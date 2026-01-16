@@ -45,9 +45,22 @@ class _BayarScreenContentState extends State<_BayarScreenContent> {
       backgroundColor: Colors.grey[50],
 
       // HEADER (AppBar)
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(100),
-        child: SafeArea(child: BayarHeader()),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70),
+        child: SafeArea(
+          child: Container(
+            color: const Color(0xFF5566FF),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 10,
+                left: 20,
+                right: 0,
+                bottom: 5,
+              ),
+              child: BayarHeader(),
+            ),
+          ),
+        ),
       ),
 
       body: BlocListener<BayarCubit, BayarState>(
@@ -70,11 +83,10 @@ class _BayarScreenContentState extends State<_BayarScreenContent> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Divider(color: Colors.black87, thickness: 1),
                   const SizedBox(height: 20),
 
                   // 1. Pilih Objek Pajak
@@ -87,7 +99,7 @@ class _BayarScreenContentState extends State<_BayarScreenContent> {
 
                   // 2. Pilih Kendaraan
                   const Text(
-                    "Select Vehicle Type",
+                    "Pilih Jenis Kendaraan",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),

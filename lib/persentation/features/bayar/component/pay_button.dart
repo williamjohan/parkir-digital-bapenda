@@ -28,7 +28,7 @@ class PayButton extends StatelessWidget {
             child: isLoading
                 ? const CircularProgressIndicator(color: Colors.white)
                 : const Text(
-                    "Pay Now",
+                    "Bayar Sekarang",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         // Warna utama sesuai tombol Pay Now (Biru)
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5566FF)),
         useMaterial3: true,
+        fontFamily: 'Poppins',
       ),
       // LANGSUNG KE TUJUAN UTAMA
       home: const BayarScreen(),

@@ -14,9 +14,9 @@ class VehicleSelectorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: _buildCard("Car", Icons.directions_car)),
+        Expanded(child: _buildCard("Mobil", Icons.directions_car)),
         const SizedBox(width: 16),
-        Expanded(child: _buildCard("Motorbike", Icons.two_wheeler)),
+        Expanded(child: _buildCard("Motor", Icons.two_wheeler)),
       ],
     );
   }

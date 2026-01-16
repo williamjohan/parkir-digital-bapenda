@@ -6,16 +6,36 @@ class BayarHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[50],
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      alignment: Alignment.centerLeft,
-      child: Image.asset(
-        'assets/images/logosby.png',
-        fit: BoxFit.fitHeight,
-        errorBuilder: (context, error, stackTrace) {
-          return const Icon(Icons.broken_image, color: Colors.grey);
-        },
+    final theme = Theme.of(context);
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          Image.asset('assets/images/logosby.png', height: 50),
+
+          const SizedBox(width: 8),
+          const VerticalDivider(
+            color: Colors.white,
+            thickness: 2,
+            width: 20,
+            indent: 5,
+            endIndent: 5,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Digital Parkir Surabaya",
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
