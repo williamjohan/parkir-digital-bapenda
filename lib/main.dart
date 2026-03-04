@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'persentation/features/bayar/bayar_screen.dart';
+import 'core/di/injection.dart';
+import 'core/routes/app_router.dart';
 
 void main() async {
-  // 1. Setup Wajib
+  // 1. Setup Wajib Flutter
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 2. Load Environment Variables
+  // 2. Inisialisasi Dependency Injection (SANGAT PENTING)
+  configureDependencies();
+
+  // 3. Load Environment Variables
   await dotenv.load(fileName: ".env");
 
-  // 3. Jalankan App
+  // 4. Jalankan App
   runApp(const MyApp());
 }
 
@@ -18,17 +22,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Simulasi Parkir Digital',
+    return MaterialApp.router(
+      // Gunakan .router untuk go_router
+      title: 'Parkir Digital Bapenda',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // Warna utama sesuai tombol Pay Now (Biru)
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5566FF)),
+        // Kita sinkronkan dengan Design System token yang sudah kita buat
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E88E5)),
         useMaterial3: true,
         fontFamily: 'Poppins',
       ),
-      // LANGSUNG KE TUJUAN UTAMA
-      home: const BayarScreen(),
+      routerConfig: AppRouter.router, // Pasangkan konfigurasi router kita
     );
   }
 }
