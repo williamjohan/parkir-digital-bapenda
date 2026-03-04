@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:simulasiparkirdigital/persentation/features/bayar/data/transaction_model.dart';
 import '../data/bayar_repository.dart';
 import '../data/objek_pajak_model.dart';
+import '../data/transaction_model.dart';
 
 // --- STATES ---
 abstract class BayarState extends Equatable {

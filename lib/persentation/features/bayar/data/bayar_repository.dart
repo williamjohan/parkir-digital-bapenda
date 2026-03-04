@@ -6,8 +6,8 @@ import 'package:dio/io.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:simulasiparkirdigital/persentation/features/bayar/data/transaction_model.dart';
 import 'objek_pajak_model.dart';
+import 'transaction_model.dart';
 
 class BayarRepository {
   // Fungsi untuk membuat Dio dengan konfigurasi SUPER LENGKAP tadi
