@@ -1,0 +1,42 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format width=80
+
+// **************************************************************************
+// InjectableConfigGenerator
+// **************************************************************************
+
+// ignore_for_file: type=lint
+// coverage:ignore-file
+
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:get_it/get_it.dart' as _i174;
+import 'package:injectable/injectable.dart' as _i526;
+
+import '../../features/init/data/repositories/device_check_repository_impl.dart'
+    as _i834;
+import '../../features/init/domain/repositories/i_device_check_repository.dart'
+    as _i515;
+import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
+    as _i232;
+import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
+
+// initializes the registration of main-scope dependencies inside of GetIt
+_i174.GetIt init(
+  _i174.GetIt getIt, {
+  String? environment,
+  _i526.EnvironmentFilter? environmentFilter,
+}) {
+  final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
+  gh.lazySingleton<_i515.IDeviceCheckRepository>(
+    () => _i834.DeviceCheckRepositoryImpl(),
+  );
+  gh.lazySingleton<_i232.CheckDeviceReadinessUseCase>(
+    () => _i232.CheckDeviceReadinessUseCase(gh<_i515.IDeviceCheckRepository>()),
+  );
+  gh.factory<_i674.InitCubit>(
+    () => _i674.InitCubit(
+      checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
+    ),
+  );
+  return getIt;
+}

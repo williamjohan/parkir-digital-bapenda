@@ -1,9 +1,11 @@
 // lib/features/init/domain/usecases/check_device_readiness_usecase.dart
 
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
 import '../repositories/i_device_check_repository.dart';
 
+@lazySingleton
 class CheckDeviceReadinessUseCase {
   final IDeviceCheckRepository repository;
 

@@ -1,10 +1,12 @@
 // lib/features/init/data/repositories/device_check_repository_impl.dart
 
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../domain/repositories/i_device_check_repository.dart';
 
+@LazySingleton(as: IDeviceCheckRepository)
 class DeviceCheckRepositoryImpl implements IDeviceCheckRepository {
   // Constructor, nantinya bisa untuk inject Local/Remote Datasource jika butuh
   DeviceCheckRepositoryImpl();

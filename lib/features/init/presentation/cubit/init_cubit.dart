@@ -1,9 +1,11 @@
 // lib/features/init/presentation/cubit/init_cubit.dart
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import '../../domain/usecases/check_device_readiness_usecase.dart';
 import 'init_state.dart';
 
+@injectable
 class InitCubit extends Cubit<InitState> {
   final CheckDeviceReadinessUseCase checkDeviceReadinessUseCase;
 
