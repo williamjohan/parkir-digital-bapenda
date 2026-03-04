@@ -27,6 +27,8 @@ import '../../features/vehicle_capture/domain/repositories/i_ocr_repository.dart
     as _i734;
 import '../../features/vehicle_capture/domain/usecases/extract_license_plate_usecase.dart'
     as _i342;
+import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart'
+    as _i731;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt init(
@@ -54,6 +56,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i342.ExtractLicensePlateUseCase>(
     () => _i342.ExtractLicensePlateUseCase(gh<_i734.IOcrRepository>()),
+  );
+  gh.factory<_i731.VehicleCaptureCubit>(
+    () => _i731.VehicleCaptureCubit(gh<_i342.ExtractLicensePlateUseCase>()),
   );
   return getIt;
 }
