@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../cubit/init_cubit.dart';
 import '../cubit/init_state.dart';
 
@@ -31,8 +33,7 @@ class _SplashPageState extends State<SplashPage> {
         listener: (context, state) {
           // Listener khusus untuk aksi satu kali (navigasi, snackbar)
           if (state is InitSuccess) {
-            // TODO: Lakukan navigasi ke Home (Pilih Kendaraan)
-            debugPrint('Perangkat Siap. Lanjut ke Home.');
+            context.go(AppRoutes.home);
           }
         },
         builder: (context, state) {
