@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-// Imports Komponen yang sudah dipecah
 import 'component/bayar_header.dart';
 import 'component/objek_pajak_section.dart';
 import 'component/tarif_input_section.dart';
@@ -10,7 +8,8 @@ import 'component/payment_success_dialog.dart';
 import 'component/vehicle_selector_widget.dart'; // Asumsi sudah ada
 import 'component/payment_method_widget.dart';
 import 'cubit/bayar_cubit.dart';
-import 'data/bayar_repository.dart'; // Asumsi sudah ada
+import 'data/bayar_repository.dart';
+import 'data/objek_pajak_model.dart'; // Asumsi sudah ada
 
 class BayarScreen extends StatelessWidget {
   const BayarScreen({super.key});

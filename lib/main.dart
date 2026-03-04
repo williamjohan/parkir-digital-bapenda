@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:simulasiparkirdigital/persentation/features/bayar/bayar_screen.dart';
+import 'persentation/features/bayar/bayar_screen.dart';
 
 void main() async {
   // 1. Setup Wajib
