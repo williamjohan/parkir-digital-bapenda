@@ -19,6 +19,14 @@ import '../../features/init/domain/repositories/i_device_check_repository.dart'
 import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
     as _i232;
 import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
+import '../../features/vehicle_capture/data/datasources/ocr_local_data_source.dart'
+    as _i437;
+import '../../features/vehicle_capture/data/repositories/ocr_repository_impl.dart'
+    as _i419;
+import '../../features/vehicle_capture/domain/repositories/i_ocr_repository.dart'
+    as _i734;
+import '../../features/vehicle_capture/domain/usecases/extract_license_plate_usecase.dart'
+    as _i342;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt init(
@@ -33,10 +41,19 @@ _i174.GetIt init(
   gh.lazySingleton<_i232.CheckDeviceReadinessUseCase>(
     () => _i232.CheckDeviceReadinessUseCase(gh<_i515.IDeviceCheckRepository>()),
   );
+  gh.lazySingleton<_i437.IOcrLocalDataSource>(
+    () => _i437.OcrLocalDataSourceImpl(),
+  );
   gh.factory<_i674.InitCubit>(
     () => _i674.InitCubit(
       checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
     ),
+  );
+  gh.lazySingleton<_i734.IOcrRepository>(
+    () => _i419.OcrRepositoryImpl(gh<_i437.IOcrLocalDataSource>()),
+  );
+  gh.lazySingleton<_i342.ExtractLicensePlateUseCase>(
+    () => _i342.ExtractLicensePlateUseCase(gh<_i734.IOcrRepository>()),
   );
   return getIt;
 }
