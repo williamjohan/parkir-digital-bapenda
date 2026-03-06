@@ -6,6 +6,7 @@ import '../../domain/entities/vehicle_category.dart';
 
 enum CaptureStatus {
   initial, // Di halaman Home (Pilih Kendaraan)
+  capturing, // Proses kamera menyala, menunggu jepret
   cameraReady, // Kamera menyala, siap jepret
   processing, // Loading OCR ML Kit bekerja
   success, // OCR Berhasil, TextField muncul
@@ -17,7 +18,8 @@ class VehicleCaptureState extends Equatable {
   final VehicleCategory? selectedCategory;
   final LicensePlate? licensePlate;
   final String? errorMessage;
-  final bool isFlashOn; // Untuk hardware control
+  final bool isFlashOn;
+  final String? capturedImagePath;
 
   const VehicleCaptureState({
     this.status = CaptureStatus.initial,
@@ -25,6 +27,7 @@ class VehicleCaptureState extends Equatable {
     this.licensePlate,
     this.errorMessage,
     this.isFlashOn = false,
+    this.capturedImagePath,
   });
 
   VehicleCaptureState copyWith({
@@ -33,13 +36,18 @@ class VehicleCaptureState extends Equatable {
     LicensePlate? licensePlate,
     String? errorMessage,
     bool? isFlashOn,
+    String? capturedImagePath,
+    bool clearImagePath = false,
   }) {
     return VehicleCaptureState(
       status: status ?? this.status,
       selectedCategory: selectedCategory ?? this.selectedCategory,
+      isFlashOn: isFlashOn ?? this.isFlashOn,
       licensePlate: licensePlate ?? this.licensePlate,
       errorMessage: errorMessage ?? this.errorMessage,
-      isFlashOn: isFlashOn ?? this.isFlashOn,
+      capturedImagePath: clearImagePath
+          ? null
+          : (capturedImagePath ?? this.capturedImagePath),
     );
   }
 
@@ -50,5 +58,6 @@ class VehicleCaptureState extends Equatable {
     licensePlate,
     errorMessage,
     isFlashOn,
+    capturedImagePath,
   ];
 }

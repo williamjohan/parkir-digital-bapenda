@@ -1,16 +1,22 @@
 // lib/features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart
 
+import 'dart:io';
+
+import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/utils/file_tuils.dart';
 import '../../domain/entities/vehicle_category.dart';
 import '../../domain/usecases/extract_license_plate_usecase.dart';
 import 'vehicle_capture_state.dart';
 
 @injectable
 class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
-  final ExtractLicensePlateUseCase extractLicensePlateUseCase;
+  final ExtractLicensePlateUseCase _extractLicensePlateUseCase;
+  CameraController? _cameraController;
+  CameraController? get cameraController => _cameraController;
 
-  VehicleCaptureCubit(this.extractLicensePlateUseCase)
+  VehicleCaptureCubit(this._extractLicensePlateUseCase)
     : super(const VehicleCaptureState());
 
   /// Dipanggil saat jukir memilih motor/mobil di Home
@@ -26,47 +32,156 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   }
 
   /// Dipanggil untuk toggle Flashlight on/off
-  void toggleFlash() {
-    emit(state.copyWith(isFlashOn: !state.isFlashOn));
+  Future<void> toggleFlash() async {
+    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+      return;
+    }
+
+    final newFlashState = !state.isFlashOn;
+    try {
+      await _cameraController!.setFlashMode(
+        newFlashState ? FlashMode.torch : FlashMode.off,
+      );
+      _safeEmit(state.copyWith(isFlashOn: newFlashState));
+    } catch (_) {}
   }
 
   /// Dipanggil saat jukir ingin memfoto ulang
-  void retakePhoto() {
-    emit(
+  Future<void> retakePhoto() async {
+    // 1. Bersihkan sampah cache gambar lama
+    await FileUtils.deleteFile(state.capturedImagePath);
+
+    // 2. Kembalikan stream lensa kamera
+    try {
+      await _cameraController?.resumePreview();
+    } catch (_) {}
+
+    // 3. Reset state ke awal (Hapus gambar, kosongkan plat/error)
+    _safeEmit(
       state.copyWith(
         status: CaptureStatus.cameraReady,
-        licensePlate: null,
+        clearImagePath: true,
         errorMessage: null,
+        // licensePlate tidak di-clear paksa di sini, tapi akan tertimpa saat OCR baru sukses
       ),
     );
   }
 
   /// Dipanggil SETELAH jukir menjepret gambar dan gambar tersimpan di storage lokal
-  Future<void> processCapturedImage(String imagePath) async {
-    // 1. Matikan kamera sementara dan tampilkan indikator loading OCR
-    emit(state.copyWith(status: CaptureStatus.processing, errorMessage: null));
+  Future<void> captureAndProcessImage() async {
+    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+      return;
+    }
+    if (_cameraController!.value.isTakingPicture) return;
 
-    // 2. Eksekusi UseCase (OCR + Regex)
-    final result = await extractLicensePlateUseCase.execute(imagePath);
+    _safeEmit(state.copyWith(status: CaptureStatus.capturing));
 
-    // 3. Tangani hasil
-    result.fold(
-      (failure) {
-        emit(
-          state.copyWith(
-            status: CaptureStatus.error,
-            errorMessage: failure.message,
-          ),
-        );
-      },
-      (licensePlate) {
-        emit(
-          state.copyWith(
-            status: CaptureStatus.success,
-            licensePlate: licensePlate,
-          ),
-        );
-      },
-    );
+    try {
+      // 1. Jepret Gambar
+      final image = await _cameraController!.takePicture();
+      final imagePath = image.path;
+
+      // 2. Pause Stream Lensa (Hemat Baterai & Fix UI Statis)
+      await _cameraController!.pausePreview();
+
+      // 3. Update State (Menampilkan gambar statis + status loading ML Kit)
+      _safeEmit(
+        state.copyWith(
+          status: CaptureStatus.processing,
+          capturedImagePath: imagePath,
+        ),
+      );
+
+      // 4. Eksekusi ML Kit OCR
+      final result = await _extractLicensePlateUseCase.execute(imagePath);
+
+      result.fold(
+        (failure) {
+          _safeEmit(
+            state.copyWith(
+              status: CaptureStatus.error,
+              errorMessage: failure.message,
+            ),
+          );
+        },
+        (licensePlate) {
+          _safeEmit(
+            state.copyWith(
+              status: CaptureStatus.success,
+              licensePlate: licensePlate,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      _safeEmit(
+        state.copyWith(
+          status: CaptureStatus.error,
+          errorMessage: 'Gagal memproses gambar.',
+        ),
+      );
+    }
+  }
+
+  /// Inisialisasi kamera, dipanggil saat masuk ke halaman Capture
+  Future<void> initCamera() async {
+    emit(state.copyWith(status: CaptureStatus.initial));
+
+    try {
+      final cameras = await availableCameras();
+      final backCamera = cameras.firstWhere(
+        (camera) => camera.lensDirection == CameraLensDirection.back,
+        orElse: () => cameras.first,
+      );
+
+      _cameraController = CameraController(
+        backCamera,
+        ResolutionPreset.high,
+        enableAudio: false,
+        imageFormatGroup: Platform.isAndroid
+            ? ImageFormatGroup.nv21
+            : ImageFormatGroup.bgra8888,
+      );
+
+      await _cameraController!.initialize();
+      await _cameraController!.setFocusMode(FocusMode.auto);
+
+      // Kembalikan status flash sesuai state terakhir
+      await _cameraController!.setFlashMode(
+        state.isFlashOn ? FlashMode.torch : FlashMode.off,
+      );
+
+      _safeEmit(state.copyWith(status: CaptureStatus.cameraReady));
+    } catch (e) {
+      _safeEmit(
+        state.copyWith(
+          status: CaptureStatus.error,
+          errorMessage: 'Gagal menginisialisasi kamera: $e',
+        ),
+      );
+    }
+  }
+
+  /// Dipanggil saat keluar dari halaman Capture untuk membersihkan resource kamera
+  Future<void> disposeCamera() async {
+    final oldController = _cameraController;
+    _cameraController =
+        null; // Putuskan reference agar UI langsung berhenti render
+    await oldController?.dispose();
+
+    // Pastikan sampah terhapus saat jukir keluar sepenuhnya dari halaman ini
+    await FileUtils.deleteFile(state.capturedImagePath);
+  }
+
+  void _safeEmit(VehicleCaptureState newState) {
+    if (!isClosed) {
+      emit(newState);
+    }
+  }
+
+  @override
+  Future<void> close() {
+    disposeCamera();
+    return super.close();
   }
 }

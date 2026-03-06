@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:parkir_digital_bapenda/core/routes/app_back_handler.dart';
 import 'core/di/injection.dart';
 import 'core/routes/app_router.dart';
 
