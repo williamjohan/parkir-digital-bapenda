@@ -4,6 +4,7 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_back_handler.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../core/utils/permission_utils.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -46,9 +47,16 @@ class HomePage extends StatelessWidget {
                     child: _VehicleCard(
                       title: 'Motor',
                       icon: Icons.two_wheeler,
-                      onTap: () {
-                        // Melempar parameter 'motor' ke rute capture
-                        context.push('${AppRoutes.capture}/motor');
+                      onTap: () async {
+                        final isGranted =
+                            await PermissionUtils.requestCameraPermission(
+                              context,
+                            );
+
+                        // 2. Jika diizinkan dan widget masih aktif, lakukan navigasi
+                        if (isGranted && context.mounted) {
+                          context.push('${AppRoutes.capture}/motor');
+                        }
                       },
                     ),
                   ),
@@ -57,9 +65,16 @@ class HomePage extends StatelessWidget {
                     child: _VehicleCard(
                       title: 'Mobil',
                       icon: Icons.directions_car,
-                      onTap: () {
-                        // Melempar parameter 'mobil' ke rute capture
-                        context.push('${AppRoutes.capture}/mobil');
+                      onTap: () async {
+                        final isGranted =
+                            await PermissionUtils.requestCameraPermission(
+                              context,
+                            );
+
+                        // 2. Jika diizinkan dan widget masih aktif, lakukan navigasi
+                        if (isGranted && context.mounted) {
+                          context.push('${AppRoutes.capture}/mobil');
+                        }
                       },
                     ),
                   ),

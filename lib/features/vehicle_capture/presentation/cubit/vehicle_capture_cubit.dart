@@ -1,7 +1,4 @@
-// lib/features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart
-
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -134,7 +131,7 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
         orElse: () => cameras.first,
       );
 
-      _cameraController = CameraController(
+      final controller = CameraController(
         backCamera,
         ResolutionPreset.high,
         enableAudio: false,
@@ -143,16 +140,22 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
             : ImageFormatGroup.bgra8888,
       );
 
-      await _cameraController!.initialize();
-      await _cameraController!.setFocusMode(FocusMode.auto);
+      _cameraController = controller;
 
-      // Kembalikan status flash sesuai state terakhir
-      await _cameraController!.setFlashMode(
+      // Tidak akan melempar CameraException (Permission Denied) lagi karena sudah dicegat di luar!
+      await controller.initialize();
+
+      // Guard sederhana untuk App Lifecycle Inactive/Resumed
+      if (_cameraController != controller) return;
+
+      await controller.setFocusMode(FocusMode.auto);
+      await controller.setFlashMode(
         state.isFlashOn ? FlashMode.torch : FlashMode.off,
       );
 
       _safeEmit(state.copyWith(status: CaptureStatus.cameraReady));
     } catch (e) {
+      // Cukup tangkap error hardware umum (misal: kamera rusak/kotor)
       _safeEmit(
         state.copyWith(
           status: CaptureStatus.error,
@@ -167,7 +170,17 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
     final oldController = _cameraController;
     _cameraController =
         null; // Putuskan reference agar UI langsung berhenti render
-    await oldController?.dispose();
+
+    try {
+      // Coba hancurkan kamera secara normal
+      await oldController?.dispose();
+    } catch (e) {
+      // FIX CAMERAX CRASH:
+      // Abaikan error "releaseFlutterSurfaceTexture" jika kamera dihancurkan
+      // sebelum kanvasnya selesai dibuat oleh OS.
+      // Tujuan kita memang membuangnya, jadi error pembersihan ini tidak berbahaya.
+      // AppLogger.warning('Abaikan error saat dispose kamera: $e');
+    }
 
     // Pastikan sampah terhapus saat jukir keluar sepenuhnya dari halaman ini
     await FileUtils.deleteFile(state.capturedImagePath);
