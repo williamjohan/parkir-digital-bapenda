@@ -23,7 +23,7 @@ class DeviceCheckRepositoryImpl implements IDeviceCheckRepository {
       // Clean Architecture memungkinkan kita men-swap logic ini kapan saja tanpa merusak UI/Domain.
 
       await Future.delayed(
-        const Duration(seconds: 1),
+        const Duration(seconds: 2),
       ); // Simulasi loading native check
 
       // Jika berhasil/tersedia

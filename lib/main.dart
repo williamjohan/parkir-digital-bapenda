@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:parkir_digital_bapenda/core/routes/app_back_handler.dart';
 import 'core/di/injection.dart';
 import 'core/routes/app_router.dart';
 
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Poppins',
       ),
-      routerConfig: AppRouter.router, // Pasangkan konfigurasi router kita
+      routerConfig: AppRouter.router,
     );
   }
 }
