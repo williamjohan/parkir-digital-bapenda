@@ -1,10 +1,8 @@
-// lib/features/vehicle_capture/presentation/pages/home_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/routes/app_back_handler.dart';
 import '../../../../core/routes/app_routes.dart';
 
 class HomePage extends StatelessWidget {
@@ -12,58 +10,63 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(
-          'Parkir Digital Bapenda',
-          style: AppTypography.heading2,
+    return AppBackHandler(
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text(
+            'Parkir Digital Bapenda',
+            style: AppTypography.heading2,
+          ),
+          backgroundColor: AppColors.surface,
+          elevation: 0,
+          centerTitle: true,
         ),
-        backgroundColor: AppColors.surface,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            const Text('Pilih Jenis Kendaraan', style: AppTypography.heading1),
-            const SizedBox(height: 8),
-            Text(
-              'Pilih tipe kendaraan untuk menyesuaikan rasio kotak panduan kamera pemindai.',
-              style: AppTypography.bodyRegular.copyWith(
-                color: AppColors.textSecondary,
+        body: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              const Text(
+                'Pilih Jenis Kendaraan',
+                style: AppTypography.heading1,
               ),
-            ),
-            const SizedBox(height: 40),
-            Row(
-              children: [
-                Expanded(
-                  child: _VehicleCard(
-                    title: 'Motor',
-                    icon: Icons.two_wheeler,
-                    onTap: () {
-                      // Melempar parameter 'motor' ke rute capture
-                      context.push('${AppRoutes.capture}/motor');
-                    },
-                  ),
+              const SizedBox(height: 8),
+              Text(
+                'Pilih tipe kendaraan untuk menyesuaikan rasio kotak panduan kamera pemindai.',
+                style: AppTypography.bodyRegular.copyWith(
+                  color: AppColors.textSecondary,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _VehicleCard(
-                    title: 'Mobil',
-                    icon: Icons.directions_car,
-                    onTap: () {
-                      // Melempar parameter 'mobil' ke rute capture
-                      context.push('${AppRoutes.capture}/mobil');
-                    },
+              ),
+              const SizedBox(height: 40),
+              Row(
+                children: [
+                  Expanded(
+                    child: _VehicleCard(
+                      title: 'Motor',
+                      icon: Icons.two_wheeler,
+                      onTap: () {
+                        // Melempar parameter 'motor' ke rute capture
+                        context.push('${AppRoutes.capture}/motor');
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _VehicleCard(
+                      title: 'Mobil',
+                      icon: Icons.directions_car,
+                      onTap: () {
+                        // Melempar parameter 'mobil' ke rute capture
+                        context.push('${AppRoutes.capture}/mobil');
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
