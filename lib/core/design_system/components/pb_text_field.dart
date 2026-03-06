@@ -10,6 +10,7 @@ class PbTextField extends StatelessWidget {
   final String hintText;
   final String? labelText;
   final bool isLoading;
+  final bool enabled; // BARU: Properti untuk mengunci input
   final Function(String)? onChanged;
 
   const PbTextField({
@@ -18,6 +19,7 @@ class PbTextField extends StatelessWidget {
     required this.hintText,
     this.labelText,
     this.isLoading = false,
+    this.enabled = true, // Default tetap true agar tidak merusak halaman lain
     this.onChanged,
   });
 
@@ -29,27 +31,34 @@ class PbTextField extends StatelessWidget {
         if (labelText != null) ...[
           Text(
             labelText!,
-            style: AppTypography.caption.copyWith(fontWeight: FontWeight.w600),
+            style: AppTypography.bodySmall.copyWith(
+              fontWeight: FontWeight.w600,
+              // Warna label sedikit memudar jika field di-disable
+              color: enabled ? AppColors.textPrimary : AppColors.textHint,
+            ),
           ),
           const SizedBox(height: 8),
         ],
         TextField(
           controller: controller,
           onChanged: onChanged,
-          textCapitalization:
-              TextCapitalization.characters, // Otomatis Huruf Besar
+          enabled: enabled, // BARU: Lempar status ke TextField bawaan
+          textCapitalization: TextCapitalization.characters,
           inputFormatters: [
-            // Memastikan jukir tidak memasukkan simbol aneh
             FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9 ]')),
           ],
-          style: AppTypography.heading2.copyWith(letterSpacing: 2),
+          style: AppTypography.heading2.copyWith(
+            letterSpacing: 2,
+            color: enabled ? AppColors.textPrimary : AppColors.textHint,
+          ),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: AppTypography.heading2.copyWith(
+            hintStyle: AppTypography.bodyRegular.copyWith(
               color: AppColors.textHint,
             ),
             filled: true,
-            fillColor: Colors.white,
+            // BARU: Jika di-disable, warnanya abu-abu terang (disable state)
+            fillColor: enabled ? Colors.white : Colors.grey.shade100,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 16,
@@ -59,7 +68,12 @@ class PbTextField extends StatelessWidget {
                     padding: EdgeInsets.all(12),
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Icon(Icons.edit, color: AppColors.primary, size: 20),
+                : Icon(
+                    Icons.edit,
+                    // Warna icon memudar jika disabled
+                    color: enabled ? AppColors.primary : AppColors.textHint,
+                    size: 20,
+                  ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.textHint),
@@ -67,6 +81,11 @@ class PbTextField extends StatelessWidget {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.textHint),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              // Border lebih tipis/pudar saat disabled
+              borderSide: BorderSide(color: Colors.grey.shade300),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

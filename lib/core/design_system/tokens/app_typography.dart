@@ -22,6 +22,12 @@ abstract class AppTypography {
     color: AppColors.textPrimary,
   );
 
+  static const TextStyle heading3 = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600, // Semi-bold
+    letterSpacing: 0.15,
+  );
+
   // Digunakan untuk teks tombol utama
   static const TextStyle buttonText = TextStyle(
     fontFamily: _fontFamily,
@@ -36,6 +42,11 @@ abstract class AppTypography {
     fontSize: 14,
     fontWeight: FontWeight.w400, // Regular
     color: AppColors.textPrimary,
+  );
+  static const TextStyle bodySmall = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400, // Regular
+    letterSpacing: 0.4,
   );
 
   // Digunakan untuk caption, error message kecil, atau hint text

@@ -5,14 +5,12 @@ import '../tokens/app_colors.dart';
 import '../tokens/app_typography.dart';
 
 class PbStatusSnackbar {
-  /// Menampilkan notifikasi elegan di bagian atas layar.
-  /// Memiliki proteksi dari overlay keyboard dan komponen lain.
   static void show(
     BuildContext context, {
     required String message,
     bool isError = false,
-    Duration duration = const Duration(seconds: 3), // Property durasi dinamis
-    IconData? customIcon, // Property icon dinamis
+    Duration duration = const Duration(seconds: 3),
+    IconData? customIcon,
   }) {
     final overlayState = Overlay.of(context);
     late OverlayEntry overlayEntry;
@@ -50,7 +48,7 @@ class PbStatusSnackbar {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: backgroundColor.withOpacity(0.3),
+                          color: backgroundColor.withValues(alpha: 0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
