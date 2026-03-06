@@ -12,6 +12,7 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/home/persentation/cubit/home_cubit.dart' as _i178;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
     as _i834;
 import '../../features/init/domain/repositories/i_device_check_repository.dart'
@@ -37,6 +38,7 @@ _i174.GetIt init(
   _i526.EnvironmentFilter? environmentFilter,
 }) {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
+  gh.factory<_i178.HomeCubit>(() => _i178.HomeCubit());
   gh.lazySingleton<_i515.IDeviceCheckRepository>(
     () => _i834.DeviceCheckRepositoryImpl(),
   );

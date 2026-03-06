@@ -142,16 +142,20 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
 
       _cameraController = controller;
 
-      // Tidak akan melempar CameraException (Permission Denied) lagi karena sudah dicegat di luar!
       await controller.initialize();
 
       // Guard sederhana untuk App Lifecycle Inactive/Resumed
       if (_cameraController != controller) return;
 
-      await controller.setFocusMode(FocusMode.auto);
-      await controller.setFlashMode(
-        state.isFlashOn ? FlashMode.torch : FlashMode.off,
-      );
+      try {
+        await controller.setFocusMode(FocusMode.auto);
+      } catch (_) {}
+
+      try {
+        await controller.setFlashMode(
+          state.isFlashOn ? FlashMode.torch : FlashMode.off,
+        );
+      } catch (_) {}
 
       _safeEmit(state.copyWith(status: CaptureStatus.cameraReady));
     } catch (e) {
