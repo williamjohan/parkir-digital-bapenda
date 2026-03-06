@@ -37,73 +37,101 @@ class _SplashPageState extends State<SplashPage> {
           }
         },
         builder: (context, state) {
-          // Builder khusus untuk merender ulang UI
           return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            child: SizedBox(
+              width: double.infinity,
+              height: double.infinity, // Pastikan mengambil tinggi penuh layar
+              child: Stack(
                 children: [
-                  const Spacer(),
-                  // Placeholder Logo Aplikasi Bapenda
-                  const Icon(
-                    Icons.local_parking,
-                    size: 100,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Parkir Digital\nBapenda',
-                    textAlign: TextAlign.center,
-                    style: AppTypography.heading1.copyWith(color: Colors.white),
-                  ),
-                  const Spacer(),
-
-                  // Reactive UI berdasarkan State dari Cubit
-                  if (state is InitLoading || state is InitInitial) ...[
-                    const CircularProgressIndicator(color: Colors.white),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Memeriksa kesiapan perangkat...',
-                      style: AppTypography.bodyRegular.copyWith(
-                        color: Colors.white70,
-                      ),
+                  // --- BLOK LOGO (Tengah Absolut) ---
+                  Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisSize:
+                          MainAxisSize.min, // Kolom hanya setinggi kontennya
+                      children: [
+                        const Icon(
+                          Icons.local_parking,
+                          size: 100,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Parkir Digital\nBapenda',
+                          textAlign: TextAlign.center,
+                          style: AppTypography.heading1.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
-                  ] else if (state is InitError) ...[
-                    // Mitigasi Risiko: Jika perangkat gagal memenuhi syarat
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(12),
+                  ),
+
+                  // --- BLOK STATUS (Mentok Bawah) ---
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      // Jarak aman dari dasar layar (aman untuk layar notch/home indicator)
+                      padding: const EdgeInsets.only(
+                        bottom: 48.0,
+                        left: 24.0,
+                        right: 24.0,
                       ),
                       child: Column(
+                        mainAxisSize: MainAxisSize
+                            .min, // Sangat penting agar tidak memenuhi layar
                         children: [
-                          const Icon(
-                            Icons.error_outline,
-                            color: AppColors.error,
-                            size: 48,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            state.message,
-                            textAlign: TextAlign.center,
-                            style: AppTypography.bodyRegular.copyWith(
-                              color: AppColors.textPrimary,
+                          if (state is InitLoading || state is InitInitial) ...[
+                            const CircularProgressIndicator(
+                              color: Colors.white,
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          // Menggunakan komponen buatan kita sendiri
-                          PbPrimaryButton(
-                            text: 'Coba Lagi',
-                            onPressed: () {
-                              context.read<InitCubit>().checkDeviceReadiness();
-                            },
-                          ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Memeriksa kesiapan perangkat...',
+                              style: AppTypography.bodyRegular.copyWith(
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ] else if (state is InitError) ...[
+                            // Mitigasi Risiko: Jika perangkat gagal memenuhi syarat
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: AppColors.error,
+                                    size: 48,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    state.message,
+                                    textAlign: TextAlign.center,
+                                    style: AppTypography.bodyRegular.copyWith(
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  PbPrimaryButton(
+                                    text: 'Coba Lagi',
+                                    onPressed: () {
+                                      context
+                                          .read<InitCubit>()
+                                          .checkDeviceReadiness();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ],
               ),
             ),
