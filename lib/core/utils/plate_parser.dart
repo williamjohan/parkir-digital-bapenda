@@ -56,15 +56,16 @@ class PlateParser {
       // Tidak ada angka, atau angka di depan (Pelat Indonesia harus diawali huruf)
       // Kita bisa coba konversi: Jika huruf pertama '8', mungkin itu 'B'
       if (rawString.startsWith('8')) {
-        rawString = 'B' + rawString.substring(1);
+        rawString = 'B${rawString.substring(1)}';
         firstDigitIndex = rawString.indexOf(RegExp(r'\d'));
       } else {
         return null;
       }
     }
 
-    if (firstDigitIndex > 2)
+    if (firstDigitIndex > 2) {
       return null; // Kode wilayah maksimal 2 huruf (B, AB, W, L, dst)
+    }
 
     try {
       // Pisahkan zona
