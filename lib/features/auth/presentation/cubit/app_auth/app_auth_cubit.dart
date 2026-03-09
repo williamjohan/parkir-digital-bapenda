@@ -2,8 +2,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../domain/usecases/check_auth_status_usecase.dart';
-import '../../../../domain/usecases/logout_usecase.dart';
+import '../../../domain/usecases/check_auth_status_usecase.dart';
+import '../../../domain/usecases/logout_usecase.dart';
 import 'app_auth_state.dart';
 
 @injectable

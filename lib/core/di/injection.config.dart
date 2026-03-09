@@ -23,6 +23,9 @@ import '../../features/auth/domain/usecases/check_auth_status_usecase.dart'
     as _i52;
 import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
 import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
+import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
+    as _i808;
+import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
 import '../../features/home/persentation/cubit/home_cubit.dart' as _i178;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
     as _i834;
@@ -101,8 +104,17 @@ _i174.GetIt init(
   gh.lazySingleton<_i188.LoginUseCase>(
     () => _i188.LoginUseCase(gh<_i589.IAuthRepository>()),
   );
-  gh.lazySingleton<_i48.LoginUseCase>(
-    () => _i48.LoginUseCase(gh<_i589.IAuthRepository>()),
+  gh.lazySingleton<_i48.LogoutUseCase>(
+    () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.factory<_i264.LoginCubit>(
+    () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
+  );
+  gh.factory<_i808.AppAuthCubit>(
+    () => _i808.AppAuthCubit(
+      gh<_i52.CheckAuthStatusUseCase>(),
+      gh<_i48.LogoutUseCase>(),
+    ),
   );
   return getIt;
 }
