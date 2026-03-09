@@ -25,3 +25,7 @@ class CameraFailure extends Failure {
 class OcrFailure extends Failure {
   const OcrFailure(super.message);
 }
+
+class AuthFailure extends Failure {
+  const AuthFailure(super.message);
+}

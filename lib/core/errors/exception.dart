@@ -23,3 +23,8 @@ class CameraException extends AppException {
 class OcrException extends AppException {
   const OcrException({super.message = 'Gagal memproses teks dari gambar.'});
 }
+
+class AuthException implements Exception {
+  final String message;
+  const AuthException({required this.message});
+}
