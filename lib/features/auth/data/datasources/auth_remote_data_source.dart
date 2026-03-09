@@ -9,7 +9,7 @@ abstract class IAuthRemoteDataSource {
   Future<Map<String, dynamic>> login(String username, String password);
 }
 
-@LazySingleton(as: IAuthRemoteDataSource)
+// @LazySingleton(as: IAuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
   final Dio _dio;
 

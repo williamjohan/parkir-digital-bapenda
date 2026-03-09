@@ -2,6 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../../core/utils/app_logger.dart';
 import '../../../domain/usecases/check_auth_status_usecase.dart';
 import '../../../domain/usecases/logout_usecase.dart';
 import 'app_auth_state.dart';
@@ -15,13 +16,21 @@ class AppAuthCubit extends Cubit<AppAuthState> {
 
   /// Dipanggil saat Splash Screen muncul
   Future<void> checkStatus() async {
-    // Memberikan jeda sedikit agar Splash Screen terlihat (Opsional)
+    AppLogger.debug(">>> [AppAuthCubit] Mengecek status token...");
     await Future.delayed(const Duration(seconds: 1));
 
-    final hasValidToken = await _checkAuthStatus();
-    if (hasValidToken) {
-      emit(AppAuthenticated());
-    } else {
+    try {
+      final hasValidToken = await _checkAuthStatus();
+      AppLogger.debug(">>> [AppAuthCubit] Hasil cek token: $hasValidToken");
+
+      if (hasValidToken) {
+        emit(AppAuthenticated());
+      } else {
+        emit(AppUnauthenticated());
+      }
+    } catch (e) {
+      AppLogger.error(">>> [AppAuthCubit] ERROR MEMBACA BRANKAS: $e");
+      // Fallback agar tidak stuck di splash screen
       emit(AppUnauthenticated());
     }
   }

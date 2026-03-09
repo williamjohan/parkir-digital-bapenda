@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/constants/app_asset_constant.dart';
 
 import '../../../../core/design_system/tokens/app_colors.dart';
 
@@ -30,7 +31,7 @@ class LoginBackgroundWidget extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         image: DecorationImage(
-          image: const AssetImage("assets/images/loginscreen.png"),
+          image: const AssetImage(AppAssetImages.loginscreen),
           fit: BoxFit.cover,
           opacity: 0.15,
         ),

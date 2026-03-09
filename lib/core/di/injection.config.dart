@@ -15,6 +15,8 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../features/auth/data/datasources/auth_remote_data_source.dart'
     as _i107;
+import '../../features/auth/data/datasources/auth_remote_data_source_dummy.dart'
+    as _i151;
 import '../../features/auth/data/repositories/auth_repository_impl.dart'
     as _i153;
 import '../../features/auth/domain/repositories/i_auth_repository.dart'
@@ -66,6 +68,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i437.IOcrLocalDataSource>(
     () => _i437.OcrLocalDataSourceImpl(),
   );
+  gh.lazySingleton<_i107.IAuthRemoteDataSource>(
+    () => _i151.AuthRemoteDataSourceDummyImpl(),
+  );
   gh.factory<_i674.InitCubit>(
     () => _i674.InitCubit(
       checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
@@ -83,20 +88,17 @@ _i174.GetIt init(
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
   );
-  gh.factory<_i731.VehicleCaptureCubit>(
-    () => _i731.VehicleCaptureCubit(gh<_i342.ExtractLicensePlateUseCase>()),
-  );
-  gh.lazySingleton<_i361.Dio>(
-    () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
-  );
-  gh.lazySingleton<_i107.IAuthRemoteDataSource>(
-    () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
-  );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
       gh<_i107.IAuthRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
+  );
+  gh.factory<_i731.VehicleCaptureCubit>(
+    () => _i731.VehicleCaptureCubit(gh<_i342.ExtractLicensePlateUseCase>()),
+  );
+  gh.lazySingleton<_i361.Dio>(
+    () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
     () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),

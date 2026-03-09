@@ -33,7 +33,7 @@ class _SplashPageState extends State<SplashPage> {
         listener: (context, state) {
           // Listener khusus untuk aksi satu kali (navigasi, snackbar)
           if (state is InitSuccess) {
-            context.go(AppRoutes.home);
+            context.go(AppRoutes.login);
           }
         },
         builder: (context, state) {
