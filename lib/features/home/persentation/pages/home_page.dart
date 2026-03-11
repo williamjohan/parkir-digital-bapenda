@@ -11,6 +11,8 @@ import '../../../../core/routes/app_back_handler.dart';
 import '../../../../core/utils/permission_utils.dart';
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
+import '../widgets/dashboard_widget.dart';
+import '../widgets/vehicle_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -86,13 +88,13 @@ class _HomePageState extends State<HomePage> {
                       previous.motorCount != current.motorCount ||
                       previous.mobilCount != current.mobilCount,
                   builder: (context, state) {
-                    return _DashboardWidget(
+                    return DashboardWidget(
                       motorCount: state.motorCount,
                       mobilCount: state.mobilCount,
                     );
                   },
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
 
                 // --- BAGIAN PILIH KENDARAAN ---
                 const Text(
@@ -112,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   children: [
                     Expanded(
-                      child: _VehicleCard(
+                      child: VehicleCard(
                         title: 'Motor',
                         icon: Icons.two_wheeler,
                         onTap: () => context
@@ -122,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: _VehicleCard(
+                      child: VehicleCard(
                         title: 'Mobil',
                         icon: Icons.directions_car,
                         onTap: () => context
@@ -135,152 +137,6 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// Komponen Visual Dashboard
-class _DashboardWidget extends StatelessWidget {
-  final int motorCount;
-  final int mobilCount;
-
-  const _DashboardWidget({required this.motorCount, required this.mobilCount});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryLight],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Transaksi Berhasil Hari Ini',
-            style: AppTypography.bodyRegular.copyWith(
-              color: Colors.white70,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _StatItem(
-                icon: Icons.two_wheeler,
-                count: motorCount,
-                label: 'Motor',
-              ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              _StatItem(
-                icon: Icons.directions_car,
-                count: mobilCount,
-                label: 'Mobil',
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  final IconData icon;
-  final int count;
-  final String label;
-
-  const _StatItem({
-    required this.icon,
-    required this.count,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: Colors.white, size: 24),
-            const SizedBox(width: 8),
-            Text(
-              count.toString(),
-              style: AppTypography.heading1.copyWith(
-                color: Colors.white,
-                fontSize: 28,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: AppTypography.bodySmall.copyWith(color: Colors.white),
-        ),
-      ],
-    );
-  }
-}
-
-// ... (_VehicleCard tetap sama seperti sebelumnya) ...
-class _VehicleCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _VehicleCard({
-    required this.title,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 32),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.primaryLight.withValues(alpha: .3),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: .05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 64, color: AppColors.primary),
-            const SizedBox(height: 16),
-            Text(title, style: AppTypography.heading2),
-          ],
         ),
       ),
     );

@@ -2,24 +2,22 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/storage/database_helper.dart';
+import '../../domain/usecases/get_daily_vehicle_count_usecase.dart'; // [PERBAIKAN]
 import 'home_state.dart';
 import '../../../../core/utils/permission_utils.dart';
 
 @injectable
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(const HomeState());
+  final GetDailyVehicleCountUseCase _getDailyVehicleCountUseCase; // [PERBAIKAN]
+
+  HomeCubit(this._getDailyVehicleCountUseCase) : super(const HomeState());
 
   Future<void> requestCameraAccess(String vehicleType) async {
-    // 1. Panggil Util yang sekarang mengembalikan Either
     final result = await PermissionUtils.requestCameraPermission();
-
     if (isClosed) return;
 
-    // 2. Functional Error Handling (Pattern Either)
     result.fold(
       (failure) {
-        // Jika tertangkap Left (Failure), pancarkan state error
         emit(
           state.copyWith(
             permissionActionStatus: CameraPermissionStatus.error,
@@ -29,7 +27,6 @@ class HomeCubit extends Cubit<HomeState> {
         );
       },
       (status) {
-        // Jika tertangkap Right (Success/Status), pancarkan status OS
         emit(
           state.copyWith(
             permissionActionStatus: status,
@@ -41,18 +38,25 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  /// Mengambil data terbaru dari SQLite dan memperbarui State
+  /// Mengambil data terbaru lewat UseCase
   Future<void> loadDashboardData() async {
-    try {
-      final counts = await DatabaseHelper.instance.getDailyVehicleCount();
-      emit(
-        state.copyWith(
-          motorCount: counts['motor'] ?? 0,
-          mobilCount: counts['mobil'] ?? 0,
-        ),
-      );
-    } catch (e) {
-      // Logika error handling jika gagal akses DB lokal
-    }
+    // [PERBAIKAN]: Panggil eksekusi melalui UseCase, tangani dengan pola Either
+    final result = await _getDailyVehicleCountUseCase.execute();
+
+    result.fold(
+      (failure) {
+        // Abaikan error secara silent, atau bisa Anda tambahkan properti errorMessage di state
+      },
+      (counts) {
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              motorCount: counts['motor'] ?? 0,
+              mobilCount: counts['mobil'] ?? 0,
+            ),
+          );
+        }
+      },
+    );
   }
 }

@@ -28,6 +28,12 @@ import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
+import '../../features/home/data/repositories/home_repository_impl.dart'
+    as _i76;
+import '../../features/home/domain/repositories/i_home_repository.dart'
+    as _i274;
+import '../../features/home/domain/usecases/get_daily_vehicle_count_usecase.dart'
+    as _i473;
 import '../../features/home/persentation/cubit/home_cubit.dart' as _i178;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
     as _i834;
@@ -69,7 +75,6 @@ _i174.GetIt init(
 }) {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
-  gh.factory<_i178.HomeCubit>(() => _i178.HomeCubit());
   gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
     () => _i247.PaymentRemoteDataSourceImpl(),
   );
@@ -82,6 +87,7 @@ _i174.GetIt init(
   gh.lazySingleton<_i437.IOcrLocalDataSource>(
     () => _i437.OcrLocalDataSourceImpl(),
   );
+  gh.lazySingleton<_i274.IHomeRepository>(() => _i76.HomeRepositoryImpl());
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i151.AuthRemoteDataSourceDummyImpl(),
   );
@@ -101,6 +107,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
+  );
+  gh.lazySingleton<_i473.GetDailyVehicleCountUseCase>(
+    () => _i473.GetDailyVehicleCountUseCase(gh<_i274.IHomeRepository>()),
   );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
@@ -131,6 +140,9 @@ _i174.GetIt init(
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
+  );
+  gh.factory<_i178.HomeCubit>(
+    () => _i178.HomeCubit(gh<_i473.GetDailyVehicleCountUseCase>()),
   );
   gh.lazySingleton<_i393.ConfirmPaymentUseCase>(
     () => _i393.ConfirmPaymentUseCase(gh<_i1004.IPaymentRepository>()),
