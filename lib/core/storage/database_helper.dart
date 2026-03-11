@@ -67,4 +67,35 @@ class DatabaseHelper {
       whereArgs: [idTransaksi],
     );
   }
+
+  // 3. Fungsi Ambil total kendaraan
+  /// Mengambil total kendaraan (Motor & Mobil) yang sudah PAID HARI INI
+  Future<Map<String, int>> getDailyVehicleCount() async {
+    final db = await database;
+
+    // Ambil tanggal hari ini dalam format YYYY-MM-DD
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+
+    // Query efisien: Kelompokkan dan hitung langsung di level Database
+    final List<Map<String, dynamic>> result = await db.rawQuery(
+      '''
+      SELECT kategori_kendaraan, COUNT(*) as total
+      FROM transactions 
+      WHERE status = 'PAID' AND substr(waktu_transaksi, 1, 10) = ?
+      GROUP BY kategori_kendaraan
+    ''',
+      [today],
+    );
+
+    int motorCount = 0;
+    int mobilCount = 0;
+
+    for (var row in result) {
+      final kategori = row['kategori_kendaraan'].toString().toLowerCase();
+      if (kategori == 'motor') motorCount = row['total'] as int;
+      if (kategori == 'mobil') mobilCount = row['total'] as int;
+    }
+
+    return {'motor': motorCount, 'mobil': mobilCount};
+  }
 }

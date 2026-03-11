@@ -8,17 +8,23 @@ class HomeState extends Equatable {
   // Timestamp ini adalah "Hack" arsitektur yang elegan agar Listener selalu terpicu
   // setiap kali aksi ditekan, meskipun status permission-nya tidak berubah.
   final int? actionTimestamp;
+  final int motorCount;
+  final int mobilCount;
 
   const HomeState({
     this.permissionActionStatus,
     this.selectedVehicleForCapture,
     this.actionTimestamp,
+    this.motorCount = 0,
+    this.mobilCount = 0,
   });
 
   HomeState copyWith({
     CameraPermissionStatus? permissionActionStatus,
     String? selectedVehicleForCapture,
     int? actionTimestamp,
+    int? motorCount,
+    int? mobilCount,
   }) {
     return HomeState(
       permissionActionStatus:
@@ -26,6 +32,8 @@ class HomeState extends Equatable {
       selectedVehicleForCapture:
           selectedVehicleForCapture ?? this.selectedVehicleForCapture,
       actionTimestamp: actionTimestamp ?? this.actionTimestamp,
+      motorCount: motorCount ?? this.motorCount,
+      mobilCount: mobilCount ?? this.mobilCount,
     );
   }
 
@@ -34,5 +42,7 @@ class HomeState extends Equatable {
     permissionActionStatus,
     selectedVehicleForCapture,
     actionTimestamp,
+    mobilCount,
+    motorCount,
   ];
 }

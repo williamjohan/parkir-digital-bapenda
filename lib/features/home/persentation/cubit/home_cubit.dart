@@ -2,6 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/storage/database_helper.dart';
 import 'home_state.dart';
 import '../../../../core/utils/permission_utils.dart';
 
@@ -38,5 +39,20 @@ class HomeCubit extends Cubit<HomeState> {
         );
       },
     );
+  }
+
+  /// Mengambil data terbaru dari SQLite dan memperbarui State
+  Future<void> loadDashboardData() async {
+    try {
+      final counts = await DatabaseHelper.instance.getDailyVehicleCount();
+      emit(
+        state.copyWith(
+          motorCount: counts['motor'] ?? 0,
+          mobilCount: counts['mobil'] ?? 0,
+        ),
+      );
+    } catch (e) {
+      // Logika error handling jika gagal akses DB lokal
+    }
   }
 }
