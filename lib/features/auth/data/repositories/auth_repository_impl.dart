@@ -1,5 +1,3 @@
-// lib/features/auth/data/repositories/auth_repository_impl.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
@@ -9,40 +7,34 @@ import '../../domain/repositories/i_auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
 
 @LazySingleton(as: IAuthRepository)
-@LazySingleton(as: IAuthRepository)
 class AuthRepositoryImpl implements IAuthRepository {
   final IAuthRemoteDataSource _remoteDataSource;
   final ISecureStorageManager _secureStorage;
 
   AuthRepositoryImpl(this._remoteDataSource, this._secureStorage);
-
   @override
-  // 1. KEMBALIKAN KE TIPE 'Unit'
   Future<Either<Failure, Unit>> login(String username, String password) async {
     try {
+      // 1. response sekarang otomatis bertipe AuthResponseModel, bukan Map liar lagi!
       final response = await _remoteDataSource.login(username, password);
 
-      final accessToken = response['access_token'];
-      final refreshToken = response['refresh_token'];
-      final userData = response['user'] as Map<String, dynamic>?;
-
-      if (accessToken != null && userData != null) {
-        await _secureStorage.saveAccessToken(accessToken);
-        if (refreshToken != null) {
-          await _secureStorage.saveRefreshToken(refreshToken);
+      if (response.accessToken.isNotEmpty) {
+        // 2. Simpan Token
+        await _secureStorage.saveAccessToken(response.accessToken);
+        if (response.refreshToken != null) {
+          await _secureStorage.saveRefreshToken(response.refreshToken!);
         }
 
-        // 2. SESUAIKAN DENGAN PARAMETER BARU ANDA (namaJukir)
+        // 3. Simpan Profil Jukir (Sangat bersih dan Type-Safe!)
         await _secureStorage.saveJukirProfile(
-          idJukir: userData['id_jukir'] ?? '',
-          namaJukir: userData['nama'] ?? '',
-          nop: userData['nop'] ?? '',
+          idJukir: response.user.idJukir,
+          namaJukir: response.user.nama,
+          nop: response.user.nop,
         );
 
-        // 3. KEMBALIKAN 'unit' DARI PACKAGE dartz, BUKAN 'true'
         return const Right(unit);
       } else {
-        return const Left(AuthFailure('Format response API tidak valid.'));
+        return const Left(AuthFailure('Token tidak ditemukan dari server.'));
       }
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));

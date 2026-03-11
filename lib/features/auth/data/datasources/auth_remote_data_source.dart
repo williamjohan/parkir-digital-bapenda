@@ -4,9 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
+import '../models/auth_response_model.dart';
 
 abstract class IAuthRemoteDataSource {
-  Future<Map<String, dynamic>> login(String username, String password);
+  Future<AuthResponseModel> login(String username, String password);
 }
 
 /* NOTE :
@@ -22,7 +23,7 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<Map<String, dynamic>> login(String username, String password) async {
+  Future<AuthResponseModel> login(String username, String password) async {
     try {
       final response = await _dio.post(
         ApiEndpoints.login,
@@ -30,7 +31,8 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return response.data['data'];
+        final responseData = response.data['data'];
+        return AuthResponseModel.fromJson(responseData);
       } else {
         // Jika server mengembalikan status aneh tapi tidak masuk catch Dio
         throw ServerException(
