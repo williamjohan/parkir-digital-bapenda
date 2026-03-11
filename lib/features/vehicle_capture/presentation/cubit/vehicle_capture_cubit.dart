@@ -201,4 +201,30 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
     disposeCamera();
     return super.close();
   }
+
+  void resetCapture() {
+    emit(
+      VehicleCaptureState(
+        // [PERBAIKAN ARSITEKTUR]: Langsung set ke cameraReady agar tombol bisa diklik
+        status: CaptureStatus.cameraReady,
+
+        // Pertahankan "Mobil" atau "Motor" agar Jukir tidak perlu klik ulang
+        selectedCategory: state.selectedCategory,
+
+        // Sisanya otomatis ter-reset: licensePlate (null), imagePath (null)
+      ),
+    );
+  }
+
+  /// Dipanggil saat tombol "Lanjut Bayar" diklik (Memicu BlocListener)
+  void proceedToPayment() {
+    _safeEmit(state.copyWith(status: CaptureStatus.navigatingToPayment));
+  }
+
+  /// Dipanggil saat Jukir membatalkan pembayaran (Menekan tombol Back HP di layar QRIS)
+  void cancelNavigation() {
+    // Kembalikan status ke 'success' karena Jukir sudah punya foto dan plat yang valid
+    // UI akan kembali memunculkan foto kendaraan yang tadi tanpa meresetnya.
+    _safeEmit(state.copyWith(status: CaptureStatus.success));
+  }
 }

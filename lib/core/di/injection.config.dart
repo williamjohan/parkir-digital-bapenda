@@ -44,7 +44,7 @@ import '../../features/payment/domain/usecases/confirm_payment_usecase.dart'
     as _i393;
 import '../../features/payment/domain/usecases/generate_qris_usecase.dart'
     as _i831;
-import '../../features/payment/persentation/cubit/payment_cubit.dart' as _i820;
+import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
 import '../../features/vehicle_capture/data/datasources/ocr_local_data_source.dart'
     as _i437;
 import '../../features/vehicle_capture/data/repositories/ocr_repository_impl.dart'
@@ -136,8 +136,8 @@ _i174.GetIt init(
       gh<_i48.LogoutUseCase>(),
     ),
   );
-  gh.factory<_i820.PaymentCubit>(
-    () => _i820.PaymentCubit(
+  gh.factory<_i513.PaymentCubit>(
+    () => _i513.PaymentCubit(
       gh<_i831.GenerateQrisUseCase>(),
       gh<_i393.ConfirmPaymentUseCase>(),
     ),

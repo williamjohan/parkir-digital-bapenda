@@ -68,7 +68,7 @@ class PaymentPage extends StatelessWidget {
                   backgroundColor: Colors.green,
                 ),
               );
-              context.pop(); // Kembali ke halaman Capture
+              context.pop(true); // Kembali ke halaman Capture
             }
           },
           builder: (context, state) {

@@ -11,6 +11,7 @@ enum CaptureStatus {
   processing, // Loading OCR ML Kit bekerja
   success, // OCR Berhasil, TextField muncul
   error, // Gagal baca plat / Error sistem
+  navigatingToPayment,
 }
 
 class VehicleCaptureState extends Equatable {

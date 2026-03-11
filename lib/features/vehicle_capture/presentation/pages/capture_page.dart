@@ -1,15 +1,16 @@
-// lib/features/vehicle_capture/presentation/pages/capture_page.dart
-
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_keyboard_dismiss_wrapper.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
-import '../../../../core/design_system/tokens/app_typography.dart'; // Import Typography
+import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
+import '../../../../core/routes/app_routes.dart';
+import '../../../payment/presentation/pages/payment_page.dart';
 import '../cubit/vehicle_capture_cubit.dart';
 import '../cubit/vehicle_capture_state.dart';
 import '../widgets/vehicle_overlay_guide.dart';
@@ -51,8 +52,11 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    // [PERBAIKAN 4]: Semua logika efek samping disatukan di SATU Listener Utama
     return BlocConsumer<VehicleCaptureCubit, VehicleCaptureState>(
-      listener: (context, state) {
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) async {
+        // --- 1. HANDLE OCR STATUS ---
         if (state.status == CaptureStatus.success) {
           _plateController.text = state.licensePlate?.formattedNumber ?? '';
           PbStatusSnackbar.show(context, message: 'Plat berhasil dipindai!');
@@ -69,11 +73,35 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
         } else if (state.status == CaptureStatus.cameraReady) {
           _plateController.clear();
         }
+        // --- 2. HANDLE NAVIGASI KE PAYMENT ---
+        else if (state.status == CaptureStatus.navigatingToPayment) {
+          final args = PaymentPageArgs(
+            platNomor: _plateController.text.trim(),
+            kategoriKendaraan: 'Mobil', // Nanti sesuaikan dengan state
+            fotoKendaraan: 'base64_dummy_image_data',
+          );
+
+          // Pindah layar dan tunggu kembalian
+          final isSuccess = await context.push<bool>(
+            AppRoutes.payment,
+            extra: args,
+          );
+
+          // Guard keamanan memori
+          if (!context.mounted) return;
+
+          // Eksekusi pembersihan
+          if (isSuccess == true) {
+            _plateController.clear();
+            context.read<VehicleCaptureCubit>().resetCapture();
+          } else {
+            // Asumsi Cubit Anda memiliki method cancelNavigation() untuk mengembalikan state
+            context.read<VehicleCaptureCubit>().cancelNavigation();
+          }
+        }
       },
       builder: (context, state) {
         final cubit = context.read<VehicleCaptureCubit>();
-
-        // State flags yang bersih
         final isLoading =
             state.status == CaptureStatus.processing ||
             state.status == CaptureStatus.capturing;
@@ -81,7 +109,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
         final hasCapturedImage = state.capturedImagePath != null;
 
         return PopScope(
-          // Kunci navigasi back HANYA saat loading (AI sedang bekerja)
           canPop: !isLoading,
           onPopInvokedWithResult: (didPop, result) {
             if (!didPop && isLoading) {
@@ -94,14 +121,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           child: PbKeyboardDismissWrapper(
             child: Scaffold(
               backgroundColor: Colors.black,
-              // Menggunakan Stack di level Scaffold untuk menempatkan Overlay Premium di paling atas
               body: SafeArea(
                 child: Stack(
                   children: [
                     // --- LAYER 1: KONTEN UTAMA APLIKASI ---
                     Column(
                       children: [
-                        // AREA KAMERA / HASIL FOTO
                         Expanded(
                           child: Stack(
                             fit: StackFit.expand,
@@ -117,11 +142,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                   cubit.cameraController!.value.isInitialized)
                                 SizedBox.expand(
                                   child: FittedBox(
-                                    fit: BoxFit
-                                        .cover, // Samakan perilakunya dengan Image statis di atas
+                                    fit: BoxFit.cover,
                                     child: SizedBox(
-                                      // Resolusi sensor kamera native biasanya orientasinya terbalik (Landscape)
-                                      // Jadi kita tukar width menjadi height agar proporsinya tidak melar.
                                       width:
                                           cubit
                                               .cameraController!
@@ -149,14 +171,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                   ),
                                 ),
 
-                              // Kotak Panduan (Hanya muncul jika lensa terbuka)
                               if (!hasCapturedImage &&
                                   state.selectedCategory != null)
                                 VehicleOverlayGuide(
                                   category: state.selectedCategory!,
                                 ),
 
-                              // Tombol Flashlight
                               if (!hasCapturedImage && isCameraReady)
                                 Positioned(
                                   top: 16,
@@ -173,7 +193,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                   ),
                                 ),
 
-                              // Tombol Back UI
                               Positioned(
                                 top: 16,
                                 left: 16,
@@ -212,19 +231,15 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                               children: [
                                 PbTextField(
                                   controller: _plateController,
-                                  // --- FIX DYNAMIC PLACEHOLDER ---
                                   hintText: hasCapturedImage
                                       ? 'Ketik manual (Contoh: L 1234 AB)'
                                       : 'Wajib foto kendaraan dulu',
                                   labelText: 'Nomor Plat Kendaraan',
-                                  // ENHANCEMENT 2: Disabled jika belum ada foto, Enabled jika sudah ada foto
                                   enabled: hasCapturedImage && !isLoading,
-                                  // Hapus loading di level TextField agar bersih
                                   isLoading: false,
                                 ),
                                 const SizedBox(height: 16),
 
-                                // LOGIC TOMBOL ADAPTIF
                                 if (hasCapturedImage)
                                   Row(
                                     children: [
@@ -249,14 +264,15 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                       Expanded(
                                         child: PbPrimaryButton(
                                           text: 'Lanjut Bayar',
-                                          // Hapus loading di level Button agar bersih
                                           isLoading: false,
                                           onPressed: isLoading
                                               ? null
                                               : () {
-                                                  if (_plateController.text
-                                                      .trim()
-                                                      .isEmpty) {
+                                                  // [PERBAIKAN 3]: Variabel args yang tidak terpakai sudah dihapus
+                                                  final plat = _plateController
+                                                      .text
+                                                      .trim();
+                                                  if (plat.isEmpty) {
                                                     PbStatusSnackbar.show(
                                                       context,
                                                       message:
@@ -265,11 +281,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                                     );
                                                     return;
                                                   }
-                                                  PbStatusSnackbar.show(
-                                                    context,
-                                                    message:
-                                                        'Lanjut ke QRIS dengan plat: ${_plateController.text}',
-                                                  );
+
+                                                  // Perintahkan Jenderal untuk navigasi
+                                                  context
+                                                      .read<
+                                                        VehicleCaptureCubit
+                                                      >()
+                                                      .proceedToPayment();
                                                 },
                                         ),
                                       ),
@@ -279,7 +297,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                   PbPrimaryButton(
                                     text: 'Ambil Foto Kendaraan',
                                     icon: Icons.camera_alt,
-                                    // Hapus loading di level Button agar bersih
                                     isLoading: false,
                                     onPressed: isCameraReady
                                         ? () => cubit.captureAndProcessImage()
@@ -292,22 +309,19 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                       ],
                     ),
 
-                    // --- LAYER 2: ENHANCEMENT 1 - PREMIUM UNIFIED LOADING OVERLAY ---
+                    // --- LAYER 2: PREMIUM UNIFIED LOADING OVERLAY ---
                     if (isLoading)
                       Container(
-                        // Latar belakang abu-abu transparan premium feel
                         color: Colors.black.withValues(alpha: 0.7),
                         child: Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Spinner Putih Besar di tengah
                               const CircularProgressIndicator(
                                 color: Colors.white,
                                 strokeWidth: 5,
                               ),
                               const SizedBox(height: 24),
-                              // Teks Peringatan/Edukasi Jukir ala premium app
                               Text(
                                 'Harap tunggu...\nSedang memproses plat nomor.',
                                 textAlign: TextAlign.center,
@@ -317,9 +331,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                 ),
                               ),
                               const SizedBox(height: 12),
+                              // [PERBAIKAN 2]: Mengganti bodySmall menjadi caption agar sesuai kamus Typography
                               Text(
                                 'Jangan keluar dari halaman ini.',
-                                style: AppTypography.bodySmall.copyWith(
+                                style: AppTypography.caption.copyWith(
                                   color: Colors.white70,
                                 ),
                               ),

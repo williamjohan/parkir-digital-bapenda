@@ -9,7 +9,7 @@ import '../repositories/i_payment_repository.dart';
 class GenerateQrisUseCase {
   final IPaymentRepository repository;
 
-  GenerateQrisUseCase(IPaymentRepository repository) : repository = repository;
+  GenerateQrisUseCase(this.repository);
 
   Future<Either<Failure, Map<String, dynamic>>> execute({
     required int nominal,
