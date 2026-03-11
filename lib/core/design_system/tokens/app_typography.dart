@@ -43,6 +43,16 @@ abstract class AppTypography {
     fontWeight: FontWeight.w400, // Regular
     color: AppColors.textPrimary,
   );
+
+  static const TextStyle bodyText = TextStyle(
+    fontSize: 14.0,
+    fontWeight: FontWeight.w400,
+    color:
+        AppColors.textPrimary, // Sesuaikan dengan variabel warna default Anda
+    letterSpacing: 0.25,
+    height: 1.5, // Line height standar untuk keterbacaan (readability)
+  );
+
   static const TextStyle bodySmall = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400, // Regular
@@ -51,9 +61,9 @@ abstract class AppTypography {
 
   // Digunakan untuk caption, error message kecil, atau hint text
   static const TextStyle caption = TextStyle(
-    fontFamily: _fontFamily,
-    fontSize: 12,
+    fontSize: 12.0,
     fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
+    color: Colors.grey,
+    letterSpacing: 0.4,
   );
 }
