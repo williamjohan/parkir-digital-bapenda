@@ -61,12 +61,13 @@ class HomePage extends StatelessWidget {
           body: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
                 const Text(
                   'Pilih Jenis Kendaraan',
                   style: AppTypography.heading1,
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -74,6 +75,7 @@ class HomePage extends StatelessWidget {
                   style: AppTypography.bodyRegular.copyWith(
                     color: AppColors.textSecondary,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
                 Row(

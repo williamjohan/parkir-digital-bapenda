@@ -48,12 +48,14 @@ class PbTextField extends StatelessWidget {
             FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9 ]')),
           ],
           style: AppTypography.heading2.copyWith(
+            fontSize: 20,
             letterSpacing: 2,
             color: enabled ? AppColors.textPrimary : AppColors.textHint,
           ),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: AppTypography.bodyRegular.copyWith(
+              fontSize: 11,
               color: AppColors.textHint,
             ),
             filled: true,
