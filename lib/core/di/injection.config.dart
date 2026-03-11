@@ -112,7 +112,7 @@ _i174.GetIt init(
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
   );
-  gh.factory<_i808.AppAuthCubit>(
+  gh.lazySingleton<_i808.AppAuthCubit>(
     () => _i808.AppAuthCubit(
       gh<_i52.CheckAuthStatusUseCase>(),
       gh<_i48.LogoutUseCase>(),
