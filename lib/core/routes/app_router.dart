@@ -19,45 +19,43 @@ import 'go_router_refresh_stream.dart';
 class AppRouter {
   AppRouter._();
 
+  static GoRouter? _router;
+
   // Kita ubah menjadi function/getter agar bisa menerima instance AppAuthCubit
   static GoRouter getRouter(AppAuthCubit appAuthCubit) {
-    return GoRouter(
+    if (_router != null) {
+      return _router!;
+    }
+    // Jika belum ada, baru kita buat.
+    _router = GoRouter(
       initialLocation: AppRoutes.splash,
-
-      // 1. TELINGA ROUTER: GoRouter akan bereaksi tiap kali state AppAuthCubit berubah!
       refreshListenable: GoRouterRefreshStream(appAuthCubit.stream),
-
-      // 2. SATPAM RUTE (THE BOUNCER): Logic interceptor perpindahan halaman
       redirect: (context, state) {
         final authState = appAuthCubit.state;
+        final path = state.uri.path;
 
-        final isGoingToLogin = state.matchedLocation == AppRoutes.login;
-        final isGoingToSplash = state.matchedLocation == AppRoutes.splash;
+        final isGoingToLogin = path == AppRoutes.login;
+        final isGoingToSplash = path == AppRoutes.splash;
 
-        // Kondisi A: Aplikasi baru buka, biarkan di Splash Screen dulu
         if (authState is AppAuthInitial) {
           return null;
         }
 
-        // Kondisi B: Jukir TIDAK punya akses (Token basi / belum login)
         if (authState is AppUnauthenticated) {
-          // Kalau dia coba-coba akses /home atau /capture, TENDANG ke /login!
           if (!isGoingToLogin && !isGoingToSplash) {
             return AppRoutes.login;
           }
         }
 
-        // Kondisi C: Jukir PUNYA akses (Sudah login / token valid)
         if (authState is AppAuthenticated) {
-          // Kalau dia nyasar balik ke halaman /login atau /splash, ARAHKAN ke /home!
           if (isGoingToLogin || isGoingToSplash) {
             return AppRoutes.home;
           }
         }
 
-        // Tidak ada pelanggaran, silakan lewat
         return null;
       },
+
       routes: [
         GoRoute(
           path: AppRoutes.splash,
@@ -105,5 +103,7 @@ class AppRouter {
         ),
       ],
     );
+
+    return _router!;
   }
 }

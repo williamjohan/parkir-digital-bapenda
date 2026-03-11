@@ -1,6 +1,7 @@
 // lib/features/auth/data/datasources/auth_remote_data_source_dummy.dart
 
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/utils/app_logger.dart';
 import '../../../../core/errors/exception.dart';
 import 'auth_remote_data_source.dart'; // Import interface-nya
 
@@ -10,7 +11,7 @@ import 'auth_remote_data_source.dart'; // Import interface-nya
 class AuthRemoteDataSourceDummyImpl implements IAuthRemoteDataSource {
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
-    print("⚠️ [WARNING] MENGGUNAKAN DUMMY API LOGIN!");
+    AppLogger.warning("⚠️ [WARNING] MENGGUNAKAN DUMMY API LOGIN!");
 
     // 1. Simulasi delay jaringan Bapenda (2 detik)
     await Future.delayed(const Duration(seconds: 2));

@@ -7,7 +7,7 @@ import '../../../domain/usecases/check_auth_status_usecase.dart';
 import '../../../domain/usecases/logout_usecase.dart';
 import 'app_auth_state.dart';
 
-@injectable
+@lazySingleton
 class AppAuthCubit extends Cubit<AppAuthState> {
   final CheckAuthStatusUseCase _checkAuthStatus;
   final LogoutUseCase _logout;
@@ -15,9 +15,13 @@ class AppAuthCubit extends Cubit<AppAuthState> {
   AppAuthCubit(this._checkAuthStatus, this._logout) : super(AppAuthInitial());
 
   /// Dipanggil saat Splash Screen muncul
-  Future<void> checkStatus() async {
+  Future<void> checkStatus({bool isFromSplash = false}) async {
     AppLogger.debug(">>> [AppAuthCubit] Mengecek status token...");
-    await Future.delayed(const Duration(seconds: 1));
+
+    // Bungkus delay dengan kondisi
+    if (isFromSplash) {
+      await Future.delayed(const Duration(seconds: 1));
+    }
 
     try {
       final hasValidToken = await _checkAuthStatus();

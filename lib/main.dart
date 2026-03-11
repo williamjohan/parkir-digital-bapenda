@@ -25,25 +25,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // A. Tarik Sang Jenderal dari GetIt (Service Locator)
     final appAuthCubit = locator<AppAuthCubit>();
 
-    // B. Bungkus aplikasi dengan BlocProvider Global
     return BlocProvider(
-      // Menggunakan cascade operator (..) untuk langsung menyuruh Jenderal
-      // mengecek isi brankas detik pertama kali aplikasi dibuka!
-      create: (_) => appAuthCubit..checkStatus(),
+      // [TAMBAHAN WAJIB SANG ARSITEK]
+      // Matikan sifat malas! Paksa Jenderal langsung bekerja detik itu juga.
+      lazy: false,
 
+      create: (_) => appAuthCubit..checkStatus(isFromSplash: true),
       child: MaterialApp.router(
         title: 'Parkir Digital Bapenda',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          // Kita sinkronkan dengan Design System token yang sudah kita buat
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E88E5)),
           useMaterial3: true,
           fontFamily: 'Poppins',
         ),
-        // C. Masukkan Sang Jenderal ke dalam Router agar dia bisa menjadi Satpam Rute!
         routerConfig: AppRouter.getRouter(appAuthCubit),
       ),
     );

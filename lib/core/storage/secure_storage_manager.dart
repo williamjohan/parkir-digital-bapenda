@@ -14,9 +14,10 @@ abstract class ISecureStorageManager {
 
 @LazySingleton(as: ISecureStorageManager)
 class SecureStorageManagerImpl implements ISecureStorageManager {
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
-  // Key konstan untuk menghindari typo
   static const String _keyAccessToken = 'ACCESS_TOKEN';
   static const String _keyRefreshToken = 'REFRESH_TOKEN';
 
@@ -49,8 +50,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<bool> hasValidToken() async {
     final token = await getAccessToken();
-    // Catatan: Validasi masa aktif (expired) JWT akan kita lakukan di Interceptor/UseCase
-    // Fungsi ini hanya mengecek apakah token fisiknya ada di storage
     return token != null && token.isNotEmpty;
   }
 }

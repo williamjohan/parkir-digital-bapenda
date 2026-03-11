@@ -21,8 +21,16 @@ class InitCubit extends Cubit<InitState> {
 
     // 3. Tangani hasil Either
     result.fold(
-      (failure) => emit(InitError(failure.message)),
-      (isReady) => emit(InitSuccess()),
+      (failure) {
+        if (!isClosed) {
+          emit(InitError(failure.message));
+        }
+      },
+      (isReady) {
+        if (!isClosed) {
+          emit(InitSuccess());
+        }
+      },
     );
   }
 }
