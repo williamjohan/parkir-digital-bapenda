@@ -12,6 +12,7 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   final ExtractLicensePlateUseCase _extractLicensePlateUseCase;
   CameraController? _cameraController;
   CameraController? get cameraController => _cameraController;
+  Future<void>? _initializeControllerFuture;
 
   VehicleCaptureCubit(this._extractLicensePlateUseCase)
     : super(const VehicleCaptureState());
@@ -142,7 +143,9 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
 
       _cameraController = controller;
 
-      await controller.initialize();
+      // [PERBAIKAN]: Cukup panggil initialize satu kali dan simpan di Future!
+      _initializeControllerFuture = controller.initialize();
+      await _initializeControllerFuture;
 
       // Guard sederhana untuk App Lifecycle Inactive/Resumed
       if (_cameraController != controller) return;
@@ -159,7 +162,6 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
 
       _safeEmit(state.copyWith(status: CaptureStatus.cameraReady));
     } catch (e) {
-      // Cukup tangkap error hardware umum (misal: kamera rusak/kotor)
       _safeEmit(
         state.copyWith(
           status: CaptureStatus.error,
@@ -177,23 +179,12 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
 
     try {
       // Coba hancurkan kamera secara normal
+      // Jika kamera sedang inisialisasi, TUNGGU sampai selesai baru dibunuh
+      if (_initializeControllerFuture != null) {
+        await _initializeControllerFuture;
+      }
       await oldController?.dispose();
-    } catch (e) {
-      // FIX CAMERAX CRASH:
-      // Abaikan error "releaseFlutterSurfaceTexture" jika kamera dihancurkan
-      // sebelum kanvasnya selesai dibuat oleh OS.
-      // Tujuan kita memang membuangnya, jadi error pembersihan ini tidak berbahaya.
-      // AppLogger.warning('Abaikan error saat dispose kamera: $e');
-    }
-
-    // Pastikan sampah terhapus saat jukir keluar sepenuhnya dari halaman ini
-    await FileUtils.deleteFile(state.capturedImagePath);
-  }
-
-  void _safeEmit(VehicleCaptureState newState) {
-    if (!isClosed) {
-      emit(newState);
-    }
+    } catch (e) {}
   }
 
   @override
@@ -202,16 +193,17 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
     return super.close();
   }
 
-  void resetCapture() {
-    emit(
+  Future<void> resetCapture() async {
+    // 1. Bangunkan lensa kamera dari tidur (pause) setelah pembayaran sukses!
+    try {
+      await _cameraController?.resumePreview();
+    } catch (_) {}
+
+    // [PERBAIKAN]: Gunakan _safeEmit agar terhindar dari emit saat Cubit mati
+    _safeEmit(
       VehicleCaptureState(
-        // [PERBAIKAN ARSITEKTUR]: Langsung set ke cameraReady agar tombol bisa diklik
         status: CaptureStatus.cameraReady,
-
-        // Pertahankan "Mobil" atau "Motor" agar Jukir tidak perlu klik ulang
         selectedCategory: state.selectedCategory,
-
-        // Sisanya otomatis ter-reset: licensePlate (null), imagePath (null)
       ),
     );
   }
@@ -226,5 +218,11 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
     // Kembalikan status ke 'success' karena Jukir sudah punya foto dan plat yang valid
     // UI akan kembali memunculkan foto kendaraan yang tadi tanpa meresetnya.
     _safeEmit(state.copyWith(status: CaptureStatus.success));
+  }
+
+  void _safeEmit(VehicleCaptureState newState) {
+    if (!isClosed) {
+      emit(newState);
+    }
   }
 }
