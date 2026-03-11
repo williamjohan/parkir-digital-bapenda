@@ -8,6 +8,7 @@ import '../../features/auth/presentation/pages/login_screen.dart'; // Sesuaikan 
 import '../../features/home/persentation/cubit/home_cubit.dart';
 import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
+import '../../features/payment/persentation/pages/payment_page.dart';
 import '../../features/vehicle_capture/domain/entities/vehicle_category.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
 import '../../features/vehicle_capture/presentation/pages/capture_page.dart';
@@ -99,6 +100,15 @@ class AppRouter {
                   locator<VehicleCaptureCubit>()..selectVehicle(category),
               child: const CapturePage(),
             );
+          },
+        ),
+
+        GoRoute(
+          path: AppRoutes.payment,
+          builder: (context, state) {
+            // Tangkap objek PaymentPageArgs dari property 'extra'
+            final args = state.extra as PaymentPageArgs;
+            return PaymentPage(args: args);
           },
         ),
       ],
