@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 
 class LoginFormSheetWidget extends StatefulWidget {
   final VoidCallback onClose;
@@ -73,7 +74,7 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF2d1b01),
+                color: AppColors.primary,
               ),
             ),
             const SizedBox(height: 30),
@@ -81,7 +82,7 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
             // INPUT NPWPD
             _buildTextField(
               controller: widget.usernameController,
-              label: "NPWPD",
+              label: "Username",
               icon: Icons.person_outline,
               isPassword: false, // Bukan password
             ),
@@ -102,7 +103,7 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                 onPressed: () {},
                 child: const Text(
                   "Lupa Kata Sandi?",
-                  style: TextStyle(color: Colors.orange),
+                  style: TextStyle(color: AppColors.primary),
                 ),
               ),
             ),
@@ -115,7 +116,7 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
               child: ElevatedButton(
                 onPressed: widget.onLogin,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFe48901),
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -158,7 +159,7 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
             ? TextInputAction.done
             : TextInputAction.next,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.orange),
+          prefixIcon: Icon(icon, color: AppColors.primary),
 
           // SUFFIX ICON (MATA)
           suffixIcon: isPassword

@@ -7,6 +7,7 @@ class AppAssetImages {
   static const logosurabayaLoginWhite =
       'assets/images/surabayalogo_login_white.png';
   static const profileimagePlaceholder = 'assets/images/william.png';
+  static const cityOfHeroes = 'assets/images/city_of_heroes.png';
 }
 
 class AppAssetFonts {

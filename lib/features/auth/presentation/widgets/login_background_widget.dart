@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/constants/app_asset_constant.dart';
-
 import '../../../../core/design_system/tokens/app_colors.dart';
 
 class LoginBackgroundWidget extends StatelessWidget {
@@ -45,9 +44,9 @@ class LoginBackgroundWidget extends StatelessWidget {
               Row(
                 children: [
                   Transform.translate(
-                    offset: const Offset(-15, 0),
+                    offset: const Offset(-20, 0),
                     child: Image.asset(
-                      "assets/images/city_of_heroes.png",
+                      AppAssetImages.cityOfHeroes,
                       height: 80,
                       color: Colors.white,
                     ),
@@ -74,6 +73,9 @@ class LoginBackgroundWidget extends StatelessWidget {
                   height: 1.1,
                 ),
               ),
+
+              const SizedBox(height: 10),
+
               const Text(
                 "Nikmati kemudahan parkir digital dengan aplikasi resmi dari Bapenda Surabaya.",
                 style: TextStyle(
@@ -82,6 +84,7 @@ class LoginBackgroundWidget extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
+
               const Spacer(),
 
               // GROUP TOMBOL (Login & Register)
@@ -98,7 +101,7 @@ class LoginBackgroundWidget extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: isHidden ? null : onLoginPressed,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
+                          backgroundColor: AppColors.primary,
                           foregroundColor: AppColors.background,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
