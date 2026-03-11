@@ -12,6 +12,7 @@ enum CaptureStatus {
   success, // OCR Berhasil, TextField muncul
   error, // Gagal baca plat / Error sistem
   navigatingToPayment,
+  standby,
 }
 
 class VehicleCaptureState extends Equatable {

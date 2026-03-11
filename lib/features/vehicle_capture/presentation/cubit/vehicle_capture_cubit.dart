@@ -217,7 +217,7 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   void cancelNavigation() {
     // Kembalikan status ke 'success' karena Jukir sudah punya foto dan plat yang valid
     // UI akan kembali memunculkan foto kendaraan yang tadi tanpa meresetnya.
-    _safeEmit(state.copyWith(status: CaptureStatus.success));
+    _safeEmit(state.copyWith(status: CaptureStatus.standby));
   }
 
   void _safeEmit(VehicleCaptureState newState) {

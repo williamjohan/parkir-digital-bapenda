@@ -75,10 +75,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
         }
         // --- 2. HANDLE NAVIGASI KE PAYMENT ---
         else if (state.status == CaptureStatus.navigatingToPayment) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          final String namaKategori = state.selectedCategory?.name ?? 'Mobil';
+
           final args = PaymentPageArgs(
             platNomor: _plateController.text.trim(),
-            kategoriKendaraan: 'Mobil', // Nanti sesuaikan dengan state
-            fotoKendaraan: 'base64_dummy_image_data',
+            kategoriKendaraan: namaKategori,
+            fotoKendaraan: state.capturedImagePath ?? 'dummy_path',
           );
 
           // Pindah layar dan tunggu kembalian

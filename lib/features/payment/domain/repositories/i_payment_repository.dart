@@ -1,13 +1,12 @@
-// lib/features/payment/domain/repositories/i_payment_repository.dart
-
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failure.dart';
+import '../entities/qris_entity.dart';
 
 abstract class IPaymentRepository {
-  /// Memproses data dari layar Capture, menyimpan status PENDING ke SQLite,
-  /// dan mengembalikan ID Transaksi beserta data QRIS (Dummy).
-  Future<Either<Failure, Map<String, dynamic>>> generateQrisAndSavePending({
-    required int nominal,
+  /// Meminta QRIS ke server, menyimpan status PENDING ke SQLite,
+  /// dan mengembalikan Entity berisi Nominal, String QR, dan ID Transaksi.
+  Future<Either<Failure, QrisEntity>> generateQrisAndSavePending({
+    // [PERBAIKAN]: 'nominal' dihapus karena akan diambil dari Datasource!
     required String platNomor,
     required String kategoriKendaraan,
     required String fotoKendaraan, // Base64

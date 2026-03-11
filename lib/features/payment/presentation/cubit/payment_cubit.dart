@@ -15,7 +15,6 @@ class PaymentCubit extends Cubit<PaymentState> {
     : super(PaymentInitial());
 
   Future<void> generateQris({
-    required int nominal,
     required String platNomor,
     required String kategoriKendaraan,
     required String fotoKendaraan,
@@ -26,7 +25,6 @@ class PaymentCubit extends Cubit<PaymentState> {
     await Future.delayed(const Duration(seconds: 1));
 
     final result = await _generateQrisUseCase.execute(
-      nominal: nominal,
       platNomor: platNomor,
       kategoriKendaraan: kategoriKendaraan,
       fotoKendaraan: fotoKendaraan,
@@ -37,9 +35,15 @@ class PaymentCubit extends Cubit<PaymentState> {
         // [AUDITOR GUARD]: Selalu cek isClosed agar terhindar dari Ghost Error!
         if (!isClosed) emit(PaymentFailure(failure.message));
       },
-      (data) {
+      (qrisEntity) {
         if (!isClosed) {
-          emit(PaymentQrisGenerated(data['id_transaksi'], data['qris_data']));
+          emit(
+            PaymentQrisGenerated(
+              qrisEntity.idTransaksi,
+              qrisEntity.qrString,
+              qrisEntity.nominal,
+            ),
+          );
         }
       },
     );

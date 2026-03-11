@@ -1,5 +1,3 @@
-// lib/features/payment/data/repositories/payment_repository_impl.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
@@ -7,18 +5,20 @@ import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/database_helper.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/repositories/i_payment_repository.dart';
+import '../../domain/entities/qris_entity.dart';
 import '../models/local_transaction_model.dart';
+import '../datasources/payment_remote_datasource.dart'; // Import Datasource Anda
 
 @LazySingleton(as: IPaymentRepository)
 class PaymentRepositoryImpl implements IPaymentRepository {
   final ISecureStorageManager _secureStorage;
-  // DatabaseHelper kita panggil via Singleton instance yang sudah Anda buat
+  // [PERBAIKAN]: Inject Datasource ke dalam Repository
+  final IPaymentRemoteDataSource _remoteDataSource;
 
-  PaymentRepositoryImpl(this._secureStorage);
+  PaymentRepositoryImpl(this._secureStorage, this._remoteDataSource);
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> generateQrisAndSavePending({
-    required int nominal,
+  Future<Either<Failure, QrisEntity>> generateQrisAndSavePending({
     required String platNomor,
     required String kategoriKendaraan,
     required String fotoKendaraan,
@@ -32,45 +32,52 @@ class PaymentRepositoryImpl implements IPaymentRepository {
         );
       }
 
-      // 2. Buat ID Unik dan Waktu Saat Ini
+      // 2. HIT API (Minta Tarif dan QR ke Backend via Datasource)
+      // Jika Backend error, proses akan terlempar ke blok catch
+      final responseMap = await _remoteDataSource.requestQrisData(
+        kategoriKendaraan,
+      );
+
+      final int nominalDariServer = responseMap['data']['nominal'];
+      final String qrStringDariServer = responseMap['data']['qr_string'];
+
+      // 3. Buat ID Unik dan Waktu Saat Ini
       final String idTransaksi = const Uuid().v4();
       final String waktuTransaksi = DateTime.now().toIso8601String();
 
-      // 3. Rakit Entitas Transaksi
+      // 4. Rakit Entitas Transaksi untuk SQLite
       final transaction = LocalTransactionModel(
         idTransaksiLokal: idTransaksi,
-        nominal: nominal,
+        nominal: nominalDariServer, // Gunakan nominal dari server!
         platNomor: platNomor,
         kategoriKendaraan: kategoriKendaraan,
         waktuTransaksi: waktuTransaksi,
-        status: 'PENDING', // Sandiwara dimulai: Uang belum masuk!
+        status: 'PENDING',
         idJukir: jukirProfile['id_jukir'] ?? '',
         namaJukir: jukirProfile['nama'] ?? '',
         nop: jukirProfile['nop'] ?? '',
         fotoKendaraan: fotoKendaraan,
       );
 
-      // 4. Simpan ke Pabrik Data (SQLite)
+      // 5. Simpan ke Pabrik Data (SQLite)
       await DatabaseHelper.instance.insertTransaction(transaction.toJson());
 
-      // 5. Kembalikan data untuk dirender oleh UI (Layar QRIS)
-      // Di dunia nyata, Anda akan fetch API Backend di sini untuk dapat QRIS Dinamis Asli
-      return Right({
-        'id_transaksi': idTransaksi,
-        'qris_data':
-            '00020101021126670016COM.NOBUBANK.WWW01189360050300000879140214...DUMMY_QRIS_STRING_BAPENDA',
-      });
-    } catch (e) {
-      return Left(
-        ServerFailure('Gagal menyimpan transaksi lokal: ${e.toString()}'),
+      // 6. Kembalikan Entity Murni ke UseCase/Cubit
+      return Right(
+        QrisEntity(
+          idTransaksi: idTransaksi,
+          nominal: nominalDariServer,
+          qrString: qrStringDariServer,
+        ),
       );
+    } catch (e) {
+      return Left(ServerFailure('Gagal memproses transaksi: ${e.toString()}'));
     }
   }
 
   @override
   Future<Either<Failure, Unit>> confirmPayment(String idTransaksi) async {
     try {
-      // Jukir klik tombol "OK/Selesai" di layar, transaksi disahkan!
       await DatabaseHelper.instance.updateTransactionStatus(
         idTransaksi,
         'PAID',

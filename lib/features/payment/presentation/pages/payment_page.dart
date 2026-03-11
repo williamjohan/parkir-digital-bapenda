@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -30,16 +31,10 @@ class PaymentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Tarif parkir (Bisa diganti dinamis nanti, sementara kita hardcode logic-nya)
-    final int nominal = args.kategoriKendaraan.toLowerCase() == 'mobil'
-        ? 5000
-        : 2000;
-
     return BlocProvider(
       // Sang Jenderal langsung diperintah membuat QRIS dan Insert SQLite saat halaman dibuka!
       create: (context) => locator<PaymentCubit>()
         ..generateQris(
-          nominal: nominal,
           platNomor: args.platNomor,
           kategoriKendaraan: args.kategoriKendaraan,
           fotoKendaraan: args.fotoKendaraan,
@@ -57,17 +52,12 @@ class PaymentPage extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.success,
                 ),
               );
             } else if (state is PaymentConfirmed) {
-              // Jika Jukir klik OK (Pembayaran Sah), munculkan notifikasi dan kembali ke Capture
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Pembayaran Berhasil!'),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              PbStatusSnackbar.show(context, message: 'Pembayaran Berhasil!');
+
               context.pop(true); // Kembali ke halaman Capture
             }
           },
@@ -97,8 +87,9 @@ class PaymentPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Plat: ${args.platNomor} | Total: Rp $nominal',
+                      'Plat: ${args.platNomor} - ${args.kategoriKendaraan.toUpperCase()} - Rp ${state.nominal}',
                       style: AppTypography.bodyText,
+                      textAlign: TextAlign.center,
                     ),
 
                     const SizedBox(height: 32),

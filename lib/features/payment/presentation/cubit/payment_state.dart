@@ -17,11 +17,12 @@ class PaymentLoading extends PaymentState {}
 class PaymentQrisGenerated extends PaymentState {
   final String idTransaksi;
   final String qrisData;
+  final int nominal;
 
-  const PaymentQrisGenerated(this.idTransaksi, this.qrisData);
+  const PaymentQrisGenerated(this.idTransaksi, this.qrisData, this.nominal);
 
   @override
-  List<Object?> get props => [idTransaksi, qrisData];
+  List<Object?> get props => [idTransaksi, qrisData, nominal];
 }
 
 // State ketika Jukir menekan "OK/Selesai"
