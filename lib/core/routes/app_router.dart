@@ -4,15 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 import '../../features/auth/presentation/cubit/app_auth/app_auth_state.dart';
-import '../../features/auth/presentation/pages/login_screen.dart'; // Sesuaikan path
-import '../../features/home/persentation/cubit/home_cubit.dart';
+import '../../features/auth/presentation/pages/login_screen.dart';
+import '../../features/home/presentation/cubit/home_cubit.dart';
+import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
 import '../../features/vehicle_capture/domain/entities/vehicle_category.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
 import '../../features/vehicle_capture/presentation/pages/capture_page.dart';
-import '../../features/home/persentation/pages/home_page.dart';
 import '../di/injection.dart';
 import 'app_routes.dart';
 import 'go_router_refresh_stream.dart';
@@ -86,7 +86,6 @@ class AppRouter {
             );
           },
         ),
-
         GoRoute(
           path: '${AppRoutes.capture}/:category',
           builder: (context, state) {

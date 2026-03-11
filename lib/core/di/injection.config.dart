@@ -34,7 +34,7 @@ import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
 import '../../features/home/domain/usecases/get_daily_vehicle_count_usecase.dart'
     as _i473;
-import '../../features/home/persentation/cubit/home_cubit.dart' as _i178;
+import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
     as _i834;
 import '../../features/init/domain/repositories/i_device_check_repository.dart'
@@ -141,8 +141,8 @@ _i174.GetIt init(
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
   );
-  gh.factory<_i178.HomeCubit>(
-    () => _i178.HomeCubit(gh<_i473.GetDailyVehicleCountUseCase>()),
+  gh.factory<_i9.HomeCubit>(
+    () => _i9.HomeCubit(gh<_i473.GetDailyVehicleCountUseCase>()),
   );
   gh.lazySingleton<_i393.ConfirmPaymentUseCase>(
     () => _i393.ConfirmPaymentUseCase(gh<_i1004.IPaymentRepository>()),

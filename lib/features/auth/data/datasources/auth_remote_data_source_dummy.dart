@@ -12,7 +12,7 @@ class AuthRemoteDataSourceDummyImpl implements IAuthRemoteDataSource {
     AppLogger.warning("⚠️ [WARNING] MENGGUNAKAN DUMMY API LOGIN!");
     await Future.delayed(const Duration(seconds: 2));
 
-    if (username == 'willi' && password == '123456') {
+    if (username == 'mas_it' && password == 'bapenda123') {
       return AuthResponseModel(
         accessToken: 'dummy_access_token_super_rahasia_123',
         refreshToken: 'dummy_refresh_token_anti_basi_456',
