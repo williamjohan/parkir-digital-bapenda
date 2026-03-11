@@ -36,6 +36,15 @@ import '../../features/init/domain/repositories/i_device_check_repository.dart'
 import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
     as _i232;
 import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
+import '../../features/payment/data/repositories/payment_repository_impl.dart'
+    as _i265;
+import '../../features/payment/domain/repositories/i_payment_repository.dart'
+    as _i1004;
+import '../../features/payment/domain/usecases/confirm_payment_usecase.dart'
+    as _i393;
+import '../../features/payment/domain/usecases/generate_qris_usecase.dart'
+    as _i831;
+import '../../features/payment/persentation/cubit/payment_cubit.dart' as _i820;
 import '../../features/vehicle_capture/data/datasources/ocr_local_data_source.dart'
     as _i437;
 import '../../features/vehicle_capture/data/repositories/ocr_repository_impl.dart'
@@ -97,6 +106,9 @@ _i174.GetIt init(
   gh.factory<_i731.VehicleCaptureCubit>(
     () => _i731.VehicleCaptureCubit(gh<_i342.ExtractLicensePlateUseCase>()),
   );
+  gh.lazySingleton<_i1004.IPaymentRepository>(
+    () => _i265.PaymentRepositoryImpl(gh<_i1042.ISecureStorageManager>()),
+  );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
   );
@@ -112,10 +124,22 @@ _i174.GetIt init(
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
   );
+  gh.lazySingleton<_i393.ConfirmPaymentUseCase>(
+    () => _i393.ConfirmPaymentUseCase(gh<_i1004.IPaymentRepository>()),
+  );
+  gh.lazySingleton<_i831.GenerateQrisUseCase>(
+    () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
+  );
   gh.lazySingleton<_i808.AppAuthCubit>(
     () => _i808.AppAuthCubit(
       gh<_i52.CheckAuthStatusUseCase>(),
       gh<_i48.LogoutUseCase>(),
+    ),
+  );
+  gh.factory<_i820.PaymentCubit>(
+    () => _i820.PaymentCubit(
+      gh<_i831.GenerateQrisUseCase>(),
+      gh<_i393.ConfirmPaymentUseCase>(),
     ),
   );
   return getIt;
