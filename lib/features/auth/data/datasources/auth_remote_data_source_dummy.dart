@@ -12,19 +12,20 @@ class AuthRemoteDataSourceDummyImpl implements IAuthRemoteDataSource {
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
     AppLogger.warning("⚠️ [WARNING] MENGGUNAKAN DUMMY API LOGIN!");
-
-    // 1. Simulasi delay jaringan Bapenda (2 detik)
     await Future.delayed(const Duration(seconds: 2));
 
-    // 2. Simulasi sukses (Skenario Happy Path)
     if (username == 'willi' && password == '123456') {
       return {
         'access_token': 'dummy_access_token_super_rahasia_123',
         'refresh_token': 'dummy_refresh_token_anti_basi_456',
+        // [TAMBAHAN FASE 1]: Simulasi balikan Profil dari Backend
+        'user': {
+          'id_jukir': 'JUKIR-BPD-001',
+          'nama': 'William',
+          'nop': 'NOP-SBY-99887766',
+        },
       };
-    }
-    // 3. Simulasi gagal (Skenario Negative Path)
-    else {
+    } else {
       throw const AuthException(
         message: 'Username atau password Jukir salah (Dari Dummy).',
       );
