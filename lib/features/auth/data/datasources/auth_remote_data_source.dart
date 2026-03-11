@@ -9,6 +9,12 @@ abstract class IAuthRemoteDataSource {
   Future<Map<String, dynamic>> login(String username, String password);
 }
 
+/* NOTE :
+- LazySingleton di comment karena kita ingin bisa switch antara implementasi nyata dan dummy dengan mudah.
+- Jika ingin menggunakan implementasi nyata, pastikan untuk menghapus komentar pada @LazySingleton di
+  AuthRemoteDataSourceImpl dan mengomentari @LazySingleton di AuthRemoteDataSourceDummyImpl.
+- Dan jalankan Build Runner lagi untuk memperbarui injeksi dependensi.
+*/
 // @LazySingleton(as: IAuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
   final Dio _dio;
