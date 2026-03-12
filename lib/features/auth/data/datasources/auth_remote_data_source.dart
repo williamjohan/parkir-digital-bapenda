@@ -10,15 +10,10 @@ abstract class IAuthRemoteDataSource {
   Future<AuthResponseModel> login(String username, String password);
 }
 
-/* NOTE :
-- LazySingleton di comment karena kita ingin bisa switch antara implementasi nyata dan dummy dengan mudah.
-- Jika ingin menggunakan implementasi nyata, pastikan untuk menghapus komentar pada @LazySingleton di
-  AuthRemoteDataSourceImpl dan mengomentari @LazySingleton di AuthRemoteDataSourceDummyImpl.
-- Dan jalankan Build Runner lagi untuk memperbarui injeksi dependensi.
-*/
-// @LazySingleton(as: IAuthRemoteDataSource)
+@LazySingleton(as: IAuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
-  final Dio _dio;
+  final Dio
+  _dio; // Ingat, ini dio dari DioClient yang sudah ada AuthInterceptor-nya
 
   AuthRemoteDataSourceImpl(this._dio);
 
@@ -30,38 +25,53 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
         data: {'username': username, 'password': password},
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData = response.data['data'];
-        return AuthResponseModel.fromJson(responseData);
+      final responseData = response.data;
+
+      // 1. Cek Envelope Bapenda
+      if (responseData['isSuccess'] == true) {
+        final beData = responseData['data'];
+
+        // 2. THE ADAPTER: Kita konversi JSON flat dari BE menjadi JSON nested untuk FE
+        final mappedJson = {
+          'accessToken': beData['accessToken'] ?? '',
+          'refreshToken': beData['refreshToken'] ?? '',
+          'user': {
+            // Jika saat di-test BE belum siap dengan field ini,
+            // fallback (?? '') akan mengamankan aplikasi agar tidak crash!
+            'idJukir': beData['idJukir'] ?? '',
+            'nama': beData['nama'] ?? '',
+            'nop': beData['nop'] ?? '',
+          },
+        };
+
+        // 3. Masukkan ke Model andalan Anda
+        return AuthResponseModel.fromJson(mappedJson);
       } else {
-        // Jika server mengembalikan status aneh tapi tidak masuk catch Dio
-        throw ServerException(
-          statusCode: response.statusCode ?? 500,
-          message: 'Terjadi kesalahan pada server Bapenda.',
+        // Jika isSuccess false dari BE
+        throw AuthException(
+          message:
+              responseData['message'] ??
+              'Login gagal, periksa kredensial Anda.',
         );
       }
     } on DioException catch (e) {
-      // 1. Amankan status code (jika null, anggap 500 Internal Server Error)
       final int statusCode = e.response?.statusCode ?? 500;
+      final String? backendMessage = e.response?.data?['message'];
 
-      // 2. Tangkap error spesifik 401/404 dari BE (Password / User Salah)
-      if (statusCode == 401 || statusCode == 404) {
-        throw const AuthException(
-          message: 'Username atau password Jukir salah.',
+      if (statusCode == 401 || statusCode == 404 || statusCode == 400) {
+        throw AuthException(
+          message: backendMessage ?? 'Username atau password Jukir salah.',
         );
       }
 
-      // 3. (Opsional tapi Best Practice) Coba tangkap pesan error asli dari JSON Backend Bapenda
-      // Biasanya Backend mengirim format: {"message": "Email tidak ditemukan"}
-      final String? backendMessage = e.response?.data?['message'];
-
-      // 4. Lempar ServerException yang sudah diperkaya dengan statusCode
       throw ServerException(
         statusCode: statusCode,
-        message: backendMessage ?? e.message ?? 'Gagal terhubung ke server.',
+        message:
+            backendMessage ?? e.message ?? 'Gagal terhubung ke server Bapenda.',
       );
     } catch (e) {
-      // Tangkap error di luar Dio (misal kesalahan parsing JSON)
+      if (e is AuthException)
+        rethrow; // Selamatkan AuthException agar tidak tertimpa
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal aplikasi.',

@@ -4,7 +4,10 @@ part 'user_model.g.dart';
 
 @JsonSerializable()
 class UserModel {
-  @JsonKey(name: 'id_jukir', defaultValue: '')
+  // Kita ikuti penamaan BE nantinya. Misal BE mau pakai camelCase,
+  // kita tinggal sesuaikan string di dalam @JsonKey.
+  // Asumsi BE akan kasih camelCase mengikuti Swagger mereka.
+  @JsonKey(name: 'idJukir', defaultValue: '')
   final String idJukir;
 
   @JsonKey(name: 'nama', defaultValue: '')
@@ -17,5 +20,6 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }
