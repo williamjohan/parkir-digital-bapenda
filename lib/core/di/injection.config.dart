@@ -15,8 +15,6 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../features/auth/data/datasources/auth_remote_data_source.dart'
     as _i107;
-import '../../features/auth/data/datasources/auth_remote_data_source_dummy.dart'
-    as _i151;
 import '../../features/auth/data/repositories/auth_repository_impl.dart'
     as _i153;
 import '../../features/auth/domain/repositories/i_auth_repository.dart'
@@ -88,9 +86,6 @@ _i174.GetIt init(
     () => _i437.OcrLocalDataSourceImpl(),
   );
   gh.lazySingleton<_i274.IHomeRepository>(() => _i76.HomeRepositoryImpl());
-  gh.lazySingleton<_i107.IAuthRemoteDataSource>(
-    () => _i151.AuthRemoteDataSourceDummyImpl(),
-  );
   gh.factory<_i674.InitCubit>(
     () => _i674.InitCubit(
       checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
@@ -111,12 +106,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i473.GetDailyVehicleCountUseCase>(
     () => _i473.GetDailyVehicleCountUseCase(gh<_i274.IHomeRepository>()),
   );
-  gh.lazySingleton<_i589.IAuthRepository>(
-    () => _i153.AuthRepositoryImpl(
-      gh<_i107.IAuthRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
   gh.factory<_i731.VehicleCaptureCubit>(
     () => _i731.VehicleCaptureCubit(gh<_i342.ExtractLicensePlateUseCase>()),
   );
@@ -128,6 +117,24 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
       gh<_i247.IPaymentRemoteDataSource>(),
     ),
+  );
+  gh.lazySingleton<_i107.IAuthRemoteDataSource>(
+    () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.factory<_i9.HomeCubit>(
+    () => _i9.HomeCubit(gh<_i473.GetDailyVehicleCountUseCase>()),
+  );
+  gh.lazySingleton<_i589.IAuthRepository>(
+    () => _i153.AuthRepositoryImpl(
+      gh<_i107.IAuthRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i393.ConfirmPaymentUseCase>(
+    () => _i393.ConfirmPaymentUseCase(gh<_i1004.IPaymentRepository>()),
+  );
+  gh.lazySingleton<_i831.GenerateQrisUseCase>(
+    () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
     () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),
@@ -141,25 +148,16 @@ _i174.GetIt init(
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
   );
-  gh.factory<_i9.HomeCubit>(
-    () => _i9.HomeCubit(gh<_i473.GetDailyVehicleCountUseCase>()),
-  );
-  gh.lazySingleton<_i393.ConfirmPaymentUseCase>(
-    () => _i393.ConfirmPaymentUseCase(gh<_i1004.IPaymentRepository>()),
-  );
-  gh.lazySingleton<_i831.GenerateQrisUseCase>(
-    () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
+  gh.factory<_i513.PaymentCubit>(
+    () => _i513.PaymentCubit(
+      gh<_i831.GenerateQrisUseCase>(),
+      gh<_i393.ConfirmPaymentUseCase>(),
+    ),
   );
   gh.lazySingleton<_i808.AppAuthCubit>(
     () => _i808.AppAuthCubit(
       gh<_i52.CheckAuthStatusUseCase>(),
       gh<_i48.LogoutUseCase>(),
-    ),
-  );
-  gh.factory<_i513.PaymentCubit>(
-    () => _i513.PaymentCubit(
-      gh<_i831.GenerateQrisUseCase>(),
-      gh<_i393.ConfirmPaymentUseCase>(),
     ),
   );
   return getIt;

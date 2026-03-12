@@ -5,7 +5,7 @@ import '../models/auth_response_model.dart';
 import '../models/user_model.dart';
 import 'auth_remote_data_source.dart';
 
-@LazySingleton(as: IAuthRemoteDataSource)
+// @LazySingleton(as: IAuthRemoteDataSource)
 class AuthRemoteDataSourceDummyImpl implements IAuthRemoteDataSource {
   @override
   Future<AuthResponseModel> login(String username, String password) async {
