@@ -1,22 +1,26 @@
 // lib/core/di/register_module.dart
 
+import 'dart:io';
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import '../network/dio_auth_interceptor.dart';
+import '../network/env_config.dart';
 
 @module
 abstract class RegisterModule {
-  // Daftarkan Dio sebagai Singleton, dan minta GetIt untuk menyuntikkan (inject)
-  // DioAuthInterceptor yang sudah kita buat tadi ke fungsi ini.
   @lazySingleton
   Dio provideDio(DioAuthInterceptor authInterceptor) {
-    // 1. Inisialisasi dasar Dio
     final dio = Dio(
       BaseOptions(
-        // TODO: Ganti dengan Base URL API Bapenda yang sesungguhnya nanti
-        baseUrl: 'https://api.bapenda.surabaya.go.id/api/v1',
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
+        baseUrl: EnvConfig.baseUrl,
+        // [STRATEGI 1: Extended Timeouts] - Adaptasi untuk upload foto & sinyal jalanan
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 45),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -24,11 +28,43 @@ abstract class RegisterModule {
       ),
     );
 
-    // 2. Pasang Satpam Jaringan (Auth Interceptor) kita!
+    // [STRATEGI 3: Selective SSL Bypass & Prioritas IPv4]
+    dio.httpClientAdapter = IOHttpClientAdapter(
+      createHttpClient: () {
+        final client = HttpClient();
+        client.connectionTimeout = const Duration(seconds: 30);
+
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) {
+              final baseUrl = EnvConfig.baseUrl;
+              // Hanya izinkan bypass jika URL-nya memang milik Bapenda
+              if (baseUrl.contains(host)) return true;
+              return false;
+            };
+        return client;
+      },
+    );
+
+    // [STRATEGI 2: Smart Retry Interceptor]
+    dio.interceptors.add(
+      RetryInterceptor(
+        dio: dio,
+        logPrint: print, // Bisa diganti dengan AppLogger.debug nantinya
+        retries: 3, // Coba ulang 3 kali jika gagal koneksi
+        retryDelays: const [
+          Duration(seconds: 2),
+          Duration(seconds: 5),
+          Duration(seconds: 10),
+        ],
+        // Hanya mengulang jika error berupa timeout atau koneksi putus (bukan error 400/500 dari backend)
+        retryableExtraStatuses: {status408RequestTimeout},
+      ),
+    );
+
+    // 1. Masukkan AuthInterceptor (Satpam Token) kita
     dio.interceptors.add(authInterceptor);
 
-    // 3. (Opsional & Sangat Disarankan) Pasang Log Interceptor bawaan Dio
-    // agar Anda bisa melihat request/response API di terminal/console dengan jelas.
+    // 2. Masukkan LogInterceptor standar
     dio.interceptors.add(
       LogInterceptor(
         requestHeader: true,
@@ -38,6 +74,14 @@ abstract class RegisterModule {
         error: true,
       ),
     );
+
+    // [STRATEGI 4: Network Inspector khusus Debug]
+    // Catatan: Jika Anda ingin pakai Chucker, pastikan package chucker_flutter sudah di-install.
+    // Jika tidak ingin pakai sekarang, bisa di-comment dulu blok ini.
+
+    if (kDebugMode) {
+      dio.interceptors.add(ChuckerDioInterceptor());
+    }
 
     return dio;
   }
