@@ -136,9 +136,6 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
         backCamera,
         ResolutionPreset.high,
         enableAudio: false,
-        imageFormatGroup: Platform.isAndroid
-            ? ImageFormatGroup.nv21
-            : ImageFormatGroup.bgra8888,
       );
 
       _cameraController = controller;
