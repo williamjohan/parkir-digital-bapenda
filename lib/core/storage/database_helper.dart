@@ -98,4 +98,28 @@ class DatabaseHelper {
 
     return {'motor': motorCount, 'mobil': mobilCount};
   }
+
+  // 4. Fungsi Mengambil Transaksi yang Belum Terkirim (Gagal/Offline)
+  // Asumsi: Saat offline, Anda menyimpan status = 'PENDING'
+  Future<List<Map<String, dynamic>>> getUnsyncedTransactions() async {
+    final db = await instance.database;
+    // Mengambil semua baris yang statusnya belum PAID/SYNCED
+    return await db.query(
+      tableTransactions,
+      where: 'status = ?',
+      whereArgs: [
+        'PENDING',
+      ], // Sesuaikan dengan naming convention status offline Anda
+    );
+  }
+
+  // 5. Fungsi Membersihkan Data (Cleanup) Setelah Sukses Kirim ke BE
+  Future<int> deleteTransaction(String idTransaksi) async {
+    final db = await instance.database;
+    return await db.delete(
+      tableTransactions,
+      where: 'id_transaksi_lokal = ?',
+      whereArgs: [idTransaksi],
+    );
+  }
 }

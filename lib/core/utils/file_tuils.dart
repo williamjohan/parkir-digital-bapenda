@@ -1,24 +1,26 @@
-// lib/core/utils/file_utils.dart
-
-import 'dart:io';
-import 'app_logger.dart'; // Pastikan import logger kita
-
 class FileUtils {
-  FileUtils._(); // Private constructor agar tidak bisa di-instantiate
+  FileUtils._(); // Private constructor
 
-  /// Menghapus file secara aman berdasarkan path.
-  /// Sangat berguna untuk membersihkan cache gambar kamera.
-  static Future<void> deleteFile(String? path) async {
-    if (path == null || path.isEmpty) return;
+  /// Menghasilkan nama file yang seragam dan unik untuk transaksi parkir.
+  /// Contoh output: "trx_L1234AB_1710574829384"
+  static String generateTransactionFileName(String nopol) {
+    // Hilangkan spasi pada nopol agar aman untuk nama file
+    final cleanNopol = nopol.replaceAll(' ', '').toUpperCase();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
 
-    try {
-      final file = File(path);
-      if (await file.exists()) {
-        await file.delete();
-        AppLogger.info('File cache berhasil dibersihkan: $path');
-      }
-    } catch (e, stackTrace) {
-      AppLogger.error('Gagal membersihkan file cache', e, stackTrace);
-    }
+    return 'trx_${cleanNopol}_$timestamp';
+  }
+
+  /// Mengambil ekstensi dari sebuah string path file (contoh: '.jpg', '.png').
+  static String getFileExtension(String path) {
+    if (!path.contains('.')) return '';
+    return path.substring(path.lastIndexOf('.'));
+  }
+
+  /// Mengekstrak nama file dari string path lengkap.
+  /// Contoh: "/data/user/0/cache/foto.jpg" -> "foto.jpg"
+  static String getFileNameFromPath(String path) {
+    if (!path.contains('/')) return path;
+    return path.split('/').last;
   }
 }

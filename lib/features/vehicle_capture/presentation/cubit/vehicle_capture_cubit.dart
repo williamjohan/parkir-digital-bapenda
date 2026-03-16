@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/utils/file_tuils.dart';
+import '../../../../core/services/image/i_image_service.dart';
 import '../../domain/entities/vehicle_category.dart';
 import '../../domain/usecases/extract_license_plate_usecase.dart';
 import 'vehicle_capture_state.dart';
@@ -9,11 +9,12 @@ import 'vehicle_capture_state.dart';
 @injectable
 class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   final ExtractLicensePlateUseCase _extractLicensePlateUseCase;
+  final IImageService _imageService;
   CameraController? _cameraController;
   CameraController? get cameraController => _cameraController;
   Future<void>? _initializeControllerFuture;
 
-  VehicleCaptureCubit(this._extractLicensePlateUseCase)
+  VehicleCaptureCubit(this._extractLicensePlateUseCase, this._imageService)
     : super(const VehicleCaptureState());
 
   /// Dipanggil saat jukir memilih motor/mobil di Home
@@ -46,7 +47,10 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   /// Dipanggil saat jukir ingin memfoto ulang
   Future<void> retakePhoto() async {
     // 1. Bersihkan sampah cache gambar lama
-    await FileUtils.deleteFile(state.capturedImagePath);
+    if (state.capturedImagePath != null &&
+        state.capturedImagePath!.isNotEmpty) {
+      await _imageService.deleteImage(state.capturedImagePath!);
+    }
 
     // 2. Kembalikan stream lensa kamera
     try {
