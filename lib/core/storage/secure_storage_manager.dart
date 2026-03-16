@@ -15,9 +15,9 @@ abstract class ISecureStorageManager {
 
   // Jukir Profile
   Future<void> saveJukirProfile({
-    required String idJukir,
-    required String namaJukir,
-    required String nop,
+    required String idUserStorage,
+    required String namaUserStorage,
+    required String nopStorage,
   });
   Future<Map<String, dynamic>?> getJukirProfile();
   Future<void> clearJukirProfile();
@@ -68,12 +68,16 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
 
   @override
   Future<void> saveJukirProfile({
-    required String idJukir,
-    required String namaJukir,
-    required String nop,
+    required String idUserStorage,
+    required String namaUserStorage,
+    required String nopStorage,
   }) async {
     // Kita bungkus jadi Map, lalu ubah ke String JSON agar rapi
-    final profileData = {'id_jukir': idJukir, 'nama': namaJukir, 'nop': nop};
+    final profileData = {
+      'idUser': idUserStorage,
+      'namaUser': namaUserStorage,
+      'nop': nopStorage,
+    };
     final jsonString = jsonEncode(profileData);
     await _storage.write(key: _keyJukirProfile, value: jsonString);
   }

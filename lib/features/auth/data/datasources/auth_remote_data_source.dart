@@ -38,9 +38,12 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
           'user': {
             // Jika saat di-test BE belum siap dengan field ini,
             // fallback (?? '') akan mengamankan aplikasi agar tidak crash!
-            'idJukir': beData['idJukir'] ?? '',
-            'nama': beData['nama'] ?? '',
+            'idUser': beData['idJukir'] ?? '',
+            'namaUser': beData['namaUser'] ?? '',
             'nop': beData['nop'] ?? '',
+            // Siapkan slot kosong untuk data yang baru akan didapat nanti di /profile
+            'namaObjekPajak': '',
+            'alamat': '',
           },
         };
 
@@ -70,8 +73,7 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
             backendMessage ?? e.message ?? 'Gagal terhubung ke server Bapenda.',
       );
     } catch (e) {
-      if (e is AuthException)
-        rethrow; // Selamatkan AuthException agar tidak tertimpa
+      if (e is AuthException) rethrow;
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal aplikasi.',

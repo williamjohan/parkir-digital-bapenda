@@ -1,22 +1,36 @@
+// lib/features/auth/data/models/user_model.dart
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
 class UserModel {
-  // Kita ikuti penamaan BE nantinya. Misal BE mau pakai camelCase,
-  // kita tinggal sesuaikan string di dalam @JsonKey.
-  // Asumsi BE akan kasih camelCase mengikuti Swagger mereka.
-  @JsonKey(name: 'idJukir', defaultValue: '')
-  final String idJukir;
+  // [KUNCI KESAKTIAN]: BE mengirim 'idUser', tapi di aplikasi kita tetap pakai 'idJukir'
+  @JsonKey(name: 'idUser', defaultValue: '')
+  final String idUser;
 
-  @JsonKey(name: 'nama', defaultValue: '')
-  final String nama;
+  // BE mengirim 'namaUser', kita petakan ke 'nama'
+  @JsonKey(name: 'namaUser', defaultValue: '')
+  final String namaUser;
 
   @JsonKey(name: 'nop', defaultValue: '')
   final String nop;
 
-  UserModel({required this.idJukir, required this.nama, required this.nop});
+  // [TAMBAHAN BONUS BE]: Sangat berguna untuk ditampilkan di Header Home Screen Jukir
+  @JsonKey(name: 'namaObjekPajak', defaultValue: '')
+  final String namaObjekPajak;
+
+  @JsonKey(name: 'alamat', defaultValue: '')
+  final String alamat;
+
+  UserModel({
+    required this.idUser,
+    required this.namaUser,
+    required this.nop,
+    this.namaObjekPajak = '',
+    this.alamat = '',
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);

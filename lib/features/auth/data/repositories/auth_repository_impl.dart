@@ -21,15 +21,15 @@ class AuthRepositoryImpl implements IAuthRepository {
       if (response.accessToken.isNotEmpty) {
         // 2. Simpan Token
         await _secureStorage.saveAccessToken(response.accessToken);
-        if (response.refreshToken != null) {
-          await _secureStorage.saveRefreshToken(response.refreshToken!);
+        if (response.refreshToken.isNotEmpty) {
+          await _secureStorage.saveRefreshToken(response.refreshToken);
         }
 
         // 3. Simpan Profil Jukir (Sangat bersih dan Type-Safe!)
         await _secureStorage.saveJukirProfile(
-          idJukir: response.user.idJukir,
-          namaJukir: response.user.nama,
-          nop: response.user.nop,
+          idUserStorage: response.user.idUser,
+          namaUserStorage: response.user.namaUser,
+          nopStorage: response.user.nop,
         );
 
         return const Right(unit);
