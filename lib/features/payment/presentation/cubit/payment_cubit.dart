@@ -20,9 +20,6 @@ class PaymentCubit extends Cubit<PaymentState> {
   }) async {
     emit(PaymentLoading());
 
-    // Simulasi jeda waktu memanggil API QRIS (Bisa dihapus jika API asli sangat cepat)
-    await Future.delayed(const Duration(seconds: 1));
-
     // [PERBAIKAN]: Sesuaikan pemanggilan execute dengan kontrak UseCase yang baru!
     final result = await _generateQrisUseCase.execute(
       idTransaksiLokal: idTransaksiLokal,

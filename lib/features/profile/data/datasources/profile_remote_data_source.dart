@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
-import '../models/user_model.dart'; // Sesuaikan path jika berbeda
+import '../../../auth/data/models/user_model.dart'; // Sesuaikan path jika berbeda
 
 abstract class IProfileRemoteDataSource {
   Future<UserModel> getProfile();
