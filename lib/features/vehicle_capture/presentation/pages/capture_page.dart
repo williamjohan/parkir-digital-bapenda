@@ -78,10 +78,22 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           FocusManager.instance.primaryFocus?.unfocus();
           final String namaKategori = state.selectedCategory?.name ?? 'Mobil';
 
+          //TODO Perlu diperbaiki
+          // [TODO NANTI]: Panggil Sang Otak untuk kompres foto dan simpan ke SQLite
+
+          // final String namaKategori = state.selectedCategory?.name ?? 'Mobil';
+          //   final String platNomor = _plateController.text.trim();
+          //   final String imagePath = state.capturedImagePath!;
+          // context.read<ParkingTransactionCubit>().processNewTransaction(
+          //   platNomor: platNomor,
+          //   kategoriKendaraan: namaKategori,
+          //   imagePath: imagePath,
+          // );
           final args = PaymentPageArgs(
+            idTransaksiLokal: namaKategori,
             platNomor: _plateController.text.trim(),
             kategoriKendaraan: namaKategori,
-            fotoKendaraan: state.capturedImagePath ?? 'dummy_path',
+            // fotoKendaraan: state.capturedImagePath ?? 'dummy_path',
           );
 
           // Pindah layar dan tunggu kembalian

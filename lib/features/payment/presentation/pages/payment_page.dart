@@ -11,16 +11,16 @@ import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
 
-// 1. KELAS BUNGKUS ARGUMEN DARI HALAMAN SEBELUMNYA
+// 1. KELAS BUNGKUS ARGUMEN (Boleh bawa platNomor untuk murni ditampilin di UI)
 class PaymentPageArgs {
-  final String platNomor;
+  final String idTransaksiLokal;
   final String kategoriKendaraan;
-  final String fotoKendaraan; // Base64
+  final String platNomor;
 
   PaymentPageArgs({
-    required this.platNomor,
+    required this.idTransaksiLokal,
     required this.kategoriKendaraan,
-    required this.fotoKendaraan,
+    required this.platNomor,
   });
 }
 
@@ -32,12 +32,11 @@ class PaymentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // Sang Jenderal langsung diperintah membuat QRIS dan Insert SQLite saat halaman dibuka!
       create: (context) => locator<PaymentCubit>()
         ..generateQris(
-          platNomor: args.platNomor,
+          idTransaksiLokal: args.idTransaksiLokal,
           kategoriKendaraan: args.kategoriKendaraan,
-          fotoKendaraan: args.fotoKendaraan,
+          // Perhatikan: Cubit TETAP TIDAK MEMINTA platNomor! Sangat Clean!
         ),
       child: Scaffold(
         appBar: AppBar(
@@ -57,8 +56,7 @@ class PaymentPage extends StatelessWidget {
               );
             } else if (state is PaymentConfirmed) {
               PbStatusSnackbar.show(context, message: 'Pembayaran Berhasil!');
-
-              context.pop(true); // Kembali ke halaman Capture
+              context.pop(true); // Kembali ke halaman sebelumnya
             }
           },
           builder: (context, state) {
@@ -86,6 +84,8 @@ class PaymentPage extends StatelessWidget {
                       style: AppTypography.heading2,
                     ),
                     const SizedBox(height: 8),
+
+                    // Plat Nomor ditampilkan di sini dari args!
                     Text(
                       'Plat: ${args.platNomor} - ${args.kategoriKendaraan.toUpperCase()} - Rp ${state.nominal}',
                       style: AppTypography.bodyText,
@@ -119,7 +119,7 @@ class PaymentPage extends StatelessWidget {
 
                     const Spacer(),
 
-                    // TOMBOL "SELESAI" (Memicu konfirmasi PAID di SQLite)
+                    // TOMBOL "SELESAI"
                     PbPrimaryButton(
                       text: 'Selesai (Simulasi Lunas)',
                       onPressed: () {

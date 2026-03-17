@@ -1,5 +1,3 @@
-// lib/features/payment/domain/usecases/generate_qris_usecase.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
@@ -12,17 +10,15 @@ class GenerateQrisUseCase {
 
   GenerateQrisUseCase(this.repository);
 
-  // [PERBAIKAN]: Sesuaikan parameter execute dengan kebutuhan Repository
+  // [PERBAIKAN]: Sesuaikan parameter execute dengan kebutuhan Repository yang baru
   Future<Either<Failure, QrisEntity>> execute({
-    required String platNomor,
+    required String idTransaksiLokal, // Menerima lemparan ID dari fitur parkir
     required String kategoriKendaraan,
-    required String fotoKendaraan,
   }) {
-    // Teruskan semua data ke lapisan Repository
-    return repository.generateQrisAndSavePending(
-      platNomor: platNomor,
+    // Teruskan data ke lapisan Repository
+    return repository.generateQris(
+      idTransaksiLokal: idTransaksiLokal,
       kategoriKendaraan: kategoriKendaraan,
-      fotoKendaraan: fotoKendaraan,
     );
   }
 }

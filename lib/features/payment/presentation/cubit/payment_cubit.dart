@@ -15,19 +15,18 @@ class PaymentCubit extends Cubit<PaymentState> {
     : super(PaymentInitial());
 
   Future<void> generateQris({
-    required String platNomor,
+    required String idTransaksiLokal, // Menerima lemparan ID dari fitur parkir
     required String kategoriKendaraan,
-    required String fotoKendaraan,
   }) async {
     emit(PaymentLoading());
 
     // Simulasi jeda waktu memanggil API QRIS (Bisa dihapus jika API asli sangat cepat)
     await Future.delayed(const Duration(seconds: 1));
 
+    // [PERBAIKAN]: Sesuaikan pemanggilan execute dengan kontrak UseCase yang baru!
     final result = await _generateQrisUseCase.execute(
-      platNomor: platNomor,
+      idTransaksiLokal: idTransaksiLokal,
       kategoriKendaraan: kategoriKendaraan,
-      fotoKendaraan: fotoKendaraan,
     );
 
     result.fold(

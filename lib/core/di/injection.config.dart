@@ -118,7 +118,10 @@ _i174.GetIt init(
     () => _i473.GetDailyVehicleCountUseCase(gh<_i274.IHomeRepository>()),
   );
   gh.factory<_i731.VehicleCaptureCubit>(
-    () => _i731.VehicleCaptureCubit(gh<_i342.ExtractLicensePlateUseCase>()),
+    () => _i731.VehicleCaptureCubit(
+      gh<_i342.ExtractLicensePlateUseCase>(),
+      gh<_i37.IImageService>(),
+    ),
   );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
