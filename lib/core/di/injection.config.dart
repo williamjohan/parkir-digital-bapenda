@@ -40,6 +40,10 @@ import '../../features/init/domain/repositories/i_device_check_repository.dart'
 import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
     as _i232;
 import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
+import '../../features/parking_transaction/data/datasources/i_parking_transaction_local_datasource.dart'
+    as _i92;
+import '../../features/parking_transaction/data/datasources/parking_transaction_local_datasource_impl.dart'
+    as _i462;
 import '../../features/payment/data/datasources/payment_remote_datasource.dart'
     as _i247;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
@@ -131,6 +135,9 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
       gh<_i247.IPaymentRemoteDataSource>(),
     ),
+  );
+  gh.lazySingleton<_i92.IParkingTransactionLocalDataSource>(
+    () => _i462.ParkingTransactionLocalDataSourceImpl(gh<_i37.IImageService>()),
   );
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),

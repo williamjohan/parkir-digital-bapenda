@@ -103,13 +103,11 @@ class DatabaseHelper {
   // Asumsi: Saat offline, Anda menyimpan status = 'PENDING'
   Future<List<Map<String, dynamic>>> getUnsyncedTransactions() async {
     final db = await instance.database;
-    // Mengambil semua baris yang statusnya belum PAID/SYNCED
+    // Mengambil semua baris yang statusnya sesuai dengan kamus arsitektur baru kita
     return await db.query(
       tableTransactions,
-      where: 'status = ?',
-      whereArgs: [
-        'PENDING',
-      ], // Sesuaikan dengan naming convention status offline Anda
+      where: 'status IN (?, ?, ?)',
+      whereArgs: ['PENDING_PAYMENT', 'PAID_OFFLINE', 'FREE_OFFLINE'],
     );
   }
 
