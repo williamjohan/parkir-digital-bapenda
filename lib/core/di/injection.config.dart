@@ -44,6 +44,14 @@ import '../../features/parking_transaction/data/datasources/i_parking_transactio
     as _i92;
 import '../../features/parking_transaction/data/datasources/parking_transaction_local_datasource_impl.dart'
     as _i462;
+import '../../features/parking_transaction/data/repositories/parking_transaction_repository_impl.dart'
+    as _i14;
+import '../../features/parking_transaction/domain/repositories/i_parking_transaction_repository.dart'
+    as _i1054;
+import '../../features/parking_transaction/domain/usecases/save_parking_transaction_usecase.dart'
+    as _i512;
+import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart'
+    as _i877;
 import '../../features/payment/data/datasources/payment_remote_datasource.dart'
     as _i247;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
@@ -142,6 +150,12 @@ _i174.GetIt init(
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i1054.IParkingTransactionRepository>(
+    () => _i14.ParkingTransactionRepositoryImpl(
+      gh<_i92.IParkingTransactionLocalDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(
     () => _i847.ProfileRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -153,6 +167,11 @@ _i174.GetIt init(
   );
   gh.factory<_i9.HomeCubit>(
     () => _i9.HomeCubit(gh<_i473.GetDailyVehicleCountUseCase>()),
+  );
+  gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
+    () => _i512.SaveParkingTransactionUseCase(
+      gh<_i1054.IParkingTransactionRepository>(),
+    ),
   );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
@@ -180,6 +199,11 @@ _i174.GetIt init(
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
+  );
+  gh.factory<_i877.ParkingTransactionCubit>(
+    () => _i877.ParkingTransactionCubit(
+      gh<_i512.SaveParkingTransactionUseCase>(),
+    ),
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(

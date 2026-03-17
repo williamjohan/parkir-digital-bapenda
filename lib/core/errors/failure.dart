@@ -29,3 +29,7 @@ class OcrFailure extends Failure {
 class AuthFailure extends Failure {
   const AuthFailure(super.message);
 }
+
+class DatabaseFailure extends Failure {
+  const DatabaseFailure(super.message);
+}
