@@ -81,9 +81,9 @@ class DatabaseHelper {
       '''
       SELECT kategori_kendaraan, COUNT(*) as total
       FROM transactions 
-      WHERE status = 'PAID' AND substr(waktu_transaksi, 1, 10) = ?
+      WHERE status IN ('PAID_OFFLINE', 'FREE_OFFLINE') AND substr(waktu_transaksi, 1, 10) = ?
       GROUP BY kategori_kendaraan
-    ''',
+      ''',
       [today],
     );
 

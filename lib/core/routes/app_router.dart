@@ -1,5 +1,6 @@
 // lib/core/routes/app_router.dart
 
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
@@ -9,6 +10,7 @@ import '../../features/home/presentation/cubit/home_cubit.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
+import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
 import '../../features/vehicle_capture/domain/entities/vehicle_category.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
@@ -30,6 +32,7 @@ class AppRouter {
     // Jika belum ada, baru kita buat.
     _router = GoRouter(
       initialLocation: AppRoutes.splash,
+      observers: [ChuckerFlutter.navigatorObserver],
       refreshListenable: GoRouterRefreshStream(appAuthCubit.stream),
       redirect: (context, state) {
         final authState = appAuthCubit.state;
@@ -94,9 +97,17 @@ class AppRouter {
                 ? VehicleCategory.mobil
                 : VehicleCategory.motor;
 
-            return BlocProvider(
-              create: (_) =>
-                  locator<VehicleCaptureCubit>()..selectVehicle(category),
+            // [PERBAIKAN]: Gunakan MultiBlocProvider untuk 2 Jenderal!
+            return MultiBlocProvider(
+              providers: [
+                // 1. Jenderal Mata (Yang mengurus Kamera & OCR)
+                BlocProvider(
+                  create: (_) =>
+                      locator<VehicleCaptureCubit>()..selectVehicle(category),
+                ),
+                // 2. Jenderal Otak (Yang mengurus SQLite & Kompresi)
+                BlocProvider(create: (_) => locator<ParkingTransactionCubit>()),
+              ],
               child: const CapturePage(),
             );
           },

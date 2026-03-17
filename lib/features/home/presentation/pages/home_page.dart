@@ -1,5 +1,7 @@
 // lib/features/home/presentation/pages/home_page.dart
 
+import 'package:chucker_flutter/chucker_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -37,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       listener: (context, state) async {
         switch (state.permissionActionStatus) {
           case CameraPermissionStatus.granted:
-            // [PERBAIKAN ARSITEKTUR UI]: Await push agar kita bisa menyuruh Cubit
+
             // merefresh data SQLite TEPAT saat Jukir kembali dari halaman Capture/Payment.
             await context.push('/capture/${state.selectedVehicleForCapture}');
 
@@ -69,9 +71,17 @@ class _HomePageState extends State<HomePage> {
         child: Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
-            title: const Text(
-              'Parkir Digital Bapenda',
-              style: AppTypography.heading2,
+            title: GestureDetector(
+              onDoubleTap: () {
+                // Hanya bisa dibuka saat mode Debug (Aman dari user asli!)
+                if (kDebugMode) {
+                  ChuckerFlutter.showChuckerScreen();
+                }
+              },
+              child: const Text(
+                'Parkir Digital Bapenda',
+                style: AppTypography.heading2,
+              ),
             ),
             backgroundColor: AppColors.surface,
             elevation: 0,

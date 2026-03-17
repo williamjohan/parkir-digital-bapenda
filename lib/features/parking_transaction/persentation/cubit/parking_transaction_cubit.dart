@@ -3,13 +3,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../domain/usecases/save_parking_transaction_usecase.dart';
+import '../../domain/usecases/update_parking_status_usecase.dart';
 import 'parking_transaction_state.dart';
 
 @injectable
 class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
   final SaveParkingTransactionUseCase _saveUseCase;
+  final UpdateParkingStatusUseCase _updateUseCase;
 
-  ParkingTransactionCubit(this._saveUseCase)
+  ParkingTransactionCubit(this._saveUseCase, this._updateUseCase)
     : super(ParkingTransactionInitial());
 
   /// Fungsi ini akan dipanggil dari CapturePage saat Jukir klik "Lanjut Bayar"
@@ -40,5 +42,10 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
           emit(ParkingTransactionSaveSuccess(transaction.idTransaksiLokal));
       },
     );
+  }
+
+  Future<void> updateStatusToPaid(String idTransaksiLokal) async {
+    // Kita tidak perlu emit Loading agar UI Capture tidak berkedip
+    await _updateUseCase.execute(idTransaksiLokal, 'PAID_OFFLINE');
   }
 }

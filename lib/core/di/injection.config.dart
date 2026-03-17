@@ -50,6 +50,8 @@ import '../../features/parking_transaction/domain/repositories/i_parking_transac
     as _i1054;
 import '../../features/parking_transaction/domain/usecases/save_parking_transaction_usecase.dart'
     as _i512;
+import '../../features/parking_transaction/domain/usecases/update_parking_status_usecase.dart'
+    as _i269;
 import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart'
     as _i877;
 import '../../features/payment/data/datasources/payment_remote_datasource.dart'
@@ -173,6 +175,11 @@ _i174.GetIt init(
       gh<_i1054.IParkingTransactionRepository>(),
     ),
   );
+  gh.lazySingleton<_i269.UpdateParkingStatusUseCase>(
+    () => _i269.UpdateParkingStatusUseCase(
+      gh<_i1054.IParkingTransactionRepository>(),
+    ),
+  );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
       gh<_i107.IAuthRemoteDataSource>(),
@@ -197,13 +204,14 @@ _i174.GetIt init(
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
   );
-  gh.factory<_i264.LoginCubit>(
-    () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
-  );
   gh.factory<_i877.ParkingTransactionCubit>(
     () => _i877.ParkingTransactionCubit(
       gh<_i512.SaveParkingTransactionUseCase>(),
+      gh<_i269.UpdateParkingStatusUseCase>(),
     ),
+  );
+  gh.factory<_i264.LoginCubit>(
+    () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(

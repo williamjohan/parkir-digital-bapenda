@@ -137,8 +137,11 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
 
       final controller = CameraController(
         backCamera,
-        ResolutionPreset.high,
+        ResolutionPreset.medium,
         enableAudio: false,
+        // 2. KUNCI FORMAT: Paksa Android menggunakan JPEG agar tidak bingung
+        // mengalokasikan memori untuk format YUV (Image Analysis) yang berat.
+        imageFormatGroup: ImageFormatGroup.jpeg,
       );
 
       _cameraController = controller;
