@@ -111,11 +111,6 @@ _i174.GetIt init(
     () => _i437.OcrLocalDataSourceImpl(),
   );
   gh.lazySingleton<_i274.IHomeRepository>(() => _i76.HomeRepositoryImpl());
-  gh.factory<_i674.InitCubit>(
-    () => _i674.InitCubit(
-      checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
-    ),
-  );
   gh.lazySingleton<_i1042.ISecureStorageManager>(
     () => _i1042.SecureStorageManagerImpl(),
   );
@@ -156,6 +151,12 @@ _i174.GetIt init(
     () => _i14.ParkingTransactionRepositoryImpl(
       gh<_i92.IParkingTransactionLocalDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i674.InitCubit>(
+    () => _i674.InitCubit(
+      checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
+      secureStorageManager: gh<_i1042.ISecureStorageManager>(),
     ),
   );
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(

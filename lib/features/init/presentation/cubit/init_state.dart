@@ -13,7 +13,15 @@ class InitInitial extends InitState {}
 
 class InitLoading extends InitState {}
 
-class InitSuccess extends InitState {}
+// [PERBAIKAN]: Tambahkan variabel isLoggedIn untuk memberi tahu rute selanjutnya
+class InitSuccess extends InitState {
+  final bool isLoggedIn;
+
+  const InitSuccess({required this.isLoggedIn});
+
+  @override
+  List<Object> get props => [isLoggedIn];
+}
 
 class InitError extends InitState {
   final String message;
