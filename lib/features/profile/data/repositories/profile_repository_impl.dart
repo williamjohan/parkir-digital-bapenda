@@ -28,6 +28,9 @@ class ProfileRepositoryImpl implements IProfileRepository {
         idUserStorage: userModel.idUser,
         namaUserStorage: userModel.namaUser,
         nopStorage: userModel.nop,
+        // [PERBAIKAN]: Teruskan data tarif dari model ke brankas
+        pungutTarif: userModel.pungutTarif,
+        namaObjekPajak: userModel.namaObjekPajak,
       );
 
       // 3. Kembalikan data sukses

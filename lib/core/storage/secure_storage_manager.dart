@@ -18,6 +18,8 @@ abstract class ISecureStorageManager {
     required String idUserStorage,
     required String namaUserStorage,
     required String nopStorage,
+    int? pungutTarif,
+    String? namaObjekPajak,
   });
   Future<Map<String, dynamic>?> getJukirProfile();
   Future<void> clearJukirProfile();
@@ -71,12 +73,16 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     required String idUserStorage,
     required String namaUserStorage,
     required String nopStorage,
+    int? pungutTarif, // [TAMBAHAN]
+    String? namaObjekPajak, // [TAMBAHAN]
   }) async {
-    // Kita bungkus jadi Map, lalu ubah ke String JSON agar rapi
+    // Kita bungkus jadi Map, lalu ubah ke String JSON
     final profileData = {
       'idUser': idUserStorage,
       'namaUser': namaUserStorage,
       'nop': nopStorage,
+      'pungutTarif': pungutTarif, // Masukkan ke dalam JSON lokal
+      'namaObjekPajak': namaObjekPajak,
     };
     final jsonString = jsonEncode(profileData);
     await _storage.write(key: _keyJukirProfile, value: jsonString);

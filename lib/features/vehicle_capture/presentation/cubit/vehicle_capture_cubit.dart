@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/services/image/i_image_service.dart';
+import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/entities/vehicle_category.dart';
 import '../../domain/usecases/extract_license_plate_usecase.dart';
 import 'vehicle_capture_state.dart';
@@ -10,12 +11,20 @@ import 'vehicle_capture_state.dart';
 class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   final ExtractLicensePlateUseCase _extractLicensePlateUseCase;
   final IImageService _imageService;
+  final ISecureStorageManager _secureStorage;
+
   CameraController? _cameraController;
   CameraController? get cameraController => _cameraController;
   Future<void>? _initializeControllerFuture;
 
-  VehicleCaptureCubit(this._extractLicensePlateUseCase, this._imageService)
-    : super(const VehicleCaptureState());
+  VehicleCaptureCubit(
+    this._extractLicensePlateUseCase,
+    this._imageService,
+    this._secureStorage,
+  ) : super(const VehicleCaptureState()) {
+    // Body dari constructor dijalankan setelah super() selesai
+    _loadTarifConfig();
+  }
 
   /// Dipanggil saat jukir memilih motor/mobil di Home
   void selectVehicle(VehicleCategory category) {
@@ -226,6 +235,17 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   void _safeEmit(VehicleCaptureState newState) {
     if (!isClosed) {
       emit(newState);
+    }
+  }
+
+  Future<void> _loadTarifConfig() async {
+    final profile = await _secureStorage.getJukirProfile();
+    if (profile != null) {
+      final tarif = profile['pungutTarif'];
+      final isFree = (tarif == 1 || tarif == '1');
+
+      // Pancarkan State ke UI!
+      emit(state.copyWith(isFreeParking: isFree));
     }
   }
 }

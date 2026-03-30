@@ -14,33 +14,33 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
   ParkingTransactionCubit(this._saveUseCase, this._updateUseCase)
     : super(ParkingTransactionInitial());
 
-  /// Fungsi ini akan dipanggil dari CapturePage saat Jukir klik "Lanjut Bayar"
+  /// Fungsi ini universal, bisa dipanggil dari CapturePage maupun QuickParkPage
   Future<void> processNewTransaction({
     String? platNomor, // Opsional
     required String kategoriKendaraan,
     String? imagePath, // Opsional
-    required bool isFree,
-    required int
-    modePlat, // [WAJIB ADA]: UI yang memanggil ini harus memberitahu mode apa yang dipakai
+    required int modePlat, // [WAJIB ADA]: 0 = Tanpa Plat, 1 = Pakai Plat
   }) async {
-    emit(ParkingTransactionLoading()); // Atau state loading Anda
+    emit(ParkingTransactionLoading());
 
+    // 1. Eksekusi UseCase tanpa parameter isFree
     final result = await _saveUseCase.execute(
       platNomor: platNomor,
       kategoriKendaraan: kategoriKendaraan,
       rawImagePath: imagePath,
-      isFree: isFree,
       modePlat: modePlat,
     );
 
+    // 2. Tangani hasil dari mesin SQLite
     result.fold(
       (failure) {
         if (!isClosed) emit(ParkingTransactionFailure(failure.message));
       },
       (transaction) {
-        // SUKSES! UUID SQLite didapatkan, lempar ke UI untuk pindah layar!
-        if (!isClosed)
-          emit(ParkingTransactionSaveSuccess(transaction.idTransaksiLokal));
+        // [PERBAIKAN ARSITEKTUR]: Lempar seluruh objek transaction, bukan cuma ID-nya!
+        if (!isClosed) {
+          emit(ParkingTransactionSaveSuccess(transaction));
+        }
       },
     );
   }

@@ -108,15 +108,21 @@ class DatabaseHelper {
     );
   }
 
+  // 3. Fungsi Ambil total kendaraan
+  /// Mengambil total kendaraan (Motor & Mobil) HARI INI tanpa mempedulikan status bayar/sync
   Future<Map<String, int>> getDailyVehicleCount() async {
     final db = await database;
+
+    // Ambil tanggal hari ini dalam format YYYY-MM-DD
     final today = DateTime.now().toIso8601String().substring(0, 10);
 
+    // [PERBAIKAN]: Hapus filter "WHERE status IN..."
+    // Sekarang kita menghitung SEMUA baris yang waktu_transaksinya hari ini
     final List<Map<String, dynamic>> result = await db.rawQuery(
       '''
       SELECT kategori_kendaraan, COUNT(*) as total
       FROM transactions 
-      WHERE status IN ('PAID_OFFLINE', 'FREE_OFFLINE') AND substr(waktu_transaksi, 1, 10) = ?
+      WHERE substr(waktu_transaksi, 1, 10) = ?
       GROUP BY kategori_kendaraan
       ''',
       [today],

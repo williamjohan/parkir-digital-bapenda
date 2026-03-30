@@ -1,6 +1,7 @@
 // lib/features/parking_transaction/presentation/cubit/parking_transaction_state.dart
 
 import 'package:equatable/equatable.dart';
+import '../../data/models/local_transaction_model.dart';
 
 abstract class ParkingTransactionState extends Equatable {
   const ParkingTransactionState();
@@ -13,15 +14,14 @@ class ParkingTransactionInitial extends ParkingTransactionState {}
 
 class ParkingTransactionLoading extends ParkingTransactionState {}
 
-// [PERHATIAN]: Saat sukses, State HANYA membawa ID Transaksi!
-// Ini yang akan dilempar ke PaymentPage nanti.
+// [PERBAIKAN ARSITEKTUR]: State ini sekarang membawa "Oleh-oleh" lengkap dari SQLite
 class ParkingTransactionSaveSuccess extends ParkingTransactionState {
-  final String idTransaksiLokal;
+  final LocalTransactionModel transaction;
 
-  const ParkingTransactionSaveSuccess(this.idTransaksiLokal);
+  const ParkingTransactionSaveSuccess(this.transaction);
 
   @override
-  List<Object?> get props => [idTransaksiLokal];
+  List<Object?> get props => [transaction];
 }
 
 class ParkingTransactionFailure extends ParkingTransactionState {

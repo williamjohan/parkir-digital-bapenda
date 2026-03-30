@@ -5,12 +5,12 @@ import '../../domain/entities/license_plate.dart';
 import '../../domain/entities/vehicle_category.dart';
 
 enum CaptureStatus {
-  initial, // Di halaman Home (Pilih Kendaraan)
-  capturing, // Proses kamera menyala, menunggu jepret
-  cameraReady, // Kamera menyala, siap jepret
-  processing, // Loading OCR ML Kit bekerja
-  success, // OCR Berhasil, TextField muncul
-  error, // Gagal baca plat / Error sistem
+  initial,
+  capturing,
+  cameraReady,
+  processing,
+  success,
+  error,
   navigatingToPayment,
   standby,
 }
@@ -22,6 +22,7 @@ class VehicleCaptureState extends Equatable {
   final String? errorMessage;
   final bool isFlashOn;
   final String? capturedImagePath;
+  final bool isFreeParking;
 
   const VehicleCaptureState({
     this.status = CaptureStatus.initial,
@@ -30,6 +31,7 @@ class VehicleCaptureState extends Equatable {
     this.errorMessage,
     this.isFlashOn = false,
     this.capturedImagePath,
+    this.isFreeParking = false, // Pessimistic Default (Cari Aman)
   });
 
   VehicleCaptureState copyWith({
@@ -40,6 +42,7 @@ class VehicleCaptureState extends Equatable {
     bool? isFlashOn,
     String? capturedImagePath,
     bool clearImagePath = false,
+    bool? isFreeParking, // [PERBAIKAN 1]: Tambahkan di parameter
   }) {
     return VehicleCaptureState(
       status: status ?? this.status,
@@ -50,6 +53,8 @@ class VehicleCaptureState extends Equatable {
       capturedImagePath: clearImagePath
           ? null
           : (capturedImagePath ?? this.capturedImagePath),
+      isFreeParking:
+          isFreeParking ?? this.isFreeParking, // [PERBAIKAN 2]: Update nilainya
     );
   }
 
@@ -61,5 +66,6 @@ class VehicleCaptureState extends Equatable {
     errorMessage,
     isFlashOn,
     capturedImagePath,
+    isFreeParking, // [PERBAIKAN 3]: Daftarkan ke Equatable agar UI bisa mendeteksi perubahan!
   ];
 }

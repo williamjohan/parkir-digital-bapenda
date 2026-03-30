@@ -11,7 +11,6 @@ abstract class IParkingTransactionRepository {
     String? platNomor, // [PERBAIKAN]: Menjadi opsional (bisa null)
     required String kategoriKendaraan,
     String? rawImagePath, // [PERBAIKAN]: Menjadi opsional (bisa null)
-    required bool isFree,
     required int modePlat, // [TAMBAHAN BARU]: 0 = Tanpa Plat, 1 = Pakai Plat
   });
 

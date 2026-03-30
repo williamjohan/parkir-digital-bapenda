@@ -18,13 +18,13 @@ class ParkingTransactionRepositoryImpl
 
   @override
   Future<Either<Failure, LocalTransactionModel>> saveNewTransaction({
-    String? platNomor, // [PERBAIKAN]
+    String? platNomor,
     required String kategoriKendaraan,
-    String? rawImagePath, // [PERBAIKAN]
-    required bool isFree,
-    required int modePlat, // [TAMBAHAN]
+    String? rawImagePath,
+    required int modePlat,
   }) async {
     try {
+      // 1. Buka Brankas
       final jukirProfile = await _secureStorage.getJukirProfile();
       if (jukirProfile == null) {
         return const Left(
@@ -32,14 +32,25 @@ class ParkingTransactionRepositoryImpl
         );
       }
 
+      // 2. [INTEGRASI LOGIKA TARIF BAPENDA]
+      // Kamus DB:
+      // 0 = Tidak Diketahui (Fail-safe: Anggap Berbayar)
+      // 1 = Tidak Bertarif (Gratis / Free Parking)
+      // 2 = Bertarif (Wajib QRIS)
+      final dynamic rawPungutTarif = jukirProfile['pungutTarif'];
+
+      // Hanya akan bernilai TRUE jika secara eksplisit BE mengirim angka 1
+      final bool isFree = rawPungutTarif == 1 || rawPungutTarif == '1';
+
+      // 3. Eksekusi ke SQLite
       final transaction = await _localDataSource.saveNewTransaction(
         platNomor: platNomor,
         kategoriKendaraan: kategoriKendaraan,
         rawImagePath: rawImagePath,
         isFree: isFree,
-        modePlat: modePlat, // Teruskan ke Data Source
-        idJukir: jukirProfile['id_jukir'] ?? '',
-        namaJukir: jukirProfile['nama'] ?? '',
+        modePlat: modePlat,
+        idJukir: jukirProfile['idUser'] ?? '',
+        namaJukir: jukirProfile['namaUser'] ?? '',
         nop: jukirProfile['nop'] ?? '',
       );
 

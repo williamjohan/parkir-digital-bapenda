@@ -16,14 +16,12 @@ class SaveParkingTransactionUseCase {
     String? platNomor, // [PERBAIKAN]: Opsional
     required String kategoriKendaraan,
     String? rawImagePath, // [PERBAIKAN]: Opsional
-    required bool isFree,
     required int modePlat, // [TAMBAHAN]: 0 = Tanpa Plat, 1 = Pakai Plat
   }) {
     return repository.saveNewTransaction(
       platNomor: platNomor,
       kategoriKendaraan: kategoriKendaraan,
       rawImagePath: rawImagePath,
-      isFree: isFree,
       modePlat: modePlat,
     );
   }

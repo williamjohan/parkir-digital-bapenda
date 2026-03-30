@@ -24,12 +24,17 @@ class UserModel {
   @JsonKey(name: 'alamat', defaultValue: '')
   final String alamat;
 
+  // [TAMBAHAN WAJIB]: Menangkap status tarif dari Backend (0/1/2)
+  @JsonKey(name: 'pungutTarif', defaultValue: 0)
+  final int pungutTarif;
+
   UserModel({
     required this.idUser,
     required this.namaUser,
     required this.nop,
     this.namaObjekPajak = '',
     this.alamat = '',
+    this.pungutTarif = 0, // Default 0 (Tidak diketahui) agar aman dari null
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

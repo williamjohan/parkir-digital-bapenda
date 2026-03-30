@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -20,17 +21,13 @@ class QuickParkPage extends StatefulWidget {
 }
 
 class _QuickParkPageState extends State<QuickParkPage> {
-  // Menghitung berapa kali Jukir nge-tap di sesi ini (sejak halaman dibuka)
-  int _sessionCounter = 0;
-
   void _handleTapParkir(BuildContext context) {
     // 1. Eksekusi Sang Otak (Universal)
     context.read<ParkingTransactionCubit>().processNewTransaction(
-      platNomor: null, // Tanpa Plat
+      platNomor: null,
       kategoriKendaraan: widget.kategoriKendaraan,
-      imagePath: null, // Tanpa Foto
-      isFree: false, // [TODO: Sesuaikan nanti dengan The Free Parking Rule]
-      modePlat: 0, // [IDENTITAS MUTLAK]: 0 = Mode Tanpa Plat
+      imagePath: null,
+      modePlat: 0,
     );
   }
 
@@ -67,17 +64,11 @@ class _QuickParkPageState extends State<QuickParkPage> {
                 isError: true,
               );
             } else if (state is ParkingTransactionSaveSuccess) {
-              // Jika sukses masuk SQLite
-              setState(() {
-                _sessionCounter++;
-              });
-
-              // [TODO NANTI]: Di sini kita tambahkan logika pengecekan isFree.
-              // Jika isFree == 0, maka context.push('/payment', extra: state.idTransaksiLokal);
-              // Untuk sekarang, kita munculkan Toast saja.
-              PbStatusSnackbar.show(
+              // Gunakan komponen modular PbShowDialog untuk Anti-Spam
+              PbShowDialog.show(
                 context,
-                message: '$kategoriTitle berhasil dicatat!',
+                title: 'Berhasil!',
+                description: 'Parkir Tanpa Plat\n$kategoriTitle tercatat.',
               );
             }
           },
@@ -90,26 +81,6 @@ class _QuickParkPageState extends State<QuickParkPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // --- COUNTER SESI ---
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: Text(
-                        'Total Sesi Ini: $_sessionCounter',
-                        style: AppTypography.heading2.copyWith(
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 60),
-
                     // --- TOMBOL RAKSASA (MASSIVE HIT AREA) ---
                     GestureDetector(
                       // Matikan fungsi tap saat isLocked (Loading)
@@ -118,7 +89,7 @@ class _QuickParkPageState extends State<QuickParkPage> {
                         duration: const Duration(milliseconds: 200),
                         width: isLocked
                             ? 230
-                            : 250, // Efek mengecil saat ditekan/loading
+                            : 250, // Efek mengecil saat ditekan
                         height: isLocked ? 230 : 250,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,

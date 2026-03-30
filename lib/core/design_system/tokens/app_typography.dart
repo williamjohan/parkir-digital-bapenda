@@ -66,4 +66,10 @@ abstract class AppTypography {
     color: Colors.grey,
     letterSpacing: 0.4,
   );
+
+  static const TextStyle bodySemiBold = TextStyle(
+    fontSize: 14.0,
+    fontWeight: FontWeight.w600, // Kunci dari SemiBold
+    // color: AppColors.textPrimary, // (Opsional, tergantung setup Anda)
+  );
 }

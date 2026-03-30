@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_keyboard_dismiss_wrapper.dart';
+import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
@@ -70,49 +71,70 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               .cancelNavigation(); // Batalkan loading
         } else if (parkingState is ParkingTransactionSaveSuccess) {
           // BINGO! FOTO SUDAH DIKOMPRES & MASUK SQLITE!
-          // Sekarang saatnya Sang Otak memanggil Sang Kasir (Payment Page)
 
-          final String namaKategori =
-              context
-                  .read<VehicleCaptureCubit>()
-                  .state
-                  .selectedCategory
-                  ?.name ??
-              'Mobil';
+          // [PERBAIKAN 1]: Buka koper datanya!
+          final trx = parkingState.transaction;
 
-          final args = PaymentPageArgs(
-            idTransaksiLokal:
-                parkingState.idTransaksiLokal, // Kuitansi resmi dari Sang Otak
-            platNomor: _plateController.text.trim(), // Plat dari UI
-            kategoriKendaraan: namaKategori,
-          );
+          // [PERBAIKAN 2]: THE FREE PARKING RULE
+          if (trx.status == 'PENDING_PAYMENT') {
+            // --- KAWASAN BERBAYAR (Wajib masuk Kasir/QRIS) ---
+            final String namaKategori =
+                context
+                    .read<VehicleCaptureCubit>()
+                    .state
+                    .selectedCategory
+                    ?.name ??
+                'Mobil';
 
-          // Pindah layar ke Kasir dan tunggu kembaliannya
-          final isSuccess = await context.push<bool>(
-            AppRoutes.payment,
-            extra: args,
-          );
-
-          // Guard keamanan memori
-          if (!context.mounted) return;
-
-          // Eksekusi pembersihan setelah kembali dari Kasir
-          if (isSuccess == true) {
-            context.read<ParkingTransactionCubit>().updateStatusToPaid(
-              parkingState.idTransaksiLokal,
+            final args = PaymentPageArgs(
+              idTransaksiLokal:
+                  trx.idTransaksiLokal, // [PERBAIKAN]: Ambil dari koper trx
+              platNomor: trx.platNomor ?? _plateController.text.trim(),
+              kategoriKendaraan: namaKategori,
             );
-            _plateController.clear();
-            context.read<VehicleCaptureCubit>().resetCapture();
-          } else {
-            // [PERBAIKAN]: Meskipun Jukir menekan tombol "Back" (Batal QRIS),
-            // transaksi SUDAH masuk SQLite. Jadi layar harus di-reset untuk mobil selanjutnya!
-            _plateController.clear();
-            context.read<VehicleCaptureCubit>().resetCapture();
 
-            // Opsional: Beritahu Jukir bahwa data tetap aman
-            PbStatusSnackbar.show(
+            // Pindah layar ke Kasir dan tunggu kembaliannya
+            final isSuccess = await context.push<bool>(
+              AppRoutes.payment,
+              extra: args,
+            );
+
+            // Guard keamanan memori
+            if (!context.mounted) return;
+
+            // Eksekusi pembersihan setelah kembali dari Kasir
+            if (isSuccess == true) {
+              context.read<ParkingTransactionCubit>().updateStatusToPaid(
+                trx.idTransaksiLokal, // [PERBAIKAN]: Ambil dari koper trx
+              );
+              _plateController.clear();
+              context.read<VehicleCaptureCubit>().resetCapture();
+            } else {
+              _plateController.clear();
+              context.read<VehicleCaptureCubit>().resetCapture();
+
+              PbStatusSnackbar.show(
+                context,
+                message: 'Pembayaran ditunda. Data tersimpan di riwayat.',
+              );
+            }
+          } else {
+            // --- KAWASAN GRATIS (Langsung Lunas, Tidak Perlu QRIS) ---
+
+            // Hapus indikator loading di kamera
+            context.read<VehicleCaptureCubit>().cancelNavigation();
+
+            // Munculkan Modal Dialog Wajib Klik
+            PbShowDialog.show(
               context,
-              message: 'Pembayaran ditunda. Data tersimpan di riwayat.',
+              title: 'Berhasil!',
+              description:
+                  'Parkir GRATIS dengan Kamera\n${trx.platNomor ?? ''} tercatat.',
+              onConfirm: () {
+                // Bersihkan layar untuk kendaraan selanjutnya setelah Jukir klik OK
+                _plateController.clear();
+                context.read<VehicleCaptureCubit>().resetCapture();
+              },
             );
           }
         }
@@ -145,15 +167,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
             final String namaKategori = state.selectedCategory?.name ?? 'Mobil';
             final String platNomor = _plateController.text.trim();
             final String imagePath = state.capturedImagePath!;
-
-            // [EKSEKUSI]: Berikan data mentah ke Sang Otak!
-            // TODO isFree nanti diganti ambil dari usecase / cubit.
-
             context.read<ParkingTransactionCubit>().processNewTransaction(
               platNomor: platNomor,
               kategoriKendaraan: namaKategori,
               imagePath: imagePath,
-              isFree: false,
               modePlat: 1,
             );
           }
@@ -327,7 +344,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: PbPrimaryButton(
-                                            text: 'Lanjut Bayar',
+                                            text: state.isFreeParking
+                                                ? 'Simpan Data'
+                                                : 'Lanjut Bayar',
                                             isLoading: false,
                                             onPressed: isLoading
                                                 ? null
