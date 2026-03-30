@@ -11,12 +11,16 @@ class HomeState extends Equatable {
   final int motorCount;
   final int mobilCount;
 
+  // UNtuk pilih jenis mode_plat
+  final int? selectedModePlat;
+
   const HomeState({
     this.permissionActionStatus,
     this.selectedVehicleForCapture,
     this.actionTimestamp,
     this.motorCount = 0,
     this.mobilCount = 0,
+    this.selectedModePlat,
   });
 
   HomeState copyWith({
@@ -25,6 +29,7 @@ class HomeState extends Equatable {
     int? actionTimestamp,
     int? motorCount,
     int? mobilCount,
+    int? selectedModePlat,
   }) {
     return HomeState(
       permissionActionStatus:
@@ -34,6 +39,7 @@ class HomeState extends Equatable {
       actionTimestamp: actionTimestamp ?? this.actionTimestamp,
       motorCount: motorCount ?? this.motorCount,
       mobilCount: mobilCount ?? this.mobilCount,
+      selectedModePlat: selectedModePlat ?? this.selectedModePlat,
     );
   }
 
@@ -44,5 +50,6 @@ class HomeState extends Equatable {
     actionTimestamp,
     mobilCount,
     motorCount,
+    selectedModePlat,
   ];
 }

@@ -59,4 +59,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
     );
   }
+
+  void selectModePlat(int mode) {
+    emit(state.copyWith(selectedModePlat: mode));
+  }
 }

@@ -147,7 +147,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
             final String imagePath = state.capturedImagePath!;
 
             // [EKSEKUSI]: Berikan data mentah ke Sang Otak!
-            // Navigasi context.push dihapus dari sini, dipindah ke Listener di atas.
+            // TODO isFree nanti diganti ambil dari usecase / cubit.
+
             context.read<ParkingTransactionCubit>().processNewTransaction(
               platNomor: platNomor,
               kategoriKendaraan: namaKategori,

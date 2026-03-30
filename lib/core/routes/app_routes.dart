@@ -6,5 +6,5 @@ class AppRoutes {
   static const String capture = '/capture';
   static const String login = '/login';
   static const String payment = '/payment';
-  static const String profile = '/api/mobile/parking/profile';
+  static const String quickPark = '/quick-park';
 }

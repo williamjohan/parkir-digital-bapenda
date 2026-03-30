@@ -12,6 +12,7 @@ import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
 import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
+import '../../features/quick_parking/presentation/pages/quick_park_page.dart';
 import '../../features/vehicle_capture/domain/entities/vehicle_category.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
 import '../../features/vehicle_capture/presentation/pages/capture_page.dart';
@@ -109,6 +110,20 @@ class AppRouter {
                 BlocProvider(create: (_) => locator<ParkingTransactionCubit>()),
               ],
               child: const CapturePage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: '${AppRoutes.quickPark}/:category',
+          builder: (context, state) {
+            // 1. Tangkap parameter dari URL (motor/mobil)
+            final categoryString = state.pathParameters['category'] ?? 'motor';
+
+            // 2. [INJEKSI]: Halaman ini HANYA butuh Sang Otak (ParkingTransactionCubit)
+            // Tidak butuh Jenderal Kamera!
+            return BlocProvider(
+              create: (_) => locator<ParkingTransactionCubit>(),
+              child: QuickParkPage(kategoriKendaraan: categoryString),
             );
           },
         ),
