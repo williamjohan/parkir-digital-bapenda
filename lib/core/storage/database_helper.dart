@@ -1,14 +1,14 @@
+// lib/core/storage/database_helper.dart
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  // Singleton pattern agar koneksi DB tidak berlipat ganda
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
 
   DatabaseHelper._init();
 
-  // Nama Tabel
   static const String tableTransactions = 'transactions';
 
   Future<Database> get database async {
@@ -21,30 +21,60 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    // [PERBAIKAN]: Naik versi ke 2, dan tambahkan onUpgrade
+    return await openDatabase(
+      path,
+      version: 2,
+      onCreate: _createDB,
+      onUpgrade: _upgradeDB,
+    );
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // Mengeksekusi DDL (Data Definition Language) untuk membuat tabel 10 Kolom
+    // [PERBAIKAN SKEMA BARU]
     await db.execute('''
       CREATE TABLE $tableTransactions (
         id_transaksi_lokal TEXT PRIMARY KEY,
         nominal INTEGER NOT NULL,
-        plat_nomor TEXT NOT NULL,
+        plat_nomor TEXT, 
         kategori_kendaraan TEXT NOT NULL,
         waktu_transaksi TEXT NOT NULL,
         status TEXT NOT NULL,
         id_jukir TEXT NOT NULL,
         nama_jukir TEXT NOT NULL,
         nop TEXT NOT NULL,
-        foto_kendaraan TEXT NOT NULL
+        foto_kendaraan TEXT, 
+        mode_plat INTEGER NOT NULL,
+        is_sync INTEGER NOT NULL DEFAULT 0
       )
     ''');
+    // Keterangan: plat_nomor dan foto_kendaraan sudah TIDAK memiliki 'NOT NULL'
   }
 
-  // --- FUNGSI CRUD DASAR UNTUK FASE SELANJUTNYA ---
+  // [SCRIPT MIGRASI OTOMATIS]
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Karena SQLite tidak mendukung ALTER COLUMN DROP NOT NULL,
+      // kita harus merename tabel lama, membuat tabel baru, dan memindahkan isinya.
+      await db.execute(
+        'ALTER TABLE $tableTransactions RENAME TO tmp_transactions',
+      );
 
-  // 1. Fungsi Insert (Saat klik "Lanjut Bayar")
+      await _createDB(db, newVersion);
+
+      // Pindahkan data lama. Set default mode_plat = 1 (Pakai Plat) dan is_sync = 0.
+      await db.execute('''
+        INSERT INTO $tableTransactions(id_transaksi_lokal, nominal, plat_nomor, kategori_kendaraan, waktu_transaksi, status, id_jukir, nama_jukir, nop, foto_kendaraan, mode_plat, is_sync)
+        SELECT id_transaksi_lokal, nominal, plat_nomor, kategori_kendaraan, waktu_transaksi, status, id_jukir, nama_jukir, nop, foto_kendaraan, 1, 0
+        FROM tmp_transactions
+      ''');
+
+      await db.execute('DROP TABLE tmp_transactions');
+    }
+  }
+
+  // --- FUNGSI CRUD DASAR ---
+
   Future<int> insertTransaction(Map<String, dynamic> row) async {
     final db = await instance.database;
     return await db.insert(
@@ -54,7 +84,6 @@ class DatabaseHelper {
     );
   }
 
-  // 2. Fungsi Update Status (Saat klik "OK" di layar QRIS)
   Future<int> updateTransactionStatus(
     String idTransaksi,
     String newStatus,
@@ -68,15 +97,21 @@ class DatabaseHelper {
     );
   }
 
-  // 3. Fungsi Ambil total kendaraan
-  /// Mengambil total kendaraan (Motor & Mobil) yang sudah PAID HARI INI
+  // [FUNGSI BARU]: Update status sinkronisasi menjadi 1 (Sukses dikirim ke BE)
+  Future<int> markTransactionAsSynced(String idTransaksi) async {
+    final db = await instance.database;
+    return await db.update(
+      tableTransactions,
+      {'is_sync': 1},
+      where: 'id_transaksi_lokal = ?',
+      whereArgs: [idTransaksi],
+    );
+  }
+
   Future<Map<String, int>> getDailyVehicleCount() async {
     final db = await database;
-
-    // Ambil tanggal hari ini dalam format YYYY-MM-DD
     final today = DateTime.now().toIso8601String().substring(0, 10);
 
-    // Query efisien: Kelompokkan dan hitung langsung di level Database
     final List<Map<String, dynamic>> result = await db.rawQuery(
       '''
       SELECT kategori_kendaraan, COUNT(*) as total
@@ -99,19 +134,17 @@ class DatabaseHelper {
     return {'motor': motorCount, 'mobil': mobilCount};
   }
 
-  // 4. Fungsi Mengambil Transaksi yang Belum Terkirim (Gagal/Offline)
-  // Asumsi: Saat offline, Anda menyimpan status = 'PENDING'
+  // [PERBAIKAN]: Fungsi ini sekarang melihat is_sync == 0, bukan sekadar status.
   Future<List<Map<String, dynamic>>> getUnsyncedTransactions() async {
     final db = await instance.database;
-    // Mengambil semua baris yang statusnya sesuai dengan kamus arsitektur baru kita
     return await db.query(
       tableTransactions,
-      where: 'status IN (?, ?, ?)',
-      whereArgs: ['PENDING_PAYMENT', 'PAID_OFFLINE', 'FREE_OFFLINE'],
+      // Kita ambil semua yang belum tersinkronisasi, asalkan transaksi itu sudah SELESAI di HP
+      where: 'is_sync = ? AND status IN (?, ?)',
+      whereArgs: [0, 'PAID_OFFLINE', 'FREE_OFFLINE'],
     );
   }
 
-  // 5. Fungsi Membersihkan Data (Cleanup) Setelah Sukses Kirim ke BE
   Future<int> deleteTransaction(String idTransaksi) async {
     final db = await instance.database;
     return await db.delete(

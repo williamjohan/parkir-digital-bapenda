@@ -3,15 +3,18 @@
 import '../models/local_transaction_model.dart';
 
 abstract class IParkingTransactionLocalDataSource {
-  /// Memproses kompresi foto 3MB -> 10KB, membuat UUID,
+  /// Memproses kompresi foto 3MB -> 10KB (jika modePlat == 1), membuat UUID,
   /// lalu menyimpan data ke SQLite.
   /// Mengembalikan model yang sudah matang untuk dilempar ke UI/Kasir.
   Future<LocalTransactionModel> saveNewTransaction({
-    required String platNomor,
+    String?
+    platNomor, // [PERBAIKAN]: Menjadi opsional (bisa null) untuk Tanpa Plat
     required String kategoriKendaraan,
-    required String rawImagePath, // Path foto mentah dari kamera
+    String?
+    rawImagePath, // [PERBAIKAN]: Menjadi opsional (bisa null) untuk Tanpa Plat
     required bool
-    isFree, // Untuk menentukan status awal (PENDING_PAYMENT atau FREE_PAYMENT)
+    isFree, // Untuk menentukan status awal (PENDING_PAYMENT atau FREE_OFFLINE)
+    required int modePlat, // [TAMBAHAN BARU]: 0 = Tanpa Plat, 1 = Pakai Plat
     required String idJukir,
     required String namaJukir,
     required String nop,

@@ -18,43 +18,44 @@ class ParkingTransactionLocalDataSourceImpl
 
   @override
   Future<LocalTransactionModel> saveNewTransaction({
-    required String platNomor,
+    String? platNomor, // [PERBAIKAN]
     required String kategoriKendaraan,
-    required String rawImagePath,
+    String? rawImagePath, // [PERBAIKAN]
     required bool isFree,
+    required int modePlat, // [TAMBAHAN]
     required String idJukir,
     required String namaJukir,
     required String nop,
   }) async {
-    // 1. KOMPRESI FOTO (Mesin Pres 3MB -> 10KB)
-    final String fileName = 'parkir_${DateTime.now().millisecondsSinceEpoch}';
-    final String? compressedImagePath = await _imageService
-        .compressAndSaveImage(
-          originalFile: File(rawImagePath),
-          fileName: fileName,
-        );
+    String? finalImagePath;
 
-    if (compressedImagePath == null) {
-      throw Exception(
-        'Gagal mengompresi foto kendaraan. Memori mungkin penuh.',
+    // [PERBAIKAN LOGIKA]: Hanya kompres foto jika Pakai Plat (modePlat == 1)
+    if (modePlat == 1 && rawImagePath != null && rawImagePath.isNotEmpty) {
+      final String fileName = 'parkir_${DateTime.now().millisecondsSinceEpoch}';
+      finalImagePath = await _imageService.compressAndSaveImage(
+        originalFile: File(rawImagePath),
+        fileName: fileName,
       );
+
+      if (finalImagePath == null) {
+        throw Exception(
+          'Gagal mengompresi foto kendaraan. Memori mungkin penuh.',
+        );
+      }
+      // EKSEKUSI MATI FOTO MENTAH
+      await _imageService.deleteImage(rawImagePath);
     }
 
-    // 2. EKSEKUSI MATI FOTO MENTAH (Mencegah Memory Leak HP Jukir!)
-    await _imageService.deleteImage(rawImagePath);
-
-    // 3. GENERATE IDENTITAS TRANSAKSI
     final String idTransaksi = const Uuid().v4();
     final String waktuTransaksi = DateTime.now().toIso8601String();
 
-    // [KESEPAKATAN ARSITEKTUR]: Penentuan Status Awal
-    final String status = isFree ? 'FREE_PAYMENT' : 'PENDING_PAYMENT';
+    // Sesuai The Free Parking Rule
+    final String status = isFree ? 'FREE_OFFLINE' : 'PENDING_PAYMENT';
 
-    // Penentuan Nominal Lokal (Sebagai cadangan jika API lama)
     final bool isMobil = kategoriKendaraan.toLowerCase() == 'mobil';
     final int nominal = isFree ? 0 : (isMobil ? 5000 : 2000);
 
-    // 4. RAKIT MODEL TRANSAKSI
+    // RAKIT MODEL TRANSAKSI LOKAL
     final transaction = LocalTransactionModel(
       idTransaksiLokal: idTransaksi,
       nominal: nominal,
@@ -65,13 +66,14 @@ class ParkingTransactionLocalDataSourceImpl
       idJukir: idJukir,
       namaJukir: namaJukir,
       nop: nop,
-      fotoKendaraan: compressedImagePath, // Gunakan path 10KB!
+      fotoKendaraan: finalImagePath, // Bisa berupa string path atau null
+      modePlat: modePlat, // Masukkan dari parameter
+      isSync: 0, // [DEFAULT]: 0 karena baru dibuat dan belum di-upload
     );
 
-    // 5. SIMPAN KE BUKU KAS (SQLite)
+    // SIMPAN KE SQLite
     await DatabaseHelper.instance.insertTransaction(transaction.toJson());
 
-    // 6. KEMBALIKAN DATA MATANG KE REPOSITORY
     return transaction;
   }
 

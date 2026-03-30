@@ -18,13 +18,13 @@ class ParkingTransactionRepositoryImpl
 
   @override
   Future<Either<Failure, LocalTransactionModel>> saveNewTransaction({
-    required String platNomor,
+    String? platNomor, // [PERBAIKAN]
     required String kategoriKendaraan,
-    required String rawImagePath,
+    String? rawImagePath, // [PERBAIKAN]
     required bool isFree,
+    required int modePlat, // [TAMBAHAN]
   }) async {
     try {
-      // 1. Manajer mengambil identitas Jukir dari brankas rahasia
       final jukirProfile = await _secureStorage.getJukirProfile();
       if (jukirProfile == null) {
         return const Left(
@@ -32,21 +32,19 @@ class ParkingTransactionRepositoryImpl
         );
       }
 
-      // 2. Manajer menyuruh Data Source mengeksekusi penyimpanan
       final transaction = await _localDataSource.saveNewTransaction(
         platNomor: platNomor,
         kategoriKendaraan: kategoriKendaraan,
         rawImagePath: rawImagePath,
         isFree: isFree,
+        modePlat: modePlat, // Teruskan ke Data Source
         idJukir: jukirProfile['id_jukir'] ?? '',
         namaJukir: jukirProfile['nama'] ?? '',
         nop: jukirProfile['nop'] ?? '',
       );
 
-      // 3. Kembalikan hasil sukses (Right)
       return Right(transaction);
     } catch (e) {
-      // Tangkap error jika memori penuh saat kompresi atau SQLite gagal
       return Left(DatabaseFailure('Gagal menyimpan parkir: ${e.toString()}'));
     }
   }

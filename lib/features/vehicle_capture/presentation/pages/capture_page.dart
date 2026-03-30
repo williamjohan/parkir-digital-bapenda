@@ -152,7 +152,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               platNomor: platNomor,
               kategoriKendaraan: namaKategori,
               imagePath: imagePath,
-              isFree: false, // Default berbayar untuk simulasi
+              isFree: false,
+              modePlat: 1,
             );
           }
         },

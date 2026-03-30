@@ -16,20 +16,21 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
 
   /// Fungsi ini akan dipanggil dari CapturePage saat Jukir klik "Lanjut Bayar"
   Future<void> processNewTransaction({
-    required String platNomor,
+    String? platNomor, // Opsional
     required String kategoriKendaraan,
-    required String imagePath,
-    // Asumsi default adalah berbayar (isFree = false).
-    // Nanti bisa dibuat dinamis jika Jukir memindai profil khusus.
-    bool isFree = false,
+    String? imagePath, // Opsional
+    required bool isFree,
+    required int
+    modePlat, // [WAJIB ADA]: UI yang memanggil ini harus memberitahu mode apa yang dipakai
   }) async {
-    emit(ParkingTransactionLoading());
+    emit(ParkingTransactionLoading()); // Atau state loading Anda
 
     final result = await _saveUseCase.execute(
       platNomor: platNomor,
       kategoriKendaraan: kategoriKendaraan,
       rawImagePath: imagePath,
       isFree: isFree,
+      modePlat: modePlat,
     );
 
     result.fold(
