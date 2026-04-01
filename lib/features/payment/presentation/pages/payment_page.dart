@@ -3,11 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
+import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../shared/ticket_preview_widget.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
 
@@ -26,8 +29,9 @@ class PaymentPageArgs {
 
 class PaymentPage extends StatelessWidget {
   final PaymentPageArgs args;
+  final _secureStorage = locator<ISecureStorageManager>();
 
-  const PaymentPage({super.key, required this.args});
+  PaymentPage({super.key, required this.args});
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +126,50 @@ class PaymentPage extends StatelessWidget {
                     // TOMBOL "SELESAI"
                     PbPrimaryButton(
                       text: 'Selesai (Simulasi Lunas)',
-                      onPressed: () {
-                        context.read<PaymentCubit>().confirmPayment(
-                          state.idTransaksi,
+                      onPressed: () async {
+                        final profile = await _secureStorage.getJukirProfile();
+
+                        if (!context.mounted) return; // 🔥 WAJIB
+
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return Dialog(
+                              child: PreviewTicketWidget(
+                                deviceId: profile?['idDevice'] ?? '',
+                                orderId: state.idTransaksi,
+                                objekPajak:
+                                    profile?['namaObjekPajak'] ?? 'Objek Pajak',
+                                alamatObjekPajak:
+                                    profile?['alamat'] ?? 'Alamat Objek Pajak',
+                                waktuParkir: DateFormat(
+                                  'dd MMM yyyy • HH:mm',
+                                  'id_ID',
+                                ).format(DateTime.now()),
+                                tipeKendaraan: args.kategoriKendaraan == 'motor'
+                                    ? 'Motor'
+                                    : 'Mobil',
+                                isQuickMode: false,
+                                isFree: profile?['pungutTarif'] == 1,
+                                noKendaraan: args.platNomor,
+                                tarifParkir: state.nominal,
+                                idTransaksi: state.idTransaksi,
+                                okPressed: () {
+                                  Navigator.pop(context); // tutup dialog
+                                  // context.pop(
+                                  //   true,
+                                  // ); // balik ke halaman sebelumnya
+                                  // context.read<PaymentCubit>().confirmPayment(
+                                  //   state.idTransaksi,
+                                  // );
+                                },
+                                printPressed: () {
+                                  // nanti bisa integrasi printer di sini
+                                },
+                              ),
+                            );
+                          },
                         );
                       },
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:parkir_digital_bapenda/features/parking_transaction/persentation/cubit/sync_cubit.dart';
 import 'core/di/injection.dart';
 import 'core/routes/app_router.dart';
@@ -9,6 +10,7 @@ import 'features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await initializeDateFormatting('id_ID', null);
   configureDependencies();
   runApp(const MyApp());
 }

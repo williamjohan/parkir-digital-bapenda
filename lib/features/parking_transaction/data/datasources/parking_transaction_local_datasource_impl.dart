@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/utils/transaction_id_utils.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../core/storage/database_helper.dart';
 import '../../../../core/services/image/i_image_service.dart';
 import '../models/local_transaction_model.dart';
