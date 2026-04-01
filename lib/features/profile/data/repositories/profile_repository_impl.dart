@@ -33,6 +33,7 @@ class ProfileRepositoryImpl implements IProfileRepository {
         kodeGate: userModel.kodeGate,
         namaGate: userModel.namaGate,
         shift: userModel.shift,
+        alamat: userModel.alamat,
       );
 
       return Right(userModel);
