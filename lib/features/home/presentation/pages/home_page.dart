@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -33,20 +34,20 @@ class _HomePageState extends State<HomePage> {
     // Memuat data pertama kali saat Home dibuka
     context.read<HomeCubit>().loadDashboardData();
 
-    // _checkSecureStorageProfile();
+    _checkSecureStorageProfile();
   }
 
-  // Future<void> _checkSecureStorageProfile() async {
-  //   // Sesuaikan cara Anda memanggil SecureStorageManager di file ini
-  //   // Misalnya menggunakan locator GetIt:
-  //   final secureStorage = locator<ISecureStorageManager>();
-  //   final profile = await secureStorage.getJukirProfile();
+  Future<void> _checkSecureStorageProfile() async {
+    // Sesuaikan cara Anda memanggil SecureStorageManager di file ini
+    // Misalnya menggunakan locator GetIt:
+    final secureStorage = locator<ISecureStorageManager>();
+    final profile = await secureStorage.getJukirProfile();
 
-  //   debugPrint('=== AUDIT SECURE STORAGE ===');
-  //   debugPrint('Isi Profil: $profile');
-  //   debugPrint('Pungut Tarif: ${profile?['pungutTarif']}');
-  //   debugPrint('============================');
-  // }
+    debugPrint('=== AUDIT SECURE STORAGE ===');
+    debugPrint('Isi Profil: $profile');
+    debugPrint('Pungut Tarif: ${profile?['pungutTarif']}');
+    debugPrint('============================');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +88,7 @@ class _HomePageState extends State<HomePage> {
       child: AppBackHandler(
         child: Scaffold(
           backgroundColor: AppColors.background,
+          drawer: const HomeDrawer(),
           appBar: AppBar(
             title: GestureDetector(
               onDoubleTap: () {

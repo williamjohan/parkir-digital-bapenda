@@ -1,7 +1,9 @@
 // lib/features/auth/presentation/cubit/app_auth/app_auth_cubit.dart
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../../core/storage/secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
 import '../../../domain/usecases/check_auth_status_usecase.dart';
 import '../../../domain/usecases/logout_usecase.dart';
@@ -38,16 +40,26 @@ class AppAuthCubit extends Cubit<AppAuthState> {
         final profileResult = await _getProfile();
 
         profileResult.fold(
-          (failure) {
-            // [OFFLINE TOLERANCE]: Jika server RTO atau sinyal jelek saat ambil profil,
-            // Jukir TETAP DIIZINKAN MASUK ke Home menggunakan data lokal yang ada di brankas.
+          (failure) async {
+            // Tambahkan async
             AppLogger.error(
               ">>> [AppAuthCubit] Gagal sinkronisasi profil: ${failure.message}",
             );
-            emit(AppAuthenticated());
+
+            final locator = GetIt.instance; // Pastikan Anda import get_it
+            final localProfile = await locator<ISecureStorageManager>()
+                .getJukirProfile();
+
+            if (localProfile != null) {
+              // Boleh masuk pakai Offline Tolerance (Data Kemarin)
+              emit(AppAuthenticated());
+            } else {
+              // Dilarang keras masuk! Brankas kosong dan API gagal.
+              // Biasanya terjadi pada Fresh Login yang sinyalnya jelek.
+              emit(AppUnauthenticated());
+            }
           },
           (userModel) {
-            // Jika sukses, profil di brankas otomatis sudah tertimpa yang baru.
             AppLogger.debug(
               ">>> [AppAuthCubit] Profil sukses disinkronkan: ${userModel.namaUser}",
             );

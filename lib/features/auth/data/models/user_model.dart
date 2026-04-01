@@ -6,7 +6,6 @@ part 'user_model.g.dart';
 
 @JsonSerializable()
 class UserModel {
-  // [KUNCI KESAKTIAN]: BE mengirim 'idUser', tapi di aplikasi kita tetap pakai 'idJukir'
   @JsonKey(name: 'idUser', defaultValue: '')
   final String idUser;
 
@@ -17,16 +16,26 @@ class UserModel {
   @JsonKey(name: 'nop', defaultValue: '')
   final String nop;
 
-  // [TAMBAHAN BONUS BE]: Sangat berguna untuk ditampilkan di Header Home Screen Jukir
   @JsonKey(name: 'namaObjekPajak', defaultValue: '')
   final String namaObjekPajak;
 
   @JsonKey(name: 'alamat', defaultValue: '')
   final String alamat;
 
-  // [TAMBAHAN WAJIB]: Menangkap status tarif dari Backend (0/1/2)
   @JsonKey(name: 'pungutTarif', defaultValue: 0)
   final int pungutTarif;
+
+  @JsonKey(name: 'lokasiId', defaultValue: 0)
+  final int lokasiId;
+
+  @JsonKey(name: 'namaLokasi', defaultValue: '')
+  final String namaLokasi;
+
+  @JsonKey(name: 'kodeGate', defaultValue: '')
+  final String kodeGate;
+
+  @JsonKey(name: 'namaGate', defaultValue: '')
+  final String namaGate;
 
   UserModel({
     required this.idUser,
@@ -34,7 +43,11 @@ class UserModel {
     required this.nop,
     this.namaObjekPajak = '',
     this.alamat = '',
-    this.pungutTarif = 0, // Default 0 (Tidak diketahui) agar aman dari null
+    this.pungutTarif = 0,
+    this.lokasiId = 0,
+    this.namaLokasi = '',
+    this.kodeGate = '',
+    this.namaGate = '',
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

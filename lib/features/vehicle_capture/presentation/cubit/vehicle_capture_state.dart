@@ -66,6 +66,6 @@ class VehicleCaptureState extends Equatable {
     errorMessage,
     isFlashOn,
     capturedImagePath,
-    isFreeParking, // [PERBAIKAN 3]: Daftarkan ke Equatable agar UI bisa mendeteksi perubahan!
+    isFreeParking,
   ];
 }

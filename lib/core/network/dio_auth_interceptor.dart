@@ -35,8 +35,7 @@ class DioAuthInterceptor extends Interceptor {
       final refreshToken = await _storage.getRefreshToken();
 
       if (refreshToken == null || refreshToken.isEmpty) {
-        await _storage
-            .clearAllTokens(); // Pastikan nama method sesuai dengan yang ada di storage Anda
+        await _storage.clearAllTokens();
         return super.onError(err, handler);
       }
 

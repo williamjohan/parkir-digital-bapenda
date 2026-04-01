@@ -18,15 +18,15 @@ class AuthRepositoryImpl implements IAuthRepository {
   @override
   Future<Either<Failure, Unit>> login(String username, String password) async {
     try {
+      await _secureStorage.clearAllTokens();
+
       final response = await _remoteDataSource.login(username, password);
 
       if (response.accessToken.isNotEmpty) {
-        // 2. Simpan Kunci Akses (Token) Saja!
         await _secureStorage.saveAccessToken(response.accessToken);
         if (response.refreshToken.isNotEmpty) {
           await _secureStorage.saveRefreshToken(response.refreshToken);
         }
-
         return const Right(unit);
       } else {
         return const Left(AuthFailure('Token tidak ditemukan dari server.'));

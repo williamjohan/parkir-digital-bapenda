@@ -212,9 +212,6 @@ _i174.GetIt init(
       gh<_i269.UpdateParkingStatusUseCase>(),
     ),
   );
-  gh.factory<_i264.LoginCubit>(
-    () => _i264.LoginCubit(gh<_i188.LoginUseCase>()),
-  );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(
       gh<_i831.GenerateQrisUseCase>(),
@@ -227,6 +224,9 @@ _i174.GetIt init(
       gh<_i48.LogoutUseCase>(),
       gh<_i965.GetProfileUseCase>(),
     ),
+  );
+  gh.factory<_i264.LoginCubit>(
+    () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
   );
   return getIt;
 }
