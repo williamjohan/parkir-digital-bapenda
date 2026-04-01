@@ -9,7 +9,6 @@ class UserModel {
   @JsonKey(name: 'idUser', defaultValue: '')
   final String idUser;
 
-  // BE mengirim 'namaUser', kita petakan ke 'nama'
   @JsonKey(name: 'namaUser', defaultValue: '')
   final String namaUser;
 
@@ -37,6 +36,13 @@ class UserModel {
   @JsonKey(name: 'namaGate', defaultValue: '')
   final String namaGate;
 
+  // [TAMBAHAN]: Parameter penting untuk Final Boss
+  @JsonKey(name: 'idDevice', defaultValue: '')
+  final String idDevice;
+
+  @JsonKey(name: 'shift', defaultValue: '')
+  final String shift;
+
   UserModel({
     required this.idUser,
     required this.namaUser,
@@ -48,6 +54,8 @@ class UserModel {
     this.namaLokasi = '',
     this.kodeGate = '',
     this.namaGate = '',
+    this.idDevice = '',
+    this.shift = '',
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

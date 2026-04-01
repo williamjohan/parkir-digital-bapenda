@@ -19,21 +19,22 @@ class ProfileRepositoryImpl implements IProfileRepository {
   @override
   Future<Either<Failure, UserModel>> getProfile() async {
     try {
-      // 1. Ambil data dari server
       final userModel = await _remoteDataSource.getProfile();
 
-      // 2. Simpan/Timpa data ke Brankas dengan data yang baru dan lengkap!
-      // Memastikan kita menggunakan nama parameter yang sudah kita perbaiki sebelumnya.
       await _secureStorage.saveJukirProfile(
         idUserStorage: userModel.idUser,
         namaUserStorage: userModel.namaUser,
         nopStorage: userModel.nop,
-        // [PERBAIKAN]: Teruskan data tarif dari model ke brankas
         pungutTarif: userModel.pungutTarif,
         namaObjekPajak: userModel.namaObjekPajak,
+        idDevice: userModel.idDevice,
+        lokasiId: userModel.lokasiId,
+        namaLokasi: userModel.namaLokasi,
+        kodeGate: userModel.kodeGate,
+        namaGate: userModel.namaGate,
+        shift: userModel.shift,
       );
 
-      // 3. Kembalikan data sukses
       return Right(userModel);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));

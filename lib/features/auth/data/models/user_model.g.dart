@@ -17,6 +17,8 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   namaLokasi: json['namaLokasi'] as String? ?? '',
   kodeGate: json['kodeGate'] as String? ?? '',
   namaGate: json['namaGate'] as String? ?? '',
+  idDevice: json['idDevice'] as String? ?? '',
+  shift: json['shift'] as String? ?? '',
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -30,4 +32,6 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'namaLokasi': instance.namaLokasi,
   'kodeGate': instance.kodeGate,
   'namaGate': instance.namaGate,
+  'idDevice': instance.idDevice,
+  'shift': instance.shift,
 };

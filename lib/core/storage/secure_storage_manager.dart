@@ -13,13 +13,19 @@ abstract class ISecureStorageManager {
   Future<void> clearAllTokens();
   Future<bool> hasValidToken();
 
-  // Jukir Profile
+  // [PERBAIKAN]: Perlebar pintu brankas untuk menerima peluru Sync
   Future<void> saveJukirProfile({
     required String idUserStorage,
     required String namaUserStorage,
     required String nopStorage,
     int? pungutTarif,
     String? namaObjekPajak,
+    String? idDevice,
+    int? lokasiId,
+    String? namaLokasi,
+    String? kodeGate,
+    String? namaGate,
+    String? shift,
   });
   Future<Map<String, dynamic>?> getJukirProfile();
   Future<void> clearJukirProfile();
@@ -73,16 +79,27 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     required String idUserStorage,
     required String namaUserStorage,
     required String nopStorage,
-    int? pungutTarif, // [TAMBAHAN]
-    String? namaObjekPajak, // [TAMBAHAN]
+    int? pungutTarif,
+    String? namaObjekPajak,
+    String? idDevice,
+    int? lokasiId,
+    String? namaLokasi,
+    String? kodeGate,
+    String? namaGate,
+    String? shift,
   }) async {
-    // Kita bungkus jadi Map, lalu ubah ke String JSON
     final profileData = {
       'idUser': idUserStorage,
       'namaUser': namaUserStorage,
       'nop': nopStorage,
-      'pungutTarif': pungutTarif, // Masukkan ke dalam JSON lokal
+      'pungutTarif': pungutTarif,
       'namaObjekPajak': namaObjekPajak,
+      'idDevice': idDevice,
+      'lokasiId': lokasiId,
+      'namaLokasi': namaLokasi,
+      'kodeGate': kodeGate,
+      'namaGate': namaGate,
+      'shift': shift,
     };
     final jsonString = jsonEncode(profileData);
     await _storage.write(key: _keyJukirProfile, value: jsonString);
