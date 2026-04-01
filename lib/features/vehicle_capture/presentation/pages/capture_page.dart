@@ -13,6 +13,7 @@ import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_state.dart';
+import '../../../parking_transaction/persentation/cubit/sync_cubit.dart';
 import '../../../payment/presentation/pages/payment_page.dart';
 import '../cubit/vehicle_capture_cubit.dart';
 import '../cubit/vehicle_capture_state.dart';
@@ -55,8 +56,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // [PERBAIKAN FINAL]: Tambahkan Listener untuk Sang Otak di lapisan terluar!
-    // Ini berfungsi menangkap hasil kompresi dan SQLite.
     return BlocListener<ParkingTransactionCubit, ParkingTransactionState>(
       listener: (context, parkingState) async {
         if (parkingState is ParkingTransactionFailure) {
@@ -70,14 +69,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               .read<VehicleCaptureCubit>()
               .cancelNavigation(); // Batalkan loading
         } else if (parkingState is ParkingTransactionSaveSuccess) {
-          // BINGO! FOTO SUDAH DIKOMPRES & MASUK SQLITE!
-
-          // [PERBAIKAN 1]: Buka koper datanya!
           final trx = parkingState.transaction;
 
           // [PERBAIKAN 2]: THE FREE PARKING RULE
           if (trx.status == 'PENDING_PAYMENT') {
             // --- KAWASAN BERBAYAR (Wajib masuk Kasir/QRIS) ---
+            context.read<SyncCubit>().syncDataBackground();
+
             final String namaKategori =
                 context
                     .read<VehicleCaptureCubit>()
@@ -123,6 +121,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 
             // Hapus indikator loading di kamera
             context.read<VehicleCaptureCubit>().cancelNavigation();
+
+            context.read<SyncCubit>().syncDataBackground();
 
             // Munculkan Modal Dialog Wajib Klik
             PbShowDialog.show(
