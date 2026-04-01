@@ -21,17 +21,17 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    // [PERBAIKAN]: Naik versi ke 2, dan tambahkan onUpgrade
+    // [MIGRASI KUNCI]: Naik versi ke 3 untuk menyuntikkan GPS
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // [PERBAIKAN SKEMA BARU]
+    // [SKEMA BARU V3]: Langsung memiliki latitude & longitude
     await db.execute('''
       CREATE TABLE $tableTransactions (
         id_transaksi_lokal TEXT PRIMARY KEY,
@@ -45,24 +45,25 @@ class DatabaseHelper {
         nop TEXT NOT NULL,
         foto_kendaraan TEXT, 
         mode_plat INTEGER NOT NULL,
-        is_sync INTEGER NOT NULL DEFAULT 0
+        is_sync INTEGER NOT NULL DEFAULT 0,
+        latitude TEXT, 
+        longitude TEXT 
       )
     ''');
-    // Keterangan: plat_nomor dan foto_kendaraan sudah TIDAK memiliki 'NOT NULL'
   }
 
   // [SCRIPT MIGRASI OTOMATIS]
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    // Migrasi dari V1 ke V2 (Yang sudah Anda buat sebelumnya)
     if (oldVersion < 2) {
-      // Karena SQLite tidak mendukung ALTER COLUMN DROP NOT NULL,
-      // kita harus merename tabel lama, membuat tabel baru, dan memindahkan isinya.
       await db.execute(
         'ALTER TABLE $tableTransactions RENAME TO tmp_transactions',
       );
 
+      // (Catatan: _createDB saat dipanggil di sini akan membuat versi V3 secara langsung,
+      // jadi kolom latitude & longitude sudah ikut terbuat).
       await _createDB(db, newVersion);
 
-      // Pindahkan data lama. Set default mode_plat = 1 (Pakai Plat) dan is_sync = 0.
       await db.execute('''
         INSERT INTO $tableTransactions(id_transaksi_lokal, nominal, plat_nomor, kategori_kendaraan, waktu_transaksi, status, id_jukir, nama_jukir, nop, foto_kendaraan, mode_plat, is_sync)
         SELECT id_transaksi_lokal, nominal, plat_nomor, kategori_kendaraan, waktu_transaksi, status, id_jukir, nama_jukir, nop, foto_kendaraan, 1, 0
@@ -71,9 +72,21 @@ class DatabaseHelper {
 
       await db.execute('DROP TABLE tmp_transactions');
     }
+
+    // [MIGRASI BARU: V2 ke V3]
+    if (oldVersion == 2) {
+      // Menambahkan kolom GPS tanpa menghapus data yang ada.
+      // Karena kita mendefinisikan tipe TEXT (bisa null), ini adalah operasi yang 100% aman.
+      await db.execute(
+        'ALTER TABLE $tableTransactions ADD COLUMN latitude TEXT',
+      );
+      await db.execute(
+        'ALTER TABLE $tableTransactions ADD COLUMN longitude TEXT',
+      );
+    }
   }
 
-  // --- FUNGSI CRUD DASAR ---
+  // --- FUNGSI CRUD DASAR TETAP SAMA ---
 
   Future<int> insertTransaction(Map<String, dynamic> row) async {
     final db = await instance.database;
@@ -97,7 +110,6 @@ class DatabaseHelper {
     );
   }
 
-  // [FUNGSI BARU]: Update status sinkronisasi menjadi 1 (Sukses dikirim ke BE)
   Future<int> markTransactionAsSynced(String idTransaksi) async {
     final db = await instance.database;
     return await db.update(
@@ -108,16 +120,9 @@ class DatabaseHelper {
     );
   }
 
-  // 3. Fungsi Ambil total kendaraan
-  /// Mengambil total kendaraan (Motor & Mobil) HARI INI tanpa mempedulikan status bayar/sync
   Future<Map<String, int>> getDailyVehicleCount() async {
     final db = await database;
-
-    // Ambil tanggal hari ini dalam format YYYY-MM-DD
     final today = DateTime.now().toIso8601String().substring(0, 10);
-
-    // [PERBAIKAN]: Hapus filter "WHERE status IN..."
-    // Sekarang kita menghitung SEMUA baris yang waktu_transaksinya hari ini
     final List<Map<String, dynamic>> result = await db.rawQuery(
       '''
       SELECT kategori_kendaraan, COUNT(*) as total
@@ -140,12 +145,10 @@ class DatabaseHelper {
     return {'motor': motorCount, 'mobil': mobilCount};
   }
 
-  // [PERBAIKAN]: Fungsi ini sekarang melihat is_sync == 0, bukan sekadar status.
   Future<List<Map<String, dynamic>>> getUnsyncedTransactions() async {
     final db = await instance.database;
     return await db.query(
       tableTransactions,
-      // Kita ambil semua yang belum tersinkronisasi, asalkan transaksi itu sudah SELESAI di HP
       where: 'is_sync = ? AND status IN (?, ?)',
       whereArgs: [0, 'PAID_OFFLINE', 'FREE_OFFLINE'],
     );
