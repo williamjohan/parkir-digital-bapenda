@@ -67,15 +67,14 @@ class _QuickParkPageState extends State<QuickParkPage> {
               final status = state.transaction.status;
 
               if (status == 'FREE_OFFLINE') {
-                // 1. Jika Gratis: Tampilkan sukses kecil dan langsung tendang ke Home
-                PbStatusSnackbar.show(
-                  context,
-                  message: 'Parkir Gratis $kategoriTitle berhasil dicatat!',
-                  isError: false,
-                );
                 context.read<SyncCubit>().syncDataBackground();
 
-                context.pop(); // Kembali ke Home
+                PbShowDialog.show(
+                  context,
+                  title: 'Berhasil!',
+                  description:
+                      'Parkir Gratis $kategoriTitle\nberhasil dicatat.',
+                );
               } else if (status == 'PENDING_PAYMENT') {
                 // 2. Jika Berbayar: Arahkan ke Halaman QRIS
                 // (Sementara kita beri dialog peringatan sampai halaman QRIS siap)
