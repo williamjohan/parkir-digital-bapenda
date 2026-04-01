@@ -14,16 +14,18 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
   ParkingTransactionCubit(this._saveUseCase, this._updateUseCase)
     : super(ParkingTransactionInitial());
 
-  /// Fungsi ini universal, bisa dipanggil dari CapturePage maupun QuickParkPage
+  /// Fungsi ini universal, bisa dipanggil dari CapturePage (Pakai Plat)
+  /// maupun QuickParkPage (Tanpa Plat)
   Future<void> processNewTransaction({
-    String? platNomor, // Opsional
+    String? platNomor,
     required String kategoriKendaraan,
-    String? imagePath, // Opsional
-    required int modePlat, // [WAJIB ADA]: 0 = Tanpa Plat, 1 = Pakai Plat
+    String? imagePath,
+    required int modePlat,
   }) async {
+    // Beri tahu UI untuk memunculkan Loading (Sambil menunggu GPS 3 detik & Kompresi Foto)
     emit(ParkingTransactionLoading());
 
-    // 1. Eksekusi UseCase tanpa parameter isFree
+    // 1. Eksekusi UseCase (GPS dan Kompresi Foto terjadi di dalam sini secara gaib!)
     final result = await _saveUseCase.execute(
       platNomor: platNomor,
       kategoriKendaraan: kategoriKendaraan,
@@ -31,22 +33,41 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
       modePlat: modePlat,
     );
 
-    // 2. Tangani hasil dari mesin SQLite
+    // 2. Tangani hasil lemparan dari SQLite
     result.fold(
       (failure) {
-        if (!isClosed) emit(ParkingTransactionFailure(failure.message));
+        if (!isClosed) {
+          emit(ParkingTransactionFailure(failure.message));
+        }
       },
       (transaction) {
-        // [PERBAIKAN ARSITEKTUR]: Lempar seluruh objek transaction, bukan cuma ID-nya!
         if (!isClosed) {
+          // [KUNCI ARSITEKTUR]: Lempar seluruh objek transaction ke UI!
+          // UI (BlocListener) nanti yang akan mengecek:
+          // if (transaction.status == 'FREE_OFFLINE') -> Tampilkan Sukses & Kembali ke Home
+          // if (transaction.status == 'PENDING_PAYMENT') -> Navigasi ke halaman QRIS
           emit(ParkingTransactionSaveSuccess(transaction));
         }
       },
     );
   }
 
+  /// Dipanggil OLEH HALAMAN QRIS jika Jukir mengonfirmasi pembayaran
   Future<void> updateStatusToPaid(String idTransaksiLokal) async {
-    // Kita tidak perlu emit Loading agar UI Capture tidak berkedip
-    await _updateUseCase.execute(idTransaksiLokal, 'PAID_OFFLINE');
+    // Tidak perlu emit Loading agar UI QRIS tidak berkedip
+    final result = await _updateUseCase.execute(
+      idTransaksiLokal,
+      'PAID_OFFLINE',
+    );
+
+    result.fold(
+      (failure) {
+        if (!isClosed) emit(ParkingTransactionFailure(failure.message));
+      },
+      (_) {
+        // Jika sukses update ke PAID_OFFLINE, beri tahu UI untuk kembali ke Home
+        if (!isClosed) emit(ParkingTransactionUpdateSuccess());
+      },
+    );
   }
 }

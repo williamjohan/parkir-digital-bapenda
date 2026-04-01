@@ -12,8 +12,7 @@ abstract class IAuthRemoteDataSource {
 
 @LazySingleton(as: IAuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
-  final Dio
-  _dio; // Ingat, ini dio dari DioClient yang sudah ada AuthInterceptor-nya
+  final Dio _dio;
 
   AuthRemoteDataSourceImpl(this._dio);
 
@@ -27,30 +26,28 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
 
       final responseData = response.data;
 
-      // 1. Cek Envelope Bapenda
       if (responseData['isSuccess'] == true) {
         final beData = responseData['data'];
 
-        // 2. THE ADAPTER: Kita konversi JSON flat dari BE menjadi JSON nested untuk FE
+        // [PERBAIKAN]: Konversi secara eksplisit ke String/Int untuk mencegah tabrakan tipe
         final mappedJson = {
-          'accessToken': beData['accessToken'] ?? '',
-          'refreshToken': beData['refreshToken'] ?? '',
+          'accessToken': beData['accessToken']?.toString() ?? '',
+          'refreshToken': beData['refreshToken']?.toString() ?? '',
           'user': {
-            // Jika saat di-test BE belum siap dengan field ini,
-            // fallback (?? '') akan mengamankan aplikasi agar tidak crash!
-            'idUser': beData['idJukir'] ?? '',
+            'idUser':
+                beData['idJukir'] ??
+                0, // Biarkan utuh, Model yang akan merapikannya
             'namaUser': beData['namaUser'] ?? '',
             'nop': beData['nop'] ?? '',
-            // Siapkan slot kosong untuk data yang baru akan didapat nanti di /profile
             'namaObjekPajak': '',
             'alamat': '',
+            'pungutTarif': 0, // Beri default aman
+            'lokasiId': 0, // Beri default aman
           },
         };
 
-        // 3. Masukkan ke Model andalan Anda
         return AuthResponseModel.fromJson(mappedJson);
       } else {
-        // Jika isSuccess false dari BE
         throw AuthException(
           message:
               responseData['message'] ??

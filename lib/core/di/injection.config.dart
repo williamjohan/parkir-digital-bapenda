@@ -42,18 +42,26 @@ import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
 import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
 import '../../features/parking_transaction/data/datasources/i_parking_transaction_local_datasource.dart'
     as _i92;
+import '../../features/parking_transaction/data/datasources/i_parking_transaction_remote_datasource.dart'
+    as _i461;
 import '../../features/parking_transaction/data/datasources/parking_transaction_local_datasource_impl.dart'
     as _i462;
+import '../../features/parking_transaction/data/datasources/parking_transaction_remote_datasource_impl.dart'
+    as _i798;
 import '../../features/parking_transaction/data/repositories/parking_transaction_repository_impl.dart'
     as _i14;
 import '../../features/parking_transaction/domain/repositories/i_parking_transaction_repository.dart'
     as _i1054;
 import '../../features/parking_transaction/domain/usecases/save_parking_transaction_usecase.dart'
     as _i512;
+import '../../features/parking_transaction/domain/usecases/sync_parking_transactions_usecase.dart'
+    as _i785;
 import '../../features/parking_transaction/domain/usecases/update_parking_status_usecase.dart'
     as _i269;
 import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart'
     as _i877;
+import '../../features/parking_transaction/persentation/cubit/sync_cubit.dart'
+    as _i420;
 import '../../features/payment/data/datasources/payment_remote_datasource.dart'
     as _i247;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
@@ -161,6 +169,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(
     () => _i847.ProfileRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i461.IParkingTransactionRemoteDataSource>(
+    () => _i798.ParkingTransactionRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i879.IProfileRepository>(
     () => _i334.ProfileRepositoryImpl(
       gh<_i847.IProfileRemoteDataSource>(),
@@ -180,6 +191,13 @@ _i174.GetIt init(
   gh.lazySingleton<_i269.UpdateParkingStatusUseCase>(
     () => _i269.UpdateParkingStatusUseCase(
       gh<_i1054.IParkingTransactionRepository>(),
+    ),
+  );
+  gh.lazySingleton<_i785.SyncParkingTransactionsUseCase>(
+    () => _i785.SyncParkingTransactionsUseCase(
+      gh<_i1054.IParkingTransactionRepository>(),
+      gh<_i461.IParkingTransactionRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
     ),
   );
   gh.lazySingleton<_i589.IAuthRepository>(
@@ -223,6 +241,9 @@ _i174.GetIt init(
       gh<_i831.GenerateQrisUseCase>(),
       gh<_i393.ConfirmPaymentUseCase>(),
     ),
+  );
+  gh.factory<_i420.SyncCubit>(
+    () => _i420.SyncCubit(gh<_i785.SyncParkingTransactionsUseCase>()),
   );
   gh.lazySingleton<_i808.AppAuthCubit>(
     () => _i808.AppAuthCubit(

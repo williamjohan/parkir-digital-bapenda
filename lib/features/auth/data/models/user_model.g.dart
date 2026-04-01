@@ -7,18 +7,20 @@ part of 'user_model.dart';
 // **************************************************************************
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
-  idUser: json['idUser'] as String? ?? '',
-  namaUser: json['namaUser'] as String? ?? '',
-  nop: json['nop'] as String? ?? '',
-  namaObjekPajak: json['namaObjekPajak'] as String? ?? '',
-  alamat: json['alamat'] as String? ?? '',
-  pungutTarif: (json['pungutTarif'] as num?)?.toInt() ?? 0,
-  lokasiId: (json['lokasiId'] as num?)?.toInt() ?? 0,
-  namaLokasi: json['namaLokasi'] as String? ?? '',
-  kodeGate: json['kodeGate'] as String? ?? '',
-  namaGate: json['namaGate'] as String? ?? '',
-  idDevice: json['idDevice'] as String? ?? '',
-  shift: json['shift'] as String? ?? '',
+  idUser: _toString(json['idUser']),
+  namaUser: _toString(json['namaUser']),
+  nop: _toString(json['nop']),
+  namaObjekPajak: json['namaObjekPajak'] == null
+      ? ''
+      : _toString(json['namaObjekPajak']),
+  alamat: json['alamat'] == null ? '' : _toString(json['alamat']),
+  pungutTarif: json['pungutTarif'] == null ? 0 : _toInt(json['pungutTarif']),
+  lokasiId: json['lokasiId'] == null ? 0 : _toInt(json['lokasiId']),
+  namaLokasi: json['namaLokasi'] == null ? '' : _toString(json['namaLokasi']),
+  kodeGate: json['kodeGate'] == null ? '' : _toString(json['kodeGate']),
+  namaGate: json['namaGate'] == null ? '' : _toString(json['namaGate']),
+  idDevice: json['idDevice'] == null ? '' : _toString(json['idDevice']),
+  shift: json['shift'] == null ? '' : _toString(json['shift']),
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{

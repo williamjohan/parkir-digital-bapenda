@@ -1,5 +1,4 @@
 // lib/features/parking_transaction/data/repositories/parking_transaction_repository_impl.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
@@ -22,8 +21,8 @@ class ParkingTransactionRepositoryImpl
     required String kategoriKendaraan,
     String? rawImagePath,
     required int modePlat,
-    String? latitude, // [TAMBAHAN BARU]
-    String? longitude, // [TAMBAHAN BARU]
+    String? latitude,
+    String? longitude,
   }) async {
     try {
       // 1. Buka Brankas
@@ -48,8 +47,8 @@ class ParkingTransactionRepositoryImpl
         idJukir: jukirProfile['idUser'] ?? '',
         namaJukir: jukirProfile['namaUser'] ?? '',
         nop: jukirProfile['nop'] ?? '',
-        latitude: latitude, // [TAMBAHAN BARU]: Teruskan ke mesin bawah!
-        longitude: longitude, // [TAMBAHAN BARU]: Teruskan ke mesin bawah!
+        latitude: latitude,
+        longitude: longitude,
       );
 
       return Right(transaction);

@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/utils/transaction_id_utils.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/storage/database_helper.dart';
 import '../../../../core/services/image/i_image_service.dart';
@@ -45,7 +46,10 @@ class ParkingTransactionLocalDataSourceImpl
       await _imageService.deleteImage(rawImagePath);
     }
 
-    final String idTransaksi = const Uuid().v4();
+    final String idTransaksi = TransactionIdUtils.generateOrderId(
+      kategoriKendaraan: kategoriKendaraan,
+      modePlat: modePlat,
+    );
     final String waktuTransaksi = DateTime.now().toIso8601String();
 
     final String status = isFree ? 'FREE_OFFLINE' : 'PENDING_PAYMENT';
@@ -67,8 +71,8 @@ class ParkingTransactionLocalDataSourceImpl
       fotoKendaraan: finalImagePath,
       modePlat: modePlat,
       isSync: 0,
-      latitude: latitude, // [TAMBAHAN BARU]: Kunci lokasi ke dalam SQLite!
-      longitude: longitude, // [TAMBAHAN BARU]: Kunci lokasi ke dalam SQLite!
+      latitude: latitude,
+      longitude: longitude,
     );
 
     // SIMPAN KE SQLite

@@ -14,15 +14,16 @@ class ParkingTransactionInitial extends ParkingTransactionState {}
 
 class ParkingTransactionLoading extends ParkingTransactionState {}
 
-// [PERBAIKAN ARSITEKTUR]: State ini sekarang membawa "Oleh-oleh" lengkap dari SQLite
 class ParkingTransactionSaveSuccess extends ParkingTransactionState {
-  final LocalTransactionModel transaction;
+  final LocalTransactionModel transaction; // [PENTING]: Membawa seluruh data!
 
   const ParkingTransactionSaveSuccess(this.transaction);
 
   @override
   List<Object?> get props => [transaction];
 }
+
+class ParkingTransactionUpdateSuccess extends ParkingTransactionState {}
 
 class ParkingTransactionFailure extends ParkingTransactionState {
   final String message;

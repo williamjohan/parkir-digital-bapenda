@@ -3,7 +3,7 @@
 import '../models/local_transaction_model.dart';
 
 abstract class IParkingTransactionLocalDataSource {
-  /// Memproses kompresi foto 3MB -> 10KB (jika modePlat == 1), membuat UUID,
+  /// Memproses kompresi foto 3MB -> 10KB (jika modePlat == 1),
   /// menyertakan koordinat GPS, lalu menyimpan data ke SQLite.
   /// Mengembalikan model yang sudah matang untuk dilempar ke UI/Kasir.
   Future<LocalTransactionModel> saveNewTransaction({

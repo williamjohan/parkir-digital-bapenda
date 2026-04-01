@@ -10,6 +10,7 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_back_handler.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_state.dart';
+import '../../../parking_transaction/persentation/cubit/sync_cubit.dart';
 
 class QuickParkPage extends StatefulWidget {
   final String kategoriKendaraan; // 'motor' atau 'mobil'
@@ -22,18 +23,16 @@ class QuickParkPage extends StatefulWidget {
 
 class _QuickParkPageState extends State<QuickParkPage> {
   void _handleTapParkir(BuildContext context) {
-    // 1. Eksekusi Sang Otak (Universal)
     context.read<ParkingTransactionCubit>().processNewTransaction(
-      platNomor: null,
+      platNomor: null, // Tanpa plat
       kategoriKendaraan: widget.kategoriKendaraan,
-      imagePath: null,
-      modePlat: 0,
+      imagePath: null, // Tanpa foto
+      modePlat: 0, // 0 = Tanpa Plat
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Kapitalisasi huruf pertama untuk UI
     final String kategoriTitle =
         widget.kategoriKendaraan[0].toUpperCase() +
         widget.kategoriKendaraan.substring(1).toLowerCase();
@@ -51,7 +50,7 @@ class _QuickParkPageState extends State<QuickParkPage> {
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-            onPressed: () => context.pop(), // Kembali ke Home
+            onPressed: () => context.pop(),
           ),
         ),
         body: BlocConsumer<ParkingTransactionCubit, ParkingTransactionState>(
@@ -64,16 +63,35 @@ class _QuickParkPageState extends State<QuickParkPage> {
                 isError: true,
               );
             } else if (state is ParkingTransactionSaveSuccess) {
-              // Gunakan komponen modular PbShowDialog untuk Anti-Spam
-              PbShowDialog.show(
-                context,
-                title: 'Berhasil!',
-                description: 'Parkir Tanpa Plat\n$kategoriTitle tercatat.',
-              );
+              // [KUNCI ARSITEKTUR]: Cek status transaksinya!
+              final status = state.transaction.status;
+
+              if (status == 'FREE_OFFLINE') {
+                // 1. Jika Gratis: Tampilkan sukses kecil dan langsung tendang ke Home
+                PbStatusSnackbar.show(
+                  context,
+                  message: 'Parkir Gratis $kategoriTitle berhasil dicatat!',
+                  isError: false,
+                );
+                context.read<SyncCubit>().syncDataBackground();
+
+                context.pop(); // Kembali ke Home
+              } else if (status == 'PENDING_PAYMENT') {
+                // 2. Jika Berbayar: Arahkan ke Halaman QRIS
+                // (Sementara kita beri dialog peringatan sampai halaman QRIS siap)
+                PbShowDialog.show(
+                  context,
+                  title: 'Arahkan ke Kasir',
+                  description:
+                      'Fitur Pembayaran/QRIS untuk $kategoriTitle sedang dipersiapkan.',
+                );
+
+                // Nanti kodenya diganti menjadi seperti ini:
+                // context.pushNamed('payment_page', extra: state.transaction);
+              }
             }
           },
           builder: (context, state) {
-            // [MITIGASI ANTI-SPAM]: Kunci tombol jika Cubit sedang bekerja
             final bool isLocked = state is ParkingTransactionLoading;
 
             return SafeArea(
@@ -81,15 +99,11 @@ class _QuickParkPageState extends State<QuickParkPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // --- TOMBOL RAKSASA (MASSIVE HIT AREA) ---
                     GestureDetector(
-                      // Matikan fungsi tap saat isLocked (Loading)
                       onTap: isLocked ? null : () => _handleTapParkir(context),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        width: isLocked
-                            ? 230
-                            : 250, // Efek mengecil saat ditekan
+                        width: isLocked ? 230 : 250,
                         height: isLocked ? 230 : 250,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -134,8 +148,6 @@ class _QuickParkPageState extends State<QuickParkPage> {
                       ),
                     ),
                     const SizedBox(height: 60),
-
-                    // --- INSTRUKSI UX ---
                     Text(
                       'Tekan lingkaran untuk mencatat\nkendaraan tanpa plat nomor.',
                       textAlign: TextAlign.center,
