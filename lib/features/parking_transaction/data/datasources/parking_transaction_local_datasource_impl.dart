@@ -13,23 +13,23 @@ class ParkingTransactionLocalDataSourceImpl
     implements IParkingTransactionLocalDataSource {
   final IImageService _imageService;
 
-  // [INJEKSI]: Kita memasukkan layanan gambar ke jantung Data Source
   ParkingTransactionLocalDataSourceImpl(this._imageService);
 
   @override
   Future<LocalTransactionModel> saveNewTransaction({
-    String? platNomor, // [PERBAIKAN]
+    String? platNomor,
     required String kategoriKendaraan,
-    String? rawImagePath, // [PERBAIKAN]
+    String? rawImagePath,
     required bool isFree,
-    required int modePlat, // [TAMBAHAN]
+    required int modePlat,
     required String idJukir,
     required String namaJukir,
     required String nop,
+    String? latitude, // [TAMBAHAN BARU]
+    String? longitude, // [TAMBAHAN BARU]
   }) async {
     String? finalImagePath;
 
-    // [PERBAIKAN LOGIKA]: Hanya kompres foto jika Pakai Plat (modePlat == 1)
     if (modePlat == 1 && rawImagePath != null && rawImagePath.isNotEmpty) {
       final String fileName = 'parkir_${DateTime.now().millisecondsSinceEpoch}';
       finalImagePath = await _imageService.compressAndSaveImage(
@@ -42,20 +42,18 @@ class ParkingTransactionLocalDataSourceImpl
           'Gagal mengompresi foto kendaraan. Memori mungkin penuh.',
         );
       }
-      // EKSEKUSI MATI FOTO MENTAH
       await _imageService.deleteImage(rawImagePath);
     }
 
     final String idTransaksi = const Uuid().v4();
     final String waktuTransaksi = DateTime.now().toIso8601String();
 
-    // Sesuai The Free Parking Rule
     final String status = isFree ? 'FREE_OFFLINE' : 'PENDING_PAYMENT';
 
     final bool isMobil = kategoriKendaraan.toLowerCase() == 'mobil';
     final int nominal = isFree ? 0 : (isMobil ? 5000 : 2000);
 
-    // RAKIT MODEL TRANSAKSI LOKAL
+    // [PERBAIKAN]: Cetak cetakan transaksi yang sudah dilengkapi GPS!
     final transaction = LocalTransactionModel(
       idTransaksiLokal: idTransaksi,
       nominal: nominal,
@@ -66,9 +64,11 @@ class ParkingTransactionLocalDataSourceImpl
       idJukir: idJukir,
       namaJukir: namaJukir,
       nop: nop,
-      fotoKendaraan: finalImagePath, // Bisa berupa string path atau null
-      modePlat: modePlat, // Masukkan dari parameter
-      isSync: 0, // [DEFAULT]: 0 karena baru dibuat dan belum di-upload
+      fotoKendaraan: finalImagePath,
+      modePlat: modePlat,
+      isSync: 0,
+      latitude: latitude, // [TAMBAHAN BARU]: Kunci lokasi ke dalam SQLite!
+      longitude: longitude, // [TAMBAHAN BARU]: Kunci lokasi ke dalam SQLite!
     );
 
     // SIMPAN KE SQLite
@@ -90,10 +90,8 @@ class ParkingTransactionLocalDataSourceImpl
 
   @override
   Future<List<LocalTransactionModel>> getUnsyncedTransactions() async {
-    // [PERBAIKAN]: Memanggil method getUnsyncedTransactions() yang ada di DatabaseHelper
     final List<Map<String, dynamic>> maps = await DatabaseHelper.instance
         .getUnsyncedTransactions();
-
     return maps.map((map) => LocalTransactionModel.fromJson(map)).toList();
   }
 }

@@ -86,6 +86,8 @@ import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.
 import '../network/dio_auth_interceptor.dart' as _i817;
 import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
+import '../services/location/app_location_services_impl.dart' as _i35;
+import '../services/location/i_app_location_service.dart' as _i988;
 import '../storage/secure_storage_manager.dart' as _i1042;
 import 'register_module.dart' as _i291;
 
@@ -105,6 +107,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i232.CheckDeviceReadinessUseCase>(
     () => _i232.CheckDeviceReadinessUseCase(gh<_i515.IDeviceCheckRepository>()),
+  );
+  gh.lazySingleton<_i988.IAppLocationService>(
+    () => _i35.AppLocationServiceImpl(),
   );
   gh.lazySingleton<_i37.IImageService>(() => _i81.ImageServiceImpl());
   gh.lazySingleton<_i437.IOcrLocalDataSource>(
@@ -172,11 +177,6 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
-    () => _i512.SaveParkingTransactionUseCase(
-      gh<_i1054.IParkingTransactionRepository>(),
-    ),
-  );
   gh.lazySingleton<_i269.UpdateParkingStatusUseCase>(
     () => _i269.UpdateParkingStatusUseCase(
       gh<_i1054.IParkingTransactionRepository>(),
@@ -193,6 +193,12 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i831.GenerateQrisUseCase>(
     () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
+  );
+  gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
+    () => _i512.SaveParkingTransactionUseCase(
+      gh<_i1054.IParkingTransactionRepository>(),
+      gh<_i988.IAppLocationService>(),
+    ),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
     () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),

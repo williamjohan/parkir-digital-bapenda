@@ -8,10 +8,12 @@ abstract class IParkingTransactionRepository {
   /// Menyimpan transaksi baru.
   /// Repository HANYA meminta data dari UI, urusan ID Jukir akan dicarikan sendiri oleh Repository ke SecureStorage.
   Future<Either<Failure, LocalTransactionModel>> saveNewTransaction({
-    String? platNomor, // [PERBAIKAN]: Menjadi opsional (bisa null)
+    String? platNomor,
     required String kategoriKendaraan,
-    String? rawImagePath, // [PERBAIKAN]: Menjadi opsional (bisa null)
-    required int modePlat, // [TAMBAHAN BARU]: 0 = Tanpa Plat, 1 = Pakai Plat
+    String? rawImagePath,
+    required int modePlat,
+    String? latitude,
+    String? longitude,
   });
 
   /// Mengubah status transaksi di SQLite

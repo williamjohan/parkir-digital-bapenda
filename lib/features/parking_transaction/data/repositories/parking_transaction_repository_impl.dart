@@ -22,6 +22,8 @@ class ParkingTransactionRepositoryImpl
     required String kategoriKendaraan,
     String? rawImagePath,
     required int modePlat,
+    String? latitude, // [TAMBAHAN BARU]
+    String? longitude, // [TAMBAHAN BARU]
   }) async {
     try {
       // 1. Buka Brankas
@@ -33,16 +35,10 @@ class ParkingTransactionRepositoryImpl
       }
 
       // 2. [INTEGRASI LOGIKA TARIF BAPENDA]
-      // Kamus DB:
-      // 0 = Tidak Diketahui (Fail-safe: Anggap Berbayar)
-      // 1 = Tidak Bertarif (Gratis / Free Parking)
-      // 2 = Bertarif (Wajib QRIS)
       final dynamic rawPungutTarif = jukirProfile['pungutTarif'];
-
-      // Hanya akan bernilai TRUE jika secara eksplisit BE mengirim angka 1
       final bool isFree = rawPungutTarif == 1 || rawPungutTarif == '1';
 
-      // 3. Eksekusi ke SQLite
+      // 3. Eksekusi ke SQLite melalui DataSource
       final transaction = await _localDataSource.saveNewTransaction(
         platNomor: platNomor,
         kategoriKendaraan: kategoriKendaraan,
@@ -52,6 +48,8 @@ class ParkingTransactionRepositoryImpl
         idJukir: jukirProfile['idUser'] ?? '',
         namaJukir: jukirProfile['namaUser'] ?? '',
         nop: jukirProfile['nop'] ?? '',
+        latitude: latitude, // [TAMBAHAN BARU]: Teruskan ke mesin bawah!
+        longitude: longitude, // [TAMBAHAN BARU]: Teruskan ke mesin bawah!
       );
 
       return Right(transaction);
