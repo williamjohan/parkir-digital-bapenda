@@ -58,7 +58,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double formHeight = screenHeight * 0.65;
+    final double formHeight = screenHeight * 0.45;
 
     // [PERUBAHAN 2]: Listener sekarang mendengarkan LoginCubit
     return BlocListener<LoginCubit, LoginState>(
@@ -89,7 +89,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
           return LoadingOverlay(
             isLoading: isLoading,
             child: Scaffold(
-              resizeToAvoidBottomInset: false,
+              resizeToAvoidBottomInset: true,
               body: Stack(
                 children: [
                   LoginBackgroundWidget(

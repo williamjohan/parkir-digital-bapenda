@@ -81,6 +81,7 @@ import '../../features/profile/domain/repositories/i_profile_repository.dart'
     as _i879;
 import '../../features/profile/domain/usecases/get_profile_usecase.dart'
     as _i965;
+import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
 import '../../features/transaction_history/data/datasources/transaction_history_remote_datasource.dart'
     as _i896;
 import '../../features/transaction_history/domain/usecases/get_transaction_history_usecase.dart'
@@ -273,6 +274,12 @@ _i174.GetIt init(
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
+  );
+  gh.factory<_i36.ProfileCubit>(
+    () => _i36.ProfileCubit(
+      gh<_i965.GetProfileUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
   );
   return getIt;
 }

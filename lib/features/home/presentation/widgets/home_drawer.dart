@@ -1,5 +1,7 @@
 // lib/features/home/presentation/widgets/home_drawer.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
@@ -109,7 +111,10 @@ class HomeDrawer extends StatelessWidget {
                     'Profile',
                     style: AppTypography.bodyRegular,
                   ),
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context); // Tutup drawer
+                    context.push(AppRoutes.profile);
+                  },
                 ),
               ],
             ),
@@ -122,13 +127,22 @@ class HomeDrawer extends StatelessWidget {
               horizontal: 24,
               vertical: 8,
             ),
-            leading: const Icon(Icons.logout, color: Colors.redAccent),
-            title: Text(
-              'Logout',
-              style: AppTypography.bodyRegular.copyWith(
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold,
-              ),
+            trailing: const Icon(Icons.logout, color: Colors.redAccent),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Version 1.0.2',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                Text(
+                  'Logout',
+                  style: AppTypography.bodyRegular.copyWith(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             onTap: () {
               Navigator.pop(context); // Tutup laci
@@ -145,7 +159,6 @@ class HomeDrawer extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 24),
         ],
       ),
     );

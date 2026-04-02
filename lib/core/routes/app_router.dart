@@ -12,6 +12,8 @@ import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
 import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
+import '../../features/profile/presentation/cubit/profile_cubit.dart';
+import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/quick_parking/presentation/pages/quick_park_page.dart';
 import '../../features/vehicle_capture/domain/entities/vehicle_category.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
@@ -134,6 +136,16 @@ class AppRouter {
             // Tangkap objek PaymentPageArgs dari property 'extra'
             final args = state.extra as PaymentPageArgs;
             return PaymentPage(args: args);
+          },
+        ),
+
+        GoRoute(
+          path: AppRoutes.profile,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (_) => locator<ProfileCubit>(),
+              child: const ProfilePage(),
+            );
           },
         ),
       ],
