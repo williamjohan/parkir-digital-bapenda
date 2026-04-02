@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_page_transitions_builder.dart';
 import 'package:parkir_digital_bapenda/features/parking_transaction/persentation/cubit/sync_cubit.dart';
 import 'core/di/injection.dart';
 import 'core/routes/app_router.dart';
@@ -39,6 +40,14 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E88E5)),
           useMaterial3: true,
           fontFamily: 'Poppins',
+          pageTransitionsTheme: PageTransitionsTheme(
+            builders: {
+              // Terapkan ke Android
+              TargetPlatform.android: PbSlidePageTransitionsBuilder(),
+              // Terapkan ke iOS (Opsional, jika Anda ingin menimpa swipe-back bawaan Apple)
+              TargetPlatform.iOS: PbSlidePageTransitionsBuilder(),
+            },
+          ),
         ),
         routerConfig: AppRouter.getRouter(appAuthCubit),
       ),
