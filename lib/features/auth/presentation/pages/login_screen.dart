@@ -58,7 +58,8 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double formHeight = screenHeight * 0.45;
+    final double formHeight = screenHeight * 0.65;
+    final isSmallDevice = screenHeight < 700;
 
     // [PERUBAHAN 2]: Listener sekarang mendengarkan LoginCubit
     return BlocListener<LoginCubit, LoginState>(
@@ -92,12 +93,48 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
               resizeToAvoidBottomInset: true,
               body: Stack(
                 children: [
-                  LoginBackgroundWidget(
-                    isHidden: _isFormVisible,
-                    onLoginPressed: () => _toggleForm(true),
-                    onRegisterPressed: () {},
+                  // LoginBackgroundWidget(
+                  //   isHidden: _isFormVisible,
+                  //   onLoginPressed: () => _toggleForm(true),
+                  //   onRegisterPressed: () {},
+                  // ),
+                  // AnimatedContainer(
+                  //   duration: const Duration(milliseconds: 600),
+                  //   curve: Curves.easeOutCubic,
+                  //   transform: Matrix4.translationValues(
+                  //     0,
+                  //     _isFormVisible
+                  //         ? -formHeight * 0.3
+                  //         : 0, // naik dikit aja (30%)
+                  //     0,
+                  //   ),
+                  //   child: LoginBackgroundWidget(
+                  //     isHidden: _isFormVisible,
+                  //     onLoginPressed: () => _toggleForm(true),
+                  //     onRegisterPressed: () {},
+                  //   ),
+                  // ),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeOutCubic,
+                    // transform: Matrix4.translationValues(
+                    //   0,
+                    //   _isFormVisible ? -screenHeight * 0.09 : 0,
+                    //   0,
+                    // ),
+                    transform: Matrix4.translationValues(
+                      0,
+                      (_isFormVisible && isSmallDevice)
+                          ? -screenHeight * 0.09
+                          : 0,
+                      0,
+                    ),
+                    child: LoginBackgroundWidget(
+                      isHidden: _isFormVisible,
+                      onLoginPressed: () => _toggleForm(true),
+                      onRegisterPressed: () {},
+                    ),
                   ),
-
                   if (_isFormVisible)
                     GestureDetector(
                       onTap: () => _toggleForm(false),
@@ -111,11 +148,11 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                   AnimatedPositioned(
                     duration: const Duration(milliseconds: 600),
                     curve: Curves.easeOutCubic,
+                    // bottom: _isFormVisible ? 0 : -formHeight,
                     bottom: _isFormVisible ? 0 : -formHeight,
                     left: 0,
                     right: 0,
-                    height: formHeight,
-
+                    // height: formHeight,
                     child: LoginFormSheetWidget(
                       usernameController: _usernameController,
                       passwordController: _passwordController,
