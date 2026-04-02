@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PbSlidePageTransitionsBuilder extends PageTransitionsBuilder {
+  // [PERBAIKAN]: Tambahkan konstruktor const kosong ini
+  const PbSlidePageTransitionsBuilder();
+
   @override
   Widget buildTransitions<T>(
     PageRoute<T> route,
@@ -9,9 +12,7 @@ class PbSlidePageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    // Sesuai instruksi: Muncul slide ke kanan (Dari Kiri [-1.0] ke Tengah [0.0])
-    // Saat pop (kembali), otomatis akan slide ke kiri.
-    const begin = Offset(-1.0, 0.0);
+    const begin = Offset(1.0, 0.0);
     const end = Offset.zero;
 
     var tween = Tween(

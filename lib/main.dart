@@ -40,11 +40,10 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E88E5)),
           useMaterial3: true,
           fontFamily: 'Poppins',
-          pageTransitionsTheme: PageTransitionsTheme(
-            builders: {
-              // Terapkan ke Android
+          pageTransitionsTheme: const PageTransitionsTheme(
+            // [PERBAIKAN]: Wajib tambahkan deklarasi tipe Map ini secara eksplisit!
+            builders: <TargetPlatform, PageTransitionsBuilder>{
               TargetPlatform.android: PbSlidePageTransitionsBuilder(),
-              // Terapkan ke iOS (Opsional, jika Anda ingin menimpa swipe-back bawaan Apple)
               TargetPlatform.iOS: PbSlidePageTransitionsBuilder(),
             },
           ),

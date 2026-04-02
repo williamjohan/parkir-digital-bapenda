@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/design_system/components/pb_calendar_range_picker.dart';
 import '../../../../core/design_system/components/pb_cupertino_date_picker.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
@@ -38,152 +39,40 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     context.read<TransactionHistoryCubit>().fetchHistory(_startDate, _endDate);
   }
 
-  // --- UX ENHANCEMENT: Bottom Sheet Filter Rentang ---
-  void _showFilterMenu() {
-    // Variable sementara di dalam bottom sheet
-    DateTime tempStart = _startDate;
-    DateTime tempEnd = _endDate;
-
-    showModalBottomSheet(
+  // --- Date picker
+  Future<void> _showCalendarDialog() async {
+    final DateTimeRange? picked = await PbCalendarRangePicker.show(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (bottomSheetContext) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            final startStr = DateFormat('dd MMM yyyy').format(tempStart);
-            final endStr = DateFormat('dd MMM yyyy').format(tempEnd);
-
-            return Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Filter Rentang Tanggal',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Tombol Pilih Tanggal Awal
-                  ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    title: const Text(
-                      'Dari Tanggal',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    subtitle: Text(
-                      startStr,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.calendar_month,
-                      color: Colors.blue,
-                    ),
-                    onTap: () async {
-                      final picked = await PbCupertinoDatePicker.show(
-                        context: context,
-                        initialDate: tempStart,
-                      );
-                      if (picked != null) {
-                        setModalState(
-                          () => tempStart = DateTime(
-                            picked.year,
-                            picked.month,
-                            picked.day,
-                          ),
-                        ); // 00:00:00
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Tombol Pilih Tanggal Akhir
-                  ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    title: const Text(
-                      'Sampai Tanggal',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    subtitle: Text(
-                      endStr,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.calendar_month,
-                      color: Colors.blue,
-                    ),
-                    onTap: () async {
-                      final picked = await PbCupertinoDatePicker.show(
-                        context: context,
-                        initialDate: tempEnd,
-                      );
-                      if (picked != null) {
-                        setModalState(
-                          () => tempEnd = DateTime(
-                            picked.year,
-                            picked.month,
-                            picked.day,
-                            23,
-                            59,
-                            59,
-                          ),
-                        ); // 23:59:59
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Tombol Terapkan
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(bottomSheetContext); // Tutup modal
-                      setState(() {
-                        _startDate = tempStart;
-                        _endDate = tempEnd;
-                      });
-                      // Fetch API dengan tanggal yang sudah diupdate
-                      this.context.read<TransactionHistoryCubit>().fetchHistory(
-                        _startDate,
-                        _endDate,
-                      );
-                    },
-                    child: const Text(
-                      'Terapkan Filter',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+      initialStartDate: _startDate,
+      initialEndDate: _endDate,
     );
+
+    if (picked != null) {
+      setState(() {
+        // Pastikan jamnya diset ke 00:00:00 untuk Start, dan 23:59:59 untuk End
+        _startDate = DateTime(
+          picked.start.year,
+          picked.start.month,
+          picked.start.day,
+        );
+        _endDate = DateTime(
+          picked.end.year,
+          picked.end.month,
+          picked.end.day,
+          23,
+          59,
+          59,
+        );
+      });
+
+      // Minta Jenderal (Cubit) menembak API Bapenda dengan tanggal baru
+      if (mounted) {
+        context.read<TransactionHistoryCubit>().fetchHistory(
+          _startDate,
+          _endDate,
+        );
+      }
+    }
   }
 
   // Bottom Sheet untuk Modal Preview Karcis
@@ -210,7 +99,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                     children: [
                       const Text(
                         'Menampilkan data:',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       Text(
                         '${DateFormat('dd MMM yyyy').format(_startDate)} - ${DateFormat('dd MMM yyyy').format(_endDate)}',
@@ -223,8 +112,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   ),
                 ),
                 OutlinedButton.icon(
-                  onPressed: _showFilterMenu,
-                  icon: const Icon(Icons.tune, size: 16),
+                  onPressed: _showCalendarDialog,
+                  icon: const Icon(Icons.calendar_month, size: 16),
                   label: const Text('Ubah'),
                 ),
               ],
