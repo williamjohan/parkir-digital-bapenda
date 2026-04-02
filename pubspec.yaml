@@ -1,7 +1,7 @@
 name: parkir_digital_bapenda
 description: "Untuk Melakukan Pembayaran Parkir Secara Digital Di Kota Surabaya"
 publish_to: 'none' 
-version: 1.0.2+1
+version: 1.0.3+1
 
 environment:
   sdk: ^3.9.2 # Pastikan versi SDK ini sesuai dengan instalasi lokalmu
