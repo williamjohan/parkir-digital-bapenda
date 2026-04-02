@@ -119,32 +119,6 @@ class LoginBackgroundWidget extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 15),
-
-                    // 2. TOMBOL REGISTER (Secondary - Outlined/Transparan)
-                    SizedBox(
-                      width: double.infinity,
-                      height: 55,
-                      child: OutlinedButton(
-                        onPressed: isHidden ? null : onRegisterPressed,
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: AppColors.primaryDark,
-                            width: 2,
-                          ),
-                          foregroundColor: AppColors.background,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          "Daftar Akun Baru",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

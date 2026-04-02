@@ -52,84 +52,86 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // HANDLE BAR
-            Center(
-              child: Container(
-                width: 50,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            // Header Text
-            const Text(
-              "Silakan Masuk",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            // INPUT NPWPD
-            _buildTextField(
-              controller: widget.usernameController,
-              label: "Username",
-              icon: Icons.person_outline,
-              isPassword: false, // Bukan password
-            ),
-            const SizedBox(height: 20),
-
-            // INPUT PASSWORD (Logic Toggle ada di dalam fungsi ini)
-            _buildTextField(
-              controller: widget.passwordController,
-              label: "Kata Sandi",
-              icon: Icons.lock_outline,
-              isPassword: true, // Tandai ini password
-            ),
-
-            // LUPA PASSWORD
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "Lupa Kata Sandi?",
-                  style: TextStyle(color: AppColors.primary),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // TOMBOL MASUK
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                onPressed: widget.onLogin,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // HANDLE BAR
+              Center(
+                child: Container(
+                  width: 50,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  elevation: 3,
-                ),
-                child: const Text(
-                  "MASUK",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 30),
+
+              // Header Text
+              const Text(
+                "Silakan Masuk",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // INPUT NPWPD
+              _buildTextField(
+                controller: widget.usernameController,
+                label: "Username",
+                icon: Icons.person_outline,
+                isPassword: false, // Bukan password
+              ),
+              const SizedBox(height: 20),
+
+              // INPUT PASSWORD (Logic Toggle ada di dalam fungsi ini)
+              _buildTextField(
+                controller: widget.passwordController,
+                label: "Kata Sandi",
+                icon: Icons.lock_outline,
+                isPassword: true, // Tandai ini password
+              ),
+
+              // LUPA PASSWORD
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    "Lupa Kata Sandi?",
+                    style: TextStyle(color: AppColors.primary),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // TOMBOL MASUK
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: widget.onLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    elevation: 3,
+                  ),
+                  child: const Text(
+                    "MASUK",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

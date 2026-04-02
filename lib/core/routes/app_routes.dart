@@ -7,5 +7,6 @@ class AppRoutes {
   static const String login = '/login';
   static const String payment = '/payment';
   static const String quickPark = '/quick-park';
+  static const String profile = '/profile';
   static const String history = '/history';
 }
