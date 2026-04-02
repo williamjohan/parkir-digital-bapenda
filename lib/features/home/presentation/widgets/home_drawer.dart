@@ -100,7 +100,10 @@ class HomeDrawer extends StatelessWidget {
                     'History Transaksi',
                     style: AppTypography.bodyRegular,
                   ),
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push(AppRoutes.history);
+                  },
                 ),
                 ListTile(
                   leading: const Icon(
