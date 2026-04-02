@@ -139,6 +139,8 @@ class PaymentPage extends StatelessWidget {
                               child: PreviewTicketWidget(
                                 deviceId: profile?['idDevice'] ?? '',
                                 orderId: state.idTransaksi,
+                                // orderId: "260131LU3085108",
+                                // deviceId: "086b755cc938a9b6",
                                 objekPajak:
                                     profile?['namaObjekPajak'] ?? 'Objek Pajak',
                                 alamatObjekPajak:
