@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:crypto/crypto.dart';
+import 'package:pointycastle/export.dart';
+
 import '../core/design_system/components/pb_primary_button.dart';
 import '../core/design_system/tokens/app_colors.dart';
 import 'qr_generator_widget.dart';
@@ -37,27 +41,70 @@ class PreviewTicketWidget extends StatelessWidget {
     required this.deviceId,
   });
 
-  /// 🔐 Helper encrypt (sementara base64)
-  String _encrypt(String input) {
-    return base64Encode(utf8.encode(input));
+  String _encrypt(String plainText) {
+    // KEY: SHA256 dari secret string → 32 bytes
+    final keyBytes = Uint8List.fromList(
+      sha256.convert(utf8.encode('pisah-key-untuk-semua-bahasa')).bytes,
+    );
+
+    // IV: MD5 dari init-vector string → 16 bytes ✅ FIX UTAMA
+    final ivBytes = Uint8List.fromList(
+      md5.convert(utf8.encode('pisah-init-vector')).bytes,
+    );
+
+    final data = Uint8List.fromList(utf8.encode(plainText));
+
+    // AES-CBC dengan PKCS7 padding ✅ FIX UTAMA (sebelumnya ECB, salah!)
+    final cipher = PaddedBlockCipherImpl(
+      PKCS7Padding(),
+      CBCBlockCipher(AESEngine()),
+    );
+
+    cipher.init(
+      true, // true = encrypt
+      PaddedBlockCipherParameters(
+        ParametersWithIV(KeyParameter(keyBytes), ivBytes), // CBC butuh IV
+        null,
+      ),
+    );
+
+    final encryptedBytes = cipher.process(data);
+
+    // Base64 URL-safe, sama persis dengan C#
+    final result = base64Encode(
+      encryptedBytes,
+    ).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+
+    return result;
   }
 
-  /// 🔗 Generate URL
+  /// 🔗 Generate URL untuk QR Code
   String get _urlAfterPayment {
-    final raw = '$orderId|$deviceId';
+    // Separator [PISAH] sesuai C#
+    final raw = '$orderId[PISAH]$deviceId';
+
     final encrypted = _encrypt(raw);
 
     final url =
         'https://bapenda.surabaya.go.id:7077/CongratulationTaxPayment?id=$encrypted';
 
-    // 🔍 DEBUG
-    print('================ QR DEBUG ================');
-    print('ORDER ID   : $orderId');
-    print('DEVICE ID  : $deviceId');
-    print('RAW        : $raw');
-    print('ENCRYPTED  : $encrypted');
-    print('FINAL URL  : $url');
-    print('==========================================');
+    // 🔍 DEBUG — otomatis hilang di release build
+    assert(() {
+      debugPrint('================ QR DEBUG ================');
+      debugPrint('ORDER ID   : $orderId');
+      debugPrint('DEVICE ID  : $deviceId');
+      debugPrint('RAW        : $raw');
+      debugPrint('ENCRYPTED  : $encrypted');
+      debugPrint(
+        'EXPECTED   : XoQ_wkHbMg7_k-ZL00gqlAd7apSOr791Qoh8hD7iQSflEegrWUvNpomdKHuWpXCy',
+      );
+      debugPrint(
+        'MATCH      : ${encrypted == 'XoQ_wkHbMg7_k-ZL00gqlAd7apSOr791Qoh8hD7iQSflEegrWUvNpomdKHuWpXCy'}',
+      );
+      debugPrint('FINAL URL  : $url');
+      debugPrint('==========================================');
+      return true;
+    }());
 
     return url;
   }
@@ -65,9 +112,7 @@ class PreviewTicketWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(
-        maxWidth: 350, // biar dialog ga terlalu lebar
-      ),
+      constraints: const BoxConstraints(maxWidth: 350),
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -75,7 +120,7 @@ class PreviewTicketWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // penting biar ga full tinggi
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           /// HEADER
@@ -83,9 +128,7 @@ class PreviewTicketWidget extends StatelessWidget {
             "Tiket Parkir",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          // const SizedBox(height: 4),
           const Text("BAPENDA Kota Surabaya"),
-          // const SizedBox(height: 12),
 
           /// INFO LOKASI
           Text(
@@ -100,21 +143,18 @@ class PreviewTicketWidget extends StatelessWidget {
           const SizedBox(height: 12),
           const Divider(),
 
-          /// DETAIL
+          /// DETAIL KENDARAAN
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Flexible(child: Text(tipeKendaraan)),
-
               const SizedBox(width: 6),
               const Text('•'),
               const SizedBox(width: 6),
               Flexible(child: Text(isQuickMode ? '[Tanpa Plat]' : noKendaraan)),
-
               const SizedBox(width: 6),
               const Text('•'),
               const SizedBox(width: 6),
-
               Flexible(
                 child: Text(
                   "Rp$tarifParkir",
@@ -126,7 +166,7 @@ class PreviewTicketWidget extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          /// QR
+          /// QR CODE
           Container(
             width: 220,
             height: 220,
@@ -135,20 +175,12 @@ class PreviewTicketWidget extends StatelessWidget {
               border: Border.all(color: AppColors.primary, width: 2),
               borderRadius: BorderRadius.circular(16),
             ),
-
-            // child: const Center(
-            //   child: Icon(Icons.qr_code_2, size: 120, color: AppColors.primary),
-            // ),
-            child: QrCodeGenerateWidget(
-              url:
-                  _urlAfterPayment, // atau bisa diganti dengan data lain (misal qrisString)
-              size: 200,
-            ),
+            child: QrCodeGenerateWidget(url: _urlAfterPayment, size: 200),
           ),
 
           const SizedBox(height: 12),
 
-          /// ID
+          /// ID TRANSAKSI
           const Text(
             "ID TRANSAKSI",
             style: TextStyle(fontSize: 12, color: Colors.grey),
