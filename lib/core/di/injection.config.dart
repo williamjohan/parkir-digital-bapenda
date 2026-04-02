@@ -243,23 +243,19 @@ _i174.GetIt init(
   gh.lazySingleton<_i48.LogoutUseCase>(
     () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
   );
-  gh.factory<_i753.TransactionHistoryCubit>(
-    () =>
-        _i753.TransactionHistoryCubit(gh<_i732.GetTransactionHistoryUseCase>()),
-  );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
-  );
-  gh.factory<_i877.ParkingTransactionCubit>(
-    () => _i877.ParkingTransactionCubit(
-      gh<_i512.SaveParkingTransactionUseCase>(),
-      gh<_i269.UpdateParkingStatusUseCase>(),
-    ),
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(
       gh<_i831.GenerateQrisUseCase>(),
       gh<_i393.ConfirmPaymentUseCase>(),
+    ),
+  );
+  gh.factory<_i753.TransactionHistoryCubit>(
+    () => _i753.TransactionHistoryCubit(
+      gh<_i732.GetTransactionHistoryUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
     ),
   );
   gh.factory<_i420.SyncCubit>(
@@ -274,6 +270,13 @@ _i174.GetIt init(
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
+  );
+  gh.factory<_i877.ParkingTransactionCubit>(
+    () => _i877.ParkingTransactionCubit(
+      gh<_i512.SaveParkingTransactionUseCase>(),
+      gh<_i269.UpdateParkingStatusUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
   );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(

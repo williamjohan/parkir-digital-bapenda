@@ -10,7 +10,7 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
-import '../../../../shared/ticket_preview_widget.dart';
+import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
 
@@ -136,7 +136,7 @@ class PaymentPage extends StatelessWidget {
                           barrierDismissible: false,
                           builder: (context) {
                             return Dialog(
-                              child: PreviewTicketWidget(
+                              child: PbPreviewTicketWidget(
                                 deviceId: profile?['idDevice'] ?? '',
                                 orderId: state.idTransaksi,
                                 // orderId: "260131LU3085108",

@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_keyboard_dismiss_wrapper.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -11,6 +12,7 @@ import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_state.dart';
 import '../../../parking_transaction/persentation/cubit/sync_cubit.dart';
@@ -70,6 +72,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               .cancelNavigation(); // Batalkan loading
         } else if (parkingState is ParkingTransactionSaveSuccess) {
           final trx = parkingState.transaction;
+          final profile = parkingState.jukirProfile;
 
           // [PERBAIKAN 2]: THE FREE PARKING RULE
           if (trx.status == 'PENDING_PAYMENT') {
@@ -117,23 +120,56 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               );
             }
           } else {
-            // --- KAWASAN GRATIS (Langsung Lunas, Tidak Perlu QRIS) ---
-
-            // Hapus indikator loading di kamera
+            // --- KAWASAN GRATIS (Langsung Lunas) ---
             context.read<VehicleCaptureCubit>().cancelNavigation();
-
             context.read<SyncCubit>().syncDataBackground();
 
-            // Munculkan Modal Dialog Wajib Klik
+            // Panggil Modal Berhasil, lalu Karcis, menggunakan data 'profile'
             PbShowDialog.show(
               context,
               title: 'Berhasil!',
               description:
                   'Parkir GRATIS dengan Kamera\n${trx.platNomor ?? ''} tercatat.',
               onConfirm: () {
-                // Bersihkan layar untuk kendaraan selanjutnya setelah Jukir klik OK
-                _plateController.clear();
-                context.read<VehicleCaptureCubit>().resetCapture();
+                // Tampilkan Modal Karcis sebelum membersihkan layar
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return Dialog(
+                      child: PbPreviewTicketWidget(
+                        deviceId: profile['idDevice'] ?? '',
+                        orderId: trx.idTransaksiLokal,
+                        objekPajak: profile['namaObjekPajak'] ?? 'Objek Pajak',
+                        alamatObjekPajak:
+                            profile['alamat'] ?? 'Alamat Objek Pajak',
+                        waktuParkir: DateFormat(
+                          'dd MMM yyyy • HH:mm',
+                          'id_ID',
+                        ).format(DateTime.parse(trx.waktuTransaksi)),
+                        tipeKendaraan:
+                            context
+                                .read<VehicleCaptureCubit>()
+                                .state
+                                .selectedCategory
+                                ?.name ??
+                            'Mobil',
+                        isQuickMode: false,
+                        isFree: true,
+                        noKendaraan: trx.platNomor ?? '',
+                        tarifParkir: 0,
+                        idTransaksi: trx.idTransaksiLokal,
+                        okPressed: () {
+                          Navigator.pop(context); // Tutup Karcis
+                          // Bersihkan layar untuk kendaraan selanjutnya
+                          _plateController.clear();
+                          context.read<VehicleCaptureCubit>().resetCapture();
+                        },
+                        printPressed: () {}, // Fitur cetak bluetooth nanti
+                      ),
+                    );
+                  },
+                );
               },
             );
           }

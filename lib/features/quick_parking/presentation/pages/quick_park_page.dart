@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:parkir_digital_bapenda/core/di/injection.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_back_handler.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
-import '../../../../shared/ticket_preview_widget.dart';
+import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_state.dart';
 import '../../../parking_transaction/persentation/cubit/sync_cubit.dart';
@@ -26,7 +24,8 @@ class QuickParkPage extends StatefulWidget {
 }
 
 class _QuickParkPageState extends State<QuickParkPage> {
-  final _secureStorage = locator<ISecureStorageManager>();
+  // 🧹 BERSIH! Tidak ada lagi inisialisasi _secureStorage di sini.
+
   void _handleTapParkir(BuildContext context) {
     context.read<ParkingTransactionCubit>().processNewTransaction(
       platNomor: null, // Tanpa plat
@@ -68,40 +67,33 @@ class _QuickParkPageState extends State<QuickParkPage> {
                 isError: true,
               );
             } else if (state is ParkingTransactionSaveSuccess) {
-              // [KUNCI ARSITEKTUR]: Cek status transaksinya!
               final status = state.transaction.status;
+
+              // 🎁 KUNCI ARSITEKTUR: Buka koper profil dari Jenderal (Cubit)!
+              final profile = state.jukirProfile;
 
               if (status == 'FREE_OFFLINE') {
                 context.read<SyncCubit>().syncDataBackground();
 
+                // 🚀 LANGSUNG PANGGIL UI: Tanpa await, tanpa !context.mounted
                 PbShowDialog.show(
                   context,
                   title: 'Berhasil!',
                   description:
                       'Parkir Gratis $kategoriTitle\nberhasil dicatat.',
-                  onConfirm: () async {
-                    final profile = await _secureStorage.getJukirProfile();
-
-                    if (!context.mounted) return; // 🔥 WAJIB
-
+                  onConfirm: () {
                     showDialog(
                       context: context,
                       barrierDismissible: false,
                       builder: (context) {
                         return Dialog(
-                          child: PreviewTicketWidget(
-                            deviceId: profile?['idDevice'] ?? '',
+                          child: PbPreviewTicketWidget(
+                            deviceId: profile['idDevice'] ?? '',
                             orderId: state.transaction.idTransaksiLokal,
-                            // orderId: "260131LU3085108",
-                            // deviceId: "086b755cc938a9b6",
                             objekPajak:
-                                profile?['namaObjekPajak'] ?? 'Objek Pajak',
+                                profile['namaObjekPajak'] ?? 'Objek Pajak',
                             alamatObjekPajak:
-                                profile?['alamat'] ?? 'Alamat Objek Pajak',
-                            // waktuParkir: DateFormat(
-                            //   'dd MMM yyyy • HH:mm',
-                            //   'id_ID',
-                            // ).format(DateTime.now()),
+                                profile['alamat'] ?? 'Alamat Objek Pajak',
                             waktuParkir:
                                 DateFormat(
                                   'dd MMM yyyy • HH:mm',
@@ -113,21 +105,13 @@ class _QuickParkPageState extends State<QuickParkPage> {
                                 ),
                             tipeKendaraan: widget.kategoriKendaraan,
                             isQuickMode: true,
-                            isFree: profile?['pungutTarif'] == 1,
+                            isFree: profile['pungutTarif'] == 1,
                             noKendaraan: '',
                             tarifParkir: 0,
                             idTransaksi: state.transaction.idTransaksiLokal,
-                            okPressed: () {
-                              Navigator.pop(context); // tutup dialog
-                              // context.pop(
-                              //   true,
-                              // ); // balik ke halaman sebelumnya
-                              // context.read<PaymentCubit>().confirmPayment(
-                              //   state.idTransaksi,
-                              // );
-                            },
+                            okPressed: () => Navigator.pop(context),
                             printPressed: () {
-                              // nanti bisa integrasi printer di sini
+                              // Fitur cetak bluetooth nanti
                             },
                           ),
                         );
@@ -136,17 +120,12 @@ class _QuickParkPageState extends State<QuickParkPage> {
                   },
                 );
               } else if (status == 'PENDING_PAYMENT') {
-                // 2. Jika Berbayar: Arahkan ke Halaman QRIS
-                // (Sementara kita beri dialog peringatan sampai halaman QRIS siap)
                 PbShowDialog.show(
                   context,
                   title: 'Arahkan ke Kasir',
                   description:
                       'Fitur Pembayaran/QRIS untuk $kategoriTitle sedang dipersiapkan.',
                 );
-
-                // Nanti kodenya diganti menjadi seperti ini:
-                // context.pushNamed('payment_page', extra: state.transaction);
               }
             }
           },

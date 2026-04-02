@@ -2,19 +2,23 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/usecases/get_transaction_history_usecase.dart';
 import 'transaction_history_state.dart';
 
 @injectable
 class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   final GetTransactionHistoryUseCase _useCase;
+  final ISecureStorageManager _secureStorage;
 
-  TransactionHistoryCubit(this._useCase) : super(TransactionHistoryInitial());
+  TransactionHistoryCubit(this._useCase, this._secureStorage)
+    : super(TransactionHistoryInitial());
 
   /// [REMOTE FILTER]: Tembak API Bapenda berdasarkan rentang tanggal
   Future<void> fetchHistory(DateTime start, DateTime end) async {
     emit(TransactionHistoryLoading());
 
+    final profile = await _secureStorage.getJukirProfile() ?? {};
     final result = await _useCase.execute(startDate: start, endDate: end);
 
     result.fold(
@@ -27,6 +31,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           endDate: end,
           selectedKategori: 'SEMUA',
           selectedMode: -1,
+          jukirProfile: profile,
         ),
       ),
     );

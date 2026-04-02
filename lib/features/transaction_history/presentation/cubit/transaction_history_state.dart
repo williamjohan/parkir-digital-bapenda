@@ -24,6 +24,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final DateTime endDate;
   final String selectedKategori; // 'SEMUA', 'MOBIL', 'MOTOR'
   final int selectedMode; // -1 (Semua), 0 (Tanpa Plat), 1 (Pakai Plat)
+  final Map<String, dynamic> jukirProfile;
 
   const TransactionHistoryLoaded({
     required this.allTransactions,
@@ -32,6 +33,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     required this.endDate,
     this.selectedKategori = 'SEMUA',
     this.selectedMode = -1,
+    required this.jukirProfile,
   });
 
   TransactionHistoryLoaded copyWith({
@@ -41,6 +43,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     DateTime? endDate,
     String? selectedKategori,
     int? selectedMode,
+    Map<String, dynamic>? jukirProfile,
   }) {
     return TransactionHistoryLoaded(
       allTransactions: allTransactions ?? this.allTransactions,
@@ -49,6 +52,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       endDate: endDate ?? this.endDate,
       selectedKategori: selectedKategori ?? this.selectedKategori,
       selectedMode: selectedMode ?? this.selectedMode,
+      jukirProfile: jukirProfile ?? this.jukirProfile,
     );
   }
 
@@ -60,6 +64,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     endDate,
     selectedKategori,
     selectedMode,
+    jukirProfile,
   ];
 }
 

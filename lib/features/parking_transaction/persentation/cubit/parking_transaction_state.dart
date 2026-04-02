@@ -15,12 +15,15 @@ class ParkingTransactionInitial extends ParkingTransactionState {}
 class ParkingTransactionLoading extends ParkingTransactionState {}
 
 class ParkingTransactionSaveSuccess extends ParkingTransactionState {
-  final LocalTransactionModel transaction; // [PENTING]: Membawa seluruh data!
+  final LocalTransactionModel transaction;
+  final Map<String, dynamic> jukirProfile;
 
-  const ParkingTransactionSaveSuccess(this.transaction);
-
+  const ParkingTransactionSaveSuccess({
+    required this.transaction,
+    required this.jukirProfile,
+  });
   @override
-  List<Object?> get props => [transaction];
+  List<Object> get props => [transaction, jukirProfile];
 }
 
 class ParkingTransactionUpdateSuccess extends ParkingTransactionState {}

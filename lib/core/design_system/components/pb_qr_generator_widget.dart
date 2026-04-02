@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
-class QrCodeGenerateWidget extends StatelessWidget {
+class PbQrCodeGenerateWidget extends StatelessWidget {
   final String url;
   final double size;
 
-  const QrCodeGenerateWidget({super.key, required this.url, this.size = 200});
+  const PbQrCodeGenerateWidget({super.key, required this.url, this.size = 200});
 
   @override
   Widget build(BuildContext context) {

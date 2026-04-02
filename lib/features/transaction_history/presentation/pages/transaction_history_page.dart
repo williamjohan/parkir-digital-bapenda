@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/components/pb_calendar_range_picker.dart';
+import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
+import '../../data/models/history_item_model.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
@@ -22,7 +24,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   @override
   void initState() {
     super.initState();
-    // [BUG FIX]: Set default ke HARI INI secara Penuh (00:00:00 - 23:59:59)
     final now = DateTime.now();
     _startDate = DateTime(now.year, now.month, now.day); // Jam 00:00:00
     _endDate = DateTime(
@@ -75,8 +76,47 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   }
 
   // Bottom Sheet untuk Modal Preview Karcis
-  void _showPreviewKarcis(BuildContext context, String orderId) {
-    // ... (sama seperti kode sebelumnya) ...
+  void _showPreviewKarcis(
+    BuildContext context,
+    HistoryItemModel item,
+    Map<String, dynamic> profile,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, // Bisa ditutup dengan klik di luar
+      builder: (context) {
+        // Format tanggal dari API (contoh: 2026-04-01T14:30:01 -> 01 Apr 2026 • 14:30)
+        String formattedDate = item.tglTrx;
+        try {
+          final date = DateTime.parse(item.tglTrx);
+          formattedDate = DateFormat(
+            'dd MMM yyyy • HH:mm',
+            'id_ID',
+          ).format(date);
+        } catch (_) {}
+
+        return Dialog(
+          child: PbPreviewTicketWidget(
+            deviceId: profile['idDevice']?.toString() ?? '',
+            orderId: item.orderId,
+            objekPajak: profile['namaObjekPajak'] ?? 'Objek Pajak',
+            alamatObjekPajak: profile['alamat'] ?? 'Alamat Objek Pajak',
+            waktuParkir: formattedDate,
+            tipeKendaraan: item.jenisTarif, // 'MOBIL' atau 'MOTOR'
+            isQuickMode: item.modePlat == 0, // 0 = Tanpa Plat
+            isFree: item.kredit == 0 || item.jenisTarif == 'FREE',
+            noKendaraan: item.platNumber == '-' ? '' : item.platNumber,
+            tarifParkir: item.kredit,
+            idTransaksi: item
+                .orderId, // Bisa diganti item.noTRX jika BE menyediakan noTRX
+            okPressed: () => Navigator.pop(context),
+            printPressed: () {
+              // TODO: Integrasi Printer Bluetooth
+            },
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -122,61 +162,133 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
           // --- LIST DATA ---
           Expanded(
-            child:
-                BlocBuilder<TransactionHistoryCubit, TransactionHistoryState>(
-                  builder: (context, state) {
-                    if (state is TransactionHistoryLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is TransactionHistoryError) {
-                      return Center(child: Text(state.message));
-                    } else if (state is TransactionHistoryLoaded) {
-                      final data = state.filteredTransactions;
-                      if (data.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.receipt_long,
-                                size: 80,
-                                color: Colors.grey.shade300,
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Belum ada transaksi di tanggal ini.',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
+            child: BlocBuilder<TransactionHistoryCubit, TransactionHistoryState>(
+              builder: (context, state) {
+                if (state is TransactionHistoryLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is TransactionHistoryError) {
+                  return Center(child: Text(state.message));
+                } else if (state is TransactionHistoryLoaded) {
+                  final data = state.filteredTransactions;
 
-                      return RefreshIndicator(
-                        onRefresh: () => context
-                            .read<TransactionHistoryCubit>()
-                            .fetchHistory(_startDate, _endDate),
-                        child: ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(top: 8, bottom: 80),
-                          itemCount: data.length,
-                          itemBuilder: (context, index) {
-                            return HistoryCardWidget(
-                              item: data[index],
-                              onPreviewTap: () => _showPreviewKarcis(
-                                context,
-                                data[index].orderId,
-                              ),
-                            );
-                          },
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 🎁 [FITUR BARU]: BARIS FILTER KATEGORI (CHIPS)
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-                      );
-                    }
-                    return const SizedBox();
-                  },
-                ),
+                        child: Row(
+                          children: [
+                            _buildFilterChip(
+                              context,
+                              'SEMUA',
+                              state.selectedKategori,
+                              'Semua',
+                            ),
+                            const SizedBox(width: 8),
+                            _buildFilterChip(
+                              context,
+                              'MOBIL',
+                              state.selectedKategori,
+                              'Mobil',
+                            ),
+                            const SizedBox(width: 8),
+                            _buildFilterChip(
+                              context,
+                              'MOTOR',
+                              state.selectedKategori,
+                              'Motor',
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // AREA LIST TRANSAKSI
+                      Expanded(
+                        child: data.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.receipt_long,
+                                      size: 80,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      'Tidak ada transaksi untuk filter ini.',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : RefreshIndicator(
+                                onRefresh: () => context
+                                    .read<TransactionHistoryCubit>()
+                                    .fetchHistory(_startDate, _endDate),
+                                child: ListView.builder(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                    bottom: 80,
+                                  ),
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index) {
+                                    return HistoryCardWidget(
+                                      item: data[index],
+                                      onPreviewTap: () => _showPreviewKarcis(
+                                        context,
+                                        data[index],
+                                        state.jukirProfile,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFilterChip(
+    BuildContext context,
+    String value,
+    String selectedValue,
+    String label,
+  ) {
+    final bool isSelected = value == selectedValue;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      selectedColor: Colors.blue.shade100,
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.blue.shade800 : Colors.black54,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      ),
+      backgroundColor: Colors.grey.shade100,
+      side: BorderSide(color: isSelected ? Colors.blue : Colors.grey.shade300),
+      onSelected: (bool selected) {
+        if (selected) {
+          // [KUNCI ARSITEKTUR]: Panggil fungsi filter LOKAL di Cubit! Tidak perlu loading API.
+          context.read<TransactionHistoryCubit>().applyLocalFilter(
+            kategori: value,
+          );
+        }
+      },
     );
   }
 }
