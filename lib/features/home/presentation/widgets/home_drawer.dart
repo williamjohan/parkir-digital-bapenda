@@ -1,5 +1,7 @@
 // lib/features/home/presentation/widgets/home_drawer.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
@@ -98,7 +100,10 @@ class HomeDrawer extends StatelessWidget {
                     'History Transaksi',
                     style: AppTypography.bodyRegular,
                   ),
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push(AppRoutes.history);
+                  },
                 ),
                 ListTile(
                   leading: const Icon(

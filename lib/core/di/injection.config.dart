@@ -85,8 +85,8 @@ import '../../features/transaction_history/data/datasources/transaction_history_
     as _i896;
 import '../../features/transaction_history/domain/usecases/get_transaction_history_usecase.dart'
     as _i732;
-import '../../features/transaction_history/presentation/transaction_history_cubit.dart'
-    as _i786;
+import '../../features/transaction_history/presentation/cubit/transaction_history_cubit.dart'
+    as _i753;
 import '../../features/vehicle_capture/data/datasources/ocr_local_data_source.dart'
     as _i437;
 import '../../features/vehicle_capture/data/repositories/ocr_repository_impl.dart'
@@ -242,9 +242,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i48.LogoutUseCase>(
     () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
   );
-  gh.factory<_i786.TransactionHistoryCubit>(
+  gh.factory<_i753.TransactionHistoryCubit>(
     () =>
-        _i786.TransactionHistoryCubit(gh<_i732.GetTransactionHistoryUseCase>()),
+        _i753.TransactionHistoryCubit(gh<_i732.GetTransactionHistoryUseCase>()),
   );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
