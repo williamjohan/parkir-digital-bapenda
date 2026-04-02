@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -135,33 +137,45 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
 
   /// Inisialisasi kamera, dipanggil saat masuk ke halaman Capture
   Future<void> initCamera() async {
+    // 1. [SAFETY FIX]: Amankan controller lama dan putuskan dari UI
+    final oldController = _cameraController;
+    _cameraController = null;
+
+    // 2. Emit status initial agar UI me-remove widget CameraPreview dari layar.
+    // Ini krusial agar OS Android melepaskan "Surface/Pipa" kamera.
     emit(state.copyWith(status: CaptureStatus.initial));
+
+    // 3. Bunuh controller lama secara fisik di level hardware
+    if (oldController != null) {
+      await oldController.dispose();
+    }
 
     try {
       final cameras = await availableCameras();
+      if (cameras.isEmpty) throw Exception("Kamera tidak ditemukan");
+
       final backCamera = cameras.firstWhere(
         (camera) => camera.lensDirection == CameraLensDirection.back,
         orElse: () => cameras.first,
       );
 
+      // 4. Inisiasi baru dengan pattern Cek Reklame
       final controller = CameraController(
         backCamera,
         ResolutionPreset.medium,
         enableAudio: false,
-        // 2. KUNCI FORMAT: Paksa Android menggunakan JPEG agar tidak bingung
-        // mengalokasikan memori untuk format YUV (Image Analysis) yang berat.
-        imageFormatGroup: ImageFormatGroup.jpeg,
       );
 
       _cameraController = controller;
 
-      // [PERBAIKAN]: Cukup panggil initialize satu kali dan simpan di Future!
+      // Inisialisasi dan simpan di Future
       _initializeControllerFuture = controller.initialize();
       await _initializeControllerFuture;
 
-      // Guard sederhana untuk App Lifecycle Inactive/Resumed
-      if (_cameraController != controller) return;
+      // Guard jika Cubit sudah terlanjur ditutup saat proses await
+      if (isClosed) return;
 
+      // 5. Safe Hardware Config (Granular Try-Catch)
       try {
         await controller.setFocusMode(FocusMode.auto);
       } catch (_) {}
@@ -172,6 +186,7 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
         );
       } catch (_) {}
 
+      // Sukses! Lempar ke UI
       _safeEmit(state.copyWith(status: CaptureStatus.cameraReady));
     } catch (e) {
       _safeEmit(

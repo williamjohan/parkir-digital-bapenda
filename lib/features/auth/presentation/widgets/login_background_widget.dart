@@ -29,102 +29,128 @@ class LoginBackgroundWidget extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
-        image: DecorationImage(
-          image: const AssetImage(AppAssetImages.loginscreen),
+        image: const DecorationImage(
+          // [PERBAIKAN]: Tambahkan const di sini
+          image: AssetImage(AppAssetImages.loginscreen),
           fit: BoxFit.cover,
           opacity: 0.15,
         ),
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Transform.translate(
-                    offset: const Offset(-20, 0),
-                    child: Image.asset(
-                      AppAssetImages.cityOfHeroes,
-                      height: 80,
-                      color: Colors.white,
+        // 🚀 [KUNCI ARSITEKTUR RESPONSIVE]:
+        // Menggunakan LayoutBuilder agar UI otomatis menjadi Scrollable
+        // HANYA JIKA layar HP pengguna terlalu kecil.
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints
+                      .maxHeight, // Paksa tinggi minimal selayar penuh
+                ),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Transform.translate(
+                              offset: const Offset(-20, 0),
+                              child: Image.asset(
+                                AppAssetImages.cityOfHeroes,
+                                height: 80,
+                                color: Colors.white,
+                              ),
+                            ),
+                            //logo lainnya
+                          ],
+                        ),
+
+                        const Text(
+                          "Sugeng Rawuh,",
+                          style: TextStyle(
+                            color: AppColors.background,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Parkir Digital Surabaya",
+                          style: TextStyle(
+                            color: AppColors.background,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            height: 1.1,
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        const Text(
+                          "Nikmati kemudahan parkir digital dengan aplikasi resmi dari Bapenda Surabaya.",
+                          style: TextStyle(
+                            color: AppColors.background,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+
+                        // Spacer akan mendorong tombol secara elastis ke paling bawah layar
+                        const Spacer(),
+                        const SizedBox(
+                          height: 24,
+                        ), // Jarak aman minimal sebelum tombol
+                        // GROUP TOMBOL (Login & Register)
+                        AnimatedOpacity(
+                          opacity: isHidden ? 0.0 : 1.0,
+                          duration: const Duration(milliseconds: 300),
+                          child: Column(
+                            children: [
+                              // 1. TOMBOL LOGIN (Primary - Putih)
+                              SizedBox(
+                                width: double.infinity,
+                                height: 55,
+                                child: ElevatedButton(
+                                  onPressed: isHidden ? null : onLoginPressed,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: AppColors.background,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 5,
+                                  ),
+                                  child: const Text(
+                                    "Masuk Akun",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 15),
+                            ],
+                          ),
+                        ),
+
+                        // [PERBAIKAN]: Jarak kaku 50px diubah menjadi 24px agar lebih proporsional di semua layar
+                        const SizedBox(height: 24),
+                      ],
                     ),
                   ),
-                  //logo lainnya
-                ],
-              ),
-
-              const Text(
-                "Sugeng Rawuh,",
-                style: TextStyle(
-                  color: AppColors.background,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                "Parkir Digital Surabaya",
-                style: TextStyle(
-                  color: AppColors.background,
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  height: 1.1,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              const Text(
-                "Nikmati kemudahan parkir digital dengan aplikasi resmi dari Bapenda Surabaya.",
-                style: TextStyle(
-                  color: AppColors.background,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-
-              const Spacer(),
-
-              // GROUP TOMBOL (Login & Register)
-              // Kita bungkus Column ini dengan AnimatedOpacity
-              AnimatedOpacity(
-                opacity: isHidden ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 300),
-                child: Column(
-                  children: [
-                    // 1. TOMBOL LOGIN (Primary - Putih)
-                    SizedBox(
-                      width: double.infinity,
-                      height: 55,
-                      child: ElevatedButton(
-                        onPressed: isHidden ? null : onLoginPressed,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.background,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 5,
-                        ),
-                        child: const Text(
-                          "Masuk Akun",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 15),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 50),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

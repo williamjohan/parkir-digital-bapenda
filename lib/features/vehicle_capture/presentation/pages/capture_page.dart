@@ -30,29 +30,37 @@ class CapturePage extends StatefulWidget {
 
 class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   final TextEditingController _plateController = TextEditingController();
+  late VehicleCaptureCubit _captureCubit;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    context.read<VehicleCaptureCubit>().initCamera();
+
+    // 2. [PERBAIKAN]: Inisialisasi referensi
+    _captureCubit = context.read<VehicleCaptureCubit>();
+    _captureCubit.initCamera();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _plateController.dispose();
+
+    // 3. [KUNCI ARSITEKTUR]: Wajib bunuh hardware kamera saat UI dihancurkan!
+    _captureCubit.disposeCamera();
+
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final cubit = context.read<VehicleCaptureCubit>();
+    // 4. [PERBAIKAN]: Gunakan variabel _captureCubit yang sudah disimpan
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
-      cubit.disposeCamera();
+      _captureCubit.disposeCamera();
     } else if (state == AppLifecycleState.resumed) {
-      cubit.initCamera();
+      _captureCubit.initCamera();
     }
   }
 
