@@ -81,6 +81,10 @@ import '../../features/profile/domain/repositories/i_profile_repository.dart'
     as _i879;
 import '../../features/profile/domain/usecases/get_profile_usecase.dart'
     as _i965;
+import '../../features/transaction_history/data/datasources/transaction_history_remote_datasource.dart'
+    as _i896;
+import '../../features/transaction_history/domain/usecases/get_transaction_history_usecase.dart'
+    as _i732;
 import '../../features/vehicle_capture/data/datasources/ocr_local_data_source.dart'
     as _i437;
 import '../../features/vehicle_capture/data/repositories/ocr_repository_impl.dart'
@@ -151,6 +155,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i92.IParkingTransactionLocalDataSource>(
     () => _i462.ParkingTransactionLocalDataSourceImpl(gh<_i37.IImageService>()),
   );
+  gh.lazySingleton<_i896.ITransactionHistoryRemoteDataSource>(
+    () => _i896.TransactionHistoryRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -175,6 +182,12 @@ _i174.GetIt init(
   gh.lazySingleton<_i879.IProfileRepository>(
     () => _i334.ProfileRepositoryImpl(
       gh<_i847.IProfileRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
+    () => _i732.GetTransactionHistoryUseCase(
+      gh<_i896.ITransactionHistoryRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
