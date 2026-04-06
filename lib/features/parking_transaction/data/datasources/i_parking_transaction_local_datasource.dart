@@ -15,8 +15,9 @@ abstract class IParkingTransactionLocalDataSource {
     required String idJukir,
     required String namaJukir,
     required String nop,
-    String? latitude, // [TAMBAHAN BARU]
-    String? longitude, // [TAMBAHAN BARU]
+    String? latitude,
+    String? longitude,
+    String? noKartuKue,
   });
 
   Future<void> updateTransactionStatus({

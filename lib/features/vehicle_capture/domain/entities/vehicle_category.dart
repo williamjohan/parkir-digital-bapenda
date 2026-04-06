@@ -1,1 +1,1 @@
-enum VehicleCategory { motor, mobil }
+enum VehicleCategory { Motor, Mobil }

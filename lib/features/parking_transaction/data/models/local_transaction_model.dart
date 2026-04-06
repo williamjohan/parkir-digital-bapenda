@@ -48,6 +48,9 @@ class LocalTransactionModel {
   @JsonKey(name: 'longitude')
   final String? longitude;
 
+  @JsonKey(name: 'no_kartu_kue')
+  final String? noKartuKue;
+
   LocalTransactionModel({
     required this.idTransaksiLokal,
     required this.nominal,
@@ -63,6 +66,7 @@ class LocalTransactionModel {
     required this.isSync,
     this.latitude,
     this.longitude,
+    this.noKartuKue,
   });
 
   factory LocalTransactionModel.fromJson(Map<String, dynamic> json) =>

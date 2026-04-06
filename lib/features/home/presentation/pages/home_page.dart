@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // --- WIDGET DASHBOARD KENDARAAN (Tetap sama) ---
+                // --- WIDGET DASHBOARDf KENDARAAN (Tetap sama) ---
                 BlocBuilder<HomeCubit, HomeState>(
                   buildWhen: (previous, current) =>
                       previous.motorCount != current.motorCount ||
@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                                 icon: Icons.two_wheeler,
                                 onTap: () => _handleVehicleSelection(
                                   context,
-                                  'motor',
+                                  'Motor',
                                   currentMode,
                                 ),
                               ),
@@ -197,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                                 icon: Icons.directions_car,
                                 onTap: () => _handleVehicleSelection(
                                   context,
-                                  'mobil',
+                                  'Mobil',
                                   currentMode,
                                 ),
                               ),

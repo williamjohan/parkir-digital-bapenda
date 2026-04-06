@@ -43,7 +43,7 @@ dependencies:
   path: ^1.9.1
   uuid: ^4.5.3
   geolocator: ^13.0.1
-  flutter_bluetooth_serial: ^0.4.0
+  # flutter_bluetooth_serial: ^0.4.0
 
 dev_dependencies:
   flutter_test:

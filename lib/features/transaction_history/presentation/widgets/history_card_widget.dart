@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_ui_extension.dart';
 import '../../data/models/history_item_model.dart';
-// Sesuaikan import AppColors & AppTypography dengan sistem desain Anda
-// import '../../../../core/design_system/tokens/app_colors.dart';
-// import '../../../../core/design_system/tokens/app_typography.dart';
 
 class HistoryCardWidget extends StatelessWidget {
   final HistoryItemModel item;
@@ -17,31 +14,7 @@ class HistoryCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Format Tanggal (Contoh: 01 Apr 2026 • 14:30)
-    String formattedDate = item.tglTrx;
-    try {
-      final DateTime date = DateTime.parse(item.tglTrx);
-      formattedDate = DateFormat('dd MMM yyyy • HH:mm').format(date);
-    } catch (_) {}
-
-    // 2. Format Uang (Rp)
-    final formatCurrency = NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: 'Rp ',
-      decimalDigits: 0,
-    );
-    final String nominal = formatCurrency.format(item.kredit);
-
-    // 3. Status Badge Logic
-    final bool isFree = item.jenisTarif.toUpperCase() == 'FREE';
-    final Color badgeColor = isFree ? Colors.green : Colors.blue;
-    final String badgeText = isFree ? 'GRATIS' : 'LUNAS';
-
-    // 4. Ikon Kendaraan
-    IconData vehicleIcon = Icons.directions_car;
-    if (item.jenisTarif.toUpperCase() == 'MOTOR') {
-      vehicleIcon = Icons.two_wheeler;
-    }
+    // 🚀 TIDAK ADA LAGI LOGIKA DI SINI! WIDGET HANYA MENGGAMBAR!
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -66,7 +39,7 @@ class HistoryCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  formattedDate,
+                  item.formattedDate, // 🚀 Langsung Panggil
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
@@ -79,18 +52,18 @@ class HistoryCardWidget extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: badgeColor.withValues(alpha: 0.1),
+                    color: item.badgeColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: badgeColor.withValues(alpha: 0.5),
+                      color: item.badgeColor.withValues(alpha: 0.5),
                     ),
                   ),
                   child: Text(
-                    badgeText,
+                    item.badgeText, // 🚀 Langsung Panggil
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: badgeColor,
+                      color: item.badgeColor,
                     ),
                   ),
                 ),
@@ -107,7 +80,10 @@ class HistoryCardWidget extends StatelessWidget {
                     color: Colors.grey.shade100,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(vehicleIcon, color: Colors.black87),
+                  child: Icon(
+                    item.vehicleIcon,
+                    color: Colors.black87,
+                  ), // 🚀 Langsung Panggil
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -115,7 +91,7 @@ class HistoryCardWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.platNumber == '-' ? 'Tanpa Plat' : item.platNumber,
+                        item.titleText, // 🚀 Langsung Panggil
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -124,19 +100,18 @@ class HistoryCardWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        item.jenisTarif == 'FREE'
-                            ? 'Parkir Gratis'
-                            : item.jenisTarif,
+                        item.subtitleText, // 🚀 Langsung Panggil
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: Colors.grey,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
                 Text(
-                  isFree ? 'Rp 0' : nominal,
+                  item.formattedNominal, // 🚀 Langsung Panggil
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -155,14 +130,14 @@ class HistoryCardWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Petugas: ${item.namaPetugas} (Shift ${item.jenisTarif == 'FREE' ? '-' : '1'})', // Fallback shift
+                    'Petugas: ${item.namaPetugasBersih} (Shift ${item.isFreeTransaction ? '-' : '1'})', // 🚀 Langsung Panggil
                     style: const TextStyle(fontSize: 11, color: Colors.grey),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
 
-                // TOMBOL PREVIEW KARCIS (THE NEXT BIG THING)
+                // TOMBOL PREVIEW KARCIS
                 InkWell(
                   onTap: onPreviewTap,
                   borderRadius: BorderRadius.circular(8),

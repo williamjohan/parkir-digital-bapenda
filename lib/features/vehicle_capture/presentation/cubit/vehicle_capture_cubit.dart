@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -148,6 +146,7 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
     // 3. Bunuh controller lama secara fisik di level hardware
     if (oldController != null) {
       await oldController.dispose();
+      await Future.delayed(const Duration(milliseconds: 500));
     }
 
     try {
