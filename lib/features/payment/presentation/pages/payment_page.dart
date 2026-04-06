@@ -1,19 +1,10 @@
 // lib/features/payment/presentation/pages/payment_page.dart
-
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:parkir_digital_bapenda/features/payment/presentation/widgets/card_detail_parkir.dart';
 import 'package:parkir_digital_bapenda/features/payment/presentation/widgets/card_qris_widget.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:saver_gallery/saver_gallery.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -51,60 +42,6 @@ class _PaymentPageState extends State<PaymentPage> {
 
   // 🆕 key untuk RepaintBoundary
   final GlobalKey _qrisKey = GlobalKey();
-
-  ////////////////////////////OPTIONAL//////////////////////////////
-  Future<bool> _requestPermission() async {
-    if (Platform.isAndroid) {
-      final deviceInfo = await DeviceInfoPlugin().androidInfo;
-      final sdkInt = deviceInfo.version.sdkInt;
-
-      if (sdkInt >= 33) {
-        // Android 13+
-        return await Permission.photos.request().isGranted;
-      } else {
-        return await Permission.storage.request().isGranted;
-      }
-    } else {
-      return await Permission.photosAddOnly.request().isGranted;
-    }
-  }
-
-  Future<void> _saveQris() async {
-    try {
-      final isGranted = await _requestPermission();
-
-      if (!isGranted) {
-        PbStatusSnackbar.show(context, message: 'Permission ditolak');
-        return;
-      }
-
-      RenderRepaintBoundary boundary =
-          _qrisKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-
-      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-
-      ByteData? byteData = await image.toByteData(
-        format: ui.ImageByteFormat.png,
-      );
-
-      if (byteData == null) {
-        PbStatusSnackbar.show(context, message: 'Gagal ambil gambar');
-        return;
-      }
-
-      final result = await SaverGallery.saveImage(
-        byteData.buffer.asUint8List(),
-        fileName: "qris_${DateTime.now().millisecondsSinceEpoch}.png",
-        androidRelativePath: "Pictures/QRIS",
-        skipIfExists: false,
-      );
-
-      PbStatusSnackbar.show(context, message: result.toString());
-    } catch (e) {
-      PbStatusSnackbar.show(context, message: 'Error: $e');
-    }
-  }
-  ////////////////////////////OPTIONAL//////////////////////////////
 
   @override
   Widget build(BuildContext context) {
@@ -234,14 +171,6 @@ class _PaymentPageState extends State<PaymentPage> {
                               );
                             },
                           );
-                        },
-                      ),
-                      SizedBox(height: 16),
-                      PbPrimaryButton(
-                        text: 'Simpan QRIS',
-                        isOutlined: true,
-                        onPressed: () {
-                          _saveQris();
                         },
                       ),
                     ],
