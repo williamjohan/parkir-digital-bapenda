@@ -34,7 +34,7 @@ dependencies:
   injectable: ^2.4.1 # Untuk Code Generation DI (Optional, jika menggunakan anotasi)
   
   # --- Core Features: Hardware & ML ---
-  camera: ^0.11.0 # Stream kamera untuk on-device scan
+  camera: 0.10.5+9
   google_mlkit_text_recognition: ^0.14.0 # Engine On-Device OCR Google
   permission_handler: ^12.0.1 # Manajemen pop-up izin akses kamera
   flutter_secure_storage: ^10.0.0
