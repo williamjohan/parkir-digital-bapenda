@@ -100,9 +100,8 @@ class AppRouter {
           builder: (context, state) {
             final categoryString = state.pathParameters['category'];
             final category = categoryString == 'mobil'
-                ? VehicleCategory.mobil
-                : VehicleCategory.motor;
-
+                ? VehicleCategory.Mobil
+                : VehicleCategory.Motor;
             // [PERBAIKAN]: Gunakan MultiBlocProvider untuk 2 Jenderal!
             return MultiBlocProvider(
               providers: [
@@ -122,7 +121,7 @@ class AppRouter {
           path: '${AppRoutes.quickPark}/:category',
           builder: (context, state) {
             // 1. Tangkap parameter dari URL (motor/mobil)
-            final categoryString = state.pathParameters['category'] ?? 'motor';
+            final categoryString = state.pathParameters['category'] ?? 'Motor';
 
             // 2. [INJEKSI]: Halaman ini HANYA butuh Sang Otak (ParkingTransactionCubit)
             // Tidak butuh Jenderal Kamera!
@@ -160,12 +159,15 @@ class AppRouter {
             );
           },
         ),
-        GoRoute(
-          path: AppRoutes.printerSettings,
-          builder: (context, state) {
-            return const PrinterDeviceScreen();
-          },
-        ),
+        // GoRoute(
+        //   path: AppRoutes.printerSettings,
+        //   builder: (context, state) {
+        //     return BlocProvider(
+        //       create: (_) => locator<PrinterCubit>(),
+        //       child: const PrinterDeviceScreen(),
+        //     );
+        //   },
+        // ),
       ],
     );
 

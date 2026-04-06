@@ -24,8 +24,8 @@ class PbPreviewTicketWidget extends StatelessWidget {
     required this.objekPajak,
     required this.alamatObjekPajak,
     required this.waktuParkir,
-    required this.tipeKendaraan,
     this.isQuickMode = false,
+    required this.tipeKendaraan,
     this.isFree = false,
     this.noKendaraan = '',
     required this.tarifParkir,
@@ -91,7 +91,7 @@ class PbPreviewTicketWidget extends StatelessWidget {
                   text: '  •  ',
                   style: TextStyle(color: Colors.grey),
                 ),
-                TextSpan(text: isQuickMode ? '[Tanpa Plat]' : noKendaraan),
+                TextSpan(text: isQuickMode ? 'Tanpa Plat' : noKendaraan),
                 const TextSpan(
                   text: '  •  ',
                   style: TextStyle(color: Colors.grey),

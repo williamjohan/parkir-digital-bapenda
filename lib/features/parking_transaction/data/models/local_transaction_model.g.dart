@@ -23,6 +23,7 @@ LocalTransactionModel _$LocalTransactionModelFromJson(
   isSync: (json['is_sync'] as num).toInt(),
   latitude: json['latitude'] as String?,
   longitude: json['longitude'] as String?,
+  noKartuKue: json['no_kartu_kue'] as String?,
 );
 
 Map<String, dynamic> _$LocalTransactionModelToJson(
@@ -42,4 +43,5 @@ Map<String, dynamic> _$LocalTransactionModelToJson(
   'is_sync': instance.isSync,
   'latitude': instance.latitude,
   'longitude': instance.longitude,
+  'no_kartu_kue': instance.noKartuKue,
 };

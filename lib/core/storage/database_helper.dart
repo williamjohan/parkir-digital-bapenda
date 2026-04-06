@@ -21,17 +21,16 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    // [MIGRASI KUNCI]: Naik versi ke 3 untuk menyuntikkan GPS
     return await openDatabase(
       path,
-      version: 3,
+      version: 4, // <-- UBAH JADI 4
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // [SKEMA BARU V3]: Langsung memiliki latitude & longitude
+    // [SKEMA BARU V4]: Langsung memiliki kolom no_kartu_kue
     await db.execute('''
       CREATE TABLE $tableTransactions (
         id_transaksi_lokal TEXT PRIMARY KEY,
@@ -47,41 +46,44 @@ class DatabaseHelper {
         mode_plat INTEGER NOT NULL,
         is_sync INTEGER NOT NULL DEFAULT 0,
         latitude TEXT, 
-        longitude TEXT 
+        longitude TEXT,
+        no_kartu_kue TEXT
       )
     ''');
   }
 
   // [SCRIPT MIGRASI OTOMATIS]
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
-    // Migrasi dari V1 ke V2 (Yang sudah Anda buat sebelumnya)
+    // Migrasi dari V1 ke V2
     if (oldVersion < 2) {
+      // ... (biarkan kode V1 ke V2 Anda yang lama tetap ada di sini) ...
       await db.execute(
         'ALTER TABLE $tableTransactions RENAME TO tmp_transactions',
       );
-
-      // (Catatan: _createDB saat dipanggil di sini akan membuat versi V3 secara langsung,
-      // jadi kolom latitude & longitude sudah ikut terbuat).
       await _createDB(db, newVersion);
-
       await db.execute('''
         INSERT INTO $tableTransactions(id_transaksi_lokal, nominal, plat_nomor, kategori_kendaraan, waktu_transaksi, status, id_jukir, nama_jukir, nop, foto_kendaraan, mode_plat, is_sync)
         SELECT id_transaksi_lokal, nominal, plat_nomor, kategori_kendaraan, waktu_transaksi, status, id_jukir, nama_jukir, nop, foto_kendaraan, 1, 0
         FROM tmp_transactions
       ''');
-
       await db.execute('DROP TABLE tmp_transactions');
     }
 
-    // [MIGRASI BARU: V2 ke V3]
+    // Migrasi V2 ke V3 (GPS)
     if (oldVersion == 2) {
-      // Menambahkan kolom GPS tanpa menghapus data yang ada.
-      // Karena kita mendefinisikan tipe TEXT (bisa null), ini adalah operasi yang 100% aman.
       await db.execute(
         'ALTER TABLE $tableTransactions ADD COLUMN latitude TEXT',
       );
       await db.execute(
         'ALTER TABLE $tableTransactions ADD COLUMN longitude TEXT',
+      );
+    }
+
+    // 🚀 [MIGRASI BARU: V3 ke V4] (SAM Card)
+    if (oldVersion < 4) {
+      // Menambahkan kolom no_kartu_kue tanpa merusak data lama!
+      await db.execute(
+        'ALTER TABLE $tableTransactions ADD COLUMN no_kartu_kue TEXT',
       );
     }
   }

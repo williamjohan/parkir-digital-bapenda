@@ -29,6 +29,7 @@ class CapturePage extends StatefulWidget {
 }
 
 class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
+  bool _isCameraManuallyDisposed = false;
   final TextEditingController _plateController = TextEditingController();
   late VehicleCaptureCubit _captureCubit;
 
@@ -47,20 +48,28 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     _plateController.dispose();
 
-    // 3. [KUNCI ARSITEKTUR]: Wajib bunuh hardware kamera saat UI dihancurkan!
-    _captureCubit.disposeCamera();
-
+    if (!_isCameraManuallyDisposed) {
+      _captureCubit.disposeCamera();
+    }
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // 4. [PERBAIKAN]: Gunakan variabel _captureCubit yang sudah disimpan
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
+      _isCameraManuallyDisposed = true;
       _captureCubit.disposeCamera();
     } else if (state == AppLifecycleState.resumed) {
-      _captureCubit.initCamera();
+      if (_isCameraManuallyDisposed) {
+        _isCameraManuallyDisposed = false;
+        // Tambahkan delay kecil agar OS Android sempat release surface lama
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            _captureCubit.initCamera();
+          }
+        });
+      }
     }
   }
 
@@ -129,7 +138,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
             }
           } else {
             // --- KAWASAN GRATIS (Langsung Lunas) ---
-            context.read<VehicleCaptureCubit>().cancelNavigation();
+
+            final captureCubit = context.read<VehicleCaptureCubit>();
+            final namaKategori =
+                captureCubit.state.selectedCategory?.name ?? 'Mobil';
+
+            captureCubit.cancelNavigation();
             context.read<SyncCubit>().syncDataBackground();
 
             // Panggil Modal Berhasil, lalu Karcis, menggunakan data 'profile'
@@ -143,7 +157,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                 showDialog(
                   context: context,
                   barrierDismissible: false,
-                  builder: (context) {
+                  builder: (dialogContext) {
                     return Dialog(
                       child: PbPreviewTicketWidget(
                         deviceId: profile['idDevice'] ?? '',
@@ -155,23 +169,17 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                           'dd MMM yyyy • HH:mm',
                           'id_ID',
                         ).format(DateTime.parse(trx.waktuTransaksi)),
-                        tipeKendaraan:
-                            context
-                                .read<VehicleCaptureCubit>()
-                                .state
-                                .selectedCategory
-                                ?.name ??
-                            'Mobil',
+                        tipeKendaraan: namaKategori,
                         isQuickMode: false,
                         isFree: true,
                         noKendaraan: trx.platNomor ?? '',
                         tarifParkir: 0,
                         idTransaksi: trx.idTransaksiLokal,
                         okPressed: () {
-                          Navigator.pop(context); // Tutup Karcis
+                          Navigator.pop(dialogContext); // Tutup Karcis
                           // Bersihkan layar untuk kendaraan selanjutnya
                           _plateController.clear();
-                          context.read<VehicleCaptureCubit>().resetCapture();
+                          captureCubit.resetCapture();
                         },
                         printPressed: () {}, // Fitur cetak bluetooth nanti
                       ),

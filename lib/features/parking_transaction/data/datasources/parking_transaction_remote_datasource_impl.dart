@@ -1,7 +1,6 @@
-// lib/features/parking_transaction/data/datasources/parking_transaction_remote_datasource_impl.dart
-
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../models/local_transaction_model.dart';
@@ -27,7 +26,7 @@ class ParkingTransactionRemoteDataSourceImpl
         transaction.fotoKendaraan!.trim().isNotEmpty) {
       final file = File(transaction.fotoKendaraan!);
       if (file.existsSync()) {
-        multipartImage = await MultipartFile.fromFile(
+        multipartImage = MultipartFileRecreatable.fromFileSync(
           file.path,
           filename: file.path.split('/').last,
         );
@@ -35,11 +34,10 @@ class ParkingTransactionRemoteDataSourceImpl
     }
 
     // --- 2. PENANGANAN PLAT NOMOR ---
-    String safePlatNumber = transaction.platNomor ?? '';
-    if (isFree) {
-      safePlatNumber = '-';
-    } else if (safePlatNumber.trim().isEmpty) {
-      safePlatNumber = '-';
+    String safePlatNumber = transaction.platNomor?.trim() ?? '';
+    if (safePlatNumber.isEmpty) {
+      safePlatNumber =
+          '-'; // Hanya ubah ke strip JIKA memang benar-benar kosong
     }
 
     // --- 3. PENANGANAN PETUGAS ID ---
@@ -47,6 +45,13 @@ class ParkingTransactionRemoteDataSourceImpl
     final int safePetugasId = (rawPetugasId is int)
         ? rawPetugasId
         : int.tryParse(rawPetugasId?.toString() ?? '0') ?? 0;
+    // --- 3.5. PERBAIKAN FORMAT TANGGAL BAPENDA ---
+    String safeDate = transaction.waktuTransaksi;
+    try {
+      final parsedDate = DateTime.parse(transaction.waktuTransaksi);
+      // Memotong ".046488" agar server Bapenda tidak meledak
+      safeDate = parsedDate.toIso8601String().split('.').first;
+    } catch (_) {}
 
     // --- 4. RAKIT PAYLOAD ---
     final formData = FormData.fromMap({
@@ -59,11 +64,11 @@ class ParkingTransactionRemoteDataSourceImpl
       'acquirer': isFree ? 'FREE' : 'BAPENDA',
 
       // [UPDATE 2]: noKartuKUE diisi null jika gratis, jika tidak kosongkan string
-      'noKartuKUE': isFree ? null : '',
+      'noKartuKUE': isFree ? '-' : (transaction.noKartuKue ?? '-'),
 
       'noTRX': isFree ? '-' : transaction.idTransaksiLokal,
-      'platNumber': isFree ? '-' : safePlatNumber,
-      'tglTrx': transaction.waktuTransaksi,
+      'platNumber': safePlatNumber,
+      'tglTrx': safeDate,
       'kredit': isFree ? 0 : transaction.nominal,
       'saldo': 0,
 
@@ -122,17 +127,23 @@ class ParkingTransactionRemoteDataSourceImpl
     try {
       AppLogger.debug('>>> [SYNC] Mengeksekusi API POST...');
 
+      // 🚀 [BYPASS DICABUT]: Kita kembalikan ke mode normal
       final response = await _dio.post(
         '/api/mobile/parking/insert-transaction',
         data: formData,
       );
 
-      if (response.statusCode != 200) {
-        throw Exception('Gagal API: ${response.statusCode} - ${response.data}');
-      }
+      AppLogger.debug('>>> [SYNC SUCCESS] Bapenda membalas: ${response.data}');
     } on DioException catch (e) {
       AppLogger.error('>>> [SYNC ERROR] DioException: ${e.message}');
-      throw Exception('Network Error: ${e.message}');
+
+      // 🚀 [SABUK PENGAMAN]: Jika setelah 3x retry tetap Error (misal 500 lagi),
+      // kita tetap bisa melihat alasan penolakannya di terminal tanpa bypass.
+      if (e.response != null) {
+        AppLogger.error('>>> [RESPONSE BAPENDA]: ${e.response?.data}');
+      }
+
+      throw Exception('Gagal Sinkronisasi: ${e.message}');
     }
   }
 }

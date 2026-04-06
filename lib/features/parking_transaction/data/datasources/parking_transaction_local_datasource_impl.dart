@@ -25,8 +25,9 @@ class ParkingTransactionLocalDataSourceImpl
     required String idJukir,
     required String namaJukir,
     required String nop,
-    String? latitude, // [TAMBAHAN BARU]
-    String? longitude, // [TAMBAHAN BARU]
+    String? latitude,
+    String? longitude,
+    String? noKartuKue,
   }) async {
     String? finalImagePath;
 
@@ -42,7 +43,7 @@ class ParkingTransactionLocalDataSourceImpl
           'Gagal mengompresi foto kendaraan. Memori mungkin penuh.',
         );
       }
-      await _imageService.deleteImage(rawImagePath);
+      // await _imageService.deleteImage(rawImagePath);
     }
 
     final String idTransaksi = TransactionIdUtils.generateOrderId(
@@ -72,6 +73,7 @@ class ParkingTransactionLocalDataSourceImpl
       isSync: 0,
       latitude: latitude,
       longitude: longitude,
+      noKartuKue: noKartuKue,
     );
 
     // SIMPAN KE SQLite
