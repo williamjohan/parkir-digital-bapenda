@@ -15,7 +15,6 @@ import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
 import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
-import '../../features/printer/presentation/cubit/printer_cubit.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/quick_parking/presentation/pages/quick_park_page.dart';
@@ -164,10 +163,7 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.printerSettings,
           builder: (context, state) {
-            return BlocProvider(
-              create: (_) => locator<PrinterCubit>(),
-              child: const PrinterDeviceScreen(),
-            );
+            return const PrinterDeviceScreen();
           },
         ),
       ],

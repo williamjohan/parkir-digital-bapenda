@@ -2,6 +2,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/usecases/generate_qris_usecase.dart';
 import '../../domain/usecases/confirm_payment_usecase.dart';
 import 'payment_state.dart';
@@ -10,6 +12,9 @@ import 'payment_state.dart';
 class PaymentCubit extends Cubit<PaymentState> {
   final GenerateQrisUseCase _generateQrisUseCase;
   final ConfirmPaymentUseCase _confirmPaymentUseCase;
+  final _secureStorage = locator<ISecureStorageManager>();
+
+  Map<String, dynamic>? _cachedProfile;
 
   PaymentCubit(this._generateQrisUseCase, this._confirmPaymentUseCase)
     : super(PaymentInitial());
@@ -19,6 +24,9 @@ class PaymentCubit extends Cubit<PaymentState> {
     required String kategoriKendaraan,
   }) async {
     emit(PaymentLoading());
+
+    // Load profile internal tanpa emit
+    _cachedProfile ??= await _secureStorage.getJukirProfile();
 
     // [PERBAIKAN]: Sesuaikan pemanggilan execute dengan kontrak UseCase yang baru!
     final result = await _generateQrisUseCase.execute(
@@ -38,6 +46,7 @@ class PaymentCubit extends Cubit<PaymentState> {
               qrisEntity.idTransaksi,
               qrisEntity.qrString,
               qrisEntity.nominal,
+              _cachedProfile,
             ),
           );
         }

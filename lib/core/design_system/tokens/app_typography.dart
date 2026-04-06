@@ -28,12 +28,32 @@ abstract class AppTypography {
     letterSpacing: 0.15,
   );
 
+  static const TextStyle heading4 = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: 18,
+    fontWeight: FontWeight.w600, // SemiBold
+    color: AppColors.textPrimary,
+  );
+
+  static const TextStyle heading5 = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: 16,
+    fontWeight: FontWeight.w500, // Medium
+    color: AppColors.textPrimary,
+  );
+
+  static const TextStyle heading6 = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: 14,
+    fontWeight: FontWeight.w500, // Medium
+    color: AppColors.textPrimary,
+  );
+
   // Digunakan untuk teks tombol utama
   static const TextStyle buttonText = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 16,
-    fontWeight: FontWeight.w600, // SemiBold
-    color: Colors.white,
+    fontWeight: FontWeight.w600,
   );
 
   // Digunakan untuk body text biasa

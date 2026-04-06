@@ -18,11 +18,17 @@ class PaymentQrisGenerated extends PaymentState {
   final String idTransaksi;
   final String qrisData;
   final int nominal;
+  final Map<String, dynamic>? profile;
 
-  const PaymentQrisGenerated(this.idTransaksi, this.qrisData, this.nominal);
+  const PaymentQrisGenerated(
+    this.idTransaksi,
+    this.qrisData,
+    this.nominal,
+    this.profile,
+  );
 
   @override
-  List<Object?> get props => [idTransaksi, qrisData, nominal];
+  List<Object?> get props => [idTransaksi, qrisData, nominal, profile];
 }
 
 // State ketika Jukir menekan "OK/Selesai"
@@ -35,4 +41,13 @@ class PaymentFailure extends PaymentState {
 
   @override
   List<Object?> get props => [message];
+}
+
+class PaymentProfileLoaded extends PaymentState {
+  final Map<String, dynamic> profile;
+
+  const PaymentProfileLoaded(this.profile);
+
+  @override
+  List<Object?> get props => [profile];
 }
