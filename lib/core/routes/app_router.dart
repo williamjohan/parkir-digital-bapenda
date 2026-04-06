@@ -3,6 +3,7 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/printer/presentation/screen/printer_device_screen.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/pages/transaction_history_page.dart';
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
@@ -14,6 +15,7 @@ import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
 import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
+import '../../features/printer/presentation/cubit/printer_cubit.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/quick_parking/presentation/pages/quick_park_page.dart';
@@ -156,6 +158,15 @@ class AppRouter {
             return BlocProvider(
               create: (_) => locator<TransactionHistoryCubit>(),
               child: const TransactionHistoryPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.printerSettings,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (_) => locator<PrinterCubit>(),
+              child: const PrinterDeviceScreen(),
             );
           },
         ),
