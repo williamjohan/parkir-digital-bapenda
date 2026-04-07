@@ -10,6 +10,7 @@ class PbPrimaryButton extends StatelessWidget {
   final bool isLoading;
   final IconData? icon;
   final bool isOutlined;
+  final bool isSecondary;
 
   const PbPrimaryButton({
     super.key,
@@ -18,27 +19,43 @@ class PbPrimaryButton extends StatelessWidget {
     this.isLoading = false,
     this.icon,
     this.isOutlined = false,
+    this.isSecondary = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor;
+    Color textColor;
+    Color borderColor;
+
+    if (isOutlined) {
+      backgroundColor = Colors.transparent;
+      textColor = AppColors.primary;
+      borderColor = AppColors.primary;
+    } else if (isSecondary) {
+      backgroundColor = AppColors.background; // tambahin di AppColors
+      textColor = AppColors.primary;
+      borderColor = Colors.transparent;
+    } else {
+      backgroundColor = AppColors.primary;
+      textColor = Colors.white;
+      borderColor = Colors.transparent;
+    }
+
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isOutlined ? Colors.transparent : AppColors.primary,
+          backgroundColor: backgroundColor,
           disabledBackgroundColor: isOutlined
               ? Colors.transparent
               : AppColors.primaryLight,
           padding: const EdgeInsets.symmetric(horizontal: 8),
-
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: isOutlined
-                ? BorderSide(color: AppColors.primary, width: 1.5)
-                : BorderSide.none,
+            side: BorderSide(color: borderColor, width: isOutlined ? 1.5 : 0),
           ),
           elevation: 0,
         ),
@@ -47,7 +64,7 @@ class PbPrimaryButton extends StatelessWidget {
                 height: 24,
                 width: 24,
                 child: CircularProgressIndicator(
-                  color: isOutlined ? AppColors.primary : Colors.white,
+                  color: textColor,
                   strokeWidth: 3,
                 ),
               )
@@ -55,18 +72,14 @@ class PbPrimaryButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
-                    Icon(
-                      icon,
-                      color: isOutlined ? AppColors.primary : Colors.white,
-                      size: 20,
-                    ),
+                    Icon(icon, color: textColor, size: 20),
                     const SizedBox(width: 8),
                   ],
                   Flexible(
                     child: Text(
                       text,
                       style: AppTypography.buttonText.copyWith(
-                        color: isOutlined ? AppColors.primary : Colors.white,
+                        color: textColor,
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,

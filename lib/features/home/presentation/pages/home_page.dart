@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_mode_transaksi.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
@@ -17,6 +18,7 @@ import '../../../../core/utils/permission_utils.dart';
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
 import '../widgets/dashboard_widget.dart';
+import '../widgets/kendaraan_botsheet_widget.dart';
 import '../widgets/mode_plat.dart';
 import '../widgets/vehicle_card.dart';
 
@@ -99,7 +101,7 @@ class _HomePageState extends State<HomePage> {
               },
               child: const Text(
                 'Parkir Digital Bapenda',
-                style: AppTypography.heading2,
+                style: AppTypography.heading5,
               ),
             ),
             backgroundColor: AppColors.surface,
@@ -107,7 +109,7 @@ class _HomePageState extends State<HomePage> {
             centerTitle: true,
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -118,93 +120,46 @@ class _HomePageState extends State<HomePage> {
                       previous.mobilCount != current.mobilCount,
                   builder: (context, state) {
                     return DashboardWidget(
+                      totalPendapatan: 20000,
+                      totalTransaksi: (state.motorCount + state.mobilCount),
                       motorCount: state.motorCount,
                       mobilCount: state.mobilCount,
                     );
                   },
                 ),
-                const SizedBox(height: 32), // Beri jarak lebih lega
-                // --- [BARU] SEGMENT 1: PILIH MODE PLAT ---
-                const Text(
-                  '1. Pilih Mode Parkir',
-                  style: AppTypography.heading2,
-                  textAlign: TextAlign.left,
-                ),
-                const SizedBox(height: 12),
-
-                BlocBuilder<HomeCubit, HomeState>(
-                  buildWhen: (previous, current) =>
-                      previous.selectedModePlat != current.selectedModePlat,
-                  builder: (context, state) {
-                    // [ABSTRAKSI]: Gunakan widget terpisah yang baru dibuat
-                    return ModePlatSelector(
-                      currentMode: state.selectedModePlat,
-                      onModeSelected: (mode) =>
-                          context.read<HomeCubit>().selectModePlat(mode),
+                SizedBox(height: 16),
+                CardModeTransaksiWidget(
+                  onTapTanpaPlat: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (_) => KendaraanBottomSheetWidget(
+                        onTapMotor: () {
+                          Navigator.pop(context); // tutup bottomsheet dulu
+                          _handleVehicleSelection(context, 'motor', 0);
+                        },
+                        onTapMobil: () {
+                          Navigator.pop(context);
+                          _handleVehicleSelection(context, 'mobil', 0);
+                        },
+                      ),
                     );
                   },
-                ),
-                const SizedBox(height: 32),
-
-                // --- [BARU] SEGMENT 2: PILIH KENDARAAN (Dinamis) ---
-                // Hanya muncul jika selectedModePlat tidak null
-                BlocBuilder<HomeCubit, HomeState>(
-                  buildWhen: (previous, current) =>
-                      previous.selectedModePlat != current.selectedModePlat,
-                  builder: (context, state) {
-                    final int? currentMode = state.selectedModePlat;
-
-                    if (currentMode == null) {
-                      // Jika belum memilih mode, tampilkan instruksi kosong
-                      return Center(
-                        child: Text(
-                          'Silakan pilih mode parkir terlebih dahulu.',
-                          style: AppTypography.bodyRegular.copyWith(
-                            color: AppColors.textSecondary,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      );
-                    }
-
-                    // Jika sudah memilih mode, tampilkan pilihan kendaraan!
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          '2. Pilih Jenis Kendaraan',
-                          style: AppTypography.heading2,
-                          textAlign: TextAlign.left,
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: VehicleCard(
-                                title: 'Motor',
-                                icon: Icons.two_wheeler,
-                                onTap: () => _handleVehicleSelection(
-                                  context,
-                                  'Motor',
-                                  currentMode,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: VehicleCard(
-                                title: 'Mobil',
-                                icon: Icons.directions_car,
-                                onTap: () => _handleVehicleSelection(
-                                  context,
-                                  'Mobil',
-                                  currentMode,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                  onTapPakaiPlat: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (_) => KendaraanBottomSheetWidget(
+                        isTanpaPlat: false,
+                        onTapMotor: () {
+                          Navigator.pop(context); // tutup bottomsheet dulu
+                          _handleVehicleSelection(context, 'motor', 1);
+                        },
+                        onTapMobil: () {
+                          Navigator.pop(context);
+                          _handleVehicleSelection(context, 'mobil', 1);
+                        },
+                      ),
                     );
                   },
                 ),

@@ -1,28 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/dashboard_item.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
 class DashboardWidget extends StatelessWidget {
   // <--- Public Class
+  final int totalPendapatan;
+  final int totalTransaksi;
   final int motorCount;
   final int mobilCount;
 
   const DashboardWidget({
     super.key,
+    required this.totalPendapatan,
+    required this.totalTransaksi,
     required this.motorCount,
     required this.mobilCount,
   });
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryLight],
+          colors: [AppColors.primaryDark, AppColors.primaryLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.3),
@@ -35,73 +42,57 @@ class DashboardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Transaksi Hari Ini',
+            'TOTAL PENDAPATAN',
             style: AppTypography.bodyRegular.copyWith(
-              color: Colors.white70,
+              color: AppColors.surface,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 16),
+          Text(
+            DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(DateTime.now()),
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.surface,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Rp$totalPendapatan",
+            style: AppTypography.heading1.copyWith(color: AppColors.surface),
+          ),
+          const SizedBox(height: 8),
+          Divider(color: AppColors.surface),
+          const SizedBox(height: 8),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              StatItem(
+              DashboardItem(
+                title: "Transaksi",
+                value: totalTransaksi.toString(),
+              ),
+
+              SizedBox(width: 4),
+              DashboardItem(
+                title: "Motor",
+                value: motorCount.toString(),
                 icon: Icons.two_wheeler,
-                count: motorCount,
-                label: 'Motor',
               ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              StatItem(
+
+              SizedBox(width: 4),
+              DashboardItem(
+                title: "Mobil",
+                value: mobilCount.toString(),
                 icon: Icons.directions_car,
-                count: mobilCount,
-                label: 'Mobil',
               ),
             ],
           ),
+          const SizedBox(height: 16                                                                           ),
+          PbPrimaryButton(
+            text: "Tambah Transaksi",
+            isSecondary: true,
+            onPressed: () {},
+          ),
         ],
       ),
-    );
-  }
-}
-
-class StatItem extends StatelessWidget {
-  final IconData icon;
-  final int count;
-  final String label;
-
-  const StatItem({
-    required this.icon,
-    required this.count,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: Colors.white, size: 24),
-            const SizedBox(width: 8),
-            Text(
-              count.toString(),
-              style: AppTypography.heading1.copyWith(
-                color: Colors.white,
-                fontSize: 28,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: AppTypography.bodySmall.copyWith(color: Colors.white),
-        ),
-      ],
     );
   }
 }
