@@ -1,6 +1,7 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/features/transaction/widgets/card_metode_pembayaran.dart';
 import 'package:parkir_digital_bapenda/features/transaction/widgets/card_nopol_widget.dart';
@@ -36,14 +37,18 @@ class _TransactionPageState extends State<TransactionPage> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            CardNopolWidget(),
-            SizedBox(height: 16),
-            CardJenisKendaraan(),
-            SizedBox(height: 16),
-            CardMetodePembayaranWidget(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              CardNopolWidget(),
+              SizedBox(height: 16),
+              CardJenisKendaraan(),
+              SizedBox(height: 16),
+              CardMetodePembayaranWidget(),
+              SizedBox(height: 16),
+              PbPrimaryButton(text: "Selanjutnya", onPressed: () {}),
+            ],
+          ),
         ),
       ),
     );

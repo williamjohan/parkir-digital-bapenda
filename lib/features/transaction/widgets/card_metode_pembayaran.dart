@@ -29,6 +29,10 @@ class _CardMetodePembayaranWidgetState
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -139,8 +143,12 @@ class PaymentItem extends StatelessWidget {
                 ),
               ),
 
-              if (isSelected)
-                Icon(Icons.radio_button_checked, color: AppColors.primary),
+              Icon(
+                isSelected
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_off,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+              ),
             ],
           ),
         ),

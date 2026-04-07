@@ -69,7 +69,7 @@ class CardNopolWidget extends StatelessWidget {
               Expanded(child: Divider(color: AppColors.border)),
               SizedBox(width: 8),
               Text(
-                "atau pindah otomatis",
+                "atau pindai otomatis",
                 style: AppTypography.bodySmall.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -100,33 +100,39 @@ class CardNopolWidget extends StatelessWidget {
                     size: 20,
                   ),
                 ),
-                SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Pindai dengan Kamera",
-                      style: AppTypography.bodySemiBold.copyWith(
-                        color: AppColors.primaryDark,
+                SizedBox(width: 8),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Pindai dengan Kamera",
+                              style: AppTypography.bodySemiBold.copyWith(
+                                color: AppColors.primaryDark,
+                              ),
+                            ),
+                            Text(
+                              "Deteksi AI - arahkan ke plat nomor",
+                              style: AppTypography.bodySmall.copyWith(
+                                color: AppColors.primary,
+                              ),
+                              maxLines: 2,
+                              softWrap: true,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Deteksi AI - arahkan ke plat nomor",
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.primary,
-                          size: 12,
-                        ),
-                      ],
-                    ),
-                  ],
+                      SizedBox(width: 8),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: AppColors.primaryDark,
+                        size: 12,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

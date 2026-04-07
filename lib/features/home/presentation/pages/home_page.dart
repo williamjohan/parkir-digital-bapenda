@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_mode_transaksi.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/bar_diagram_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
@@ -18,9 +18,6 @@ import '../../../../core/utils/permission_utils.dart';
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
 import '../widgets/dashboard_widget.dart';
-import '../widgets/kendaraan_botsheet_widget.dart';
-import '../widgets/mode_plat.dart';
-import '../widgets/vehicle_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,15 +30,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Memuat data pertama kali saat Home dibuka
     context.read<HomeCubit>().loadDashboardData();
-
     _checkSecureStorageProfile();
   }
 
   Future<void> _checkSecureStorageProfile() async {
-    // Sesuaikan cara Anda memanggil SecureStorageManager di file ini
-    // Misalnya menggunakan locator GetIt:
     final secureStorage = locator<ISecureStorageManager>();
     final profile = await secureStorage.getJukirProfile();
 
@@ -59,10 +52,7 @@ class _HomePageState extends State<HomePage> {
       listener: (context, state) async {
         switch (state.permissionActionStatus) {
           case CameraPermissionStatus.granted:
-
-            // merefresh data SQLite TEPAT saat Jukir kembali dari halaman Capture/Payment.
             await context.push('/capture/${state.selectedVehicleForCapture}');
-
             if (context.mounted) {
               context.read<HomeCubit>().loadDashboardData();
             }
@@ -94,7 +84,6 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             title: GestureDetector(
               onDoubleTap: () {
-                // Hanya bisa dibuka saat mode Debug (Aman dari user asli!)
                 if (kDebugMode) {
                   ChuckerFlutter.showChuckerScreen();
                 }
@@ -109,11 +98,9 @@ class _HomePageState extends State<HomePage> {
             centerTitle: true,
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // --- WIDGET DASHBOARDf KENDARAAN (Tetap sama) ---
+                // ===== DASHBOARD (background berwarna) =====
                 BlocBuilder<HomeCubit, HomeState>(
                   buildWhen: (previous, current) =>
                       previous.motorCount != current.motorCount ||
@@ -127,41 +114,32 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-                SizedBox(height: 16),
-                CardModeTransaksiWidget(
-                  onTapTanpaPlat: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (_) => KendaraanBottomSheetWidget(
-                        onTapMotor: () {
-                          Navigator.pop(context); // tutup bottomsheet dulu
-                          _handleVehicleSelection(context, 'motor', 0);
-                        },
-                        onTapMobil: () {
-                          Navigator.pop(context);
-                          _handleVehicleSelection(context, 'mobil', 0);
-                        },
+
+                // ===== KONTEN BAWAH (rounded top) =====
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30),
+                    ),
+                  ),
+                  // Geser sedikit ke atas agar overlap dengan dashboard
+                  transform: Matrix4.translationValues(0, -50, 0),
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Bar diagram — pakai versi dengan label di atas bar
+                      BarDiagramWithLabels(
+                        weeklyIncome: [500000, 1200000, 0, 0, 0, 0, 0],
                       ),
-                    );
-                  },
-                  onTapPakaiPlat: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (_) => KendaraanBottomSheetWidget(
-                        isTanpaPlat: false,
-                        onTapMotor: () {
-                          Navigator.pop(context); // tutup bottomsheet dulu
-                          _handleVehicleSelection(context, 'motor', 1);
-                        },
-                        onTapMobil: () {
-                          Navigator.pop(context);
-                          _handleVehicleSelection(context, 'mobil', 1);
-                        },
-                      ),
-                    );
-                  },
+                      // SimpleBarChart(),
+                      const SizedBox(height: 24),
+
+                      // Tambahkan widget lain di bawah sini
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -179,14 +157,11 @@ void _handleVehicleSelection(
   int modePlat,
 ) async {
   if (modePlat == 1) {
-    // MODE 1: PAKAI PLAT (Rute Lama) -> Butuh Izin Kamera
+    // MODE 1: PAKAI PLAT -> Butuh Izin Kamera
     context.read<HomeCubit>().requestCameraAccess(kategori);
-    // Catatan: Navigasi aslinya terjadi di BlocListener di atas setelah izin diberikan.
   } else {
-    // MODE 0: TANPA PLAT (Rute Baru) -> Langsung lompat, tidak butuh kamera!
+    // MODE 0: TANPA PLAT -> Langsung lompat
     await context.push('/quick-park/$kategori');
-
-    // Saat Jukir menekan "Back" dari layar Quick Park, kita refresh dashboard!
     if (context.mounted) {
       context.read<HomeCubit>().loadDashboardData();
     }
