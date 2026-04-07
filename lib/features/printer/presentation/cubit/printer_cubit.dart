@@ -1,88 +1,78 @@
-// import 'dart:async';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-// import 'printer_state.dart';
+import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
-// class PrinterCubit extends Cubit<PrinterState> {
-//   PrinterCubit() : super(const PrinterState());
+// Sesuaikan path import ini dengan struktur folder Anda!
+import '../../../../core/services/printer/i_printer_service.dart';
+import '../../../transaction_history/data/models/history_item_model.dart';
 
-//   StreamSubscription<BluetoothDiscoveryResult>? _discoveryStream;
+part 'printer_state.dart';
 
-//   /// INIT
-//   Future<void> init() async {
-//     await _ensureBluetoothEnabled();
-//     await loadBondedDevices();
+@injectable
+class PrinterCubit extends Cubit<PrinterState> {
+  final IPrinterService _printerService;
 
-//     Future.delayed(const Duration(seconds: 1), () {
-//       startScan();
-//     });
-//   }
+  PrinterCubit(this._printerService) : super(PrinterInitial());
 
-//   /// Bluetooth ON
-//   Future<void> _ensureBluetoothEnabled() async {
-//     bool isOn = await FlutterBluetoothSerial.instance.isEnabled ?? false;
+  // 1. Memindai perangkat Bluetooth di sekitar/yang sudah dipair
+  Future<void> scanDevices() async {
+    emit(PrinterLoading());
+    try {
+      final devices = await _printerService.getPairedDevices();
+      // Otomatis cek jika ada yang sedang terkoneksi
+      final isConnected = await _printerService.isConnected;
+      // Catatan: blue_thermal_printer tidak menyimpan state 'current device',
+      // jadi jika terkoneksi, kita anggap itu device yang sedang aktif (bisa diimprove nanti).
 
-//     if (!isOn) {
-//       await FlutterBluetoothSerial.instance.requestEnable();
-//     }
-//   }
+      emit(
+        PrinterLoaded(
+          devices: devices,
+          connectedDevice: isConnected ? devices.firstOrNull : null,
+        ),
+      );
+    } catch (e) {
+      emit(PrinterError('Gagal memindai perangkat Bluetooth.'));
+    }
+  }
 
-//   /// Load paired
-//   Future<void> loadBondedDevices() async {
-//     final bonded = await FlutterBluetoothSerial.instance.getBondedDevices();
+  // 2. Konek ke Printer yang dipilih Jukir
+  Future<void> connectDevice(BluetoothDevice device) async {
+    final currentState = state;
+    if (currentState is! PrinterLoaded) return;
 
-//     final newMap = Map<String, BluetoothDevice>.from(state.devices);
+    emit(PrinterLoading());
 
-//     for (var d in bonded) {
-//       newMap[d.address] = d;
-//     }
+    final success = await _printerService.connect(device);
 
-//     emit(state.copyWith(devices: newMap));
-//   }
+    if (success) {
+      emit(
+        PrinterLoaded(devices: currentState.devices, connectedDevice: device),
+      );
+    } else {
+      emit(
+        PrinterError(
+          'Gagal terhubung ke ${device.name}. Pastikan printer menyala.',
+        ),
+      );
+      emit(PrinterLoaded(devices: currentState.devices)); // Kembalikan list
+    }
+  }
 
-//   /// START SCAN
-//   void startScan() {
-//     if (state.isScanning) return;
+  // 3. Putuskan koneksi
+  Future<void> disconnect() async {
+    final currentState = state;
+    if (currentState is! PrinterLoaded) return;
 
-//     emit(state.copyWith(isScanning: true));
+    await _printerService.disconnect();
+    emit(PrinterLoaded(devices: currentState.devices, connectedDevice: null));
+  }
 
-//     _discoveryStream = FlutterBluetoothSerial.instance.startDiscovery().listen((
-//       result,
-//     ) {
-//       final device = result.device;
-
-//       final newMap = Map<String, BluetoothDevice>.from(state.devices);
-//       newMap[device.address] = device;
-
-//       emit(state.copyWith(devices: newMap));
-//     });
-
-//     _discoveryStream!.onDone(() {
-//       emit(state.copyWith(isScanning: false));
-//     });
-//   }
-
-//   /// STOP SCAN
-//   void stopScan() {
-//     _discoveryStream?.cancel();
-//     _discoveryStream = null;
-
-//     emit(state.copyWith(isScanning: false));
-//   }
-
-//   /// CONNECT
-//   Future<bool> connect(BluetoothDevice device) async {
-//     try {
-//       await BluetoothConnection.toAddress(device.address);
-//       return true;
-//     } catch (e) {
-//       return false;
-//     }
-//   }
-
-//   @override
-//   Future<void> close() {
-//     _discoveryStream?.cancel();
-//     return super.close();
-//   }
-// }
+  // 4. 🚀 Print Karcis (Membutuhkan transaction dan deviceId)
+  Future<bool> printReceipt(
+    HistoryItemModel transaction,
+    String deviceId,
+  ) async {
+    return await _printerService.printReceipt(transaction, deviceId);
+  }
+}

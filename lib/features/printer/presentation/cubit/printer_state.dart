@@ -1,22 +1,33 @@
-// import 'package:equatable/equatable.dart';
-// import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+part of 'printer_cubit.dart';
 
-// class PrinterState extends Equatable {
-//   final Map<String, BluetoothDevice> devices;
-//   final bool isScanning;
+abstract class PrinterState extends Equatable {
+  const PrinterState();
 
-//   const PrinterState({this.devices = const {}, this.isScanning = false});
+  @override
+  List<Object?> get props => [];
+}
 
-//   PrinterState copyWith({
-//     Map<String, BluetoothDevice>? devices,
-//     bool? isScanning,
-//   }) {
-//     return PrinterState(
-//       devices: devices ?? this.devices,
-//       isScanning: isScanning ?? this.isScanning,
-//     );
-//   }
+class PrinterInitial extends PrinterState {}
 
-//   @override
-//   List<Object?> get props => [devices, isScanning];
-// }
+class PrinterLoading extends PrinterState {}
+
+class PrinterLoaded extends PrinterState {
+  final List<BluetoothDevice> devices;
+  final BluetoothDevice? connectedDevice;
+
+  const PrinterLoaded({required this.devices, this.connectedDevice});
+
+  @override
+  List<Object?> get props => [devices, connectedDevice];
+}
+
+class PrinterError extends PrinterState {
+  final String message;
+  final DateTime
+  timestamp; // Memicu re-render meski pesan error sama berturut-turut
+
+  PrinterError(this.message) : timestamp = DateTime.now();
+
+  @override
+  List<Object?> get props => [message, timestamp];
+}

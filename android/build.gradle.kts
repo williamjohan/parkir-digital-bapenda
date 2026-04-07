@@ -15,6 +15,21 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+
+// 🚀 --- 1. SCRIPT PENAMBAL NAMESPACE HARUS DI SINI (SEBELUM EVALUASI) --- 🚀
+subprojects {
+    afterEvaluate {
+        if (plugins.hasPlugin("com.android.library")) {
+            extensions.configure<com.android.build.gradle.LibraryExtension>("android") {
+                if (namespace == null) {
+                    namespace = group.toString()
+                }
+            }
+        }
+    }
+}
+
+// 🚀 --- 2. PEMICU EVALUASI (HARUS DI BAWAH PENAMBAL) --- 🚀
 subprojects {
     project.evaluationDependsOn(":app")
 }

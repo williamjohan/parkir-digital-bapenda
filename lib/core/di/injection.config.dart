@@ -73,6 +73,7 @@ import '../../features/payment/domain/usecases/confirm_payment_usecase.dart'
 import '../../features/payment/domain/usecases/generate_qris_usecase.dart'
     as _i831;
 import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
+import '../../features/printer/presentation/cubit/printer_cubit.dart' as _i377;
 import '../../features/profile/data/datasources/profile_remote_data_source.dart'
     as _i847;
 import '../../features/profile/data/repositories/profile_repository_impl.dart'
@@ -103,6 +104,8 @@ import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
 import '../services/location/app_location_services_impl.dart' as _i35;
 import '../services/location/i_app_location_service.dart' as _i988;
+import '../services/printer/bluetooth_printer_service_impl.dart' as _i291;
+import '../services/printer/i_printer_service.dart' as _i1003;
 import '../storage/secure_storage_manager.dart' as _i1042;
 import 'register_module.dart' as _i291;
 
@@ -131,6 +134,9 @@ _i174.GetIt init(
     () => _i437.OcrLocalDataSourceImpl(),
   );
   gh.lazySingleton<_i274.IHomeRepository>(() => _i76.HomeRepositoryImpl());
+  gh.lazySingleton<_i1003.IPrinterService>(
+    () => _i291.BluetoothPrinterServiceImpl(),
+  );
   gh.lazySingleton<_i1042.ISecureStorageManager>(
     () => _i1042.SecureStorageManagerImpl(),
   );
@@ -154,6 +160,9 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
       gh<_i247.IPaymentRemoteDataSource>(),
     ),
+  );
+  gh.factory<_i377.PrinterCubit>(
+    () => _i377.PrinterCubit(gh<_i1003.IPrinterService>()),
   );
   gh.lazySingleton<_i92.IParkingTransactionLocalDataSource>(
     () => _i462.ParkingTransactionLocalDataSourceImpl(gh<_i37.IImageService>()),

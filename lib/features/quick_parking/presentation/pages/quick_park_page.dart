@@ -8,11 +8,14 @@ import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_back_handler.dart';
 import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_state.dart';
 import '../../../parking_transaction/persentation/cubit/sync_cubit.dart';
+import '../../../printer/presentation/cubit/printer_cubit.dart';
+import '../../../transaction_history/data/models/history_item_model.dart';
 
 class QuickParkPage extends StatefulWidget {
   final String kategoriKendaraan; // 'motor' atau 'mobil'
@@ -110,8 +113,60 @@ class _QuickParkPageState extends State<QuickParkPage> {
                             tarifParkir: 0,
                             idTransaksi: state.transaction.idTransaksiLokal,
                             okPressed: () => Navigator.pop(context),
-                            printPressed: () {
-                              // Fitur cetak bluetooth nanti
+                            printPressed: () async {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Mengirim ke printer...'),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+
+                              // 🚀 1. THE ADAPTER: Ubah LocalModel menjadi HistoryModel di udara!
+                              // (Sesuaikan field di sebelah kanan dengan nama property asli di LocalTransactionModel Anda)
+                              final mappedTransaction = HistoryItemModel(
+                                id: 0, // Isi 0 saja karena ID row server belum ada (ini transaksi offline)
+                                orderId: state.transaction.idTransaksiLokal,
+                                jenisTarif: widget
+                                    .kategoriKendaraan, // Misal: 'Motor' atau 'Mobil'
+                                sof: 'CASH',
+                                platNumber:
+                                    'Tanpa Plat', // Karena ini Quick Park
+                                tglTrx: state.transaction.waktuTransaksi,
+                                kredit:
+                                    0, // Sesuaikan jika ada field tarif/nominal di state.transaction
+                                namaPetugas: profile['namaUser'] ?? 'Petugas',
+                                modePlat: 0, // 0 = tanpa plat
+                              );
+
+                              // 🚀 2. Tembakkan Model yang sudah dikonversi ke PrinterCubit
+                              final success = await locator<PrinterCubit>()
+                                  .printReceipt(
+                                    mappedTransaction,
+                                    profile['idDevice']?.toString() ??
+                                        'UNKNOWN_DEVICE',
+                                  );
+
+                              if (!context.mounted) return;
+
+                              if (success) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Karcis berhasil dicetak! 🖨️',
+                                    ),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Gagal mencetak. Pastikan printer menyala & terhubung di Pengaturan!',
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             },
                           ),
                         );
