@@ -4,9 +4,17 @@ import '../../../core/design_system/tokens/app_colors.dart';
 import '../../../core/design_system/tokens/app_typography.dart';
 
 class CardJenisKendaraan extends StatefulWidget {
+  final int tarifMotor;
+  final int tarifMobil;
+
   final Function(String value)? onSelected;
 
-  const CardJenisKendaraan({super.key, this.onSelected});
+  const CardJenisKendaraan({
+    super.key,
+    this.onSelected,
+    required this.tarifMotor,
+    required this.tarifMobil,
+  });
 
   @override
   State<CardJenisKendaraan> createState() => _CardJenisKendaraanState();
@@ -48,7 +56,7 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
               Expanded(
                 child: _buildItem(
                   title: "Motor",
-                  price: "Rp2.000",
+                  price: "Rp${widget.tarifMotor}",
                   icon: Icons.two_wheeler,
                   isSelected: selectedValue == "Motor",
                   onTap: () => _onSelect("Motor"),
@@ -58,7 +66,7 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
               Expanded(
                 child: _buildItem(
                   title: "Mobil",
-                  price: "Rp5.000",
+                  price: "Rp${widget.tarifMobil}",
                   icon: Icons.directions_car,
                   isSelected: selectedValue == "Mobil",
                   onTap: () => _onSelect("Mobil"),

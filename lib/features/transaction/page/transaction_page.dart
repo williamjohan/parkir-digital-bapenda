@@ -42,7 +42,7 @@ class _TransactionPageState extends State<TransactionPage> {
             children: [
               CardNopolWidget(),
               SizedBox(height: 16),
-              CardJenisKendaraan(),
+              CardJenisKendaraan(tarifMotor: 2000, tarifMobil: 5000),
               SizedBox(height: 16),
               CardMetodePembayaranWidget(),
               SizedBox(height: 16),
