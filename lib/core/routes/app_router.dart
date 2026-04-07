@@ -98,19 +98,22 @@ class AppRouter {
         GoRoute(
           path: '${AppRoutes.capture}/:category',
           builder: (context, state) {
+            // 1. Ambil teks dari parameter URL (misal: 'Mobil' atau 'Motor')
             final categoryString = state.pathParameters['category'];
-            final category = categoryString == 'mobil'
+
+            // 2. 🚀 [PERBAIKAN]: Ratakan teks jadi huruf kecil untuk dicek.
+            // Jika teksnya 'mobil' (mengabaikan besar/kecil), jadikan VehicleCategory.Mobil
+            // Selain itu, jadikan VehicleCategory.Motor
+            final category = categoryString?.toLowerCase() == 'mobil'
                 ? VehicleCategory.Mobil
                 : VehicleCategory.Motor;
-            // [PERBAIKAN]: Gunakan MultiBlocProvider untuk 2 Jenderal!
+
             return MultiBlocProvider(
               providers: [
-                // 1. Jenderal Mata (Yang mengurus Kamera & OCR)
                 BlocProvider(
                   create: (_) =>
                       locator<VehicleCaptureCubit>()..selectVehicle(category),
                 ),
-                // 2. Jenderal Otak (Yang mengurus SQLite & Kompresi)
                 BlocProvider(create: (_) => locator<ParkingTransactionCubit>()),
               ],
               child: const CapturePage(),
