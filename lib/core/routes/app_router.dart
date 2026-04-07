@@ -4,6 +4,7 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/screen/printer_device_screen.dart';
+import 'package:parkir_digital_bapenda/features/transaction/page/transaction_page.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/pages/transaction_history_page.dart';
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
@@ -157,6 +158,12 @@ class AppRouter {
               create: (_) => locator<TransactionHistoryCubit>(),
               child: const TransactionHistoryPage(),
             );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.transaction,
+          builder: (context, state) {
+            return const TransactionPage();
           },
         ),
         // GoRoute(

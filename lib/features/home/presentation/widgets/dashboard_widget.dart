@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/dashboard_item.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/routes/app_routes.dart';
 
 class DashboardWidget extends StatelessWidget {
   // <--- Public Class
@@ -85,11 +87,13 @@ class DashboardWidget extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16                                                                           ),
+          const SizedBox(height: 16),
           PbPrimaryButton(
             text: "Tambah Transaksi",
             isSecondary: true,
-            onPressed: () {},
+            onPressed: () {
+              context.push(AppRoutes.transaction);
+            },
           ),
         ],
       ),
