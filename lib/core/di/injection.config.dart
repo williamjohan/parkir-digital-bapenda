@@ -117,9 +117,6 @@ _i174.GetIt init(
 }) {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
-  gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
-    () => _i247.PaymentRemoteDataSourceImpl(),
-  );
   gh.lazySingleton<_i515.IDeviceCheckRepository>(
     () => _i834.DeviceCheckRepositoryImpl(),
   );
@@ -155,12 +152,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
   );
-  gh.lazySingleton<_i1004.IPaymentRepository>(
-    () => _i265.PaymentRepositoryImpl(
-      gh<_i1042.ISecureStorageManager>(),
-      gh<_i247.IPaymentRemoteDataSource>(),
-    ),
-  );
   gh.factory<_i377.PrinterCubit>(
     () => _i377.PrinterCubit(gh<_i1003.IPrinterService>()),
   );
@@ -172,6 +163,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
+    () => _i247.PaymentRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i1054.IParkingTransactionRepository>(
     () => _i14.ParkingTransactionRepositoryImpl(
@@ -231,16 +225,16 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i393.ConfirmPaymentUseCase>(
-    () => _i393.ConfirmPaymentUseCase(gh<_i1004.IPaymentRepository>()),
-  );
-  gh.lazySingleton<_i831.GenerateQrisUseCase>(
-    () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
-  );
   gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
     () => _i512.SaveParkingTransactionUseCase(
       gh<_i1054.IParkingTransactionRepository>(),
       gh<_i988.IAppLocationService>(),
+    ),
+  );
+  gh.lazySingleton<_i1004.IPaymentRepository>(
+    () => _i265.PaymentRepositoryImpl(
+      gh<_i1042.ISecureStorageManager>(),
+      gh<_i247.IPaymentRemoteDataSource>(),
     ),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
@@ -254,12 +248,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
-  );
-  gh.factory<_i513.PaymentCubit>(
-    () => _i513.PaymentCubit(
-      gh<_i831.GenerateQrisUseCase>(),
-      gh<_i393.ConfirmPaymentUseCase>(),
-    ),
   );
   gh.factory<_i753.TransactionHistoryCubit>(
     () => _i753.TransactionHistoryCubit(
@@ -287,10 +275,22 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i393.ConfirmPaymentUseCase>(
+    () => _i393.ConfirmPaymentUseCase(gh<_i1004.IPaymentRepository>()),
+  );
+  gh.lazySingleton<_i831.GenerateQrisUseCase>(
+    () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
+  );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(
       gh<_i965.GetProfileUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i513.PaymentCubit>(
+    () => _i513.PaymentCubit(
+      gh<_i831.GenerateQrisUseCase>(),
+      gh<_i393.ConfirmPaymentUseCase>(),
     ),
   );
   return getIt;

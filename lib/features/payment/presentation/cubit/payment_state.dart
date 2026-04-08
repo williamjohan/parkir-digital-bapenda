@@ -16,19 +16,30 @@ class PaymentLoading extends PaymentState {}
 // State ketika UI harus menggambar QRIS di layar
 class PaymentQrisGenerated extends PaymentState {
   final String idTransaksi;
-  final String qrisData;
+  final String qrBase64;
+  final String qrisBase64;
   final int nominal;
+  final int expTimeMenit;
   final Map<String, dynamic>? profile;
 
-  const PaymentQrisGenerated(
-    this.idTransaksi,
-    this.qrisData,
-    this.nominal,
+  const PaymentQrisGenerated({
+    required this.idTransaksi,
+    required this.qrBase64,
+    required this.qrisBase64,
+    required this.nominal,
+    required this.expTimeMenit,
     this.profile,
-  );
+  });
 
   @override
-  List<Object?> get props => [idTransaksi, qrisData, nominal, profile];
+  List<Object?> get props => [
+    idTransaksi,
+    qrBase64,
+    qrisBase64,
+    nominal,
+    expTimeMenit,
+    profile,
+  ];
 }
 
 // State ketika Jukir menekan "OK/Selesai"

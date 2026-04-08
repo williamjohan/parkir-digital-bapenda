@@ -49,7 +49,9 @@ class _PaymentPageState extends State<PaymentPage> {
       create: (context) => locator<PaymentCubit>()
         ..generateQris(
           idTransaksiLokal: widget.args.idTransaksiLokal,
-          kategoriKendaraan: widget.args.kategoriKendaraan,
+          nominal: 2000,
+          // jenisKendaraan: widget.args.kategoriKendaraan,
+
           // Perhatikan: Cubit TETAP TIDAK MEMINTA platNomor! Sangat Clean!
         ),
       child: Scaffold(
@@ -99,23 +101,28 @@ class _PaymentPageState extends State<PaymentPage> {
                         key: _qrisKey,
                         child: Column(
                           children: [
+                            // QrisImgWidget(base64String: state.qrBase64),
                             CardQrisWidget(
-                              url:
-                                  "https://www.google.com/search?q=instagram&oq=&ie=UTF-8",
+                              url: state.qrisBase64,
                               objekPajak:
                                   profile?['namaObjekPajak'] ?? 'Objek Pajak',
                               idTransaksi: state.idTransaksi,
+                              // durasi: state.expTimeMenit,
+                              durasi: 1,
+                              onFinish: () {
+                                // jalankan generate ulang QRIS saat timer habis
+                                context.read<PaymentCubit>().generateQris(
+                                  idTransaksiLokal:
+                                      widget.args.idTransaksiLokal,
+                                  nominal: state.nominal,
+                                );
+                              },
                             ),
                             SizedBox(height: 16),
                             CardDetailParkirWidget(
                               platNomor: widget.args.platNomor,
                               kategoriKendaraan: widget.args.kategoriKendaraan,
                               nominal: state.nominal,
-                            ),
-                            SizedBox(height: 32),
-                            Text(
-                              "Diterima di semua e-wallet dan bank",
-                              style: AppTypography.caption,
                             ),
                           ],
                         ),

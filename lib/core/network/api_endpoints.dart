@@ -12,4 +12,6 @@ class ApiEndpoints {
   // Endpoint khusus Modul Kendaraan (Biarkan dulu, nanti disesuaikan dengan Swagger)
   static const String submitPlate = '/vehicle/submit';
   static const String getHistory = '/vehicle/history';
+
+  static const String generateQris = '/api/mobile/parking/generate-qris';
 }

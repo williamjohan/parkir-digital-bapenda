@@ -216,7 +216,15 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           else if (state.status == CaptureStatus.navigatingToPayment) {
             FocusManager.instance.primaryFocus?.unfocus();
 
-            final String namaKategori = state.selectedCategory?.name ?? 'Mobil';
+            // final String namaKategori = state.selectedCategory?.name ?? 'Mobil';
+            final String namaKategori =
+                context
+                    .read<VehicleCaptureCubit>()
+                    .state
+                    .selectedCategory
+                    ?.name
+                    ?.toLowerCase() ?? // 🔥 Kirim lowercase
+                'mobil';
             final String platNomor = _plateController.text.trim();
             final String imagePath = state.capturedImagePath!;
             context.read<ParkingTransactionCubit>().processNewTransaction(

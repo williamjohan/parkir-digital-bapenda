@@ -21,6 +21,9 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   namaGate: json['namaGate'] == null ? '' : _toString(json['namaGate']),
   idDevice: json['idDevice'] == null ? '' : _toString(json['idDevice']),
   shift: json['shift'] == null ? '' : _toString(json['shift']),
+  tarifParkirs: json['tarifParkirs'] == null
+      ? const []
+      : _toTarifList(json['tarifParkirs']),
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -36,4 +39,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'namaGate': instance.namaGate,
   'idDevice': instance.idDevice,
   'shift': instance.shift,
+  'tarifParkirs': instance.tarifParkirs,
 };

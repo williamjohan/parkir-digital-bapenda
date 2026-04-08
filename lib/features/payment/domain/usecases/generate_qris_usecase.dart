@@ -10,15 +10,15 @@ class GenerateQrisUseCase {
 
   GenerateQrisUseCase(this.repository);
 
-  // [PERBAIKAN]: Sesuaikan parameter execute dengan kebutuhan Repository yang baru
   Future<Either<Failure, QrisEntity>> execute({
-    required String idTransaksiLokal, // Menerima lemparan ID dari fitur parkir
-    required String kategoriKendaraan,
+    required String idTransaksiLokal,
+    required String nop,
+    required int nominal,
   }) {
-    // Teruskan data ke lapisan Repository
     return repository.generateQris(
       idTransaksiLokal: idTransaksiLokal,
-      kategoriKendaraan: kategoriKendaraan,
+      nop: nop,
+      nominal: nominal,
     );
   }
 }

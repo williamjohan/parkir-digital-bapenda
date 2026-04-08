@@ -34,6 +34,7 @@ class ProfileRepositoryImpl implements IProfileRepository {
         namaGate: userModel.namaGate,
         shift: userModel.shift,
         alamat: userModel.alamat,
+        tarifParkirs: userModel.tarifParkirs.map((e) => e.toJson()).toList(),
       );
 
       return Right(userModel);

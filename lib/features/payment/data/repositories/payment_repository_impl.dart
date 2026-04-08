@@ -1,9 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
-import '../../domain/repositories/i_payment_repository.dart';
 import '../../domain/entities/qris_entity.dart';
+import '../../domain/repositories/i_payment_repository.dart';
 import '../datasources/payment_remote_datasource.dart';
 
 @LazySingleton(as: IPaymentRepository)
@@ -16,10 +17,11 @@ class PaymentRepositoryImpl implements IPaymentRepository {
   @override
   Future<Either<Failure, QrisEntity>> generateQris({
     required String idTransaksiLokal,
-    required String kategoriKendaraan,
+    required String nop,
+    required int nominal,
   }) async {
     try {
-      // 1. Ambil Identitas Jukir dari Brankas (Bisa dipakai untuk payload API nanti)
+      // 1. Ambil data jukir (optional, tergantung kebutuhan BE)
       final jukirProfile = await _secureStorage.getJukirProfile();
       if (jukirProfile == null) {
         return const Left(
@@ -27,21 +29,26 @@ class PaymentRepositoryImpl implements IPaymentRepository {
         );
       }
 
-      // 2. HIT API (Minta Tarif dan QR ke Backend via Datasource)
+      // 2. HIT API (pakai nop + nominal)
       final responseMap = await _remoteDataSource.requestQrisData(
-        kategoriKendaraan,
+        nop: nop,
+        nominal: nominal,
       );
 
-      final int nominalDariServer = responseMap['data']['nominal'];
-      final String qrStringDariServer = responseMap['data']['qr_string'];
+      // 3. Parsing response (TANPA ['data'] lagi)
+      final int nominalDariServer = responseMap['nominal'] ?? 0;
+      final String qrisBase64Server = responseMap['qrisBase64'] ?? '';
+      final String qrBase64Server = responseMap['qrBase64'] ?? '';
+      final int expTimeMenitServer = responseMap['expTimeMenit'] ?? 0;
 
-      // 3. Kembalikan Entity Murni
-      // Kita langsung tempelkan idTransaksiLokal yang dilempar dari fitur parkir
+      // 4. Return Entity
       return Right(
         QrisEntity(
           idTransaksi: idTransaksiLokal,
           nominal: nominalDariServer,
-          qrString: qrStringDariServer,
+          qrisBase64: qrisBase64Server,
+          qrBase64: qrBase64Server,
+          expTimeMenit: expTimeMenitServer,
         ),
       );
     } catch (e) {
@@ -52,12 +59,7 @@ class PaymentRepositoryImpl implements IPaymentRepository {
   @override
   Future<Either<Failure, Unit>> confirmPayment(String idTransaksi) async {
     try {
-      // Logika di sini murni HANYA menembak API Bapenda untuk cek mutasi QRIS.
-      // Tidak ada lagi intervensi ke SQLite (DatabaseHelper)!
-
-      // Simulasi latency jaringan
       await Future.delayed(const Duration(seconds: 1));
-
       return const Right(unit);
     } catch (e) {
       return Left(
