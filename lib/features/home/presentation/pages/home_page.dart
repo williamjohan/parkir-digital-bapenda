@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       // Bar diagram — pakai versi dengan label di atas bar
                       BarDiagramWithLabels(
-                        weeklyIncome: [500000, 1200000, 0, 0, 0, 0, 0],
+                        weeklyIncome: [500000, 1200000, 200000, 0, 0, 0, 0],
                       ),
                       // SimpleBarChart(),
                       const SizedBox(height: 24),
