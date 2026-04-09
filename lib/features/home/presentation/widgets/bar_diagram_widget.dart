@@ -4,9 +4,19 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 
 class BarDiagramWithLabels extends StatelessWidget {
   final List<double> weeklyIncome;
+  final String selectedVehicleType;
+  final List<String> vehicleTypes;
+  final ValueChanged<String> onVehicleTypeChanged;
 
-  const BarDiagramWithLabels({super.key, required this.weeklyIncome});
+  const BarDiagramWithLabels({
+    super.key,
+    required this.weeklyIncome,
+    required this.selectedVehicleType,
+    required this.vehicleTypes,
+    required this.onVehicleTypeChanged,
+  });
 
+  /// 🔹 FORMAT TOOLTIP (PAKAI NILAI ASLI)
   String _formatLabel(double value) {
     if (value >= 1000000) {
       return '${(value / 1000000).toStringAsFixed(1)}jt';
@@ -17,8 +27,9 @@ class BarDiagramWithLabels extends StatelessWidget {
     return value.toInt().toString();
   }
 
-  String _formatYLabel(double value) {
-    if (value == 1000000) return '>1jt';
+  /// 🔹 FORMAT Y AXIS (TOP JADI >500rb)
+  String _formatYLabel(double value, double maxY) {
+    if (value == maxY) return '>500rb';
     if (value >= 1000) {
       return '${(value / 1000).toStringAsFixed(0)}rb';
     }
@@ -38,13 +49,16 @@ class BarDiagramWithLabels extends StatelessWidget {
   Widget build(BuildContext context) {
     final todayIndex = _getTodayIndex();
 
-    const double maxY = 1000000;
+    /// 🔥 MAX Y FIX 500rb
+    const double maxY = 500000;
 
-    final double step = (maxY / 4).ceilToDouble();
+    /// 🔥 STEP BIAR RAPI (0,125,250,375,500)
+    final double step = maxY / 4;
+
     final List<double> yLabels = [0, step, step * 2, step * 3, maxY];
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.border),
         borderRadius: BorderRadius.circular(10),
@@ -52,11 +66,67 @@ class BarDiagramWithLabels extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Pendapatan Mingguan',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          /// 🔹 HEADER
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Pendapatan Mingguan',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child:
+                    // Alternatif dengan PopupMenuButton (lebih customizable)
+                    PopupMenuButton<String>(
+                      initialValue: selectedVehicleType,
+                      offset: const Offset(0, 40), // Memastikan muncul di bawah
+                      constraints: BoxConstraints(
+                        maxHeight: 200,
+                        maxWidth: 200,
+                      ),
+                      onSelected: onVehicleTypeChanged,
+                      itemBuilder: (context) {
+                        return vehicleTypes.map((type) {
+                          return PopupMenuItem<String>(
+                            value: type,
+                            child: SizedBox(
+                              width: 180,
+                              child: Text(
+                                type,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          );
+                        }).toList();
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            selectedVehicleType,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const Icon(Icons.arrow_drop_down, size: 20),
+                        ],
+                      ),
+                    ),
+              ),
+            ],
           ),
+
           const SizedBox(height: 40),
+
+          /// 🔹 CHART
           SizedBox(
             height: 260,
             child: BarChart(
@@ -64,6 +134,7 @@ class BarDiagramWithLabels extends StatelessWidget {
                 alignment: BarChartAlignment.spaceAround,
                 maxY: maxY,
 
+                /// GRID
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
@@ -77,6 +148,7 @@ class BarDiagramWithLabels extends StatelessWidget {
 
                 borderData: FlBorderData(show: false),
 
+                /// 🔹 TITLES
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
@@ -92,7 +164,7 @@ class BarDiagramWithLabels extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(right: 4),
                           child: Text(
-                            _formatYLabel(value),
+                            _formatYLabel(value, maxY),
                             style: const TextStyle(
                               fontSize: 9,
                               color: Colors.black54,
@@ -102,6 +174,7 @@ class BarDiagramWithLabels extends StatelessWidget {
                       },
                     ),
                   ),
+
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -116,6 +189,7 @@ class BarDiagramWithLabels extends StatelessWidget {
                       },
                     ),
                   ),
+
                   rightTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
                   ),
@@ -124,10 +198,11 @@ class BarDiagramWithLabels extends StatelessWidget {
                   ),
                 ),
 
-                // ===== BARS =====
+                /// 🔹 BAR DATA
                 barGroups: List.generate(weeklyIncome.length, (index) {
                   final isToday = index == todayIndex;
 
+                  /// 🔥 CLAMP BIAR GA LEBIH DARI 500rb
                   final double visualHeight = weeklyIncome[index].clamp(
                     0,
                     maxY,
@@ -145,12 +220,10 @@ class BarDiagramWithLabels extends StatelessWidget {
                             : AppColors.primary.withOpacity(0.5),
                       ),
                     ],
-                    // ❌ DIHAPUS → biar tidak muncul otomatis
-                    // showingTooltipIndicators: [0],
                   );
                 }),
 
-                // ===== TOOLTIP (muncul saat tap saja) =====
+                /// 🔹 TOOLTIP (PAKAI NILAI ASLI)
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
@@ -158,7 +231,6 @@ class BarDiagramWithLabels extends StatelessWidget {
                     tooltipMargin: 6,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final actualValue = weeklyIncome[group.x.toInt()];
-
                       return BarTooltipItem(
                         _formatLabel(actualValue),
                         const TextStyle(fontSize: 10, color: Colors.white),

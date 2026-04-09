@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/bar_diagram_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/last_activity_widget.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -43,6 +44,23 @@ class _HomePageState extends State<HomePage> {
     debugPrint('Pungut Tarif: ${profile?['pungutTarif']}');
     debugPrint('============================');
   }
+
+  // State untuk filter kendaraan
+  String _selectedVehicleType = 'Semua Kendaraan';
+  final List<String> _vehicleTypes = [
+    'Semua Kendaraan',
+    'Motor',
+    'Mobil',
+    'Ojol',
+  ];
+
+  // Dummy data pendapatan per jenis kendaraan (7 hari)
+  final Map<String, List<double>> _incomeData = {
+    'Semua Kendaraan': [250000, 430000, 230000, 200000, 0, 0, 0],
+    'Motor': [100000, 130000, 80000, 50000, 0, 0, 0],
+    'Mobil': [150000, 300000, 150000, 150000, 0, 0, 0],
+    'Ojol': [0, 0, 0, 0, 0, 0, 0], // Dummy untuk ojol
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -114,17 +132,19 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: BarDiagramWithLabels(
-                        weeklyIncome: [
-                          500000,
-                          1200000,
-                          200000,
-                          250000,
-                          0,
-                          0,
-                          0,
-                        ],
+                        weeklyIncome:
+                            _incomeData[_selectedVehicleType] ??
+                            List.filled(7, 0.0),
+                        selectedVehicleType: _selectedVehicleType,
+                        vehicleTypes: _vehicleTypes,
+                        onVehicleTypeChanged: (newType) {
+                          setState(() {
+                            _selectedVehicleType = newType;
+                          });
+                        },
                       ),
                     ),
+                    LastActivityWidget(),
                   ],
                 );
               },
