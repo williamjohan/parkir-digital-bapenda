@@ -28,7 +28,7 @@ class ReceiptFormatter {
       styles: const PosStyles(
         align: PosAlign.center,
         height: PosTextSize.size2,
-        width: PosTextSize.size2, // 🚀
+        width: PosTextSize.size1,
         bold: true,
       ),
     );
