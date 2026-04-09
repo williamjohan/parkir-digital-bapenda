@@ -26,14 +26,16 @@ class InitCubit extends Cubit<InitState> {
     // 2. Eksekusi UseCase (Cek Kamera & Sistem)
     final result = await checkDeviceReadinessUseCase.execute();
 
-    // 3. Tangani hasil Either
-    result.fold(
-      (failure) {
-        if (isClosed) return; // 🚀 Gembok tepat sebelum emit
+    // 3. 🚀 THE FIX: WAJIB TAMBAHKAN 'await' DI DEPAN 'result.fold'
+    // Agar fungsi utama tidak kabur duluan sebelum brankas selesai dibuka!
+    await result.fold(
+      (failure) async {
+        // Samakan menjadi async agar tipe fold-nya Future
+        if (isClosed) return;
         emit(InitError(failure.message));
       },
       (isReady) async {
-        // 4. CEK TIKET MASUK (Proses Async)
+        // 4. CEK TIKET MASUK (The Gold Standard)
         final accessToken = await secureStorageManager.getAccessToken();
         final refreshToken = await secureStorageManager.getRefreshToken();
 
@@ -41,8 +43,7 @@ class InitCubit extends Cubit<InitState> {
             (refreshToken != null && refreshToken.isNotEmpty) ||
             (accessToken != null && accessToken.isNotEmpty);
 
-        // 🚀 THE FIX: Letakkan gembok SETELAH semua proses 'await' selesai
-        // dan TEPAT 1 baris SEBELUM emit!
+        // 🚀 Lapis pertahanan terakhir
         if (isClosed) return;
 
         // 5. Emit Success beserta status tiketnya!

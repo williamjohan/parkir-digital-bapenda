@@ -24,11 +24,11 @@ class ReceiptFormatter {
 
     // --- 1. BAPENDA SURABAYA (Font Besar) ---
     bytes += generator.text(
-      'BAPENDA SURABAYA',
+      'BAPENDA KOTA SURABAYA',
       styles: const PosStyles(
         align: PosAlign.center,
         height: PosTextSize.size2,
-        width: PosTextSize.size2,
+        width: PosTextSize.size2, // 🚀
         bold: true,
       ),
     );
@@ -61,7 +61,8 @@ class ReceiptFormatter {
     // --- 6. TEXT 3 SEGMENT (Digabung 1 Baris Agar Hemat!) ---
     // Format: Motor * L 1234 AB * Rp2.000
     String segmen3 =
-        "${transaction.jenisTarif} * $platBersih * ${transaction.formattedNominal}";
+        // "${transaction.jenisTarif} * $platBersih * ${transaction.formattedNominal}";
+        "${transaction.jenisTarif} * $platBersih * 5000";
     bytes += generator.text(
       segmen3,
       styles: const PosStyles(align: PosAlign.center, bold: true),
@@ -83,10 +84,13 @@ class ReceiptFormatter {
 
     // --- 9. ID TRANSAKSI ---
     bytes += generator.text(
-      'ID: ${transaction.orderId}',
+      ' ',
+      styles: const PosStyles(height: PosTextSize.size1),
+    ); // 🚀 Trik spasi tipis
+    bytes += generator.text(
+      transaction.orderId,
       styles: const PosStyles(align: PosAlign.center),
     );
-
     bytes += generator.feed(1);
 
     // --- 10. KATA TERIMA KASIH ---
