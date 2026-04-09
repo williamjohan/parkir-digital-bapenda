@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart' as external_settings;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/printer_cubit.dart';
@@ -162,6 +163,54 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                             );
                           },
                         ),
+                ),
+
+                //-- Info untuk buka pengaturan Bluetooth --
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 0,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Printer tidak ditemukan?",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          "Pastikan printer sudah di-pairing (sambungkan) di menu pengaturan Bluetooth HP Anda.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            await external_settings.AppSettings.openAppSettings(
+                              type: external_settings.AppSettingsType.bluetooth,
+                            );
+                          },
+                          icon: const Icon(Icons.settings_bluetooth),
+                          label: const Text("Buka Pengaturan Bluetooth"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             );
