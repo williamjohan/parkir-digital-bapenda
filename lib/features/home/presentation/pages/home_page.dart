@@ -114,7 +114,15 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: BarDiagramWithLabels(
-                        weeklyIncome: [500000, 1200000, 200000, 0, 0, 0, 0],
+                        weeklyIncome: [
+                          500000,
+                          1200000,
+                          200000,
+                          250000,
+                          0,
+                          0,
+                          0,
+                        ],
                       ),
                     ),
                   ],

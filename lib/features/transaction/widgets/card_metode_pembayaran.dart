@@ -4,9 +4,9 @@ import '../../../core/design_system/tokens/app_colors.dart';
 import '../../../core/design_system/tokens/app_typography.dart';
 
 class CardMetodePembayaranWidget extends StatefulWidget {
-  final Function(String value)? onSelected;
+  final Function(String value)? onTap;
 
-  const CardMetodePembayaranWidget({super.key, this.onSelected});
+  const CardMetodePembayaranWidget({super.key, this.onTap});
 
   @override
   State<CardMetodePembayaranWidget> createState() =>
@@ -22,7 +22,8 @@ class _CardMetodePembayaranWidgetState
       selectedValue = value;
     });
 
-    widget.onSelected?.call(value);
+    // 🔥 kirim value ke parent
+    widget.onTap?.call(value);
   }
 
   @override
@@ -44,6 +45,7 @@ class _CardMetodePembayaranWidgetState
           ),
           const SizedBox(height: 16),
 
+          /// QRIS
           PaymentItem(
             title: "QRIS",
             subTitle: "Scan kode QR yang diberikan",
@@ -54,6 +56,7 @@ class _CardMetodePembayaranWidgetState
 
           const SizedBox(height: 8),
 
+          /// E-CARD
           PaymentItem(
             title: "Kartu Elektronik",
             subTitle: "e-Money, Flazz, Brizzi, TapCash",

@@ -5,7 +5,9 @@ import 'botsheet_tarif_widget.dart';
 
 class CardJenisKendaraan extends StatefulWidget {
   final List<Map<String, dynamic>> tarifList;
-  final Function(String value)? onSelected;
+
+  /// 🔥 kirim 2 parameter
+  final Function(String jenisTarif, int tarif)? onSelected;
 
   const CardJenisKendaraan({
     super.key,
@@ -30,8 +32,9 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
       tarifController.text = "Rp$selectedTarif";
     });
 
+    /// 🔥 kirim 2 data langsung
     if (widget.onSelected != null) {
-      widget.onSelected!(selectedJenisTarif!);
+      widget.onSelected!(selectedJenisTarif!, selectedTarif!);
     }
   }
 
@@ -60,7 +63,7 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
           ),
           const SizedBox(height: 16),
 
-          /// 🔥 Button custom (replace PbPrimaryButton kalau mau lebih fleksibel)
+          /// 🔥 Dropdown Button
           InkWell(
             onTap: () {
               BottomSheetTarifParkir.show(
@@ -89,7 +92,7 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
                           : AppColors.textPrimary,
                     ),
                   ),
-                  Icon(Icons.arrow_drop_down),
+                  const Icon(Icons.arrow_drop_down),
                 ],
               ),
             ),
@@ -97,13 +100,13 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
 
           const SizedBox(height: 16),
 
+          /// 🔥 Tarif Field
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Tarif Parkir", style: AppTypography.caption),
               const SizedBox(height: 4),
 
-              /// 🔥 TextField auto keisi & disable
               TextField(
                 controller: tarifController,
                 style: AppTypography.bodyRegular,
@@ -114,17 +117,14 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
                     color: AppColors.textSecondary,
                   ),
                   filled: true,
-
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(color: AppColors.border),
                   ),
-
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(color: AppColors.border),
                   ),
-
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 12,

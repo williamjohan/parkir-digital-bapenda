@@ -17,6 +17,10 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
+  String? metodePembayaran;
+  String? selectedKendaraan;
+  int? selectedTarif;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,11 +51,34 @@ class _TransactionPageState extends State<TransactionPage> {
                   {"jenisTarif": "Motor", "tarif": 2000},
                   {"jenisTarif": "Mobil", "tarif": 5000},
                 ],
+                onSelected: (jenisTarif, tarif) {
+                  setState(() {
+                    selectedKendaraan = jenisTarif;
+                    selectedTarif = tarif;
+                  });
+
+                  print("Jenis: $selectedKendaraan");
+                  print("Tarif: $selectedTarif");
+                },
               ),
               SizedBox(height: 16),
-              CardMetodePembayaranWidget(),
+              CardMetodePembayaranWidget(
+                onTap: (value) {
+                  setState(() {
+                    metodePembayaran = value;
+                  });
+
+                  print("Metode Pembayaran : $metodePembayaran");
+                },
+              ),
               SizedBox(height: 16),
-              PbPrimaryButton(text: "Selanjutnya", onPressed: () {}),
+              PbPrimaryButton(
+                text: "Selanjutnya",
+                onPressed: () {
+                  if (metodePembayaran == 'qris') {
+                  } else {}
+                },
+              ),
             ],
           ),
         ),

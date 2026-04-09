@@ -57,9 +57,28 @@ class DashboardWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            "Rp$totalPendapatan",
-            style: AppTypography.heading1.copyWith(color: AppColors.surface),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Rp$totalPendapatan",
+                style: AppTypography.heading1.copyWith(
+                  color: AppColors.surface,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "${motorCount + mobilCount} transaksi",
+                  style: AppTypography.caption.copyWith(color: Colors.white),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Divider(color: AppColors.surface),
@@ -67,20 +86,14 @@ class DashboardWidget extends StatelessWidget {
           Row(
             children: [
               DashboardItem(
-                title: "Transaksi",
-                value: totalTransaksi.toString(),
-              ),
-
-              SizedBox(width: 4),
-              DashboardItem(
-                title: "Motor",
+                title: "Roda 2",
                 value: motorCount.toString(),
                 icon: Icons.two_wheeler,
               ),
 
               SizedBox(width: 4),
               DashboardItem(
-                title: "Mobil",
+                title: "Roda 4",
                 value: mobilCount.toString(),
                 icon: Icons.directions_car,
               ),
