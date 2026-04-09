@@ -15,5 +15,9 @@ abstract class IPrinterService {
   Future<bool> get isConnected;
 
   /// Mencetak karcis menggunakan data transaksi
-  Future<bool> printReceipt(HistoryItemModel transaction, String deviceId);
+  Future<bool> printReceipt(
+    HistoryItemModel transaction,
+    String deviceId,
+    Map<String, dynamic> profile,
+  );
 }

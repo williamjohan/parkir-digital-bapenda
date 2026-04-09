@@ -29,27 +29,24 @@ class InitCubit extends Cubit<InitState> {
     // 3. Tangani hasil Either
     result.fold(
       (failure) {
-        if (!isClosed) {
-          emit(InitError(failure.message));
-        }
+        if (isClosed) return; // 🚀 Gembok tepat sebelum emit
+        emit(InitError(failure.message));
       },
-      // [PERBAIKAN]: Ubah menjadi async karena kita akan membuka brankas
       (isReady) async {
-        if (!isClosed) {
-          // 4. CEK TIKET MASUK (The Gold Standard)
-          // Ambil kedua token dari Brankas
-          final accessToken = await secureStorageManager.getAccessToken();
-          final refreshToken = await secureStorageManager.getRefreshToken();
+        // 4. CEK TIKET MASUK (Proses Async)
+        final accessToken = await secureStorageManager.getAccessToken();
+        final refreshToken = await secureStorageManager.getRefreshToken();
 
-          // Sesi dianggap VALID jika Refresh Token ada.
-          // (Atau Access Token ada, sebagai pertahanan ganda jika Refresh Token sedang kosong)
-          final bool hasSession =
-              (refreshToken != null && refreshToken.isNotEmpty) ||
-              (accessToken != null && accessToken.isNotEmpty);
+        final bool hasSession =
+            (refreshToken != null && refreshToken.isNotEmpty) ||
+            (accessToken != null && accessToken.isNotEmpty);
 
-          // 5. Emit Success beserta status tiketnya!
-          emit(InitSuccess(isLoggedIn: hasSession));
-        }
+        // 🚀 THE FIX: Letakkan gembok SETELAH semua proses 'await' selesai
+        // dan TEPAT 1 baris SEBELUM emit!
+        if (isClosed) return;
+
+        // 5. Emit Success beserta status tiketnya!
+        emit(InitSuccess(isLoggedIn: hasSession));
       },
     );
   }

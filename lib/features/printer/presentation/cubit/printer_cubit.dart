@@ -2,8 +2,6 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-
-// Sesuaikan path import ini dengan struktur folder Anda!
 import '../../../../core/services/printer/i_printer_service.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 
@@ -20,10 +18,10 @@ class PrinterCubit extends Cubit<PrinterState> {
     emit(PrinterLoading());
     try {
       final devices = await _printerService.getPairedDevices();
-      // Otomatis cek jika ada yang sedang terkoneksi
       final isConnected = await _printerService.isConnected;
-      // Catatan: blue_thermal_printer tidak menyimpan state 'current device',
-      // jadi jika terkoneksi, kita anggap itu device yang sedang aktif (bisa diimprove nanti).
+
+      // 🚀 GEMBOK PENGAMAN: Cegah crash jika Jukir tutup halaman saat loading!
+      if (isClosed) return;
 
       emit(
         PrinterLoaded(
@@ -32,6 +30,7 @@ class PrinterCubit extends Cubit<PrinterState> {
         ),
       );
     } catch (e) {
+      if (isClosed) return; // 🚀 Gembok juga di catch!
       emit(PrinterError('Gagal memindai perangkat Bluetooth.'));
     }
   }
@@ -44,6 +43,9 @@ class PrinterCubit extends Cubit<PrinterState> {
     emit(PrinterLoading());
 
     final success = await _printerService.connect(device);
+
+    // 🚀 GEMBOK PENGAMAN SEBELUM EMIT
+    if (isClosed) return;
 
     if (success) {
       emit(
@@ -65,14 +67,27 @@ class PrinterCubit extends Cubit<PrinterState> {
     if (currentState is! PrinterLoaded) return;
 
     await _printerService.disconnect();
+
+    // 🚀 GEMBOK PENGAMAN
+    if (isClosed) return;
+
     emit(PrinterLoaded(devices: currentState.devices, connectedDevice: null));
   }
 
-  // 4. 🚀 Print Karcis (Membutuhkan transaction dan deviceId)
+  // 4. 🚀 Print Karcis (Pipa parameter sudah SEMPURNA)
   Future<bool> printReceipt(
     HistoryItemModel transaction,
     String deviceId,
+    Map<String, dynamic> profile,
   ) async {
-    return await _printerService.printReceipt(transaction, deviceId);
+    // Fungsi ini aman karena tidak memanggil emit() di dalamnya.
+    // Dia hanya melempar tugas ke Service dan mengembalikan true/false.
+    final success = await _printerService.printReceipt(
+      transaction,
+      deviceId,
+      profile,
+    );
+
+    return success;
   }
 }

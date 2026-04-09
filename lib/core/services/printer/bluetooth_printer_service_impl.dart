@@ -60,6 +60,7 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
   Future<bool> printReceipt(
     HistoryItemModel transaction,
     String deviceId,
+    Map<String, dynamic> profile,
   ) async {
     try {
       final connected = await isConnected;
@@ -72,6 +73,7 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
       final List<int> bytes = await ReceiptFormatter.generateBytes(
         transaction,
         deviceId,
+        profile,
       );
 
       // 2. 🚀 Minta "Sang Kurir" menembakkan Bytes ke Printer!

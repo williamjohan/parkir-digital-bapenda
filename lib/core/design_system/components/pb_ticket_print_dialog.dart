@@ -120,6 +120,7 @@ class PbTicketPrintDialog {
               final success = await locator<PrinterCubit>().printReceipt(
                 transaction,
                 profile['idDevice']?.toString() ?? 'UNKNOWN_DEVICE',
+                profile,
               );
 
               // 3. Cek apakah dialog masih terbuka
