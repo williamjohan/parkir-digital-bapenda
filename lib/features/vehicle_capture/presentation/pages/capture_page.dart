@@ -431,7 +431,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                   else
                                     PbPrimaryButton(
                                       text: 'Ambil Foto Kendaraan',
-                                      icon: Icons.camera_alt,
+                                      iconLeft: Icons.camera_alt,
                                       isLoading: false,
                                       onPressed: isCameraReady
                                           ? () => cubit.captureAndProcessImage()

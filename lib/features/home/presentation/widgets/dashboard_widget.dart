@@ -24,7 +24,7 @@ class DashboardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 70),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primaryDark, AppColors.primaryLight],
@@ -89,7 +89,7 @@ class DashboardWidget extends StatelessWidget {
           const SizedBox(height: 16),
           PbPrimaryButton(
             text: "Tambah Transaksi",
-            isSecondary: true,
+            variant: PbButtonVariant.outlinedSecondaryLight,
             onPressed: () {
               context.push(AppRoutes.transaction);
             },

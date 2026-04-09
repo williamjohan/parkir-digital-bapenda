@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-
 import '../../../core/design_system/tokens/app_colors.dart';
 import '../../../core/design_system/tokens/app_typography.dart';
+import 'botsheet_tarif_widget.dart';
 
 class CardJenisKendaraan extends StatefulWidget {
-  final int tarifMotor;
-  final int tarifMobil;
-
+  final List<Map<String, dynamic>> tarifList;
   final Function(String value)? onSelected;
 
   const CardJenisKendaraan({
     super.key,
     this.onSelected,
-    required this.tarifMotor,
-    required this.tarifMobil,
+    required this.tarifList,
   });
 
   @override
@@ -21,16 +18,27 @@ class CardJenisKendaraan extends StatefulWidget {
 }
 
 class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
-  String? selectedValue;
+  String? selectedJenisTarif;
+  int? selectedTarif;
 
-  void _onSelect(String value) {
+  final TextEditingController tarifController = TextEditingController();
+
+  void _onSelect(Map<String, dynamic> selected) {
     setState(() {
-      selectedValue = value;
+      selectedJenisTarif = selected['jenisTarif'];
+      selectedTarif = selected['tarif'];
+      tarifController.text = "Rp$selectedTarif";
     });
 
     if (widget.onSelected != null) {
-      widget.onSelected!(value);
+      widget.onSelected!(selectedJenisTarif!);
     }
+  }
+
+  @override
+  void dispose() {
+    tarifController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,25 +59,76 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildItem(
-                  title: "Motor",
-                  price: "Rp${widget.tarifMotor}",
-                  icon: Icons.two_wheeler,
-                  isSelected: selectedValue == "Motor",
-                  onTap: () => _onSelect("Motor"),
-                ),
+
+          /// 🔥 Button custom (replace PbPrimaryButton kalau mau lebih fleksibel)
+          InkWell(
+            onTap: () {
+              BottomSheetTarifParkir.show(
+                context,
+                tarifList: widget.tarifList,
+                onTap: (selected) {
+                  _onSelect(selected);
+                },
+              );
+            },
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(10),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildItem(
-                  title: "Mobil",
-                  price: "Rp${widget.tarifMobil}",
-                  icon: Icons.directions_car,
-                  isSelected: selectedValue == "Mobil",
-                  onTap: () => _onSelect("Mobil"),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    selectedJenisTarif ?? "Pilih Jenis Kendaraan",
+                    style: AppTypography.bodyText.copyWith(
+                      color: selectedJenisTarif == null
+                          ? AppColors.textSecondary
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                  Icon(Icons.arrow_drop_down),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Tarif Parkir", style: AppTypography.caption),
+              const SizedBox(height: 4),
+
+              /// 🔥 TextField auto keisi & disable
+              TextField(
+                controller: tarifController,
+                style: AppTypography.bodyRegular,
+                readOnly: true,
+                decoration: InputDecoration(
+                  hintText: "Rp0",
+                  hintStyle: AppTypography.bodyText.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  filled: true,
+
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: AppColors.border),
+                  ),
+
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: AppColors.border),
+                  ),
+
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
               ),
             ],
@@ -78,49 +137,4 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
       ),
     );
   }
-}
-
-Widget _buildItem({
-  required String title,
-  required String price,
-  required IconData icon,
-  required bool isSelected,
-  required VoidCallback onTap,
-}) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSelected ? AppColors.primary : Colors.grey.shade300,
-          width: isSelected ? 2 : 1,
-        ),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            icon,
-            size: 28,
-            color: isSelected ? AppColors.primary : AppColors.primaryDark,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: AppTypography.bodyRegular.copyWith(
-              fontWeight: FontWeight.w600,
-              color: isSelected ? AppColors.primary : Colors.black,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            price,
-            style: AppTypography.bodySmall.copyWith(color: Colors.grey),
-          ),
-        ],
-      ),
-    ),
-  );
 }

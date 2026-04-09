@@ -98,50 +98,28 @@ class _HomePageState extends State<HomePage> {
             centerTitle: true,
           ),
           body: SingleChildScrollView(
-            child: Column(
-              children: [
-                // ===== DASHBOARD (background berwarna) =====
-                BlocBuilder<HomeCubit, HomeState>(
-                  buildWhen: (previous, current) =>
-                      previous.motorCount != current.motorCount ||
-                      previous.mobilCount != current.mobilCount,
-                  builder: (context, state) {
-                    return DashboardWidget(
+            child: BlocBuilder<HomeCubit, HomeState>(
+              buildWhen: (previous, current) =>
+                  previous.motorCount != current.motorCount ||
+                  previous.mobilCount != current.mobilCount,
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    DashboardWidget(
                       totalPendapatan: 20000,
                       totalTransaksi: (state.motorCount + state.mobilCount),
                       motorCount: state.motorCount,
                       mobilCount: state.mobilCount,
-                    );
-                  },
-                ),
-
-                // ===== KONTEN BAWAH (rounded top) =====
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: AppColors.background,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(30),
                     ),
-                  ),
-                  // Geser sedikit ke atas agar overlap dengan dashboard
-                  transform: Matrix4.translationValues(0, -50, 0),
-                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Bar diagram — pakai versi dengan label di atas bar
-                      BarDiagramWithLabels(
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: BarDiagramWithLabels(
                         weeklyIncome: [500000, 1200000, 200000, 0, 0, 0, 0],
                       ),
-                      // SimpleBarChart(),
-                      const SizedBox(height: 24),
-
-                      // Tambahkan widget lain di bawah sini
-                    ],
-                  ),
-                ),
-              ],
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),

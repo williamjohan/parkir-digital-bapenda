@@ -4,47 +4,88 @@ import 'package:flutter/material.dart';
 import '../tokens/app_colors.dart';
 import '../tokens/app_typography.dart';
 
+enum PbButtonVariant {
+  primary,
+  secondary,
+  outlinedPrimary,
+  outlinedSecondaryLight,
+  outlinedSecondaryDark,
+}
+
+enum PbButtonSize { regular, small }
+
 class PbPrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
-  final IconData? icon;
-  final bool isOutlined;
-  final bool isSecondary;
+  final IconData? iconLeft;
+  final IconData? iconRight;
+  final PbButtonVariant variant;
+  final PbButtonSize size;
 
   const PbPrimaryButton({
     super.key,
     required this.text,
     this.onPressed,
     this.isLoading = false,
-    this.icon,
-    this.isOutlined = false,
-    this.isSecondary = false,
+    this.iconLeft,
+    this.iconRight,
+    this.variant = PbButtonVariant.primary,
+    this.size = PbButtonSize.regular,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor;
-    Color textColor;
-    Color borderColor;
+    late Color backgroundColor;
+    late Color textColor;
+    late Color borderColor;
 
-    if (isOutlined) {
-      backgroundColor = Colors.transparent;
-      textColor = AppColors.primary;
-      borderColor = AppColors.primary;
-    } else if (isSecondary) {
-      backgroundColor = AppColors.background; // tambahin di AppColors
-      textColor = AppColors.primary;
-      borderColor = Colors.transparent;
-    } else {
-      backgroundColor = AppColors.primary;
-      textColor = Colors.white;
-      borderColor = Colors.transparent;
+    // 🎨 Variant styling
+    switch (variant) {
+      case PbButtonVariant.primary:
+        backgroundColor = AppColors.primary;
+        textColor = Colors.white;
+        borderColor = Colors.transparent;
+        break;
+
+      case PbButtonVariant.secondary:
+        backgroundColor = AppColors.background;
+        textColor = AppColors.primary;
+        borderColor = Colors.transparent;
+        break;
+
+      case PbButtonVariant.outlinedPrimary:
+        backgroundColor = Colors.transparent;
+        textColor = AppColors.primary;
+        borderColor = AppColors.primary;
+        break;
+
+      case PbButtonVariant.outlinedSecondaryLight:
+        backgroundColor = Colors.transparent;
+        textColor = Colors.white;
+        borderColor = Colors.white;
+        break;
+
+      case PbButtonVariant.outlinedSecondaryDark:
+        backgroundColor = Colors.transparent;
+        textColor = Colors.grey.shade700;
+        borderColor = Colors.grey.shade400;
+        break;
     }
+
+    // 📏 Size config
+    final double height = size == PbButtonSize.small ? 40 : 52;
+    final double fontSize = size == PbButtonSize.small ? 12 : 14;
+    final double iconSize = size == PbButtonSize.small ? 16 : 20;
+
+    final bool isOutlined =
+        variant == PbButtonVariant.outlinedPrimary ||
+        variant == PbButtonVariant.outlinedSecondaryLight ||
+        variant == PbButtonVariant.outlinedSecondaryDark;
 
     return SizedBox(
       width: double.infinity,
-      height: 52,
+      height: height,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -52,7 +93,7 @@ class PbPrimaryButton extends StatelessWidget {
           disabledBackgroundColor: isOutlined
               ? Colors.transparent
               : AppColors.primaryLight,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(color: borderColor, width: isOutlined ? 1.5 : 0),
@@ -61,30 +102,36 @@ class PbPrimaryButton extends StatelessWidget {
         ),
         child: isLoading
             ? SizedBox(
-                height: 24,
-                width: 24,
+                height: iconSize,
+                width: iconSize,
                 child: CircularProgressIndicator(
                   color: textColor,
                   strokeWidth: 3,
                 ),
               )
             : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: iconRight != null
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.center,
                 children: [
-                  if (icon != null) ...[
-                    Icon(icon, color: textColor, size: 20),
-                    const SizedBox(width: 8),
-                  ],
-                  Flexible(
-                    child: Text(
-                      text,
-                      style: AppTypography.buttonText.copyWith(
-                        color: textColor,
+                  Row(
+                    children: [
+                      if (iconLeft != null) ...[
+                        Icon(iconLeft, color: textColor, size: iconSize),
+                        const SizedBox(width: 8),
+                      ],
+                      Text(
+                        text,
+                        style: AppTypography.buttonText.copyWith(
+                          color: textColor,
+                          fontSize: fontSize,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
+                    ],
                   ),
+                  if (iconRight != null)
+                    Icon(iconRight, color: textColor, size: iconSize),
                 ],
               ),
       ),
