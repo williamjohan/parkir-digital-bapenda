@@ -2,8 +2,6 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-import 'tarif_parkir_model.dart';
-
 part 'user_model.g.dart';
 
 // --- [TAMENG ANTI-PELURU BE] ---
@@ -17,18 +15,6 @@ int _toInt(dynamic value) {
   if (value is double) return value.toInt();
   if (value is String) return int.tryParse(value) ?? 0;
   return 0;
-}
-// ------------------------------
-
-// parsing list tarif parkir
-List<TarifParkirModel> _toTarifList(dynamic value) {
-  if (value == null) return [];
-  if (value is List) {
-    return value
-        .map((e) => TarifParkirModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-  return [];
 }
 // ------------------------------
 
@@ -71,10 +57,6 @@ class UserModel {
   @JsonKey(name: 'shift', fromJson: _toString)
   final String shift;
 
-  // 🔥 FIELD BARU
-  @JsonKey(name: 'tarifParkirs', fromJson: _toTarifList)
-  final List<TarifParkirModel> tarifParkirs;
-
   UserModel({
     required this.idUser,
     required this.namaUser,
@@ -88,7 +70,6 @@ class UserModel {
     this.namaGate = '',
     this.idDevice = '',
     this.shift = '',
-    this.tarifParkirs = const [],
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

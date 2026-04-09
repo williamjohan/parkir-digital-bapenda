@@ -19,7 +19,6 @@ abstract class ISecureStorageManager {
     required String namaUserStorage,
     required String nopStorage,
     required String alamat,
-    required List<Map<String, dynamic>> tarifParkirs,
     int? pungutTarif,
     String? namaObjekPajak,
     String? idDevice,
@@ -82,7 +81,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     required String namaUserStorage,
     required String nopStorage,
     required String alamat,
-    required List<Map<String, dynamic>> tarifParkirs,
     int? pungutTarif,
     String? namaObjekPajak,
     String? idDevice,
@@ -105,7 +103,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
       'namaGate': namaGate,
       'shift': shift,
       'alamat': alamat,
-      'tarifParkirs': tarifParkirs,
     };
     final jsonString = jsonEncode(profileData);
     await _storage.write(key: _keyJukirProfile, value: jsonString);

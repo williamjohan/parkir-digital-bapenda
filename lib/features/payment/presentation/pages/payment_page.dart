@@ -107,8 +107,7 @@ class _PaymentPageState extends State<PaymentPage> {
                               objekPajak:
                                   profile?['namaObjekPajak'] ?? 'Objek Pajak',
                               idTransaksi: state.idTransaksi,
-                              // durasi: state.expTimeMenit,
-                              durasi: 1,
+                              durasi: state.expTimeMenit,
                               onFinish: () {
                                 // jalankan generate ulang QRIS saat timer habis
                                 context.read<PaymentCubit>().generateQris(
