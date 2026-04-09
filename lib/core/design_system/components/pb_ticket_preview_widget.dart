@@ -143,7 +143,7 @@ class PbPreviewTicketWidget extends StatelessWidget {
               Expanded(
                 child: PbPrimaryButton(
                   text: "",
-                  icon: Icons.print,
+                  iconRight: Icons.print,
                   onPressed: printPressed,
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/transaction/page/transaction_page.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/pages/transaction_history_page.dart';
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
@@ -17,6 +18,7 @@ import '../../features/printer/presentation/screen/printer_settings_page.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/quick_parking/presentation/pages/quick_park_page.dart';
+import '../../features/transaction/page/transaction_page.dart';
 import '../../features/vehicle_capture/domain/entities/vehicle_category.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
 import '../../features/vehicle_capture/presentation/pages/capture_page.dart';
@@ -155,6 +157,12 @@ class AppRouter {
               create: (_) => locator<TransactionHistoryCubit>(),
               child: const TransactionHistoryPage(),
             );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.transaction,
+          builder: (context, state) {
+            return const TransactionPage();
           },
         ),
         GoRoute(

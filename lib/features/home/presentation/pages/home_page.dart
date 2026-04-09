@@ -5,7 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/bar_diagram_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/last_activity_widget.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -17,8 +19,6 @@ import '../../../../core/utils/permission_utils.dart';
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
 import '../widgets/dashboard_widget.dart';
-import '../widgets/mode_plat.dart';
-import '../widgets/vehicle_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,15 +31,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Memuat data pertama kali saat Home dibuka
     context.read<HomeCubit>().loadDashboardData();
-
     _checkSecureStorageProfile();
   }
 
   Future<void> _checkSecureStorageProfile() async {
-    // Sesuaikan cara Anda memanggil SecureStorageManager di file ini
-    // Misalnya menggunakan locator GetIt:
     final secureStorage = locator<ISecureStorageManager>();
     final profile = await secureStorage.getJukirProfile();
 
@@ -49,6 +45,23 @@ class _HomePageState extends State<HomePage> {
     debugPrint('============================');
   }
 
+  // State untuk filter kendaraan
+  String _selectedVehicleType = 'Semua Kendaraan';
+  final List<String> _vehicleTypes = [
+    'Semua Kendaraan',
+    'Motor',
+    'Mobil',
+    'Ojol',
+  ];
+
+  // Dummy data pendapatan per jenis kendaraan (7 hari)
+  final Map<String, List<double>> _incomeData = {
+    'Semua Kendaraan': [250000, 430000, 230000, 200000, 0, 0, 0],
+    'Motor': [100000, 130000, 80000, 50000, 0, 0, 0],
+    'Mobil': [150000, 300000, 150000, 150000, 0, 0, 0],
+    'Ojol': [0, 0, 0, 0, 0, 0, 0], // Dummy untuk ojol
+  };
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<HomeCubit, HomeState>(
@@ -57,10 +70,7 @@ class _HomePageState extends State<HomePage> {
       listener: (context, state) async {
         switch (state.permissionActionStatus) {
           case CameraPermissionStatus.granted:
-
-            // merefresh data SQLite TEPAT saat Jukir kembali dari halaman Capture/Payment.
             await context.push('/capture/${state.selectedVehicleForCapture}');
-
             if (context.mounted) {
               context.read<HomeCubit>().loadDashboardData();
             }
@@ -92,14 +102,13 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             title: GestureDetector(
               onDoubleTap: () {
-                // Hanya bisa dibuka saat mode Debug (Aman dari user asli!)
                 if (kDebugMode) {
                   ChuckerFlutter.showChuckerScreen();
                 }
               },
               child: const Text(
                 'Parkir Digital Bapenda',
-                style: AppTypography.heading2,
+                style: AppTypography.heading5,
               ),
             ),
             backgroundColor: AppColors.surface,
@@ -107,108 +116,38 @@ class _HomePageState extends State<HomePage> {
             centerTitle: true,
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // --- WIDGET DASHBOARDf KENDARAAN (Tetap sama) ---
-                BlocBuilder<HomeCubit, HomeState>(
-                  buildWhen: (previous, current) =>
-                      previous.motorCount != current.motorCount ||
-                      previous.mobilCount != current.mobilCount,
-                  builder: (context, state) {
-                    return DashboardWidget(
+            child: BlocBuilder<HomeCubit, HomeState>(
+              buildWhen: (previous, current) =>
+                  previous.motorCount != current.motorCount ||
+                  previous.mobilCount != current.mobilCount,
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    DashboardWidget(
+                      totalPendapatan: 20000,
+                      totalTransaksi: (state.motorCount + state.mobilCount),
                       motorCount: state.motorCount,
                       mobilCount: state.mobilCount,
-                    );
-                  },
-                ),
-                const SizedBox(height: 32), // Beri jarak lebih lega
-                // --- [BARU] SEGMENT 1: PILIH MODE PLAT ---
-                const Text(
-                  '1. Pilih Mode Parkir',
-                  style: AppTypography.heading2,
-                  textAlign: TextAlign.left,
-                ),
-                const SizedBox(height: 12),
-
-                BlocBuilder<HomeCubit, HomeState>(
-                  buildWhen: (previous, current) =>
-                      previous.selectedModePlat != current.selectedModePlat,
-                  builder: (context, state) {
-                    // [ABSTRAKSI]: Gunakan widget terpisah yang baru dibuat
-                    return ModePlatSelector(
-                      currentMode: state.selectedModePlat,
-                      onModeSelected: (mode) =>
-                          context.read<HomeCubit>().selectModePlat(mode),
-                    );
-                  },
-                ),
-                const SizedBox(height: 32),
-
-                // --- [BARU] SEGMENT 2: PILIH KENDARAAN (Dinamis) ---
-                // Hanya muncul jika selectedModePlat tidak null
-                BlocBuilder<HomeCubit, HomeState>(
-                  buildWhen: (previous, current) =>
-                      previous.selectedModePlat != current.selectedModePlat,
-                  builder: (context, state) {
-                    final int? currentMode = state.selectedModePlat;
-
-                    if (currentMode == null) {
-                      // Jika belum memilih mode, tampilkan instruksi kosong
-                      return Center(
-                        child: Text(
-                          'Silakan pilih mode parkir terlebih dahulu.',
-                          style: AppTypography.bodyRegular.copyWith(
-                            color: AppColors.textSecondary,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      );
-                    }
-
-                    // Jika sudah memilih mode, tampilkan pilihan kendaraan!
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          '2. Pilih Jenis Kendaraan',
-                          style: AppTypography.heading2,
-                          textAlign: TextAlign.left,
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: VehicleCard(
-                                title: 'Motor',
-                                icon: Icons.two_wheeler,
-                                onTap: () => _handleVehicleSelection(
-                                  context,
-                                  'Motor',
-                                  currentMode,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: VehicleCard(
-                                title: 'Mobil',
-                                icon: Icons.directions_car,
-                                onTap: () => _handleVehicleSelection(
-                                  context,
-                                  'Mobil',
-                                  currentMode,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: BarDiagramWithLabels(
+                        weeklyIncome:
+                            _incomeData[_selectedVehicleType] ??
+                            List.filled(7, 0.0),
+                        selectedVehicleType: _selectedVehicleType,
+                        vehicleTypes: _vehicleTypes,
+                        onVehicleTypeChanged: (newType) {
+                          setState(() {
+                            _selectedVehicleType = newType;
+                          });
+                        },
+                      ),
+                    ),
+                    LastActivityWidget(),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -224,14 +163,11 @@ void _handleVehicleSelection(
   int modePlat,
 ) async {
   if (modePlat == 1) {
-    // MODE 1: PAKAI PLAT (Rute Lama) -> Butuh Izin Kamera
+    // MODE 1: PAKAI PLAT -> Butuh Izin Kamera
     context.read<HomeCubit>().requestCameraAccess(kategori);
-    // Catatan: Navigasi aslinya terjadi di BlocListener di atas setelah izin diberikan.
   } else {
-    // MODE 0: TANPA PLAT (Rute Baru) -> Langsung lompat, tidak butuh kamera!
+    // MODE 0: TANPA PLAT -> Langsung lompat
     await context.push('/quick-park/$kategori');
-
-    // Saat Jukir menekan "Back" dari layar Quick Park, kita refresh dashboard!
     if (context.mounted) {
       context.read<HomeCubit>().loadDashboardData();
     }

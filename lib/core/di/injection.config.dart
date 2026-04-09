@@ -32,6 +32,8 @@ import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
 import '../../features/home/domain/usecases/get_daily_vehicle_count_usecase.dart'
     as _i473;
+import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
+    as _i77;
 import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
     as _i834;
@@ -197,14 +199,17 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i77.GetRecentTransactionsUseCase>(
+    () => _i77.GetRecentTransactionsUseCase(
+      gh<_i896.ITransactionHistoryRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
   gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
     () => _i732.GetTransactionHistoryUseCase(
       gh<_i896.ITransactionHistoryRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
-  );
-  gh.factory<_i9.HomeCubit>(
-    () => _i9.HomeCubit(gh<_i473.GetDailyVehicleCountUseCase>()),
   );
   gh.factory<_i731.VehicleCaptureCubit>(
     () => _i731.VehicleCaptureCubit(
@@ -254,6 +259,12 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
+  );
+  gh.factory<_i9.HomeCubit>(
+    () => _i9.HomeCubit(
+      gh<_i473.GetDailyVehicleCountUseCase>(),
+      gh<_i77.GetRecentTransactionsUseCase>(),
+    ),
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(
