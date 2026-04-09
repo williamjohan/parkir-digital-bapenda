@@ -14,8 +14,6 @@ class HistoryCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🚀 TIDAK ADA LAGI LOGIKA DI SINI! WIDGET HANYA MENGGAMBAR!
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(

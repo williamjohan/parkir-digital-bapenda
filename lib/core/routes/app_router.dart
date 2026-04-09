@@ -97,32 +97,35 @@ class AppRouter {
         GoRoute(
           path: '${AppRoutes.capture}/:category',
           builder: (context, state) {
-            // 1. Ambil teks dari parameter URL (misal: 'Mobil' atau 'Motor')
             final categoryString = state.pathParameters['category'];
-
-            final category = categoryString?.toLowerCase() == 'mobil'
-                ? VehicleCategory.Mobil
-                : VehicleCategory.Motor;
+            final categoryEnum = categoryString?.toLowerCase() == 'mobil'
+                ? VehicleCategory.mobil
+                : VehicleCategory.motor;
 
             return MultiBlocProvider(
               providers: [
                 BlocProvider(
                   create: (_) =>
-                      locator<VehicleCaptureCubit>()..selectVehicle(category),
+                      locator<VehicleCaptureCubit>()
+                        ..selectVehicle(categoryEnum),
                 ),
                 BlocProvider(create: (_) => locator<ParkingTransactionCubit>()),
               ],
-              child: const CapturePage(),
+              child: CapturePage(kategoriKendaraan: categoryEnum.displayName),
             );
           },
         ),
         GoRoute(
           path: '${AppRoutes.quickPark}/:category',
           builder: (context, state) {
-            final categoryString = state.pathParameters['category'] ?? 'Motor';
+            final categoryString = state.pathParameters['category'];
+            final categoryEnum = categoryString?.toLowerCase() == 'mobil'
+                ? VehicleCategory.mobil
+                : VehicleCategory.motor;
+
             return BlocProvider(
               create: (_) => locator<ParkingTransactionCubit>(),
-              child: QuickParkPage(kategoriKendaraan: categoryString),
+              child: QuickParkPage(kategoriKendaraan: categoryEnum.displayName),
             );
           },
         ),

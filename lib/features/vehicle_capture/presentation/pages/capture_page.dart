@@ -3,16 +3,15 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_keyboard_dismiss_wrapper.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
+import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/routes/app_routes.dart';
-import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_state.dart';
 import '../../../parking_transaction/persentation/cubit/sync_cubit.dart';
@@ -22,7 +21,8 @@ import '../cubit/vehicle_capture_state.dart';
 import '../widgets/vehicle_overlay_guide.dart';
 
 class CapturePage extends StatefulWidget {
-  const CapturePage({super.key});
+  final String kategoriKendaraan;
+  const CapturePage({super.key, required this.kategoriKendaraan});
 
   @override
   State<CapturePage> createState() => _CapturePageState();
@@ -96,19 +96,11 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
             // --- KAWASAN BERBAYAR (Wajib masuk Kasir/QRIS) ---
             context.read<SyncCubit>().syncDataBackground();
 
-            final String namaKategori =
-                context
-                    .read<VehicleCaptureCubit>()
-                    .state
-                    .selectedCategory
-                    ?.name ??
-                'Mobil';
-
             final args = PaymentPageArgs(
               idTransaksiLokal:
                   trx.idTransaksiLokal, // [PERBAIKAN]: Ambil dari koper trx
               platNomor: trx.platNomor ?? _plateController.text.trim(),
-              kategoriKendaraan: namaKategori,
+              kategoriKendaraan: widget.kategoriKendaraan,
             );
 
             // Pindah layar ke Kasir dan tunggu kembaliannya
@@ -119,18 +111,15 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 
             // Guard keamanan memori
             if (!context.mounted) return;
-
-            // Eksekusi pembersihan setelah kembali dari Kasir
             if (isSuccess == true) {
               context.read<ParkingTransactionCubit>().updateStatusToPaid(
-                trx.idTransaksiLokal, // [PERBAIKAN]: Ambil dari koper trx
+                trx.idTransaksiLokal,
               );
               _plateController.clear();
               context.read<VehicleCaptureCubit>().resetCapture();
             } else {
               _plateController.clear();
               context.read<VehicleCaptureCubit>().resetCapture();
-
               PbStatusSnackbar.show(
                 context,
                 message: 'Pembayaran ditunda. Data tersimpan di riwayat.',
@@ -138,52 +127,32 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
             }
           } else {
             // --- KAWASAN GRATIS (Langsung Lunas) ---
-
             final captureCubit = context.read<VehicleCaptureCubit>();
-            final namaKategori =
-                captureCubit.state.selectedCategory?.name ?? 'Mobil';
-
             captureCubit.cancelNavigation();
             context.read<SyncCubit>().syncDataBackground();
+            final platAktif = _plateController.text.trim();
+            final platFinal = platAktif.isNotEmpty
+                ? platAktif
+                : (trx.platNomor ?? '-');
 
-            // Panggil Modal Berhasil, lalu Karcis, menggunakan data 'profile'
+            // Panggil Modal Berhasil
             PbShowDialog.show(
               context,
               title: 'Berhasil!',
-              description:
-                  'Parkir GRATIS dengan Kamera\n${trx.platNomor ?? ''} tercatat.',
+              description: 'Parkir GRATIS dengan Kamera\n$platFinal tercatat.',
               onConfirm: () {
-                // Tampilkan Modal Karcis sebelum membersihkan layar
-                showDialog(
+                // Tampilkan Modal Karcis Modular
+                PbTicketPrintDialog.showFromLocalTransaction(
                   context: context,
-                  barrierDismissible: false,
-                  builder: (dialogContext) {
-                    return Dialog(
-                      child: PbPreviewTicketWidget(
-                        deviceId: profile['idDevice'] ?? '',
-                        orderId: trx.idTransaksiLokal,
-                        objekPajak: profile['namaObjekPajak'] ?? 'Objek Pajak',
-                        alamatObjekPajak:
-                            profile['alamat'] ?? 'Alamat Objek Pajak',
-                        waktuParkir: DateFormat(
-                          'dd MMM yyyy • HH:mm',
-                          'id_ID',
-                        ).format(DateTime.parse(trx.waktuTransaksi)),
-                        tipeKendaraan: namaKategori,
-                        isQuickMode: false,
-                        isFree: true,
-                        noKendaraan: trx.platNomor ?? '',
-                        tarifParkir: 0,
-                        idTransaksi: trx.idTransaksiLokal,
-                        okPressed: () {
-                          Navigator.pop(dialogContext); // Tutup Karcis
-                          // Bersihkan layar untuk kendaraan selanjutnya
-                          _plateController.clear();
-                          captureCubit.resetCapture();
-                        },
-                        printPressed: () {}, // Fitur cetak bluetooth nanti
-                      ),
-                    );
+                  localTx: trx,
+                  profile: profile,
+                  kategoriKendaraan: widget.kategoriKendaraan,
+                  isQuickMode: false,
+                  noKendaraan: platFinal,
+                  tarifParkir: 0,
+                  onClosed: () {
+                    _plateController.clear();
+                    captureCubit.resetCapture();
                   },
                 );
               },
