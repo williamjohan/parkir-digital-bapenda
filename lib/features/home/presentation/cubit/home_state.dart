@@ -5,12 +5,10 @@ import '../../../transaction_history/data/models/history_item_model.dart'; // [B
 class HomeState extends Equatable {
   final CameraPermissionStatus? permissionActionStatus;
   final String? selectedVehicleForCapture;
-
-  // Timestamp ini adalah "Hack" arsitektur yang elegan agar Listener selalu terpicu
-  // setiap kali aksi ditekan, meskipun status permission-nya tidak berubah.
   final int? actionTimestamp;
   final int motorCount;
   final int mobilCount;
+  final double totalPendapatan;
 
   // UNtuk pilih jenis mode_plat
   final int? selectedModePlat;
@@ -24,6 +22,7 @@ class HomeState extends Equatable {
     this.actionTimestamp,
     this.motorCount = 0,
     this.mobilCount = 0,
+    this.totalPendapatan = 0.0,
     this.selectedModePlat,
     this.recentTransactions = const [], // [BARU]
   });
@@ -35,6 +34,7 @@ class HomeState extends Equatable {
     int? motorCount,
     int? mobilCount,
     int? selectedModePlat,
+    double? totalPendapatan,
     List<HistoryItemModel>? recentTransactions, // [BARU]
   }) {
     return HomeState(
@@ -45,6 +45,7 @@ class HomeState extends Equatable {
       actionTimestamp: actionTimestamp ?? this.actionTimestamp,
       motorCount: motorCount ?? this.motorCount,
       mobilCount: mobilCount ?? this.mobilCount,
+      totalPendapatan: totalPendapatan ?? this.totalPendapatan,
       selectedModePlat: selectedModePlat ?? this.selectedModePlat,
       recentTransactions:
           recentTransactions ?? this.recentTransactions, // [BARU]
@@ -58,6 +59,7 @@ class HomeState extends Equatable {
     actionTimestamp,
     mobilCount,
     motorCount,
+    totalPendapatan,
     selectedModePlat,
     recentTransactions, // [BARU]
   ];

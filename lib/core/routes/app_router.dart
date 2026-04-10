@@ -18,7 +18,6 @@ import '../../features/printer/presentation/screen/printer_settings_page.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/quick_parking/presentation/pages/quick_park_page.dart';
-import '../../features/transaction/page/transaction_page.dart';
 import '../../features/vehicle_capture/domain/entities/vehicle_category.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
 import '../../features/vehicle_capture/presentation/pages/capture_page.dart';

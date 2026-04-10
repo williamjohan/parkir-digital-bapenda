@@ -2,6 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/storage/secure_storage_manager.dart';
 import '../../domain/usecases/get_daily_vehicle_count_usecase.dart';
 import '../../domain/usecases/get_recent_transaction_usecase.dart';
 import 'home_state.dart';
@@ -11,10 +12,12 @@ import '../../../../core/utils/permission_utils.dart';
 class HomeCubit extends Cubit<HomeState> {
   final GetDailyVehicleCountUseCase _getDailyVehicleCountUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
+  final ISecureStorageManager _secureStorage;
 
   HomeCubit(
     this._getDailyVehicleCountUseCase,
     this._getRecentTransactionsUseCase,
+    this._secureStorage,
   ) : super(const HomeState());
 
   Future<void> requestCameraAccess(String vehicleType) async {
@@ -45,18 +48,59 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Mengambil data dashboard lengkap (counts + recent transactions)
   Future<void> loadDashboardData() async {
-    // Handle daily vehicle count
+    // 1. Ambil JANGKAR (Data Server Terakhir dari Secure Storage)
+    final profile = await _secureStorage.getJukirProfile();
+    int serverMotor = 0;
+    int serverMobil = 0;
+    double serverNominal = 0.0;
+
+    if (profile != null) {
+      // Ambil angka dari API BE (pastikan key-nya sesuai dengan JSON BE)
+      serverMotor = (profile['jumlahMotor'] ?? 0) as int;
+      serverMobil = (profile['jumlahMobil'] ?? 0) as int;
+
+      // Hitung total uang dari server
+      final nominalMotor = (profile['totalNominalMotor'] ?? 0).toDouble();
+      final nominalMobil = (profile['totalNominalMobil'] ?? 0).toDouble();
+      serverNominal = nominalMotor + nominalMobil;
+    }
+
+    // 2. Ambil DELTA (Data Lokal yang belum tersinkronisasi)
+    // Asumsi: Nanti UseCase ini HANYA mengambil yang is_synced = 0
     final countResult = await _getDailyVehicleCountUseCase.execute();
+
     countResult.fold(
       (failure) {
-        // Silent error, keep existing counts
-      },
-      (counts) {
+        // Jika gagal ambil lokal, tampilkan angka server saja
         if (!isClosed) {
           emit(
             state.copyWith(
-              motorCount: counts['motor'] ?? 0,
-              mobilCount: counts['mobil'] ?? 0,
+              motorCount: serverMotor,
+              mobilCount: serverMobil,
+              totalPendapatan: serverNominal,
+            ),
+          );
+        }
+      },
+      (localCounts) {
+        if (!isClosed) {
+          // 3. THE HYBRID FORMULA: TOTAL = SERVER + LOKAL PENDING
+          final int localMotor = localCounts['motor'] ?? 0;
+          final int localMobil = localCounts['mobil'] ?? 0;
+
+          // Asumsi localCounts juga mengembalikan nominal (kita perbarui UseCase-nya nanti)
+          final double localNominalMotor = (localCounts['nominalMotor'] ?? 0)
+              .toDouble();
+          final double localNominalMobil = (localCounts['nominalMobil'] ?? 0)
+              .toDouble();
+          final double totalLocalNominal =
+              localNominalMotor + localNominalMobil;
+
+          emit(
+            state.copyWith(
+              motorCount: serverMotor + localMotor,
+              mobilCount: serverMobil + localMobil,
+              totalPendapatan: serverNominal + totalLocalNominal,
             ),
           );
         }

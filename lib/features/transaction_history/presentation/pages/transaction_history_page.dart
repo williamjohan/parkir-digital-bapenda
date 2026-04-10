@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/components/pb_calendar_range_picker.dart';
-import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
+import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
 import '../../data/models/history_item_model.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
@@ -81,10 +81,41 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     HistoryItemModel item,
     Map<String, dynamic> profile,
   ) {
-    PbTicketPrintDialog.showFromHistory(
+    showDialog(
       context: context,
-      historyTx: item,
-      profile: profile,
+      barrierDismissible: true, // Bisa ditutup dengan klik di luar
+      builder: (context) {
+        // Format tanggal dari API (contoh: 2026-04-01T14:30:01 -> 01 Apr 2026 • 14:30)
+        String formattedDate = item.tglTrx;
+        try {
+          final date = DateTime.parse(item.tglTrx);
+          formattedDate = DateFormat(
+            'dd MMM yyyy • HH:mm',
+            'id_ID',
+          ).format(date);
+        } catch (_) {}
+
+        return Dialog(
+          child: PbPreviewTicketWidget(
+            deviceId: profile['idDevice']?.toString() ?? '',
+            orderId: item.orderId,
+            objekPajak: profile['namaObjekPajak'] ?? 'Objek Pajak',
+            alamatObjekPajak: profile['alamat'] ?? 'Alamat Objek Pajak',
+            waktuParkir: formattedDate,
+            tipeKendaraan: item.jenisTarif, // 'MOBIL' atau 'MOTOR'
+            isQuickMode: item.modePlat == 0, // 0 = Tanpa Plat
+            isFree: item.kredit == 0 || item.jenisTarif == 'FREE',
+            noKendaraan: item.platNumber == '-' ? '' : item.platNumber,
+            tarifParkir: item.kredit,
+            idTransaksi: item
+                .orderId, // Bisa diganti item.noTRX jika BE menyediakan noTRX
+            okPressed: () => Navigator.pop(context),
+            printPressed: () {
+              // TODO: Integrasi Printer Bluetooth
+            },
+          ),
+        );
+      },
     );
   }
 

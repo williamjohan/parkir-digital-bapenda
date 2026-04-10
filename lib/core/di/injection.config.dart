@@ -264,6 +264,7 @@ _i174.GetIt init(
     () => _i9.HomeCubit(
       gh<_i473.GetDailyVehicleCountUseCase>(),
       gh<_i77.GetRecentTransactionsUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
     ),
   );
   gh.factory<_i513.PaymentCubit>(
