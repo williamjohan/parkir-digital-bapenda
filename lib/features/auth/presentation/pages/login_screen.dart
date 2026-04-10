@@ -133,6 +133,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                       isHidden: _isFormVisible,
                       onLoginPressed: () => _toggleForm(true),
                       onRegisterPressed: () {},
+                      onActivateDevice: () {},
                     ),
                   ),
                   if (_isFormVisible)

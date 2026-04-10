@@ -164,4 +164,17 @@ class DatabaseHelper {
       whereArgs: [idTransaksi],
     );
   }
+
+  // new - s
+  // Future<List<Map<String, dynamic>>> getTodayTransactions() async {
+  //   final db = await database;
+  //   final today = DateTime.now().toIso8601String().substring(0, 10);
+
+  //   return await db.query(
+  //     tableTransactions,
+  //     where: 'substr(waktu_transaksi, 1, 10) = ? AND is_sync = 0',
+  //     whereArgs: [today],
+  //     orderBy: 'waktu_transaksi DESC',
+  //   );
+  // }
 }

@@ -27,12 +27,38 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  // Track apakah ini pertama kali load
+  bool _isFirstLoad = true;
+
   @override
   void initState() {
     super.initState();
-    context.read<HomeCubit>().loadDashboardData();
+    WidgetsBinding.instance.addObserver(this);
+    _loadData();
     _checkSecureStorageProfile();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // Detect ketika app kembali ke foreground
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadData(); // Reload data ketika app kembali dari background
+    }
+  }
+
+  // Method untuk load data
+  Future<void> _loadData() async {
+    await context.read<HomeCubit>().loadDashboardData();
+    if (_isFirstLoad) {
+      _isFirstLoad = false;
+    }
   }
 
   Future<void> _checkSecureStorageProfile() async {
@@ -59,7 +85,7 @@ class _HomePageState extends State<HomePage> {
     'Semua Kendaraan': [250000, 430000, 230000, 200000, 0, 0, 0],
     'Motor': [100000, 130000, 80000, 50000, 0, 0, 0],
     'Mobil': [150000, 300000, 150000, 150000, 0, 0, 0],
-    'Ojol': [0, 0, 0, 0, 0, 0, 0], // Dummy untuk ojol
+    'Ojol': [0, 0, 0, 0, 0, 0, 0],
   };
 
   @override
@@ -72,7 +98,8 @@ class _HomePageState extends State<HomePage> {
           case CameraPermissionStatus.granted:
             await context.push('/capture/${state.selectedVehicleForCapture}');
             if (context.mounted) {
-              context.read<HomeCubit>().loadDashboardData();
+              // Reload setelah kembali dari capture
+              await _loadData();
             }
             break;
           case CameraPermissionStatus.permanentlyDenied:
@@ -115,37 +142,61 @@ class _HomePageState extends State<HomePage> {
             elevation: 0,
             centerTitle: true,
           ),
-          body: SingleChildScrollView(
+          body: RefreshIndicator(
+            // Pull to refresh
+            onRefresh: () async {
+              await _loadData();
+            },
             child: BlocBuilder<HomeCubit, HomeState>(
+              // Build when ANY data changes
               buildWhen: (previous, current) =>
                   previous.motorCount != current.motorCount ||
-                  previous.mobilCount != current.mobilCount,
+                  previous.mobilCount != current.mobilCount ||
+                  previous.recentTransactions != current.recentTransactions ||
+                  previous.isLoading != current.isLoading,
               builder: (context, state) {
-                return Column(
-                  children: [
-                    DashboardWidget(
-                      totalPendapatan: 20000,
-                      totalTransaksi: (state.motorCount + state.mobilCount),
-                      motorCount: state.motorCount,
-                      mobilCount: state.mobilCount,
+                // Tampilkan loading indicator saat pertama kali load
+                if (state.isLoading && _isFirstLoad) {
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Memuat data dashboard...'),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: BarDiagramWithLabels(
-                        weeklyIncome:
-                            _incomeData[_selectedVehicleType] ??
-                            List.filled(7, 0.0),
-                        selectedVehicleType: _selectedVehicleType,
-                        vehicleTypes: _vehicleTypes,
-                        onVehicleTypeChanged: (newType) {
-                          setState(() {
-                            _selectedVehicleType = newType;
-                          });
-                        },
+                  );
+                }
+
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      DashboardWidget(
+                        totalPendapatan: 20000,
+                        totalTransaksi: (state.motorCount + state.mobilCount),
+                        motorCount: state.motorCount,
+                        mobilCount: state.mobilCount,
                       ),
-                    ),
-                    LastActivityWidget(),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: BarDiagramWithLabels(
+                          weeklyIncome:
+                              _incomeData[_selectedVehicleType] ??
+                              List.filled(7, 0.0),
+                          selectedVehicleType: _selectedVehicleType,
+                          vehicleTypes: _vehicleTypes,
+                          onVehicleTypeChanged: (newType) {
+                            setState(() {
+                              _selectedVehicleType = newType;
+                            });
+                          },
+                        ),
+                      ),
+                      LastActivityWidget(),
+                    ],
+                  ),
                 );
               },
             ),
@@ -169,6 +220,7 @@ void _handleVehicleSelection(
     // MODE 0: TANPA PLAT -> Langsung lompat
     await context.push('/quick-park/$kategori');
     if (context.mounted) {
+      // Reload setelah quick park
       context.read<HomeCubit>().loadDashboardData();
     }
   }

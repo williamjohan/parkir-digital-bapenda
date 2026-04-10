@@ -3,12 +3,14 @@ import 'package:parkir_digital_bapenda/core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 
 class LoginBackgroundWidget extends StatelessWidget {
+  final VoidCallback onActivateDevice;
   final VoidCallback onLoginPressed;
   final VoidCallback onRegisterPressed;
   final bool isHidden;
 
   const LoginBackgroundWidget({
     super.key,
+    required this.onActivateDevice,
     required this.onLoginPressed,
     required this.onRegisterPressed,
     required this.isHidden,
@@ -118,6 +120,7 @@ class LoginBackgroundWidget extends StatelessWidget {
                                 width: double.infinity,
                                 height: 55,
                                 child: ElevatedButton(
+                                  // onPressed: isHidden ? null : onLoginPressed,
                                   onPressed: isHidden ? null : onLoginPressed,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primary,

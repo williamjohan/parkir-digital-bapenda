@@ -31,3 +31,5 @@ class InitError extends InitState {
   @override
   List<Object> get props => [message];
 }
+
+class InitNeedActivation extends InitState {}

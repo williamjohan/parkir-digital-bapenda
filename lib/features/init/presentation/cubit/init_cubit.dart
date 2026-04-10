@@ -1,56 +1,98 @@
-// lib/features/init/presentation/cubit/init_cubit.dart
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/storage/secure_storage_manager.dart'; // Sesuaikan path jika berbeda
+import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/usecases/check_device_readiness_usecase.dart';
 import 'init_state.dart';
+import 'package:flutter_udid/flutter_udid.dart';
 
 @injectable
 class InitCubit extends Cubit<InitState> {
   final CheckDeviceReadinessUseCase checkDeviceReadinessUseCase;
-
-  // [TAMBAHAN]: Injeksi Brankas Penyimpanan Rahasia
   final ISecureStorageManager secureStorageManager;
 
   InitCubit({
     required this.checkDeviceReadinessUseCase,
-    required this.secureStorageManager, // Jangan lupa tambahkan di constructor
+    required this.secureStorageManager,
   }) : super(InitInitial());
 
-  /// Fungsi ini dipanggil dari UI (Splash Screen) saat initState
-  Future<void> checkDeviceReadiness() async {
-    // 1. Ubah state menjadi Loading
+  Future<void> checkDeviceActivation() async {
+    AppLogger.debug("════════════════ INIT FLOW START ════════════════");
+    AppLogger.debug("[InitCubit] Start checkDeviceActivation");
+
     emit(InitLoading());
 
-    // 2. Eksekusi UseCase (Cek Kamera & Sistem)
-    final result = await checkDeviceReadinessUseCase.execute();
+    try {
+      /// 🔥 1. CHECK DEVICE READY
+      AppLogger.debug("[InitCubit] Checking device readiness...");
+      final readinessResult = await checkDeviceReadinessUseCase.execute();
 
-    // 3. Tangani hasil Either
-    result.fold(
-      (failure) {
-        if (!isClosed) {
+      await readinessResult.fold(
+        (failure) async {
+          AppLogger.debug("[InitCubit] ❌ Device NOT ready");
+          AppLogger.debug("[InitCubit] Failure: ${failure.message}");
           emit(InitError(failure.message));
-        }
-      },
-      // [PERBAIKAN]: Ubah menjadi async karena kita akan membuka brankas
-      (isReady) async {
-        if (!isClosed) {
-          // 4. CEK TIKET MASUK (The Gold Standard)
-          // Ambil kedua token dari Brankas
+        },
+        (isReady) async {
+          AppLogger.debug("[InitCubit] ✅ Device ready: $isReady");
+
+          final deviceId = await FlutterUdid.udid;
+
+          /// 🔥 2. GET PROFILE
+          AppLogger.debug("[InitCubit] Fetching jukir profile from storage...");
+          final profile = await secureStorageManager.getJukirProfile();
+
+          AppLogger.debug("[InitCubit] Profile result: $profile");
+
+          /// ❗ BELUM ADA PROFILE
+          if (profile == null) {
+            AppLogger.debug("[InitCubit] ❌ Profile NULL → Need Activation");
+            emit(InitNeedActivation());
+            return;
+          }
+
+          final nop = profile['nop'] ?? '';
+          AppLogger.debug("[InitCubit] NOP: $nop");
+
+          /// ❗ NOP KOSONG
+          if (nop.isEmpty) {
+            AppLogger.debug("[InitCubit] ❌ NOP kosong → Need Activation");
+            emit(InitNeedActivation());
+            return;
+          }
+
+          /// 🔥 3. CHECK TOKEN
+          AppLogger.debug("[InitCubit] Checking session tokens...");
+
           final accessToken = await secureStorageManager.getAccessToken();
           final refreshToken = await secureStorageManager.getRefreshToken();
 
-          // Sesi dianggap VALID jika Refresh Token ada.
-          // (Atau Access Token ada, sebagai pertahanan ganda jika Refresh Token sedang kosong)
-          final bool hasSession =
+          AppLogger.debug("[InitCubit] Access Token: $accessToken");
+          AppLogger.debug("[InitCubit] Refresh Token: $refreshToken");
+
+          final hasSession =
               (refreshToken != null && refreshToken.isNotEmpty) ||
               (accessToken != null && accessToken.isNotEmpty);
 
-          // 5. Emit Success beserta status tiketnya!
+          AppLogger.debug("[InitCubit] Session status: $hasSession");
+
+          if (hasSession) {
+            AppLogger.debug("[InitCubit] ✅ User LOGGED IN → Go to HOME");
+          } else {
+            AppLogger.debug("[InitCubit] ⚠️ No session → Go to LOGIN");
+          }
+
           emit(InitSuccess(isLoggedIn: hasSession));
-        }
-      },
-    );
+        },
+      );
+    } catch (e, stackTrace) {
+      AppLogger.debug("[InitCubit] ❌ ERROR OCCURRED");
+      AppLogger.debug("[InitCubit] Error: $e");
+      AppLogger.debug("[InitCubit] StackTrace: $stackTrace");
+
+      emit(InitError(e.toString()));
+    }
+
+    AppLogger.debug("════════════════ INIT FLOW END ════════════════");
   }
 }

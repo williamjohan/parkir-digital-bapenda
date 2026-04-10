@@ -28,7 +28,8 @@ class MyApp extends StatelessWidget {
         // 1. Jenderal Auth (Dipertahankan)
         BlocProvider<AppAuthCubit>(
           lazy: false,
-          create: (_) => appAuthCubit..checkStatus(isFromSplash: true),
+          // create: (_) => appAuthCubit..checkStatus(isFromSplash: true),
+          create: (_) => appAuthCubit,
         ),
 
         BlocProvider<SyncCubit>(create: (_) => locator<SyncCubit>()),

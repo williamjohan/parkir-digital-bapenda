@@ -3,6 +3,7 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/activation_device/presentation/activation_device_page.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/screen/printer_device_screen.dart';
 import 'package:parkir_digital_bapenda/features/transaction/page/transaction_page.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
@@ -175,6 +176,12 @@ class AppRouter {
         //     );
         //   },
         // ),
+        GoRoute(
+          path: AppRoutes.activationDevice,
+          builder: (context, state) {
+            return const ActivationDevicePage();
+          },
+        ),
       ],
     );
 

@@ -22,7 +22,7 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     // Trigger pengecekan otomatis saat halaman pertama kali dirender
-    context.read<InitCubit>().checkDeviceReadiness();
+    context.read<InitCubit>().checkDeviceActivation();
   }
 
   @override
@@ -32,6 +32,9 @@ class _SplashPageState extends State<SplashPage> {
       body: BlocConsumer<InitCubit, InitState>(
         listener: (context, state) {
           // Listener khusus untuk aksi satu kali (navigasi, snackbar)
+          if (state is InitNeedActivation) {
+            context.go(AppRoutes.activationDevice); // 🔥 halaman baru
+          }
           if (state is InitSuccess) {
             // Logika Smart Gatekeeper
             if (state.isLoggedIn) {
@@ -126,7 +129,7 @@ class _SplashPageState extends State<SplashPage> {
                                     onPressed: () {
                                       context
                                           .read<InitCubit>()
-                                          .checkDeviceReadiness();
+                                          .checkDeviceActivation();
                                     },
                                   ),
                                 ],

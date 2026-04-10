@@ -13,6 +13,16 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/activation_device/data/datasources/device_remote_datasource.dart'
+    as _i460;
+import '../../features/activation_device/data/repositories/device_repository_impl.dart'
+    as _i782;
+import '../../features/activation_device/domain/repositories/device_repository.dart'
+    as _i476;
+import '../../features/activation_device/domain/usecase/activate_device_usecase.dart'
+    as _i805;
+import '../../features/activation_device/presentation/cubit/activate_device_cubit.dart'
+    as _i624;
 import '../../features/auth/data/datasources/auth_remote_data_source.dart'
     as _i107;
 import '../../features/auth/data/repositories/auth_repository_impl.dart'
@@ -163,6 +173,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i896.ITransactionHistoryRemoteDataSource>(
     () => _i896.TransactionHistoryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i460.DeviceRemoteDataSource>(
+    () => _i460.DeviceRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -233,11 +246,17 @@ _i174.GetIt init(
   gh.lazySingleton<_i831.GenerateQrisUseCase>(
     () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
   );
+  gh.lazySingleton<_i476.DeviceRepository>(
+    () => _i782.DeviceRepositoryImpl(gh<_i460.DeviceRemoteDataSource>()),
+  );
   gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
     () => _i512.SaveParkingTransactionUseCase(
       gh<_i1054.IParkingTransactionRepository>(),
       gh<_i988.IAppLocationService>(),
     ),
+  );
+  gh.lazySingleton<_i805.ActivateDeviceUseCase>(
+    () => _i805.ActivateDeviceUseCase(gh<_i476.DeviceRepository>()),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
     () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),
@@ -247,6 +266,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i48.LogoutUseCase>(
     () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.factory<_i624.ActivationDeviceCubit>(
+    () => _i624.ActivationDeviceCubit(gh<_i805.ActivateDeviceUseCase>()),
   );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),

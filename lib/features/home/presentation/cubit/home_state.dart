@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../../core/utils/permission_utils.dart';
-import '../../../transaction_history/data/models/history_item_model.dart'; // [BARU]
+import '../../../transaction_history/data/models/history_item_model.dart';
 
 class HomeState extends Equatable {
   final CameraPermissionStatus? permissionActionStatus;
@@ -15,8 +15,11 @@ class HomeState extends Equatable {
   // UNtuk pilih jenis mode_plat
   final int? selectedModePlat;
 
-  // [BARU] Daftar 5 transaksi terbaru
+  // Daftar 5 transaksi terbaru
   final List<HistoryItemModel> recentTransactions;
+
+  // [BARU] Loading state untuk dashboard
+  final bool isLoading;
 
   const HomeState({
     this.permissionActionStatus,
@@ -25,7 +28,8 @@ class HomeState extends Equatable {
     this.motorCount = 0,
     this.mobilCount = 0,
     this.selectedModePlat,
-    this.recentTransactions = const [], // [BARU]
+    this.recentTransactions = const [],
+    this.isLoading = false, // [BARU]
   });
 
   HomeState copyWith({
@@ -35,7 +39,8 @@ class HomeState extends Equatable {
     int? motorCount,
     int? mobilCount,
     int? selectedModePlat,
-    List<HistoryItemModel>? recentTransactions, // [BARU]
+    List<HistoryItemModel>? recentTransactions,
+    bool? isLoading, // [BARU]
   }) {
     return HomeState(
       permissionActionStatus:
@@ -46,8 +51,8 @@ class HomeState extends Equatable {
       motorCount: motorCount ?? this.motorCount,
       mobilCount: mobilCount ?? this.mobilCount,
       selectedModePlat: selectedModePlat ?? this.selectedModePlat,
-      recentTransactions:
-          recentTransactions ?? this.recentTransactions, // [BARU]
+      recentTransactions: recentTransactions ?? this.recentTransactions,
+      isLoading: isLoading ?? this.isLoading, // [BARU]
     );
   }
 
@@ -59,6 +64,7 @@ class HomeState extends Equatable {
     mobilCount,
     motorCount,
     selectedModePlat,
-    recentTransactions, // [BARU]
+    recentTransactions,
+    isLoading, // [BARU]
   ];
 }
