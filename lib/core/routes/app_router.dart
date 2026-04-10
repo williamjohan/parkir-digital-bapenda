@@ -152,9 +152,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.history,
           builder: (context, state) {
+            final initialDate = state.extra as DateTime?;
             return BlocProvider(
               create: (_) => locator<TransactionHistoryCubit>(),
-              child: const TransactionHistoryPage(),
+              child: TransactionHistoryPage(initialDate: initialDate),
             );
           },
         ),

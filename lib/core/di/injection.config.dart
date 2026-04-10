@@ -26,14 +26,25 @@ import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
+import '../../features/home/data/datasources/i_summary_remote_datasource.dart'
+    as _i64;
+import '../../features/home/data/datasources/i_tarif_remote_datasource.dart'
+    as _i59;
+import '../../features/home/data/datasources/summary_remote_datasource_impl.dart'
+    as _i172;
+import '../../features/home/data/datasources/tarif_remote_datasource_impl.dart'
+    as _i565;
 import '../../features/home/data/repositories/home_repository_impl.dart'
     as _i76;
 import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
-import '../../features/home/domain/usecases/get_daily_vehicle_count_usecase.dart'
-    as _i473;
+import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart'
+    as _i421;
 import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
     as _i77;
+import '../../features/home/domain/usecases/get_weekly_chart_usecase.dart'
+    as _i33;
+import '../../features/home/domain/usecases/sync_tarif_usecase.dart' as _i770;
 import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
     as _i834;
@@ -135,7 +146,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i437.IOcrLocalDataSource>(
     () => _i437.OcrLocalDataSourceImpl(),
   );
-  gh.lazySingleton<_i274.IHomeRepository>(() => _i76.HomeRepositoryImpl());
   gh.lazySingleton<_i1003.IPrinterService>(
     () => _i291.BluetoothPrinterServiceImpl(),
   );
@@ -151,9 +161,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
   );
-  gh.lazySingleton<_i473.GetDailyVehicleCountUseCase>(
-    () => _i473.GetDailyVehicleCountUseCase(gh<_i274.IHomeRepository>()),
-  );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
   );
@@ -162,6 +169,9 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
       gh<_i247.IPaymentRemoteDataSource>(),
     ),
+  );
+  gh.lazySingleton<_i59.ITarifRemoteDataSource>(
+    () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.factory<_i377.PrinterCubit>(
     () => _i377.PrinterCubit(gh<_i1003.IPrinterService>()),
@@ -198,6 +208,9 @@ _i174.GetIt init(
       gh<_i847.IProfileRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
+  );
+  gh.lazySingleton<_i64.ISummaryRemoteDataSource>(
+    () => _i172.SummaryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i77.GetRecentTransactionsUseCase>(
     () => _i77.GetRecentTransactionsUseCase(
@@ -260,10 +273,10 @@ _i174.GetIt init(
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
   );
-  gh.factory<_i9.HomeCubit>(
-    () => _i9.HomeCubit(
-      gh<_i473.GetDailyVehicleCountUseCase>(),
-      gh<_i77.GetRecentTransactionsUseCase>(),
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(
+      gh<_i59.ITarifRemoteDataSource>(),
+      gh<_i64.ISummaryRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
@@ -299,10 +312,27 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
+    () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
+  );
+  gh.lazySingleton<_i33.GetWeeklyChartUseCase>(
+    () => _i33.GetWeeklyChartUseCase(gh<_i274.IHomeRepository>()),
+  );
+  gh.lazySingleton<_i770.SyncTarifUseCase>(
+    () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
+  );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(
       gh<_i965.GetProfileUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i9.HomeCubit>(
+    () => _i9.HomeCubit(
+      gh<_i421.GetHybridDashboardSummaryUseCase>(),
+      gh<_i77.GetRecentTransactionsUseCase>(),
+      gh<_i33.GetWeeklyChartUseCase>(),
+      gh<_i770.SyncTarifUseCase>(),
     ),
   );
   return getIt;

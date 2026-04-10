@@ -4,12 +4,12 @@ import '../../../../core/errors/failure.dart';
 import '../repositories/i_home_repository.dart';
 
 @lazySingleton
-class GetDailyVehicleCountUseCase {
+class SyncTarifUseCase {
   final IHomeRepository repository;
 
-  GetDailyVehicleCountUseCase(this.repository);
+  SyncTarifUseCase(this.repository);
 
-  Future<Either<Failure, Map<String, int>>> execute() {
-    return repository.getDailyVehicleCount();
+  Future<Either<Failure, void>> execute() {
+    return repository.syncTarif();
   }
 }

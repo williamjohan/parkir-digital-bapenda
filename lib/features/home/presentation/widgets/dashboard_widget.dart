@@ -9,7 +9,7 @@ import '../../../../core/routes/app_routes.dart';
 
 class DashboardWidget extends StatelessWidget {
   // <--- Public Class
-  final int totalPendapatan;
+  final double totalPendapatan;
   final int totalTransaksi;
   final int motorCount;
   final int mobilCount;

@@ -56,22 +56,15 @@ class ParkingTransactionRemoteDataSourceImpl
     // --- 4. RAKIT PAYLOAD ---
     final formData = FormData.fromMap({
       'orderId': transaction.idTransaksiLokal,
-
-      // [UPDATE 1]: jenisTarif diisi dengan 'MOBIL' atau 'MOTOR' (di-uppercase agar aman untuk BE)
       'jenisTarif': transaction.kategoriKendaraan.toUpperCase(),
-
       'sof': isFree ? 'FREE' : 'QRIS',
       'acquirer': isFree ? 'FREE' : 'BAPENDA',
-
-      // [UPDATE 2]: noKartuKUE diisi null jika gratis, jika tidak kosongkan string
       'noKartuKUE': isFree ? '-' : (transaction.noKartuKue ?? '-'),
-
       'noTRX': isFree ? '-' : transaction.idTransaksiLokal,
       'platNumber': safePlatNumber,
       'tglTrx': safeDate,
       'kredit': isFree ? 0 : transaction.nominal,
       'saldo': 0,
-
       'kodeGate': jukirProfile['kodeGate'] ?? '',
       'namaGate': jukirProfile['namaGate'] ?? '',
       'petugasId': safePetugasId,
@@ -82,7 +75,6 @@ class ParkingTransactionRemoteDataSourceImpl
           jukirProfile['namaLokasi'] ?? jukirProfile['namaObjekPajak'] ?? '',
       'deviceId': jukirProfile['idDevice'] ?? '',
       'nop': jukirProfile['nop'] ?? '',
-
       'latitude': transaction.latitude ?? '0',
       'longitude': transaction.longitude ?? '0',
       'jenisParkir': 'IN',

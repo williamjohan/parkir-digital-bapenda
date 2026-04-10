@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../../../core/utils/permission_utils.dart';
-import '../../../transaction_history/data/models/history_item_model.dart'; // [BARU]
+import '../../../transaction_history/data/models/history_item_model.dart';
+import '../../data/models/weekly_chart_item_model.dart'; // 🚀 [BARU] Import model chart
 
 class HomeState extends Equatable {
   final CameraPermissionStatus? permissionActionStatus;
@@ -9,12 +10,10 @@ class HomeState extends Equatable {
   final int motorCount;
   final int mobilCount;
   final double totalPendapatan;
-
-  // UNtuk pilih jenis mode_plat
   final int? selectedModePlat;
-
-  // [BARU] Daftar 5 transaksi terbaru
   final List<HistoryItemModel> recentTransactions;
+  final List<WeeklyChartItemModel>
+  weeklyChartData; // 🚀 [BARU] State untuk grafik
 
   const HomeState({
     this.permissionActionStatus,
@@ -24,7 +23,8 @@ class HomeState extends Equatable {
     this.mobilCount = 0,
     this.totalPendapatan = 0.0,
     this.selectedModePlat,
-    this.recentTransactions = const [], // [BARU]
+    this.recentTransactions = const [],
+    this.weeklyChartData = const [], // 🚀 [BARU] Default List kosong
   });
 
   HomeState copyWith({
@@ -33,9 +33,10 @@ class HomeState extends Equatable {
     int? actionTimestamp,
     int? motorCount,
     int? mobilCount,
-    int? selectedModePlat,
     double? totalPendapatan,
-    List<HistoryItemModel>? recentTransactions, // [BARU]
+    int? selectedModePlat,
+    List<HistoryItemModel>? recentTransactions,
+    List<WeeklyChartItemModel>? weeklyChartData, // 🚀 [BARU]
   }) {
     return HomeState(
       permissionActionStatus:
@@ -47,8 +48,8 @@ class HomeState extends Equatable {
       mobilCount: mobilCount ?? this.mobilCount,
       totalPendapatan: totalPendapatan ?? this.totalPendapatan,
       selectedModePlat: selectedModePlat ?? this.selectedModePlat,
-      recentTransactions:
-          recentTransactions ?? this.recentTransactions, // [BARU]
+      recentTransactions: recentTransactions ?? this.recentTransactions,
+      weeklyChartData: weeklyChartData ?? this.weeklyChartData,
     );
   }
 
@@ -61,6 +62,7 @@ class HomeState extends Equatable {
     motorCount,
     totalPendapatan,
     selectedModePlat,
-    recentTransactions, // [BARU]
+    recentTransactions,
+    weeklyChartData, // 🚀 [BARU]
   ];
 }

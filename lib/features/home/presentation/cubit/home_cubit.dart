@@ -1,23 +1,25 @@
-// lib/features/home/presentation/cubit/home_cubit.dart (versi lebih bersih)
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/core/storage/secure_storage_manager.dart';
-import '../../domain/usecases/get_daily_vehicle_count_usecase.dart';
-import '../../domain/usecases/get_recent_transaction_usecase.dart';
-import 'home_state.dart';
 import '../../../../core/utils/permission_utils.dart';
+import '../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
+import '../../domain/usecases/get_recent_transaction_usecase.dart';
+import '../../domain/usecases/get_weekly_chart_usecase.dart';
+import '../../domain/usecases/sync_tarif_usecase.dart';
+import 'home_state.dart';
 
 @injectable
 class HomeCubit extends Cubit<HomeState> {
-  final GetDailyVehicleCountUseCase _getDailyVehicleCountUseCase;
+  // 🚀 [BARU] Suntikkan 4 Senjata Baru Kita
+  final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
-  final ISecureStorageManager _secureStorage;
+  final GetWeeklyChartUseCase _getWeeklyChartUseCase;
+  final SyncTarifUseCase _syncTarifUseCase;
 
   HomeCubit(
-    this._getDailyVehicleCountUseCase,
+    this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
-    this._secureStorage,
+    this._getWeeklyChartUseCase,
+    this._syncTarifUseCase,
   ) : super(const HomeState());
 
   Future<void> requestCameraAccess(String vehicleType) async {
@@ -46,81 +48,44 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  /// Mengambil data dashboard lengkap (counts + recent transactions)
+  /// Mengambil data dashboard secara lengkap dan terstruktur
   Future<void> loadDashboardData() async {
-    // 1. Ambil JANGKAR (Data Server Terakhir dari Secure Storage)
-    final profile = await _secureStorage.getJukirProfile();
-    int serverMotor = 0;
-    int serverMobil = 0;
-    double serverNominal = 0.0;
+    // 1. TUGAS BAYANGAN (SILENT SYNC): Ambil Master Tarif dan simpan ke SQLite/Brankas
+    // Kita panggil tanpa "await" agar UI Dashboard tidak perlu menunggunya selesai.
+    _syncTarifUseCase.execute();
 
-    if (profile != null) {
-      // Ambil angka dari API BE (pastikan key-nya sesuai dengan JSON BE)
-      serverMotor = (profile['jumlahMotor'] ?? 0) as int;
-      serverMobil = (profile['jumlahMobil'] ?? 0) as int;
-
-      // Hitung total uang dari server
-      final nominalMotor = (profile['totalNominalMotor'] ?? 0).toDouble();
-      final nominalMobil = (profile['totalNominalMobil'] ?? 0).toDouble();
-      serverNominal = nominalMotor + nominalMobil;
-    }
-
-    // 2. Ambil DELTA (Data Lokal yang belum tersinkronisasi)
-    // Asumsi: Nanti UseCase ini HANYA mengambil yang is_synced = 0
-    final countResult = await _getDailyVehicleCountUseCase.execute();
-
-    countResult.fold(
-      (failure) {
-        // Jika gagal ambil lokal, tampilkan angka server saja
+    // 2. TUGAS UTAMA: Ambil Dashboard Summary (Hybrid Logic di dalam UseCase)
+    final summaryResult = await _getHybridDashboardSummaryUseCase.execute();
+    summaryResult.fold(
+      (failure) => null, // Jika gagal mutlak, biarkan state memakai angka 0
+      (summary) {
         if (!isClosed) {
           emit(
             state.copyWith(
-              motorCount: serverMotor,
-              mobilCount: serverMobil,
-              totalPendapatan: serverNominal,
-            ),
-          );
-        }
-      },
-      (localCounts) {
-        if (!isClosed) {
-          // 3. THE HYBRID FORMULA: TOTAL = SERVER + LOKAL PENDING
-          final int localMotor = localCounts['motor'] ?? 0;
-          final int localMobil = localCounts['mobil'] ?? 0;
-
-          // Asumsi localCounts juga mengembalikan nominal (kita perbarui UseCase-nya nanti)
-          final double localNominalMotor = (localCounts['nominalMotor'] ?? 0)
-              .toDouble();
-          final double localNominalMobil = (localCounts['nominalMobil'] ?? 0)
-              .toDouble();
-          final double totalLocalNominal =
-              localNominalMotor + localNominalMobil;
-
-          emit(
-            state.copyWith(
-              motorCount: serverMotor + localMotor,
-              mobilCount: serverMobil + localMobil,
-              totalPendapatan: serverNominal + totalLocalNominal,
+              motorCount: summary.jumlahMotorHariIni,
+              mobilCount: summary.jumlahMobilHariIni,
+              totalPendapatan: summary.totalNominalHariIni,
             ),
           );
         }
       },
     );
 
-    // Handle recent transactions
+    // 3. TUGAS KEDUA: Ambil 5 Transaksi Terakhir (Smart Proxy Logic di dalam UseCase)
     final recentResult = await _getRecentTransactionsUseCase.execute(limit: 5);
-    recentResult.fold(
-      (failure) {
-        if (!isClosed) {
-          emit(state.copyWith(recentTransactions: const []));
-        }
-      },
-      (transactions) {
-        if (!isClosed) {
-          emit(state.copyWith(recentTransactions: transactions));
-        }
-      },
-    );
+    recentResult.fold((failure) => null, (transactions) {
+      if (!isClosed) {
+        emit(state.copyWith(recentTransactions: transactions));
+      }
+    });
+
+    // 4. TUGAS KETIGA: Ambil Data Grafik Mingguan (Option A / API)
+    final chartResult = await _getWeeklyChartUseCase.execute();
+    chartResult.fold((failure) => null, (chartData) {
+      if (!isClosed) {
+        emit(state.copyWith(weeklyChartData: chartData));
+      }
+    });
   }
 
   void selectModePlat(int mode) {

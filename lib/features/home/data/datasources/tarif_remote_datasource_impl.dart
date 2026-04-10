@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
+import '../../../../core/network/api_endpoints.dart';
 import '../models/tarif_model.dart';
 import 'i_tarif_remote_datasource.dart';
 
@@ -13,7 +14,7 @@ class TarifRemoteDataSourceImpl implements ITarifRemoteDataSource {
   @override
   Future<List<TarifModel>> getTarif() async {
     try {
-      final response = await _dio.get('/api/mobile/parking/tarif');
+      final response = await _dio.get(ApiEndpoints.tarif);
 
       if (response.data['isSuccess'] == true) {
         final List<dynamic> dataList = response.data['data'];
