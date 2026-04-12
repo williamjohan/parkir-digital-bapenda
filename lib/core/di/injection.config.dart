@@ -45,12 +45,16 @@ import '../../features/home/domain/usecases/get_daily_vehicle_count_usecase.dart
 import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
     as _i77;
 import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
+import '../../features/init/data/datasource/status_device_remote_datasource.dart'
+    as _i338;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
     as _i834;
 import '../../features/init/domain/repositories/i_device_check_repository.dart'
     as _i515;
 import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
     as _i232;
+import '../../features/init/domain/usecases/check_status_device_usecase.dart'
+    as _i927;
 import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
 import '../../features/parking_transaction/data/datasources/i_parking_transaction_local_datasource.dart'
     as _i92;
@@ -185,17 +189,14 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.factory<_i674.InitCubit>(
-    () => _i674.InitCubit(
-      checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
-      secureStorageManager: gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(
     () => _i847.ProfileRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i461.IParkingTransactionRemoteDataSource>(
     () => _i798.ParkingTransactionRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i338.StatusDeviceRemoteDataSource>(
+    () => _i338.DeviceRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i879.IProfileRepository>(
     () => _i334.ProfileRepositoryImpl(
@@ -232,6 +233,11 @@ _i174.GetIt init(
       gh<_i1054.IParkingTransactionRepository>(),
       gh<_i461.IParkingTransactionRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i927.CheckStatusDeviceUseCase>(
+    () => _i927.CheckStatusDeviceUseCase(
+      gh<_i338.StatusDeviceRemoteDataSource>(),
     ),
   );
   gh.lazySingleton<_i589.IAuthRepository>(
@@ -272,6 +278,13 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
+  );
+  gh.factory<_i674.InitCubit>(
+    () => _i674.InitCubit(
+      checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
+      secureStorageManager: gh<_i1042.ISecureStorageManager>(),
+      checkStatusDeviceUseCase: gh<_i927.CheckStatusDeviceUseCase>(),
+    ),
   );
   gh.factory<_i9.HomeCubit>(
     () => _i9.HomeCubit(

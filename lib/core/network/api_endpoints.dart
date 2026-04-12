@@ -14,4 +14,6 @@ class ApiEndpoints {
   static const String getHistory = '/vehicle/history';
 
   static const String activateDevice = '/api/mobile/parking/aktivasi-device';
+  
+  static const String checkStatusDevice ='/api/mobile/parking/status-device';
 }
