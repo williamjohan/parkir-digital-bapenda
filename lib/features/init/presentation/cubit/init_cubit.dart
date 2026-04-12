@@ -46,28 +46,28 @@ class InitCubit extends Cubit<InitState> {
 
           final deviceId = await FlutterUdid.udid;
 
-          // /// 🔥 2. GET PROFILE
-          // AppLogger.debug("[InitCubit] Fetching jukir profile from storage...");
-          // final profile = await secureStorageManager.getJukirProfile();
+          /// 🔥 2. GET PROFILE
+          AppLogger.debug("[InitCubit] Fetching jukir profile from storage...");
+          final profile = await secureStorageManager.getJukirProfile();
 
-          // AppLogger.debug("[InitCubit] Profile result: $profile");
+          AppLogger.debug("[InitCubit] Profile result: $profile");
 
-          // /// ❗ BELUM ADA PROFILE
-          // if (profile == null) {
-          //   AppLogger.debug("[InitCubit] ❌ Profile NULL → Need Activation");
-          //   emit(InitNeedActivation());
-          //   return;
-          // }
+          /// ❗ BELUM ADA PROFILE
+          if (profile == null) {
+            AppLogger.debug("[InitCubit] ❌ Profile NULL → Need Activation");
+            emit(InitNeedActivation());
+            return;
+          }
 
-          // final nop = profile['nop'] ?? '';
-          // AppLogger.debug("[InitCubit] NOP: $nop");
+          final nop = profile['nop'] ?? '';
+          AppLogger.debug("[InitCubit] NOP: $nop");
 
-          // /// ❗ NOP KOSONG
-          // if (nop.isEmpty) {
-          //   AppLogger.debug("[InitCubit] ❌ NOP kosong → Need Activation");
-          //   emit(InitNeedActivation());
-          //   return;
-          // }
+          /// ❗ NOP KOSONG
+          if (nop.isEmpty) {
+            AppLogger.debug("[InitCubit] ❌ NOP kosong → Need Activation");
+            emit(InitNeedActivation());
+            return;
+          }
 
           /// 🔥 CHECK STATUS DEVICE KE API
           AppLogger.debug("[InitCubit] Checking device status to API...");

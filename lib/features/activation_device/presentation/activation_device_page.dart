@@ -11,6 +11,7 @@ import 'package:parkir_digital_bapenda/features/activation_device/presentation/w
 import 'package:parkir_digital_bapenda/features/activation_device/presentation/widgets/ket_activasi_widget.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/utils/formatters.dart';
 import 'cubit/activate_device_cubit.dart';
 
 class ActivationDevicePage extends StatefulWidget {
@@ -120,9 +121,11 @@ class _ActivationDevicePageState extends State<ActivationDevicePage> {
                                     return;
                                   }
 
+                                  final formattedNop = AppFormatters.nop(nop);
+
                                   context
                                       .read<ActivationDeviceCubit>()
-                                      .activate(nop: nop);
+                                      .activate(nop: formattedNop);
                                 },
                         ),
 

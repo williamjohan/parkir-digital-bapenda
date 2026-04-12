@@ -20,7 +20,9 @@ class ActivationDeviceCubit extends Cubit<ActivationDeviceState> {
 
     final result = await activateDeviceUseCase.execute(
       nop: nop,
-      deviceId: "0175",
+      // untuk testing
+      deviceId: "0175", 
+      // deviceId: deviceId
     );
 
     result.fold(
