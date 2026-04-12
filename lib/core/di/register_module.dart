@@ -1,7 +1,6 @@
-// lib/core/di/register_module.dart
-
 import 'dart:io';
 import 'package:chucker_flutter/chucker_flutter.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
@@ -85,4 +84,7 @@ abstract class RegisterModule {
 
     return dio;
   }
+
+  @lazySingleton
+  Connectivity get connectivity => Connectivity();
 }

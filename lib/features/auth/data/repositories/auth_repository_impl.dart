@@ -33,6 +33,8 @@ class AuthRepositoryImpl implements IAuthRepository {
       }
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(AuthFailure('Terjadi kesalahan yang tidak terduga.'));
     }

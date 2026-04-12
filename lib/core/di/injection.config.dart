@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -113,6 +114,7 @@ import '../../features/vehicle_capture/domain/usecases/extract_license_plate_use
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart'
     as _i731;
 import '../network/dio_auth_interceptor.dart' as _i817;
+import '../network/network_cubit.dart' as _i11;
 import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
 import '../services/location/app_location_services_impl.dart' as _i35;
@@ -130,6 +132,7 @@ _i174.GetIt init(
 }) {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
+  gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
   gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
     () => _i247.PaymentRemoteDataSourceImpl(),
   );
@@ -160,6 +163,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
+  );
+  gh.lazySingleton<_i11.NetworkCubit>(
+    () => _i11.NetworkCubit(gh<_i895.Connectivity>()),
   );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),

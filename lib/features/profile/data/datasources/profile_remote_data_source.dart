@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
+import '../../../../core/network/dio_error_handler.dart';
 import '../../../auth/data/models/user_model.dart'; // Sesuaikan path jika berbeda
 
 abstract class IProfileRemoteDataSource {
@@ -38,14 +39,7 @@ class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      final int statusCode = e.response?.statusCode ?? 500;
-      final String? backendMessage = e.response?.data?['message'];
-
-      throw ServerException(
-        statusCode: statusCode,
-        message:
-            backendMessage ?? e.message ?? 'Gagal terhubung ke server Bapenda.',
-      );
+      throw DioErrorHandler.handle(e);
     } catch (e) {
       throw const ServerException(
         statusCode: 500,

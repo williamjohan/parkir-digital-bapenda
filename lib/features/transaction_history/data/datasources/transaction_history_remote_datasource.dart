@@ -55,13 +55,6 @@ class TransactionHistoryRemoteDataSourceImpl
       final response = await _dio.post(
         ApiEndpoints.laporanPendapatan,
         data: formData,
-        // 🚀 [BYPASS RETRY]: Mencoba mematikan retry khusus hit ini
-        options: Options(
-          extra: {
-            'no_retry': true, // Key umum untuk dio_smart_retry
-            'ro_attempt': 0, // Paksa attempt ke 0
-          },
-        ),
       );
 
       final responseData = response.data;
