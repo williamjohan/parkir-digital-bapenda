@@ -109,7 +109,7 @@ class PaymentItem extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppColors.primary.withOpacity(0.2)
+                      ? AppColors.primary.withValues(alpha: 0.2)
                       : AppColors.textHint,
                   borderRadius: BorderRadius.circular(10),
                 ),

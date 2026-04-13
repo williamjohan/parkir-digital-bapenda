@@ -14,7 +14,7 @@ class VehicleOverlayGuide extends StatelessWidget {
     // Rasio lebar selalu 80% dari layar
     final double width = MediaQuery.of(context).size.width * 0.8;
     // Rasio tinggi menyesuaikan: Mobil lebih panjang (pipih), Motor lebih mengotak
-    final double height = category == VehicleCategory.Mobil
+    final double height = category == VehicleCategory.mobil
         ? width * 0.35
         : width * 0.6;
 

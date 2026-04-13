@@ -89,7 +89,6 @@ class DatabaseHelper {
   }
 
   // --- FUNGSI CRUD DASAR TETAP SAMA ---
-
   Future<int> insertTransaction(Map<String, dynamic> row) async {
     final db = await instance.database;
     return await db.insert(
@@ -165,16 +164,57 @@ class DatabaseHelper {
     );
   }
 
-  // new - s
-  // Future<List<Map<String, dynamic>>> getTodayTransactions() async {
-  //   final db = await database;
-  //   final today = DateTime.now().toIso8601String().substring(0, 10);
+  Future<Map<String, num>> getUnsyncedDailySummary() async {
+    final db = await database;
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    final List<Map<String, dynamic>> result = await db.rawQuery(
+      '''
+      SELECT kategori_kendaraan, COUNT(*) as total, SUM(nominal) as total_nominal
+      FROM $tableTransactions 
+      WHERE substr(waktu_transaksi, 1, 10) = ? AND is_sync = 0
+      GROUP BY kategori_kendaraan
+      ''',
+      [today],
+    );
 
-  //   return await db.query(
-  //     tableTransactions,
-  //     where: 'substr(waktu_transaksi, 1, 10) = ? AND is_sync = 0',
-  //     whereArgs: [today],
-  //     orderBy: 'waktu_transaksi DESC',
-  //   );
-  // }
+    int motorCount = 0;
+    int mobilCount = 0;
+    double totalNominal = 0.0;
+
+    for (var row in result) {
+      final kategori = row['kategori_kendaraan'].toString().toLowerCase();
+      final count = row['total'] as int;
+      final nominal = (row['total_nominal'] ?? 0).toDouble();
+
+      if (kategori == 'motor') motorCount = count;
+      if (kategori == 'mobil') mobilCount = count;
+      totalNominal += nominal;
+    }
+
+    return {'motor': motorCount, 'mobil': mobilCount, 'nominal': totalNominal};
+  }
+
+  Future<List<Map<String, dynamic>>> getRecentTransactions(int limit) async {
+    final db = await instance.database;
+    return await db.query(
+      tableTransactions,
+      orderBy: 'waktu_transaksi DESC', // Urutkan dari yang paling baru
+      limit: limit,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getTodayRecentTransactions(
+    int limit,
+  ) async {
+    final db = await instance.database;
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+
+    return await db.query(
+      tableTransactions,
+      where: 'substr(waktu_transaksi, 1, 10) = ?',
+      whereArgs: [today],
+      orderBy: 'waktu_transaksi DESC',
+      limit: limit,
+    );
+  }
 }

@@ -16,6 +16,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_back_handler.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../../core/utils/permission_utils.dart';
+import '../../data/models/weekly_chart_item_model.dart';
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
 import '../widgets/dashboard_widget.dart';
@@ -71,22 +72,30 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     debugPrint('============================');
   }
 
-  // State untuk filter kendaraan
+  // 🚀 [REFACTOR] State untuk filter kendaraan (Ojol dihapus)
   String _selectedVehicleType = 'Semua Kendaraan';
-  final List<String> _vehicleTypes = [
-    'Semua Kendaraan',
-    'Motor',
-    'Mobil',
-    'Ojol',
-  ];
+  final List<String> _vehicleTypes = ['Semua Kendaraan', 'Motor', 'Mobil'];
 
-  // Dummy data pendapatan per jenis kendaraan (7 hari)
-  final Map<String, List<double>> _incomeData = {
-    'Semua Kendaraan': [250000, 430000, 230000, 200000, 0, 0, 0],
-    'Motor': [100000, 130000, 80000, 50000, 0, 0, 0],
-    'Mobil': [150000, 300000, 150000, 150000, 0, 0, 0],
-    'Ojol': [0, 0, 0, 0, 0, 0, 0],
-  };
+  // 🚀 [REFACTOR] Fungsi Mapper Asli dari WeeklyChartItemModel ke List<double>
+  List<double> _getWeeklyIncomeData(
+    List<WeeklyChartItemModel> chartData,
+    String type,
+  ) {
+    if (chartData.isEmpty) {
+      return List.filled(7, 0.0); // Fallback jika data kosong
+    }
+
+    return chartData.map((data) {
+      switch (type) {
+        case 'Motor':
+          return data.motor.toDouble();
+        case 'Mobil':
+          return data.mobil.toDouble();
+        default:
+          return data.total.toDouble();
+      }
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,61 +151,39 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             elevation: 0,
             centerTitle: true,
           ),
-          body: RefreshIndicator(
-            // Pull to refresh
-            onRefresh: () async {
-              await _loadData();
-            },
+          body: SingleChildScrollView(
+            // 🚀 [REFACTOR] Dihapus buildWhen agar semua state baru bisa ter-render
             child: BlocBuilder<HomeCubit, HomeState>(
-              // Build when ANY data changes
-              buildWhen: (previous, current) =>
-                  previous.motorCount != current.motorCount ||
-                  previous.mobilCount != current.mobilCount ||
-                  previous.recentTransactions != current.recentTransactions ||
-                  previous.isLoading != current.isLoading,
               builder: (context, state) {
-                // Tampilkan loading indicator saat pertama kali load
-                if (state.isLoading && _isFirstLoad) {
-                  return const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 16),
-                        Text('Memuat data dashboard...'),
-                      ],
+                return Column(
+                  children: [
+                    DashboardWidget(
+                      // 🚀 [REFACTOR] Gunakan state.totalPendapatan
+                      totalPendapatan: state.totalPendapatan,
+                      totalTransaksi: (state.motorCount + state.mobilCount),
+                      motorCount: state.motorCount,
+                      mobilCount: state.mobilCount,
                     ),
-                  );
-                }
-
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    children: [
-                      DashboardWidget(
-                        totalPendapatan: 20000,
-                        totalTransaksi: (state.motorCount + state.mobilCount),
-                        motorCount: state.motorCount,
-                        mobilCount: state.mobilCount,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: BarDiagramWithLabels(
-                          weeklyIncome:
-                              _incomeData[_selectedVehicleType] ??
-                              List.filled(7, 0.0),
-                          selectedVehicleType: _selectedVehicleType,
-                          vehicleTypes: _vehicleTypes,
-                          onVehicleTypeChanged: (newType) {
-                            setState(() {
-                              _selectedVehicleType = newType;
-                            });
-                          },
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: BarDiagramWithLabels(
+                        // 🚀 [REFACTOR] Inject hasil mapping data chart dari state
+                        weeklyIncome: _getWeeklyIncomeData(
+                          state.weeklyChartData,
+                          _selectedVehicleType,
                         ),
+                        selectedVehicleType: _selectedVehicleType,
+                        vehicleTypes: _vehicleTypes,
+                        onVehicleTypeChanged: (newType) {
+                          setState(() {
+                            _selectedVehicleType = newType;
+                          });
+                        },
                       ),
-                      LastActivityWidget(),
-                    ],
-                  ),
+                    ),
+                    // 🚀 [REFACTOR] Mengirimkan data transaksi ke widget anak
+                    LastActivityWidget(transactions: state.recentTransactions),
+                  ],
                 );
               },
             ),
@@ -214,10 +201,8 @@ void _handleVehicleSelection(
   int modePlat,
 ) async {
   if (modePlat == 1) {
-    // MODE 1: PAKAI PLAT -> Butuh Izin Kamera
     context.read<HomeCubit>().requestCameraAccess(kategori);
   } else {
-    // MODE 0: TANPA PLAT -> Langsung lompat
     await context.push('/quick-park/$kategori');
     if (context.mounted) {
       // Reload setelah quick park

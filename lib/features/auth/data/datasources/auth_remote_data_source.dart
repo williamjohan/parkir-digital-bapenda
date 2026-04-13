@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
+import '../../../../core/network/dio_error_handler.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../models/auth_response_model.dart';
 
 abstract class IAuthRemoteDataSource {
@@ -29,20 +31,17 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
       if (responseData['isSuccess'] == true) {
         final beData = responseData['data'];
 
-        // [PERBAIKAN]: Konversi secara eksplisit ke String/Int untuk mencegah tabrakan tipe
         final mappedJson = {
           'accessToken': beData['accessToken']?.toString() ?? '',
           'refreshToken': beData['refreshToken']?.toString() ?? '',
           'user': {
-            'idUser':
-                beData['idJukir'] ??
-                0, // Biarkan utuh, Model yang akan merapikannya
+            'idUser': beData['idJukir'] ?? 0,
             'namaUser': beData['namaUser'] ?? '',
             'nop': beData['nop'] ?? '',
             'namaObjekPajak': '',
             'alamat': '',
-            'pungutTarif': 0, // Beri default aman
-            'lokasiId': 0, // Beri default aman
+            'pungutTarif': 0,
+            'lokasiId': 0,
           },
         };
 
@@ -55,22 +54,20 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
         );
       }
     } on DioException catch (e) {
+      // Cek apakah ini murni karena salah password/username
       final int statusCode = e.response?.statusCode ?? 500;
-      final String? backendMessage = e.response?.data?['message'];
-
       if (statusCode == 401 || statusCode == 404 || statusCode == 400) {
+        final String? backendMessage = e.response?.data?['message'];
         throw AuthException(
           message: backendMessage ?? 'Username atau password Jukir salah.',
         );
       }
 
-      throw ServerException(
-        statusCode: statusCode,
-        message:
-            backendMessage ?? e.message ?? 'Gagal terhubung ke server Bapenda.',
-      );
-    } catch (e) {
+      // Jika bukan masalah password (misal: Internet Mati atau Error 500),
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
       if (e is AuthException) rethrow;
+      AppLogger.error('Internal Error di AuthRemoteDataSource', e, stackTrace);
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal aplikasi.',

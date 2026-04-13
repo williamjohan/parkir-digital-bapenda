@@ -26,7 +26,7 @@ class ModeItemWidget extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           decoration: BoxDecoration(
             border: Border.all(color: AppColors.border),
-            color: AppColors.textHint.withOpacity(0.3),
+            color: AppColors.textHint.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(

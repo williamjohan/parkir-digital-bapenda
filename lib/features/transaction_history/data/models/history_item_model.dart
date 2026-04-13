@@ -31,8 +31,6 @@ class HistoryItemModel {
   @JsonKey(name: 'modePlat', defaultValue: 0)
   final int modePlat;
 
-  // Anda bisa menambahkan field lain dari JSON jika nanti diperlukan di UI
-
   HistoryItemModel({
     required this.id,
     required this.orderId,

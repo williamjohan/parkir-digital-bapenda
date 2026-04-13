@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/network/dio_error_handler.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../models/local_transaction_model.dart';
 import 'i_parking_transaction_remote_datasource.dart';
@@ -56,22 +57,15 @@ class ParkingTransactionRemoteDataSourceImpl
     // --- 4. RAKIT PAYLOAD ---
     final formData = FormData.fromMap({
       'orderId': transaction.idTransaksiLokal,
-
-      // [UPDATE 1]: jenisTarif diisi dengan 'MOBIL' atau 'MOTOR' (di-uppercase agar aman untuk BE)
       'jenisTarif': transaction.kategoriKendaraan.toUpperCase(),
-
       'sof': isFree ? 'FREE' : 'QRIS',
       'acquirer': isFree ? 'FREE' : 'BAPENDA',
-
-      // [UPDATE 2]: noKartuKUE diisi null jika gratis, jika tidak kosongkan string
       'noKartuKUE': isFree ? '-' : (transaction.noKartuKue ?? '-'),
-
       'noTRX': isFree ? '-' : transaction.idTransaksiLokal,
       'platNumber': safePlatNumber,
       'tglTrx': safeDate,
       'kredit': isFree ? 0 : transaction.nominal,
       'saldo': 0,
-
       'kodeGate': jukirProfile['kodeGate'] ?? '',
       'namaGate': jukirProfile['namaGate'] ?? '',
       'petugasId': safePetugasId,
@@ -82,7 +76,6 @@ class ParkingTransactionRemoteDataSourceImpl
           jukirProfile['namaLokasi'] ?? jukirProfile['namaObjekPajak'] ?? '',
       'deviceId': jukirProfile['idDevice'] ?? '',
       'nop': jukirProfile['nop'] ?? '',
-
       'latitude': transaction.latitude ?? '0',
       'longitude': transaction.longitude ?? '0',
       'jenisParkir': 'IN',
@@ -143,7 +136,8 @@ class ParkingTransactionRemoteDataSourceImpl
         AppLogger.error('>>> [RESPONSE BAPENDA]: ${e.response?.data}');
       }
 
-      throw Exception('Gagal Sinkronisasi: ${e.message}');
+      AppLogger.info(('Gagal Sinkronisasi : ${e.message}'));
+      throw DioErrorHandler.handle(e);
     }
   }
 }

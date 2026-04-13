@@ -4,7 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
-import '../../../auth/data/models/user_model.dart'; // Sesuaikan path jika berbeda
+import '../../../../core/network/dio_error_handler.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../auth/data/models/user_model.dart';
 
 abstract class IProfileRemoteDataSource {
   Future<UserModel> getProfile();
@@ -38,15 +40,13 @@ class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      final int statusCode = e.response?.statusCode ?? 500;
-      final String? backendMessage = e.response?.data?['message'];
-
-      throw ServerException(
-        statusCode: statusCode,
-        message:
-            backendMessage ?? e.message ?? 'Gagal terhubung ke server Bapenda.',
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Internal Error di ProfileRemoteDataSource',
+        e,
+        stackTrace,
       );
-    } catch (e) {
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal saat memparsing profil.',

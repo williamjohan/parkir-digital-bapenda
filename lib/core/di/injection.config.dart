@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -36,14 +37,25 @@ import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
+import '../../features/home/data/datasources/i_summary_remote_datasource.dart'
+    as _i64;
+import '../../features/home/data/datasources/i_tarif_remote_datasource.dart'
+    as _i59;
+import '../../features/home/data/datasources/summary_remote_datasource_impl.dart'
+    as _i172;
+import '../../features/home/data/datasources/tarif_remote_datasource_impl.dart'
+    as _i565;
 import '../../features/home/data/repositories/home_repository_impl.dart'
     as _i76;
 import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
-import '../../features/home/domain/usecases/get_daily_vehicle_count_usecase.dart'
-    as _i473;
+import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart'
+    as _i421;
 import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
     as _i77;
+import '../../features/home/domain/usecases/get_weekly_chart_usecase.dart'
+    as _i33;
+import '../../features/home/domain/usecases/sync_tarif_usecase.dart' as _i770;
 import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
 import '../../features/init/data/datasource/status_device_remote_datasource.dart'
     as _i338;
@@ -89,6 +101,7 @@ import '../../features/payment/domain/usecases/confirm_payment_usecase.dart'
 import '../../features/payment/domain/usecases/generate_qris_usecase.dart'
     as _i831;
 import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
+import '../../features/printer/presentation/cubit/printer_cubit.dart' as _i377;
 import '../../features/profile/data/datasources/profile_remote_data_source.dart'
     as _i847;
 import '../../features/profile/data/repositories/profile_repository_impl.dart'
@@ -115,10 +128,13 @@ import '../../features/vehicle_capture/domain/usecases/extract_license_plate_use
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart'
     as _i731;
 import '../network/dio_auth_interceptor.dart' as _i817;
+import '../network/network_cubit.dart' as _i11;
 import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
 import '../services/location/app_location_services_impl.dart' as _i35;
 import '../services/location/i_app_location_service.dart' as _i988;
+import '../services/printer/bluetooth_printer_service_impl.dart' as _i291;
+import '../services/printer/i_printer_service.dart' as _i1003;
 import '../storage/secure_storage_manager.dart' as _i1042;
 import 'register_module.dart' as _i291;
 
@@ -130,6 +146,7 @@ _i174.GetIt init(
 }) {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
+  gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
   gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
     () => _i247.PaymentRemoteDataSourceImpl(),
   );
@@ -146,7 +163,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i437.IOcrLocalDataSource>(
     () => _i437.OcrLocalDataSourceImpl(),
   );
-  gh.lazySingleton<_i274.IHomeRepository>(() => _i76.HomeRepositoryImpl());
+  gh.lazySingleton<_i1003.IPrinterService>(
+    () => _i291.BluetoothPrinterServiceImpl(),
+  );
   gh.lazySingleton<_i1042.ISecureStorageManager>(
     () => _i1042.SecureStorageManagerImpl(),
   );
@@ -159,8 +178,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
   );
-  gh.lazySingleton<_i473.GetDailyVehicleCountUseCase>(
-    () => _i473.GetDailyVehicleCountUseCase(gh<_i274.IHomeRepository>()),
+  gh.lazySingleton<_i11.NetworkCubit>(
+    () => _i11.NetworkCubit(gh<_i895.Connectivity>()),
   );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
@@ -170,6 +189,12 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
       gh<_i247.IPaymentRemoteDataSource>(),
     ),
+  );
+  gh.lazySingleton<_i59.ITarifRemoteDataSource>(
+    () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.factory<_i377.PrinterCubit>(
+    () => _i377.PrinterCubit(gh<_i1003.IPrinterService>()),
   );
   gh.lazySingleton<_i92.IParkingTransactionLocalDataSource>(
     () => _i462.ParkingTransactionLocalDataSourceImpl(gh<_i37.IImageService>()),
@@ -203,6 +228,9 @@ _i174.GetIt init(
       gh<_i847.IProfileRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
+  );
+  gh.lazySingleton<_i64.ISummaryRemoteDataSource>(
+    () => _i172.SummaryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i77.GetRecentTransactionsUseCase>(
     () => _i77.GetRecentTransactionsUseCase(
@@ -279,17 +307,18 @@ _i174.GetIt init(
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
   );
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(
+      gh<_i59.ITarifRemoteDataSource>(),
+      gh<_i64.ISummaryRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
   gh.factory<_i674.InitCubit>(
     () => _i674.InitCubit(
       checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
       secureStorageManager: gh<_i1042.ISecureStorageManager>(),
       checkStatusDeviceUseCase: gh<_i927.CheckStatusDeviceUseCase>(),
-    ),
-  );
-  gh.factory<_i9.HomeCubit>(
-    () => _i9.HomeCubit(
-      gh<_i473.GetDailyVehicleCountUseCase>(),
-      gh<_i77.GetRecentTransactionsUseCase>(),
     ),
   );
   gh.factory<_i513.PaymentCubit>(
@@ -324,10 +353,27 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
+    () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
+  );
+  gh.lazySingleton<_i33.GetWeeklyChartUseCase>(
+    () => _i33.GetWeeklyChartUseCase(gh<_i274.IHomeRepository>()),
+  );
+  gh.lazySingleton<_i770.SyncTarifUseCase>(
+    () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
+  );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(
       gh<_i965.GetProfileUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i9.HomeCubit>(
+    () => _i9.HomeCubit(
+      gh<_i421.GetHybridDashboardSummaryUseCase>(),
+      gh<_i77.GetRecentTransactionsUseCase>(),
+      gh<_i33.GetWeeklyChartUseCase>(),
+      gh<_i770.SyncTarifUseCase>(),
     ),
   );
   return getIt;

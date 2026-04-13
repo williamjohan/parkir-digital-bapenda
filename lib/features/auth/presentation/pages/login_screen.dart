@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:go_router/go_router.dart'; // Navigasi akan diurus GoRouter listener nanti
-import '../../../../core/di/injection.dart'; // Sesuaikan path getIt Anda
+import '../../../../core/design_system/components/pb_status_snackbar.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/loading_overlay.dart';
 import '../cubit/app_auth/app_auth_cubit.dart';
 import '../cubit/login/login_cubit.dart';
@@ -72,13 +72,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
           context.read<AppAuthCubit>().checkStatus();
         } else if (state is LoginFailure) {
           // Tampilkan Error Snackbar dari backend
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red.shade800,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          PbStatusSnackbar.show(context, message: state.message, isError: true);
         }
       },
 

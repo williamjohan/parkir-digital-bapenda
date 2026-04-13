@@ -1,15 +1,12 @@
-// lib/features/quick_parking/presentation/pages/quick_park_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_ticket_print_dialog.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_back_handler.dart';
-import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../../parking_transaction/persentation/cubit/parking_transaction_state.dart';
 import '../../../parking_transaction/persentation/cubit/sync_cubit.dart';
@@ -68,8 +65,6 @@ class _QuickParkPageState extends State<QuickParkPage> {
               );
             } else if (state is ParkingTransactionSaveSuccess) {
               final status = state.transaction.status;
-
-              // 🎁 KUNCI ARSITEKTUR: Buka koper profil dari Jenderal (Cubit)!
               final profile = state.jukirProfile;
 
               if (status == 'FREE_OFFLINE') {
@@ -82,39 +77,18 @@ class _QuickParkPageState extends State<QuickParkPage> {
                   description:
                       'Parkir Gratis $kategoriTitle\nberhasil dicatat.',
                   onConfirm: () {
-                    showDialog(
+                    // Panggil helper Karcis Modular
+                    PbTicketPrintDialog.showFromLocalTransaction(
                       context: context,
-                      barrierDismissible: false,
-                      builder: (context) {
-                        return Dialog(
-                          child: PbPreviewTicketWidget(
-                            deviceId: profile['idDevice'] ?? '',
-                            orderId: state.transaction.idTransaksiLokal,
-                            objekPajak:
-                                profile['namaObjekPajak'] ?? 'Objek Pajak',
-                            alamatObjekPajak:
-                                profile['alamat'] ?? 'Alamat Objek Pajak',
-                            waktuParkir:
-                                DateFormat(
-                                  'dd MMM yyyy • HH:mm',
-                                  'id_ID',
-                                ).format(
-                                  DateTime.parse(
-                                    state.transaction.waktuTransaksi,
-                                  ),
-                                ),
-                            tipeKendaraan: widget.kategoriKendaraan,
-                            isQuickMode: true,
-                            isFree: profile['pungutTarif'] == 1,
-                            noKendaraan: '',
-                            tarifParkir: 0,
-                            idTransaksi: state.transaction.idTransaksiLokal,
-                            okPressed: () => Navigator.pop(context),
-                            printPressed: () {
-                              // Fitur cetak bluetooth nanti
-                            },
-                          ),
-                        );
+                      localTx: state.transaction,
+                      profile: profile,
+                      kategoriKendaraan: widget.kategoriKendaraan,
+                      isQuickMode: true,
+                      // 🚀 TAMBAHKAN 2 PARAMETER WAJIB INI:
+                      noKendaraan: '-', // Karena Quick Mode (tanpa plat)
+                      tarifParkir: 0, // Karena ini blok Free Offline (Gratis)
+                      onClosed: () {
+                        // Contoh: Navigator.of(context).pop();
                       },
                     );
                   },

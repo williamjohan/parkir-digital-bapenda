@@ -1,25 +1,19 @@
 import 'package:equatable/equatable.dart';
 import '../../../../core/utils/permission_utils.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
+import '../../data/models/weekly_chart_item_model.dart'; // 🚀 [BARU] Import model chart
 
 class HomeState extends Equatable {
   final CameraPermissionStatus? permissionActionStatus;
   final String? selectedVehicleForCapture;
-
-  // Timestamp ini adalah "Hack" arsitektur yang elegan agar Listener selalu terpicu
-  // setiap kali aksi ditekan, meskipun status permission-nya tidak berubah.
   final int? actionTimestamp;
   final int motorCount;
   final int mobilCount;
-
-  // UNtuk pilih jenis mode_plat
+  final double totalPendapatan;
   final int? selectedModePlat;
-
-  // Daftar 5 transaksi terbaru
   final List<HistoryItemModel> recentTransactions;
-
-  // [BARU] Loading state untuk dashboard
-  final bool isLoading;
+  final List<WeeklyChartItemModel>
+  weeklyChartData; // 🚀 [BARU] State untuk grafik
 
   const HomeState({
     this.permissionActionStatus,
@@ -27,9 +21,10 @@ class HomeState extends Equatable {
     this.actionTimestamp,
     this.motorCount = 0,
     this.mobilCount = 0,
+    this.totalPendapatan = 0.0,
     this.selectedModePlat,
     this.recentTransactions = const [],
-    this.isLoading = false, // [BARU]
+    this.weeklyChartData = const [], // 🚀 [BARU] Default List kosong
   });
 
   HomeState copyWith({
@@ -38,9 +33,10 @@ class HomeState extends Equatable {
     int? actionTimestamp,
     int? motorCount,
     int? mobilCount,
+    double? totalPendapatan,
     int? selectedModePlat,
     List<HistoryItemModel>? recentTransactions,
-    bool? isLoading, // [BARU]
+    List<WeeklyChartItemModel>? weeklyChartData, // 🚀 [BARU]
   }) {
     return HomeState(
       permissionActionStatus:
@@ -50,9 +46,10 @@ class HomeState extends Equatable {
       actionTimestamp: actionTimestamp ?? this.actionTimestamp,
       motorCount: motorCount ?? this.motorCount,
       mobilCount: mobilCount ?? this.mobilCount,
+      totalPendapatan: totalPendapatan ?? this.totalPendapatan,
       selectedModePlat: selectedModePlat ?? this.selectedModePlat,
       recentTransactions: recentTransactions ?? this.recentTransactions,
-      isLoading: isLoading ?? this.isLoading, // [BARU]
+      weeklyChartData: weeklyChartData ?? this.weeklyChartData,
     );
   }
 
@@ -63,8 +60,9 @@ class HomeState extends Equatable {
     actionTimestamp,
     mobilCount,
     motorCount,
+    totalPendapatan,
     selectedModePlat,
     recentTransactions,
-    isLoading, // [BARU]
+    weeklyChartData, // 🚀 [BARU]
   ];
 }

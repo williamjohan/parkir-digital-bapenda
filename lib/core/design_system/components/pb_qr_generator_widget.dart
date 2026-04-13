@@ -19,7 +19,7 @@ class PbQrCodeGenerateWidget extends StatelessWidget {
     final decoration = const PrettyQrDecoration(
       shape: PrettyQrSmoothSymbol(color: Colors.black),
       background: Colors.white,
-      quietZone: PrettyQrQuietZone.standart,
+      quietZone: PrettyQrQuietZone.standard,
     );
 
     return SizedBox(

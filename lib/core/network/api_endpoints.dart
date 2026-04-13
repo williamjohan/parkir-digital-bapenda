@@ -1,3 +1,5 @@
+// lib/core/network/api_endpoints.dart
+
 class ApiEndpoints {
   ApiEndpoints._();
 
@@ -9,11 +11,14 @@ class ApiEndpoints {
   static const String profile = '/api/mobile/parking/profile';
   static const String changePassword = '/api/mobile/parking/change-password';
 
-  // Endpoint khusus Modul Kendaraan (Biarkan dulu, nanti disesuaikan dengan Swagger)
-  static const String submitPlate = '/vehicle/submit';
-  static const String getHistory = '/vehicle/history';
-
   static const String activateDevice = '/api/mobile/parking/aktivasi-device';
-  
-  static const String checkStatusDevice ='/api/mobile/parking/status-device';
+
+  static const String checkStatusDevice = '/api/mobile/parking/status-device';
+  // 🚀 [BARU] Endpoint khusus Modul Dashboard & Master Data
+  static const String tarif = '/api/mobile/parking/tarif';
+  static const String dashboardSummary =
+      '/api/mobile/parking/dashboard-summary';
+  static const String weeklyChart = '/api/mobile/parking/weekly-chart';
+  static const String laporanPendapatan =
+      '/api/mobile/parking/laporan-pendapatan';
 }

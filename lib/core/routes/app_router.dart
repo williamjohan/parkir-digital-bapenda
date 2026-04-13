@@ -1,10 +1,7 @@
-// lib/core/routes/app_router.dart
-
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/activation_device/presentation/activation_device_page.dart';
-import 'package:parkir_digital_bapenda/features/printer/presentation/screen/printer_device_screen.dart';
 import 'package:parkir_digital_bapenda/features/transaction/page/transaction_page.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/pages/transaction_history_page.dart';
@@ -17,6 +14,8 @@ import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
 import '../../features/parking_transaction/persentation/cubit/parking_transaction_cubit.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
+import '../../features/printer/presentation/cubit/printer_cubit.dart';
+import '../../features/printer/presentation/screen/printer_settings_page.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/quick_parking/presentation/pages/quick_park_page.dart';
@@ -101,35 +100,34 @@ class AppRouter {
           path: '${AppRoutes.capture}/:category',
           builder: (context, state) {
             final categoryString = state.pathParameters['category'];
-            final category = categoryString == 'mobil'
-                ? VehicleCategory.Mobil
-                : VehicleCategory.Motor;
-            // [PERBAIKAN]: Gunakan MultiBlocProvider untuk 2 Jenderal!
+            final categoryEnum = categoryString?.toLowerCase() == 'mobil'
+                ? VehicleCategory.mobil
+                : VehicleCategory.motor;
+
             return MultiBlocProvider(
               providers: [
-                // 1. Jenderal Mata (Yang mengurus Kamera & OCR)
                 BlocProvider(
                   create: (_) =>
-                      locator<VehicleCaptureCubit>()..selectVehicle(category),
+                      locator<VehicleCaptureCubit>()
+                        ..selectVehicle(categoryEnum),
                 ),
-                // 2. Jenderal Otak (Yang mengurus SQLite & Kompresi)
                 BlocProvider(create: (_) => locator<ParkingTransactionCubit>()),
               ],
-              child: const CapturePage(),
+              child: CapturePage(kategoriKendaraan: categoryEnum.displayName),
             );
           },
         ),
         GoRoute(
           path: '${AppRoutes.quickPark}/:category',
           builder: (context, state) {
-            // 1. Tangkap parameter dari URL (motor/mobil)
-            final categoryString = state.pathParameters['category'] ?? 'Motor';
+            final categoryString = state.pathParameters['category'];
+            final categoryEnum = categoryString?.toLowerCase() == 'mobil'
+                ? VehicleCategory.mobil
+                : VehicleCategory.motor;
 
-            // 2. [INJEKSI]: Halaman ini HANYA butuh Sang Otak (ParkingTransactionCubit)
-            // Tidak butuh Jenderal Kamera!
             return BlocProvider(
               create: (_) => locator<ParkingTransactionCubit>(),
-              child: QuickParkPage(kategoriKendaraan: categoryString),
+              child: QuickParkPage(kategoriKendaraan: categoryEnum.displayName),
             );
           },
         ),
@@ -155,9 +153,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.history,
           builder: (context, state) {
+            final initialDate = state.extra as DateTime?;
             return BlocProvider(
               create: (_) => locator<TransactionHistoryCubit>(),
-              child: const TransactionHistoryPage(),
+              child: TransactionHistoryPage(initialDate: initialDate),
             );
           },
         ),
@@ -180,6 +179,18 @@ class AppRouter {
           path: AppRoutes.activationDevice,
           builder: (context, state) {
             return const ActivationDevicePage();
+          },
+        ),
+
+        GoRoute(
+          path: AppRoutes.printerSettings,
+          builder: (context, state) {
+            return BlocProvider(
+              // 🚀 Memanggil Sang Pengendali (PrinterCubit) via GetIt
+              create: (_) => locator<PrinterCubit>(),
+              // 🚀 Menampilkan Wajah UI yang baru kita buat
+              child: const PrinterSettingsPage(),
+            );
           },
         ),
       ],

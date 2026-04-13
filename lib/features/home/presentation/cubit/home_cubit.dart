@@ -1,21 +1,25 @@
-// lib/features/home/presentation/cubit/home_cubit.dart
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../domain/usecases/get_daily_vehicle_count_usecase.dart';
-import '../../domain/usecases/get_recent_transaction_usecase.dart';
-import 'home_state.dart';
 import '../../../../core/utils/permission_utils.dart';
-import '../../../transaction_history/data/models/history_item_model.dart';
+import '../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
+import '../../domain/usecases/get_recent_transaction_usecase.dart';
+import '../../domain/usecases/get_weekly_chart_usecase.dart';
+import '../../domain/usecases/sync_tarif_usecase.dart';
+import 'home_state.dart';
 
 @injectable
 class HomeCubit extends Cubit<HomeState> {
-  final GetDailyVehicleCountUseCase _getDailyVehicleCountUseCase;
+  // 🚀 [BARU] Suntikkan 4 Senjata Baru Kita
+  final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
+  final GetWeeklyChartUseCase _getWeeklyChartUseCase;
+  final SyncTarifUseCase _syncTarifUseCase;
 
   HomeCubit(
-    this._getDailyVehicleCountUseCase,
+    this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
+    this._getWeeklyChartUseCase,
+    this._syncTarifUseCase,
   ) : super(const HomeState());
 
   Future<void> requestCameraAccess(String vehicleType) async {
@@ -44,50 +48,44 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  /// Mengambil data dashboard lengkap (counts + recent transactions)
+  /// Mengambil data dashboard secara lengkap dan terstruktur
   Future<void> loadDashboardData() async {
-    // [BARU] Set loading true
-    if (!isClosed) {
-      emit(state.copyWith(isLoading: true));
-    }
+    // 1. TUGAS BAYANGAN (SILENT SYNC): Ambil Master Tarif dan simpan ke SQLite/Brankas
+    // Kita panggil tanpa "await" agar UI Dashboard tidak perlu menunggunya selesai.
+    _syncTarifUseCase.execute();
 
-    // Handle daily vehicle count
-    final countResult = await _getDailyVehicleCountUseCase.execute();
-    countResult.fold(
-      (failure) {
-        // Silent error, keep existing counts
-      },
-      (counts) {
-        if (!isClosed && counts is Map<String, int>) {
+    // 2. TUGAS UTAMA: Ambil Dashboard Summary (Hybrid Logic di dalam UseCase)
+    final summaryResult = await _getHybridDashboardSummaryUseCase.execute();
+    summaryResult.fold(
+      (failure) => null, // Jika gagal mutlak, biarkan state memakai angka 0
+      (summary) {
+        if (!isClosed) {
           emit(
             state.copyWith(
-              motorCount: counts['motor'] ?? 0,
-              mobilCount: counts['mobil'] ?? 0,
+              motorCount: summary.jumlahMotorHariIni,
+              mobilCount: summary.jumlahMobilHariIni,
+              totalPendapatan: summary.totalNominalHariIni,
             ),
           );
         }
       },
     );
 
-    // Handle recent transactions
+    // 3. TUGAS KEDUA: Ambil 5 Transaksi Terakhir (Smart Proxy Logic di dalam UseCase)
     final recentResult = await _getRecentTransactionsUseCase.execute(limit: 5);
-    recentResult.fold(
-      (failure) {
-        if (!isClosed) {
-          emit(state.copyWith(recentTransactions: const []));
-        }
-      },
-      (transactions) {
-        if (!isClosed && transactions is List<HistoryItemModel>) {
-          emit(state.copyWith(recentTransactions: transactions));
-        }
-      },
-    );
+    recentResult.fold((failure) => null, (transactions) {
+      if (!isClosed) {
+        emit(state.copyWith(recentTransactions: transactions));
+      }
+    });
 
-    // [BARU] Set loading false setelah semua selesai
-    if (!isClosed) {
-      emit(state.copyWith(isLoading: false));
-    }
+    // 4. TUGAS KETIGA: Ambil Data Grafik Mingguan (Option A / API)
+    final chartResult = await _getWeeklyChartUseCase.execute();
+    chartResult.fold((failure) => null, (chartData) {
+      if (!isClosed) {
+        emit(state.copyWith(weeklyChartData: chartData));
+      }
+    });
   }
 
   void selectModePlat(int mode) {

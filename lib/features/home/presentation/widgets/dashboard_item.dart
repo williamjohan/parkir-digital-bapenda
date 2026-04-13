@@ -21,7 +21,7 @@ class DashboardItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppColors.surface.withOpacity(0.3),
+          color: AppColors.surface.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(5),
         ),
         child: Column(

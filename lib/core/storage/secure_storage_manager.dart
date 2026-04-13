@@ -1,7 +1,4 @@
-// lib/core/storage/secure_storage_manager.dart
-
 import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
@@ -13,7 +10,6 @@ abstract class ISecureStorageManager {
   Future<void> clearAllTokens();
   Future<bool> hasValidToken();
 
-  // [PERBAIKAN]: Perlebar pintu brankas untuk menerima peluru Sync
   Future<void> saveJukirProfile({
     required String idUserStorage,
     required String namaUserStorage,
@@ -30,6 +26,14 @@ abstract class ISecureStorageManager {
   });
   Future<Map<String, dynamic>?> getJukirProfile();
   Future<void> clearJukirProfile();
+
+  Future<void> saveMasterTarif(String jsonString);
+  Future<String?> getMasterTarif();
+  Future<void> clearMasterTarif();
+
+  Future<void> saveDashboardAnchor(String jsonString);
+  Future<String?> getDashboardAnchor();
+  Future<void> clearDashboardAnchor();
 }
 
 @LazySingleton(as: ISecureStorageManager)
@@ -41,6 +45,10 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyAccessToken = 'ACCESS_TOKEN';
   static const String _keyRefreshToken = 'REFRESH_TOKEN';
   static const String _keyJukirProfile = 'JUKIR_PROFILE';
+
+  // 🚀 [BARU] Kunci Brankas Baru
+  static const String _keyMasterTarif = 'MASTER_TARIF';
+  static const String _keyDashboardAnchor = 'DASHBOARD_ANCHOR';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -67,6 +75,38 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     await _storage.delete(key: _keyAccessToken);
     await _storage.delete(key: _keyRefreshToken);
     await clearJukirProfile();
+    await clearMasterTarif();
+    await clearDashboardAnchor();
+  }
+
+  @override
+  Future<void> saveMasterTarif(String jsonString) async {
+    await _storage.write(key: _keyMasterTarif, value: jsonString);
+  }
+
+  @override
+  Future<String?> getMasterTarif() async {
+    return await _storage.read(key: _keyMasterTarif);
+  }
+
+  @override
+  Future<void> clearMasterTarif() async {
+    await _storage.delete(key: _keyMasterTarif);
+  }
+
+  @override
+  Future<void> saveDashboardAnchor(String jsonString) async {
+    await _storage.write(key: _keyDashboardAnchor, value: jsonString);
+  }
+
+  @override
+  Future<String?> getDashboardAnchor() async {
+    return await _storage.read(key: _keyDashboardAnchor);
+  }
+
+  @override
+  Future<void> clearDashboardAnchor() async {
+    await _storage.delete(key: _keyDashboardAnchor);
   }
 
   @override

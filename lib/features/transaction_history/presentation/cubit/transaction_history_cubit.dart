@@ -16,6 +16,20 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
   /// [REMOTE FILTER]: Tembak API Bapenda berdasarkan rentang tanggal
   Future<void> fetchHistory(DateTime start, DateTime end) async {
+    // 🚀 [SISTEM PERTAHANAN]: Validasi Selisih 30 Hari
+    // Kita gunakan .abs() untuk berjaga-jaga jika Jukir terbalik memasukkan tanggal
+    final difference = end.difference(start).inDays.abs();
+
+    if (difference > 30) {
+      emit(
+        TransactionHistoryError(
+          'Rentang waktu maksimal pencarian adalah 30 hari.',
+        ),
+      );
+      return; // 🛑 Hentikan eksekusi, cegah payload membengkak!
+    }
+
+    // Jika lolos validasi, baru mulai proses loading
     emit(TransactionHistoryLoading());
 
     final profile = await _secureStorage.getJukirProfile() ?? {};
@@ -43,30 +57,24 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
     final currentState = state as TransactionHistoryLoaded;
 
-    // Gunakan filter baru, atau pertahankan filter lama jika tidak diubah
     final newKategori = kategori ?? currentState.selectedKategori;
     final newMode = mode ?? currentState.selectedMode;
 
-    // Proses penyaringan (Filtering) dari Master Data
     final filteredData = currentState.allTransactions.where((trx) {
-      // 1. Cek Kategori
       bool passKategori = true;
       if (newKategori != 'SEMUA') {
         passKategori =
             trx.jenisTarif.toUpperCase() == newKategori.toUpperCase();
       }
 
-      // 2. Cek Mode Plat
       bool passMode = true;
       if (newMode != -1) {
         passMode = trx.modePlat == newMode;
       }
 
-      // Harus lolos kedua filter untuk bisa tampil
       return passKategori && passMode;
     }).toList();
 
-    // Perbarui state UI dengan data yang sudah disaring
     emit(
       currentState.copyWith(
         filteredTransactions: filteredData,

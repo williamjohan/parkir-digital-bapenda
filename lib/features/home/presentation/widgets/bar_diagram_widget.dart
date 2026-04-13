@@ -70,14 +70,18 @@ class BarDiagramWithLabels extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Pendapatan Mingguan',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              Expanded(
+                child: Text(
+                  'Pendapatan Mingguan',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child:
@@ -141,7 +145,7 @@ class BarDiagramWithLabels extends StatelessWidget {
                   checkToShowHorizontalLine: (value) =>
                       yLabels.any((y) => (y - value).abs() < 0.5),
                   getDrawingHorizontalLine: (_) => FlLine(
-                    color: Colors.grey.withOpacity(0.25),
+                    color: Colors.grey.withValues(alpha: 0.25),
                     strokeWidth: 1,
                   ),
                 ),
@@ -217,7 +221,7 @@ class BarDiagramWithLabels extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                         color: isToday
                             ? AppColors.primaryDark
-                            : AppColors.primary.withOpacity(0.5),
+                            : AppColors.primary.withValues(alpha: 0.5),
                       ),
                     ],
                   );
