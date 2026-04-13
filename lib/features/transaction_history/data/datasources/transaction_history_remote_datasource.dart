@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
+import 'package:parkir_digital_bapenda/core/network/dio_error_handler.dart';
+import '../../../../core/errors/exception.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../models/history_item_model.dart';
 
@@ -66,10 +68,14 @@ class TransactionHistoryRemoteDataSourceImpl
         throw Exception(responseData['message'] ?? 'Gagal mengambil riwayat');
       }
     } on DioException catch (e) {
-      // 🚀 Sekarang error 500 akan langsung tertangkap di sini tanpa nunggu retry
       AppLogger.error('>>> [DEBUG 500] Response: ${e.response?.data}');
-      throw Exception(
-        e.response?.data?['message'] ?? 'Terjadi kesalahan server.',
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error di History', e, stackTrace);
+
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal saat memproses data login.',
       );
     }
   }

@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
+import '../../../../core/network/dio_error_handler.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../models/tarif_model.dart';
 import 'i_tarif_remote_datasource.dart';
 
@@ -27,16 +29,13 @@ class TarifRemoteDataSourceImpl implements ITarifRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      // Menangkap error dari Dio (Timeout, 404, 500)
-      throw ServerException(
-        statusCode: e.response?.statusCode ?? 500,
-        message: e.message ?? 'Terjadi kesalahan koneksi',
-      );
-    } catch (e) {
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error di Tarif DataSource', e, stackTrace);
       // Fallback untuk error parsing JSON atau lainnya
       throw ServerException(
         statusCode: 500,
-        message: 'Terjadi kesalahan internal: ${e.toString()}',
+        message: 'Terjadi kesalahan internal saat memproses tarif}',
       );
     }
   }

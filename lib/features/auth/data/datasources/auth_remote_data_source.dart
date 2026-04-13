@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../models/auth_response_model.dart';
 
 abstract class IAuthRemoteDataSource {
@@ -64,8 +65,9 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
 
       // Jika bukan masalah password (misal: Internet Mati atau Error 500),
       throw DioErrorHandler.handle(e);
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (e is AuthException) rethrow;
+      AppLogger.error('Internal Error di AuthRemoteDataSource', e, stackTrace);
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal aplikasi.',

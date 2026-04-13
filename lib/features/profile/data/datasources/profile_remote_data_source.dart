@@ -5,7 +5,8 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
-import '../../../auth/data/models/user_model.dart'; // Sesuaikan path jika berbeda
+import '../../../../core/utils/app_logger.dart';
+import '../../../auth/data/models/user_model.dart';
 
 abstract class IProfileRemoteDataSource {
   Future<UserModel> getProfile();
@@ -40,7 +41,12 @@ class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
       }
     } on DioException catch (e) {
       throw DioErrorHandler.handle(e);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Internal Error di ProfileRemoteDataSource',
+        e,
+        stackTrace,
+      );
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal saat memparsing profil.',

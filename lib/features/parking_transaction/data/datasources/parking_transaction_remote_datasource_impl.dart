@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/network/dio_error_handler.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../models/local_transaction_model.dart';
 import 'i_parking_transaction_remote_datasource.dart';
@@ -135,7 +136,8 @@ class ParkingTransactionRemoteDataSourceImpl
         AppLogger.error('>>> [RESPONSE BAPENDA]: ${e.response?.data}');
       }
 
-      throw Exception('Gagal Sinkronisasi: ${e.message}');
+      AppLogger.info(('Gagal Sinkronisasi : ${e.message}'));
+      throw DioErrorHandler.handle(e);
     }
   }
 }

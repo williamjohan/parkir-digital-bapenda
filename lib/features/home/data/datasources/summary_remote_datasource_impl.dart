@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
 import '../../../../core/errors/exception.dart';
+import '../../../../core/network/dio_error_handler.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../models/dashboard_summary_model.dart';
 import '../models/weekly_chart_item_model.dart';
 import 'i_summary_remote_datasource.dart';
@@ -56,14 +58,12 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      throw ServerException(
-        statusCode: e.response?.statusCode ?? 500,
-        message: e.message ?? 'Terjadi kesalahan koneksi saat memuat grafik',
-      );
-    } catch (e) {
-      throw ServerException(
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error di Summary', e, stackTrace);
+      throw const ServerException(
         statusCode: 500,
-        message: 'Terjadi kesalahan internal: ${e.toString()}',
+        message: 'Terjadi kesalahan internal saat memproses summary}',
       );
     }
   }
