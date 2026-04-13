@@ -5,24 +5,26 @@ import '../../../../core/errors/failure.dart';
 import '../../data/models/local_transaction_model.dart';
 
 abstract class IParkingTransactionRepository {
-  /// Menyimpan transaksi baru.
-  /// Repository HANYA meminta data dari UI, urusan ID Jukir akan dicarikan sendiri oleh Repository ke SecureStorage.
+  /// Menyimpan transaksi baru ke penyimpanan lokal (SQLite).
+  /// Parameter disesuaikan dengan kontrak Swagger Bapenda agar sinkron saat Sync.
   Future<Either<Failure, LocalTransactionModel>> saveNewTransaction({
-    String? platNomor,
-    required String kategoriKendaraan,
-    String? rawImagePath,
+    String? platNomor, // Maps ke: platNumber (Swagger)
+    required String jenisTarif, // Maps ke: jenisTarif (Swagger - String)
+    required int nominal, // Maps ke: kredit (Swagger - Decimal)
+    required String metodePembayaran, // Maps ke: sof (Swagger - String)
     required int modePlat,
-    String? latitude,
-    String? longitude,
+    String? rawImagePath, // Akan diproses menjadi fotoNopol (Swagger)
+    String? latitude, // Maps ke: latitude (Swagger)
+    String? longitude, // Maps ke: longitude (Swagger)
   });
 
-  /// Mengubah status transaksi di SQLite
+  /// Mengubah status transaksi di SQLite (misal: dari PENDING ke SYNCED)
   Future<Either<Failure, Unit>> updateTransactionStatus({
     required String idTransaksiLokal,
     required String newStatus,
   });
 
-  /// Mengambil daftar transaksi yang belum tersinkronisasi
+  /// Mengambil daftar transaksi yang belum tersinkronisasi (is_sync = 0)
   Future<Either<Failure, List<LocalTransactionModel>>>
   getUnsyncedTransactions();
 }

@@ -1,30 +1,20 @@
+// lib/features/transaction/widgets/card_metode_pembayaran.dart
+
 import 'package:flutter/material.dart';
+import '../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/design_system/tokens/app_typography.dart';
 
-import '../../../core/design_system/tokens/app_colors.dart';
-import '../../../core/design_system/tokens/app_typography.dart';
+// 🚀 [ENHANCE]: Menjadi StatelessWidget (Dumb Widget)
+class CardMetodePembayaranWidget extends StatelessWidget {
+  final String? selectedValue; // Datang dari state.metodePembayaran
+  final Function(String value)
+  onTap; // Dilempar ke context.read<TransactionCubit>().selectPayment()
 
-class CardMetodePembayaranWidget extends StatefulWidget {
-  final Function(String value)? onTap;
-
-  const CardMetodePembayaranWidget({super.key, this.onTap});
-
-  @override
-  State<CardMetodePembayaranWidget> createState() =>
-      _CardMetodePembayaranWidgetState();
-}
-
-class _CardMetodePembayaranWidgetState
-    extends State<CardMetodePembayaranWidget> {
-  String? selectedValue;
-
-  void _onSelect(String value) {
-    setState(() {
-      selectedValue = value;
-    });
-
-    // 🔥 kirim value ke parent
-    widget.onTap?.call(value);
-  }
+  const CardMetodePembayaranWidget({
+    super.key,
+    required this.selectedValue,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +40,9 @@ class _CardMetodePembayaranWidgetState
             title: "QRIS",
             subTitle: "Scan kode QR yang diberikan",
             icon: Icons.qr_code,
-            isSelected: selectedValue == "qris",
-            onTap: () => _onSelect("qris"),
+            isSelected:
+                selectedValue == "qris", // 🚀 [ENHANCE]: Cek dari Cubit State
+            onTap: () => onTap("qris"),
           ),
 
           const SizedBox(height: 8),
@@ -61,8 +52,9 @@ class _CardMetodePembayaranWidgetState
             title: "Kartu Elektronik",
             subTitle: "e-Money, Flazz, Brizzi, TapCash",
             icon: Icons.credit_card,
-            isSelected: selectedValue == "card",
-            onTap: () => _onSelect("card"),
+            isSelected:
+                selectedValue == "card", // 🚀 [ENHANCE]: Cek dari Cubit State
+            onTap: () => onTap("card"),
           ),
         ],
       ),
@@ -70,6 +62,7 @@ class _CardMetodePembayaranWidgetState
   }
 }
 
+// 🚀 PaymentItem TETAP SAMA seperti yang Anda punya, biarkan saja.
 class PaymentItem extends StatelessWidget {
   final String title;
   final String subTitle;
@@ -121,9 +114,7 @@ class PaymentItem extends StatelessWidget {
                   size: 20,
                 ),
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +136,6 @@ class PaymentItem extends StatelessWidget {
                   ],
                 ),
               ),
-
               Icon(
                 isSelected
                     ? Icons.radio_button_checked

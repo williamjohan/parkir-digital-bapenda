@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../../../core/utils/permission_utils.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
-import '../../data/models/weekly_chart_item_model.dart'; // 🚀 [BARU] Import model chart
+import '../../data/models/weekly_chart_item_model.dart';
 
 class HomeState extends Equatable {
   final CameraPermissionStatus? permissionActionStatus;
@@ -12,8 +12,8 @@ class HomeState extends Equatable {
   final double totalPendapatan;
   final int? selectedModePlat;
   final List<HistoryItemModel> recentTransactions;
-  final List<WeeklyChartItemModel>
-  weeklyChartData; // 🚀 [BARU] State untuk grafik
+  final List<WeeklyChartItemModel> weeklyChartData;
+  final bool isFree;
 
   const HomeState({
     this.permissionActionStatus,
@@ -24,7 +24,8 @@ class HomeState extends Equatable {
     this.totalPendapatan = 0.0,
     this.selectedModePlat,
     this.recentTransactions = const [],
-    this.weeklyChartData = const [], // 🚀 [BARU] Default List kosong
+    this.weeklyChartData = const [],
+    this.isFree = false,
   });
 
   HomeState copyWith({
@@ -36,7 +37,8 @@ class HomeState extends Equatable {
     double? totalPendapatan,
     int? selectedModePlat,
     List<HistoryItemModel>? recentTransactions,
-    List<WeeklyChartItemModel>? weeklyChartData, // 🚀 [BARU]
+    List<WeeklyChartItemModel>? weeklyChartData,
+    bool? isFree,
   }) {
     return HomeState(
       permissionActionStatus:
@@ -50,6 +52,7 @@ class HomeState extends Equatable {
       selectedModePlat: selectedModePlat ?? this.selectedModePlat,
       recentTransactions: recentTransactions ?? this.recentTransactions,
       weeklyChartData: weeklyChartData ?? this.weeklyChartData,
+      isFree: isFree ?? this.isFree,
     );
   }
 
@@ -63,6 +66,7 @@ class HomeState extends Equatable {
     totalPendapatan,
     selectedModePlat,
     recentTransactions,
-    weeklyChartData, // 🚀 [BARU]
+    weeklyChartData,
+    isFree,
   ];
 }

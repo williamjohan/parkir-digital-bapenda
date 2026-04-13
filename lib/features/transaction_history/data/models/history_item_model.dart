@@ -45,4 +45,18 @@ class HistoryItemModel {
 
   factory HistoryItemModel.fromJson(Map<String, dynamic> json) =>
       _$HistoryItemModelFromJson(json);
+
+  factory HistoryItemModel.fromLocalDatabase(Map<String, dynamic> map) {
+    return HistoryItemModel(
+      id: 0, // SQLite lokal tidak punya id dari server, pakai 0 sebagai sentinel
+      orderId: map['id_transaksi_lokal']?.toString() ?? '',
+      jenisTarif: map['kategori_kendaraan']?.toString() ?? '-',
+      sof: map['metode_pembayaran']?.toString() ?? 'FREE',
+      platNumber: map['plat_nomor']?.toString() ?? '-',
+      tglTrx: map['waktu_transaksi']?.toString() ?? '',
+      kredit: (map['nominal'] as num?)?.toInt() ?? 0,
+      namaPetugas: map['nama_jukir']?.toString() ?? '',
+      modePlat: (map['mode_plat'] as num?)?.toInt() ?? 0,
+    );
+  }
 }

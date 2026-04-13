@@ -3,12 +3,13 @@
 import '../models/local_transaction_model.dart';
 
 abstract class IParkingTransactionLocalDataSource {
-  /// Memproses kompresi foto 3MB -> 10KB (jika modePlat == 1),
-  /// menyertakan koordinat GPS, lalu menyimpan data ke SQLite.
-  /// Mengembalikan model yang sudah matang untuk dilempar ke UI/Kasir.
   Future<LocalTransactionModel> saveNewTransaction({
     String? platNomor,
-    required String kategoriKendaraan,
+    required String
+    jenisTarif, // 🚀 [SINKRONISASI SWAGGER]: String ("Motor"/"Mobil")
+    required int nominal, // 🚀 [SINKRONISASI SWAGGER]: Harga
+    required String
+    metodePembayaran, // 🚀 [SINKRONISASI SWAGGER]: sof (qris/card)
     String? rawImagePath,
     required bool isFree,
     required int modePlat,
@@ -17,7 +18,6 @@ abstract class IParkingTransactionLocalDataSource {
     required String nop,
     String? latitude,
     String? longitude,
-    String? noKartuKue,
   });
 
   Future<void> updateTransactionStatus({

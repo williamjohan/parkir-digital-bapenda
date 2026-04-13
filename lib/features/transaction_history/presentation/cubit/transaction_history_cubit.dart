@@ -1,7 +1,9 @@
 // lib/features/transaction_history/presentation/cubit/transaction_history_cubit.dart
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/usecases/get_transaction_history_usecase.dart';
 import 'transaction_history_state.dart';
@@ -16,31 +18,35 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
   /// [REMOTE FILTER]: Tembak API Bapenda berdasarkan rentang tanggal
   Future<void> fetchHistory(DateTime start, DateTime end) async {
-    // 🚀 [SISTEM PERTAHANAN]: Validasi Selisih 30 Hari
-    // Kita gunakan .abs() untuk berjaga-jaga jika Jukir terbalik memasukkan tanggal
     final difference = end.difference(start).inDays.abs();
-
     if (difference > 30) {
       emit(
         TransactionHistoryError(
           'Rentang waktu maksimal pencarian adalah 30 hari.',
         ),
       );
-      return; // 🛑 Hentikan eksekusi, cegah payload membengkak!
+      return;
     }
 
-    // Jika lolos validasi, baru mulai proses loading
     emit(TransactionHistoryLoading());
 
     final profile = await _secureStorage.getJukirProfile() ?? {};
-    final result = await _useCase.execute(startDate: start, endDate: end);
+
+    // ✅ Timeout 10 detik — jika lewat, usecase fallback ke lokal
+    final result = await _useCase
+        .execute(startDate: start, endDate: end)
+        .timeout(
+          const Duration(seconds: 10),
+          onTimeout: () =>
+              const Left(ServerFailure('Koneksi lambat. Coba lagi.')),
+        );
 
     result.fold(
       (failure) => emit(TransactionHistoryError(failure.message)),
       (data) => emit(
         TransactionHistoryLoaded(
           allTransactions: data,
-          filteredTransactions: data, // Awalnya tampilkan semua
+          filteredTransactions: data,
           startDate: start,
           endDate: end,
           selectedKategori: 'SEMUA',

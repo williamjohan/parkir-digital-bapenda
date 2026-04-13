@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/core/utils/transaction_id_utils.dart';
 import '../../../../core/storage/database_helper.dart';
 import '../../../../core/services/image/i_image_service.dart';
 import '../models/local_transaction_model.dart';
@@ -18,20 +17,22 @@ class ParkingTransactionLocalDataSourceImpl
   @override
   Future<LocalTransactionModel> saveNewTransaction({
     String? platNomor,
-    required String kategoriKendaraan,
+    required String jenisTarif, // 🚀 Sesuai Swagger
+    required int nominal, // 🚀 Sesuai Swagger
+    required String metodePembayaran, // 🚀 Sesuai Swagger
     String? rawImagePath,
     required bool isFree,
-    required int modePlat,
     required String idJukir,
     required String namaJukir,
     required String nop,
+    required int modePlat,
     String? latitude,
     String? longitude,
-    String? noKartuKue,
   }) async {
     String? finalImagePath;
 
-    if (modePlat == 1 && rawImagePath != null && rawImagePath.isNotEmpty) {
+    // 🚀 [PERBAIKAN LOGIKA]: Kalau ada foto, langsung kompres
+    if (rawImagePath != null && rawImagePath.isNotEmpty) {
       final String fileName = 'parkir_${DateTime.now().millisecondsSinceEpoch}';
       finalImagePath = await _imageService.compressAndSaveImage(
         originalFile: File(rawImagePath),
@@ -43,26 +44,23 @@ class ParkingTransactionLocalDataSourceImpl
           'Gagal mengompresi foto kendaraan. Memori mungkin penuh.',
         );
       }
-      // await _imageService.deleteImage(rawImagePath);
     }
 
-    final String idTransaksi = TransactionIdUtils.generateOrderId(
-      kategoriKendaraan: kategoriKendaraan,
-      modePlat: modePlat,
-    );
+    // 🚀 [PERBAIKAN UTILS]: Generate manual sementara atau sesuaikan utils Anda nanti
+    final String idTransaksi = 'TRX-${DateTime.now().millisecondsSinceEpoch}';
     final String waktuTransaksi = DateTime.now().toIso8601String();
+    final String status = isFree
+        ? 'FREE_OFFLINE'
+        : (metodePembayaran == 'qris' ? 'PENDING_QRIS' : 'PENDING_CARD');
 
-    final String status = isFree ? 'FREE_OFFLINE' : 'PENDING_PAYMENT';
-
-    final bool isMobil = kategoriKendaraan.toLowerCase() == 'mobil';
-    final int nominal = isFree ? 0 : (isMobil ? 5000 : 2000);
-
-    // [PERBAIKAN]: Cetak cetakan transaksi yang sudah dilengkapi GPS!
     final transaction = LocalTransactionModel(
       idTransaksiLokal: idTransaksi,
-      nominal: nominal,
-      platNomor: platNomor,
-      kategoriKendaraan: kategoriKendaraan,
+      kategoriKendaraan:
+          jenisTarif, // 🚀 [TRIK AMAN]: Map jenisTarif ke kolom kategoriKendaraan lama!
+      nominal: isFree ? 0 : nominal, // Harga dinamis dari API
+      metodePembayaran:
+          metodePembayaran, // 🚀 [SATU-SATUNYA YANG BARU]: Harus ditambahkan ke Model nanti
+      platNomor: platNomor ?? 'TANPA PLAT',
       waktuTransaksi: waktuTransaksi,
       status: status,
       idJukir: idJukir,
@@ -73,7 +71,6 @@ class ParkingTransactionLocalDataSourceImpl
       isSync: 0,
       latitude: latitude,
       longitude: longitude,
-      noKartuKue: noKartuKue,
     );
 
     // SIMPAN KE SQLite

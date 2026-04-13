@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/utils/permission_utils.dart';
+import '../../../../core/storage/secure_storage_manager.dart'; // 🚀 [BARU] Import Brankas
 import '../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
 import '../../domain/usecases/get_recent_transaction_usecase.dart';
 import '../../domain/usecases/get_weekly_chart_usecase.dart';
@@ -9,17 +10,18 @@ import 'home_state.dart';
 
 @injectable
 class HomeCubit extends Cubit<HomeState> {
-  // 🚀 [BARU] Suntikkan 4 Senjata Baru Kita
   final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
   final GetWeeklyChartUseCase _getWeeklyChartUseCase;
   final SyncTarifUseCase _syncTarifUseCase;
+  final ISecureStorageManager _secureStorage; // 🚀 [BARU]
 
   HomeCubit(
     this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
     this._getWeeklyChartUseCase,
     this._syncTarifUseCase,
+    this._secureStorage, // 🚀 [BARU]
   ) : super(const HomeState());
 
   Future<void> requestCameraAccess(String vehicleType) async {
@@ -50,6 +52,15 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Mengambil data dashboard secara lengkap dan terstruktur
   Future<void> loadDashboardData() async {
+    // 0. 🚀 [BARU] BONGKAR BRANKAS: Ambil status isFree dari profil Jukir
+    final profile = await _secureStorage.getJukirProfile();
+    bool isFreeStatus = false;
+
+    if (profile != null) {
+      final dynamic rawPungutTarif = profile['pungutTarif'];
+      isFreeStatus = (rawPungutTarif == 1 || rawPungutTarif == '1');
+    }
+
     // 1. TUGAS BAYANGAN (SILENT SYNC): Ambil Master Tarif dan simpan ke SQLite/Brankas
     // Kita panggil tanpa "await" agar UI Dashboard tidak perlu menunggunya selesai.
     _syncTarifUseCase.execute();
@@ -57,7 +68,10 @@ class HomeCubit extends Cubit<HomeState> {
     // 2. TUGAS UTAMA: Ambil Dashboard Summary (Hybrid Logic di dalam UseCase)
     final summaryResult = await _getHybridDashboardSummaryUseCase.execute();
     summaryResult.fold(
-      (failure) => null, // Jika gagal mutlak, biarkan state memakai angka 0
+      (failure) {
+        // 🚀 Walaupun data summary gagal, kita TETEAP harus simpan isFree ke State!
+        if (!isClosed) emit(state.copyWith(isFree: isFreeStatus));
+      },
       (summary) {
         if (!isClosed) {
           emit(
@@ -65,6 +79,8 @@ class HomeCubit extends Cubit<HomeState> {
               motorCount: summary.jumlahMotorHariIni,
               mobilCount: summary.jumlahMobilHariIni,
               totalPendapatan: summary.totalNominalHariIni,
+              isFree:
+                  isFreeStatus, // 🚀 [BARU] Lempar status Gratis/Tidak ke UI
             ),
           );
         }
@@ -86,9 +102,5 @@ class HomeCubit extends Cubit<HomeState> {
         emit(state.copyWith(weeklyChartData: chartData));
       }
     });
-  }
-
-  void selectModePlat(int mode) {
-    emit(state.copyWith(selectedModePlat: mode));
   }
 }

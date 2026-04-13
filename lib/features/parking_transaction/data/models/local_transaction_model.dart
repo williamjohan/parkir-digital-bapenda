@@ -16,7 +16,11 @@ class LocalTransactionModel {
   final String? platNomor;
 
   @JsonKey(name: 'kategori_kendaraan')
-  final String kategoriKendaraan;
+  final String kategoriKendaraan; // 🚀 Nanti diisi pakai nilai jenisTarif dari API
+
+  // 🚀 [TAMBAHAN BARU]: Untuk mapping ke field "sof" di Swagger
+  @JsonKey(name: 'metode_pembayaran')
+  final String metodePembayaran;
 
   @JsonKey(name: 'waktu_transaksi')
   final String waktuTransaksi; // Format ISO-8601 (String)
@@ -37,7 +41,7 @@ class LocalTransactionModel {
   final String? fotoKendaraan; // Base64 String (Maksimal ~10kb)
 
   @JsonKey(name: 'mode_plat')
-  final int modePlat;
+  final int modePlat; // 🚀 [DIPERTAHANKAN]: Karena diminta Swagger API!
 
   @JsonKey(name: 'is_sync')
   final int isSync;
@@ -56,13 +60,14 @@ class LocalTransactionModel {
     required this.nominal,
     this.platNomor,
     required this.kategoriKendaraan,
+    required this.metodePembayaran, // 🚀 Wajib diisi (Constructor)
     required this.waktuTransaksi,
     required this.status,
     required this.idJukir,
     required this.namaJukir,
     required this.nop,
     this.fotoKendaraan,
-    required this.modePlat,
+    required this.modePlat, // 🚀 Tetap dipertahankan
     required this.isSync,
     this.latitude,
     this.longitude,

@@ -23,24 +23,27 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
   /// maupun QuickParkPage (Tanpa Plat)
   Future<void> processNewTransaction({
     String? platNomor,
-    required String kategoriKendaraan,
-    String? imagePath,
-    required int modePlat,
+    required String jenisTarif, // Teks "Motor"/"Mobil"
+    required int nominal, // Harga
+    required String metodePembayaran, // 'qris' atau 'card' atau 'free'
+    required int modePlat, // 1 jika ada plat, 0 jika tanpa plat
+    String? imagePath, // Path gambar dari kamera OCR (jika ada)
   }) async {
-    // Beri tahu UI untuk memunculkan Loading (Sambil menunggu GPS 3 detik & Kompresi Foto)
     emit(ParkingTransactionLoading());
 
     final profile = await _secureStorage.getJukirProfile() ?? {};
 
-    // 1. Eksekusi UseCase (GPS dan Kompresi Foto terjadi di dalam sini secara gaib!)
+    // 1. Eksekusi UseCase
     final result = await _saveUseCase.execute(
       platNomor: platNomor,
-      kategoriKendaraan: kategoriKendaraan,
-      rawImagePath: imagePath,
+      jenisTarif: jenisTarif,
+      nominal: nominal,
+      metodePembayaran: metodePembayaran,
       modePlat: modePlat,
+      rawImagePath: imagePath,
     );
 
-    // 2. Tangani hasil lemparan dari SQLite
+    // 2. Tangani hasil
     result.fold(
       (failure) {
         if (!isClosed) {
@@ -49,11 +52,9 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
       },
       (transaction) {
         if (!isClosed) {
-          // [PERBAIKAN ARSITEKTUR]: Lempar data transaksi DAN koper profil ke UI!
           emit(
             ParkingTransactionSaveSuccess(
               transaction: transaction,
-              // Variabel 'profile' ini diambil dari _secureStorage di awal fungsi Anda
               jukirProfile: Map<String, dynamic>.from(profile),
             ),
           );
@@ -64,7 +65,6 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
 
   /// Dipanggil OLEH HALAMAN QRIS jika Jukir mengonfirmasi pembayaran
   Future<void> updateStatusToPaid(String idTransaksiLokal) async {
-    // Tidak perlu emit Loading agar UI QRIS tidak berkedip
     final result = await _updateUseCase.execute(
       idTransaksiLokal,
       'PAID_OFFLINE',
@@ -75,7 +75,6 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
         if (!isClosed) emit(ParkingTransactionFailure(failure.message));
       },
       (_) {
-        // Jika sukses update ke PAID_OFFLINE, beri tahu UI untuk kembali ke Home
         if (!isClosed) emit(ParkingTransactionUpdateSuccess());
       },
     );

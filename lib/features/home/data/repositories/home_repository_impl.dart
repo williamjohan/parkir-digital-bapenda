@@ -9,6 +9,7 @@ import '../../domain/repositories/i_home_repository.dart';
 import '../datasources/i_summary_remote_datasource.dart';
 import '../datasources/i_tarif_remote_datasource.dart';
 import '../models/dashboard_summary_model.dart';
+import '../models/tarif_model.dart';
 import '../models/weekly_chart_item_model.dart';
 
 @LazySingleton(as: IHomeRepository)
@@ -26,11 +27,13 @@ class HomeRepositoryImpl implements IHomeRepository {
   @override
   Future<Either<Failure, void>> syncTarif() async {
     try {
+      // 🚀 PINTU MASUK: Ambil dari API
       final tarifList = await _tarifRemoteDS.getTarif();
-      // Konversi List Model ke JSON String untuk disimpan di Brankas
+
+      // Konversi List Model ke JSON String
       final jsonString = jsonEncode(tarifList.map((e) => e.toJson()).toList());
 
-      // 🚀 [DIPERBAIKI]: Gunakan fungsi SAVE, bukan GET
+      // 🚀 SIMPAN KE BRANKAS: Menjamin data masuk ke SecureStorage
       await _secureStorage.saveMasterTarif(jsonString);
 
       return const Right(null);
@@ -103,6 +106,28 @@ class HomeRepositoryImpl implements IHomeRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Gagal memuat grafik: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TarifModel>>> getLocalTarifs() async {
+    try {
+      // 🚀 PINTU KELUAR: Ambil dari Brankas (Bukan API!)
+      // Inilah yang menjamin Chucker tidak akan nembak API lagi saat buka TransactionPage
+      final jsonString = await _secureStorage.getMasterTarif();
+
+      if (jsonString == null || jsonString.isEmpty) {
+        return const Left(CacheFailure('Data tarif belum tersedia.'));
+      }
+
+      final List<dynamic> jsonList = jsonDecode(jsonString);
+      final localData = jsonList
+          .map((json) => TarifModel.fromJson(json))
+          .toList();
+
+      return Right(localData);
+    } catch (e) {
+      return const Left(CacheFailure('Gagal membaca data dari brankas.'));
     }
   }
 }

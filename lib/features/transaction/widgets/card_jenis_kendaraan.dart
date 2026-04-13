@@ -1,51 +1,34 @@
+// lib/features/transaction/widgets/card_jenis_kendaraan.dart
+
 import 'package:flutter/material.dart';
-import '../../../core/design_system/tokens/app_colors.dart';
-import '../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../home/data/models/tarif_model.dart';
 import 'botsheet_tarif_widget.dart';
 
-class CardJenisKendaraan extends StatefulWidget {
-  final List<Map<String, dynamic>> tarifList;
-
-  /// 🔥 kirim 2 parameter
-  final Function(String jenisTarif, int tarif)? onSelected;
+// 🚀 [ENHANCE]: Menjadi StatelessWidget (Dumb Widget)
+class CardJenisKendaraan extends StatelessWidget {
+  final List<TarifModel> tarifList;
+  final TarifModel? selectedTarif;
+  final bool isFree;
+  final Function(TarifModel) onSelected;
 
   const CardJenisKendaraan({
     super.key,
-    this.onSelected,
     required this.tarifList,
+    required this.selectedTarif,
+    required this.isFree,
+    required this.onSelected,
   });
 
   @override
-  State<CardJenisKendaraan> createState() => _CardJenisKendaraanState();
-}
-
-class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
-  String? selectedJenisTarif;
-  int? selectedTarif;
-
-  final TextEditingController tarifController = TextEditingController();
-
-  void _onSelect(Map<String, dynamic> selected) {
-    setState(() {
-      selectedJenisTarif = selected['jenisTarif'];
-      selectedTarif = selected['tarif'];
-      tarifController.text = "Rp$selectedTarif";
-    });
-
-    /// 🔥 kirim 2 data langsung
-    if (widget.onSelected != null) {
-      widget.onSelected!(selectedJenisTarif!, selectedTarif!);
-    }
-  }
-
-  @override
-  void dispose() {
-    tarifController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Penentuan teks dinamis
+    final displayJenis = selectedTarif?.jenisTarif ?? "Pilih Jenis Kendaraan";
+    final displayTarif = selectedTarif != null
+        ? (isFree ? "Rp0 (GRATIS)" : "Rp${selectedTarif!.tarif.toInt()}")
+        : "Rp0";
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -63,15 +46,15 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
           ),
           const SizedBox(height: 16),
 
-          /// 🔥 Dropdown Button
+          /// Dropdown Button
           InkWell(
             onTap: () {
+              // 🚀 [ENHANCE]: Panggil BottomSheet yang sudah menggunakan TarifModel
               BottomSheetTarifParkir.show(
                 context,
-                tarifList: widget.tarifList,
-                onTap: (selected) {
-                  _onSelect(selected);
-                },
+                tarifList: tarifList,
+                isFree: isFree,
+                onTap: onSelected,
               );
             },
             borderRadius: BorderRadius.circular(10),
@@ -85,9 +68,9 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    selectedJenisTarif ?? "Pilih Jenis Kendaraan",
+                    displayJenis,
                     style: AppTypography.bodyText.copyWith(
-                      color: selectedJenisTarif == null
+                      color: selectedTarif == null
                           ? AppColors.textSecondary
                           : AppColors.textPrimary,
                     ),
@@ -100,7 +83,7 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
 
           const SizedBox(height: 16),
 
-          /// 🔥 Tarif Field
+          /// Tarif Field
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -108,22 +91,24 @@ class _CardJenisKendaraanState extends State<CardJenisKendaraan> {
               const SizedBox(height: 4),
 
               TextField(
-                controller: tarifController,
-                style: AppTypography.bodyRegular,
+                controller: TextEditingController(
+                  text: displayTarif,
+                ), // 🚀 Dikontrol sepenuhnya dari atas
+                style: AppTypography.bodyRegular.copyWith(
+                  color: isFree ? Colors.green : AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
                 readOnly: true,
                 decoration: InputDecoration(
-                  hintText: "Rp0",
-                  hintStyle: AppTypography.bodyText.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
                   filled: true,
+                  fillColor: Colors.grey.shade50,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: AppColors.border),
+                    borderSide: const BorderSide(color: AppColors.border),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: AppColors.border),
+                    borderSide: const BorderSide(color: AppColors.border),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,

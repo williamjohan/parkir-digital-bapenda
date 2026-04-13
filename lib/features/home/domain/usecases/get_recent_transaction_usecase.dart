@@ -12,37 +12,23 @@ class GetRecentTransactionsUseCase {
   final ISecureStorageManager _secureStorage;
 
   GetRecentTransactionsUseCase(this._remoteDataSource, this._secureStorage);
-
   Future<Either<Failure, List<HistoryItemModel>>> execute({
     required int limit,
   }) async {
     try {
-      // ==========================================
-      // 1. CEK LOKAL DULU (HANYA TRANSAKSI HARI INI)
-      // ==========================================
-      // Menggunakan fungsi getTodayRecentTransactions yang baru kita buat di DatabaseHelper
+      // 1. Ambil data lokal hari ini
       final localDataMap = await DatabaseHelper.instance
           .getTodayRecentTransactions(limit);
 
-      if (localDataMap.isNotEmpty) {
-        // ⚠️ CATATAN AUDITOR: Pastikan mapping SQLite ke Model ini aman.
-        // Jika nama kolom SQLite (waktu_transaksi) berbeda dengan key JSON API (misal: tglTrx),
-        // gunakan factory khusus seperti HistoryItemModel.fromLocalDatabase(map)
-        final localTransactions = localDataMap
-            .map((map) => HistoryItemModel.fromJson(map))
-            .toList();
+      final localTransactions = localDataMap
+          .map((map) => HistoryItemModel.fromLocalDatabase(map))
+          .toList();
 
-        return Right(localTransactions);
-      }
-
-      // ==========================================
-      // 2. JIKA LOKAL KOSONG (Tembak API, khusus HARI INI saja)
-      // ==========================================
+      // 2. Ambil profil untuk tembak API
       final profile = await _secureStorage.getJukirProfile();
       if (profile == null) {
-        return const Left(
-          CacheFailure('Sesi Jukir tidak ditemukan. Silakan login ulang.'),
-        );
+        // Kalau tidak ada profil, fallback ke lokal saja
+        return Right(localTransactions);
       }
 
       final String nop = profile['nop']?.toString() ?? '';
@@ -52,28 +38,47 @@ class GetRecentTransactionsUseCase {
           ? rawPetugasId
           : int.tryParse(rawPetugasId?.toString() ?? '0') ?? 0;
 
-      // 🚀 [KUNCI PERUBAHAN]: Kunci rentang waktu murni hanya hari ini!
-      final today = DateTime.now();
-
-      // Tembak API Server sebagai penyelamat
+      // 3. Selalu tembak API untuk data lengkap dari server
       final apiTransactions = await _remoteDataSource.getHistory(
         nop: nop,
         petugasId: petugasId,
         shift: shift,
-        startDate: today,
-        endDate: today,
+        startDate: DateTime.now(),
+        endDate: DateTime.now(),
         limit: limit,
       );
 
-      // Urutkan dari yang terbaru untuk memastikan UI selalu menampilkan yang terkini
-      final sortedTransactions = List<HistoryItemModel>.from(apiTransactions)
+      // 4. Merge: lokal + API, dedup by orderId
+      // Lokal diutamakan karena lebih fresh (baru diinput)
+      final mergedMap = <String, HistoryItemModel>{};
+
+      // Masukkan API dulu sebagai base
+      for (final item in apiTransactions) {
+        mergedMap[item.orderId] = item;
+      }
+
+      // Timpa dengan lokal jika orderId sama (lokal lebih fresh)
+      for (final item in localTransactions) {
+        mergedMap[item.orderId] = item;
+      }
+
+      // 5. Urutkan terbaru, ambil sesuai limit
+      final merged = mergedMap.values.toList()
         ..sort((a, b) => b.tglTrx.compareTo(a.tglTrx));
 
-      // Tidak perlu lagi memanggil .take(limit) karena BE sudah membatasinya dari sana.
-
-      return Right(sortedTransactions);
+      return Right(merged.take(limit).toList());
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      // Kalau API gagal (offline), fallback ke lokal saja
+      try {
+        final localDataMap = await DatabaseHelper.instance
+            .getTodayRecentTransactions(limit);
+        final localTransactions = localDataMap
+            .map((map) => HistoryItemModel.fromLocalDatabase(map))
+            .toList();
+        return Right(localTransactions);
+      } catch (_) {
+        return Left(ServerFailure(e.toString()));
+      }
     }
   }
 }

@@ -1,8 +1,119 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+// lib/features/transaction/cubit/transaction_cubit.dart
 
-part 'transaction_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'transaction_state.dart';
+import '../../home/data/models/tarif_model.dart';
+import '../../home/domain/usecases/get_local_tarif_usecase.dart';
+import '../../parking_transaction/domain/usecases/save_parking_transaction_usecase.dart';
 
+@injectable
 class TransactionCubit extends Cubit<TransactionState> {
-  TransactionCubit() : super(TransactionInitial());
+  final GetLocalTarifUseCase _getTarifUseCase;
+  final SaveParkingTransactionUseCase _saveTransactionUseCase;
+
+  TransactionCubit(this._getTarifUseCase, this._saveTransactionUseCase)
+    : super(const TransactionState());
+
+  Future<void> init(bool isFree) async {
+    emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
+
+    final result = await _getTarifUseCase.execute();
+
+    result.fold(
+      (failure) {
+        if (isFree) {
+          // 🚀 Jika gagal baca atau belum sync, tetap berikan pilihan untuk OP Gratis
+          _injectFreeTariff();
+        } else {
+          emit(
+            state.copyWith(
+              status: TransactionStatus.failure,
+              errorMessage: failure.message,
+            ),
+          );
+        }
+      },
+      (data) {
+        if (data.isEmpty && isFree) {
+          // 🚀 Jika data kosong dari Brankas, suntikkan kategori default
+          _injectFreeTariff();
+        } else {
+          emit(
+            state.copyWith(status: TransactionStatus.initial, tarifList: data),
+          );
+        }
+      },
+    );
+  }
+
+  // 🚀 FUNGSI KHUSUS UNTUK MEMBUAT LIST KENDARAAN GRATIS
+  void _injectFreeTariff() {
+    final List<TarifModel> dummyFree = [
+      const TarifModel(id: -1, jenisTarif: 'Motor', tarif: 0),
+      const TarifModel(id: -2, jenisTarif: 'Mobil', tarif: 0),
+      const TarifModel(id: -3, jenisTarif: 'Bus / Truk', tarif: 0),
+    ];
+    emit(
+      state.copyWith(status: TransactionStatus.initial, tarifList: dummyFree),
+    );
+  }
+
+  void updateNopol(String value) {
+    emit(state.copyWith(nopol: value.toUpperCase(), imagePath: null));
+  }
+
+  void updateFromOcr(String platNomor, String imagePath) {
+    emit(state.copyWith(nopol: platNomor.toUpperCase(), imagePath: imagePath));
+  }
+
+  void selectTarif(TarifModel tarif) {
+    emit(state.copyWith(selectedTarif: tarif));
+  }
+
+  void selectPayment(String method) {
+    emit(state.copyWith(metodePembayaran: method));
+  }
+
+  Future<void> submitTransaction() async {
+    if (!state.isValid) return;
+
+    emit(state.copyWith(status: TransactionStatus.submitting));
+
+    final int modePlat = state.nopol.trim().isNotEmpty ? 1 : 0;
+    final String? finalPlat = state.nopol.trim().isEmpty
+        ? null
+        : state.nopol.trim();
+
+    final String finalJenisTarif =
+        state.selectedTarif?.jenisTarif ?? 'Objek Pajak Gratis';
+    final int finalNominal = state.selectedTarif?.tarif.toInt() ?? 0;
+    final String finalSof = state.isFree
+        ? 'FREE'
+        : (state.metodePembayaran ?? 'UNKNOWN');
+
+    final result = await _saveTransactionUseCase.execute(
+      platNomor: finalPlat,
+      jenisTarif: finalJenisTarif,
+      nominal: finalNominal,
+      metodePembayaran: finalSof,
+      modePlat: modePlat,
+      rawImagePath: state.imagePath,
+    );
+
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          status: TransactionStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (transactionResult) => emit(
+        state.copyWith(
+          status: TransactionStatus.success,
+          savedTransaction: transactionResult,
+        ),
+      ),
+    );
+  }
 }

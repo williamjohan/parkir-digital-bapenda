@@ -58,7 +58,7 @@ class ParkingTransactionRemoteDataSourceImpl
     final formData = FormData.fromMap({
       'orderId': transaction.idTransaksiLokal,
       'jenisTarif': transaction.kategoriKendaraan.toUpperCase(),
-      'sof': isFree ? 'FREE' : 'QRIS',
+      'sof': isFree ? 'FREE' : transaction.metodePembayaran.toUpperCase(),
       'acquirer': isFree ? 'FREE' : 'BAPENDA',
       'noKartuKUE': isFree ? '-' : (transaction.noKartuKue ?? '-'),
       'noTRX': isFree ? '-' : transaction.idTransaksiLokal,
@@ -85,6 +85,9 @@ class ParkingTransactionRemoteDataSourceImpl
     // --- 5. INJEKSI FOTO ---
     if (multipartImage != null) {
       formData.files.add(MapEntry('fotoNopol', multipartImage));
+    } else {
+      // ✅ Kirim field kosong agar BE tidak reject karena field tidak ada
+      formData.fields.add(const MapEntry('fotoNopol', ''));
     }
 
     // ==========================================================

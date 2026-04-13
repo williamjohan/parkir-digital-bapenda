@@ -13,6 +13,7 @@ class DashboardWidget extends StatelessWidget {
   final int totalTransaksi;
   final int motorCount;
   final int mobilCount;
+  final bool isFree;
 
   const DashboardWidget({
     super.key,
@@ -20,6 +21,7 @@ class DashboardWidget extends StatelessWidget {
     required this.totalTransaksi,
     required this.motorCount,
     required this.mobilCount,
+    required this.isFree,
   });
   @override
   Widget build(BuildContext context) {
@@ -104,7 +106,8 @@ class DashboardWidget extends StatelessWidget {
             text: "Tambah Transaksi",
             variant: PbButtonVariant.outlinedSecondaryLight,
             onPressed: () {
-              context.push(AppRoutes.transaction);
+              // context.push(AppRoutes.transaction);
+              context.push(AppRoutes.transaction, extra: isFree);
             },
           ),
         ],

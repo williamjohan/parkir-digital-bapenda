@@ -136,6 +136,7 @@ class _HomePageState extends State<HomePage> {
                       totalTransaksi: (state.motorCount + state.mobilCount),
                       motorCount: state.motorCount,
                       mobilCount: state.mobilCount,
+                      isFree: state.isFree,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16),
@@ -164,21 +165,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-}
-
-// --- FUNGSI NAVIGASI CERDAS ---
-void _handleVehicleSelection(
-  BuildContext context,
-  String kategori,
-  int modePlat,
-) async {
-  if (modePlat == 1) {
-    context.read<HomeCubit>().requestCameraAccess(kategori);
-  } else {
-    await context.push('/quick-park/$kategori');
-    if (context.mounted) {
-      context.read<HomeCubit>().loadDashboardData();
-    }
   }
 }

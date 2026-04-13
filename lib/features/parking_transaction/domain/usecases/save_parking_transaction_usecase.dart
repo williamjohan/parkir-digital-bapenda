@@ -3,38 +3,37 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
-import '../../../../core/services/location/i_app_location_service.dart'; // [TAMBAHAN]
+import '../../../../core/services/location/i_app_location_service.dart';
 import '../../data/models/local_transaction_model.dart';
 import '../repositories/i_parking_transaction_repository.dart';
 
 @lazySingleton
 class SaveParkingTransactionUseCase {
   final IParkingTransactionRepository repository;
-  final IAppLocationService locationService; // [TAMBAHAN]: Injeksi Sensor GPS
+  final IAppLocationService locationService;
 
   SaveParkingTransactionUseCase(this.repository, this.locationService);
 
   Future<Either<Failure, LocalTransactionModel>> execute({
     String? platNomor,
-    required String kategoriKendaraan,
+    required String jenisTarif, // Kirim teks "Motor"/"Mobil" sesuai Swagger
+    required int nominal,
+    required int modePlat, // Kirim harga (kredit)
+    required String metodePembayaran, // Untuk mapping ke 'sof' di Swagger
     String? rawImagePath,
-    required int modePlat,
   }) async {
-    // [PERBAIKAN]: Tambahkan async
-
-    // 1. Ambil koordinat GPS real-time (Maksimal 3 detik atau fallback)
+    // Ambil GPS real-time
     final location = await locationService.getCurrentLocation();
-    final latitude = location['latitude'];
-    final longitude = location['longitude'];
 
-    // 2. Lempar seluruh data (termasuk GPS) ke Repository
     return repository.saveNewTransaction(
       platNomor: platNomor,
-      kategoriKendaraan: kategoriKendaraan,
-      rawImagePath: rawImagePath,
+      jenisTarif: jenisTarif,
+      nominal: nominal,
       modePlat: modePlat,
-      latitude: latitude, // [TAMBAHAN]
-      longitude: longitude, // [TAMBAHAN]
+      metodePembayaran: metodePembayaran,
+      rawImagePath: rawImagePath,
+      latitude: location['latitude'],
+      longitude: location['longitude'],
     );
   }
 }

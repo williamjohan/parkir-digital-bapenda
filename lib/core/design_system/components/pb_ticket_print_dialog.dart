@@ -4,7 +4,8 @@ import 'package:parkir_digital_bapenda/core/design_system/components/pb_ticket_p
 import 'package:parkir_digital_bapenda/core/di/injection.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
-import 'package:parkir_digital_bapenda/features/parking_transaction/data/models/local_transaction_model.dart';
+
+import '../../../features/parking_transaction/data/models/local_transaction_model.dart';
 
 class PbTicketPrintDialog {
   /// 🚪 PINTU MASUK 1: Untuk Quick Park & Capture Page (Data Lokal Baru)
