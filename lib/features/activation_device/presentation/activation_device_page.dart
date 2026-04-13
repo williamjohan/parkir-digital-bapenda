@@ -23,6 +23,8 @@ class ActivationDevicePage extends StatefulWidget {
 
 class _ActivationDevicePageState extends State<ActivationDevicePage> {
   final TextEditingController nopController = TextEditingController();
+  bool showErrorText = false;
+  String errorText = '';
 
   @override
   void dispose() {
@@ -39,10 +41,6 @@ class _ActivationDevicePageState extends State<ActivationDevicePage> {
           listener: (context, state) {
             /// ✅ SUCCESS → ke halaman login
             if (state is ActivationDeviceSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Device berhasil diaktivasi")),
-              );
-
               /// kasih delay biar snackbar kelihatan
               Future.delayed(const Duration(seconds: 1), () {
                 context.go('/login'); // pastikan route ini ada
@@ -51,90 +49,108 @@ class _ActivationDevicePageState extends State<ActivationDevicePage> {
 
             /// ❌ ERROR
             if (state is ActivationDeviceError) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              setState(() {
+                showErrorText = true;
+                errorText = state.message;
+              });
+              // ScaffoldMessenger.of(
+              //   context,
+              // ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
             final isLoading = state is ActivationDeviceLoading;
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  HeaderWidget(),
-                  const SizedBox(height: 16),
-
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 24,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: AppColors.border),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height,
+                  ),
+                  child: IntrinsicHeight(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "Nomor Operator Parkir (NOP)",
-                          style: AppTypography.bodySemiBold,
-                        ),
-                        const SizedBox(height: 8),
-
-                        PbTextField(
-                          controller: nopController,
-                          hintText: "Contoh: 35.xx.xxxx.xxx.xxx.xxxxx",
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          "NOP akan disimpan secara aman di device anda",
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-
+                        HeaderWidget(),
                         const SizedBox(height: 16),
 
-                        /// 🔥 BUTTON AKTIVASI
-                        PbPrimaryButton(
-                          text: isLoading ? "Loading..." : "Aktivasi Device",
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  final nop = nopController.text.trim();
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 24,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: AppColors.border),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                "Nomor Operator Parkir (NOP)",
+                                style: AppTypography.bodySemiBold,
+                              ),
+                              const SizedBox(height: 8),
 
-                                  /// validasi sederhana
-                                  if (nop.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text("NOP tidak boleh kosong"),
-                                      ),
-                                    );
-                                    return;
-                                  }
+                              PbTextField(
+                                inputType: TextInputType.number,
+                                controller: nopController,
+                                hintText: "Contoh: 35.xx.xxxx.xxx.xxx.xxxxx",
+                                inputFormatters: [NopInputFormatter()],
+                              ),
 
-                                  final formattedNop = AppFormatters.nop(nop);
+                              const SizedBox(height: 8),
+                              if (showErrorText)
+                                Text(
+                                  errorText,
+                                  style: AppTypography.caption.copyWith(
+                                    color: AppColors.error,
+                                  ),
+                                ),
 
-                                  context
-                                      .read<ActivationDeviceCubit>()
-                                      .activate(nop: formattedNop);
-                                },
+                              const SizedBox(height: 16),
+
+                              /// 🔥 BUTTON AKTIVASI
+                              PbPrimaryButton(
+                                text: isLoading
+                                    ? "Loading..."
+                                    : "Aktivasi Device",
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        final nop = nopController.text.trim();
+
+                                        /// validasi sederhana
+                                        if (nop.isEmpty) {
+                                          setState(() {
+                                            errorText =
+                                                "NOP tidak boleh kosong";
+                                            showErrorText = true;
+                                          });
+                                          return;
+                                        }
+
+                                        // dismiss keyboard
+                                        FocusScope.of(context).unfocus();
+
+                                        context
+                                            .read<ActivationDeviceCubit>()
+                                            .activate(nop: nop);
+                                      },
+                              ),
+
+                              const SizedBox(height: 48),
+                              KetAktivasiWidget(),
+                            ],
+                          ),
                         ),
-
-                        const SizedBox(height: 48),
-                        KetAktivasiWidget(),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
             );
           },

@@ -23,7 +23,7 @@ class HeaderWidget extends StatelessWidget {
         Text("Aktivasi Device", style: AppTypography.heading1),
         SizedBox(height: 4),
         Text(
-          "Masukkan Nomor Objek Pajak untuk mengaktifkan perangkat Anda.",
+          "Masukkan NOP untuk mengaktifkan perangkat Anda.",
           style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
           textAlign: TextAlign.center,
         ),

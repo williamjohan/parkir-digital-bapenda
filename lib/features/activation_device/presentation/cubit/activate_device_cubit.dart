@@ -14,25 +14,29 @@ class ActivationDeviceCubit extends Cubit<ActivationDeviceState> {
     : super(ActivationDeviceInitial());
 
   Future<void> activate({required String nop}) async {
-    emit(ActivationDeviceLoading());
+    try {
+      emit(ActivationDeviceLoading());
 
-    final deviceId = await FlutterUdid.udid;
+      final deviceId = await FlutterUdid.udid;
 
-    final result = await activateDeviceUseCase.execute(
-      nop: nop,
-      // untuk testing
-      deviceId: "0175", 
-      // deviceId: deviceId
-    );
+      final result = await activateDeviceUseCase.execute(
+        nop: nop,
+        deviceId: "519", // testing
+        // deviceId = deviceId
+      );
 
-    result.fold(
-      (failure) {
-        AppLogger.error("Activation Failed: ${failure.message}");
-        emit(ActivationDeviceError(failure.message));
-      },
-      (isSuccess) {
-        emit(ActivationDeviceSuccess());
-      },
-    );
+      result.fold(
+        (failure) {
+          AppLogger.error("Activation Failed: ${failure.message}");
+          emit(ActivationDeviceError(failure.message));
+        },
+        (isSuccess) {
+          emit(ActivationDeviceSuccess());
+        },
+      );
+    } catch (e) {
+      AppLogger.error("Unexpected Error: $e");
+      emit(ActivationDeviceError("Terjadi kesalahan, coba lagi"));
+    }
   }
 }

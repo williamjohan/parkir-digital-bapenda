@@ -12,6 +12,8 @@ class PbTextField extends StatelessWidget {
   final bool isLoading;
   final bool enabled; // BARU: Properti untuk mengunci input
   final Function(String)? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? inputType;
 
   const PbTextField({
     super.key,
@@ -21,6 +23,8 @@ class PbTextField extends StatelessWidget {
     this.isLoading = false,
     this.enabled = true, // Default tetap true agar tidak merusak halaman lain
     this.onChanged,
+    this.inputFormatters,
+    this.inputType,
   });
 
   @override
@@ -40,13 +44,18 @@ class PbTextField extends StatelessWidget {
           const SizedBox(height: 8),
         ],
         TextField(
+          keyboardType: inputType,
           controller: controller,
           onChanged: onChanged,
           enabled: enabled, // BARU: Lempar status ke TextField bawaan
           textCapitalization: TextCapitalization.characters,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9 ]')),
-          ],
+          scrollPadding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+
+          inputFormatters:
+              inputFormatters ??
+              [FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9 ]'))],
           style: AppTypography.heading2.copyWith(
             fontSize: 20,
             letterSpacing: 2,

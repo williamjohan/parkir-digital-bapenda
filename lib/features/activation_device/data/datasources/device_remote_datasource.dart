@@ -34,12 +34,7 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       return true;
     }
 
-    // 🔥 ANGKAT JADI SUCCESS (CASE: SUDAH AKTIF)
-    if (message.toLowerCase().contains("sudah aktif")) {
-      return true;
-    }
-
-    // ❌ ERROR BENERAN
+    // ❌ ERROR
     throw Exception(message);
   }
 }

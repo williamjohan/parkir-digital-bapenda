@@ -1,6 +1,7 @@
 // data/repositories/device_repository_impl.dart
 
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
 import '../../domain/repositories/device_repository.dart';
@@ -24,7 +25,26 @@ class DeviceRepositoryImpl implements DeviceRepository {
       );
       return Right(result);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      if (e is DioException) {
+        final responseData = e.response?.data;
+
+        String message = "Terjadi kesalahan";
+
+        if (responseData != null && responseData is Map) {
+          message = responseData['message'] ?? message;
+        }
+
+        return Left(ServerFailure(message));
+      }
+
+      // kalau dari throw Exception(message)
+      if (e is Exception) {
+        return Left(
+          ServerFailure(e.toString().replaceFirst('Exception: ', '')),
+        );
+      }
+
+      return Left(ServerFailure("Terjadi kesalahan tidak diketahui"));
     }
   }
 }
