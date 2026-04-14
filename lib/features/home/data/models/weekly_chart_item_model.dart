@@ -36,6 +36,27 @@ class WeeklyChartItemModel extends Equatable {
     required this.nominalMobil,
   });
 
+  String get hariSingkat {
+    switch (hari.toLowerCase()) {
+      case 'senin':
+        return 'Sen';
+      case 'selasa':
+        return 'Sel';
+      case 'rabu':
+        return 'Rab';
+      case 'kamis':
+        return 'Kam';
+      case 'jumat':
+        return 'Jum';
+      case 'sabtu':
+        return 'Sab';
+      case 'minggu':
+        return 'Min';
+      default:
+        return hari;
+    }
+  }
+
   factory WeeklyChartItemModel.fromJson(Map<String, dynamic> json) =>
       _$WeeklyChartItemModelFromJson(json);
 

@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
     if (chartData.isEmpty) {
       return ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
     }
-    return chartData.map((data) => data.hari).toList();
+    return chartData.map((data) => data.hariSingkat).toList();
   }
 
   // 🚀 [REFACTOR] Fungsi Mapper Asli dari WeeklyChartItemModel ke List<double>
