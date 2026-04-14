@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:injectable/injectable.dart';
 import '../../../../core/storage/database_helper.dart';
 import '../../../../core/services/image/i_image_service.dart';
+import '../../../../core/utils/transaction_id_utils.dart';
 import '../models/local_transaction_model.dart';
 import 'i_parking_transaction_local_datasource.dart';
 
@@ -43,10 +44,9 @@ class ParkingTransactionLocalDataSourceImpl
       }
     }
 
-    final String idTransaksi = 'TRX-${DateTime.now().millisecondsSinceEpoch}';
+    final String idTransaksi = TransactionIdUtils.generateOrderId();
     final String waktuTransaksi = DateTime.now().toIso8601String();
 
-    // 🚀 [PERBAIKAN RANJAU 2]: Kembalikan ke PENDING_PAYMENT agar tidak menghancurkan flow CapturePage!
     // Metode pembayaran (qris/card) sudah tersimpan dengan aman di kolom "metodePembayaran",
     // jadi status transaksi cukup "PENDING_PAYMENT".
     final String status = isFree ? 'FREE_OFFLINE' : 'PENDING_PAYMENT';
@@ -58,7 +58,7 @@ class ParkingTransactionLocalDataSourceImpl
       metodePembayaran: metodePembayaran,
       platNomor: platNomor ?? 'TANPA PLAT',
       waktuTransaksi: waktuTransaksi,
-      status: status, // 🚀 Aman!
+      status: status,
       idJukir: idJukir,
       namaJukir: namaJukir,
       nop: nop,
