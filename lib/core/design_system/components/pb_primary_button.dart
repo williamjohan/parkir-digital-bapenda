@@ -83,6 +83,8 @@ class PbPrimaryButton extends StatelessWidget {
         variant == PbButtonVariant.outlinedSecondaryLight ||
         variant == PbButtonVariant.outlinedSecondaryDark;
 
+    final bool isTextEmpty = text.trim().isEmpty;
+
     return SizedBox(
       width: double.infinity,
       height: height,
@@ -108,6 +110,14 @@ class PbPrimaryButton extends StatelessWidget {
                   color: textColor,
                   strokeWidth: 3,
                 ),
+              )
+            : isTextEmpty
+            ? Center(
+                child: iconLeft != null
+                    ? Icon(iconLeft, color: textColor, size: iconSize)
+                    : iconRight != null
+                    ? Icon(iconRight, color: textColor, size: iconSize)
+                    : const SizedBox(),
               )
             : Row(
                 mainAxisAlignment: iconRight != null

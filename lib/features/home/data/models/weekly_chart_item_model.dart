@@ -9,6 +9,8 @@ double _toDouble(dynamic value) => (value ?? 0).toDouble();
 class WeeklyChartItemModel extends Equatable {
   final DateTime tgl;
 
+  final String hari;
+
   @JsonKey(defaultValue: 0)
   final int motor;
 
@@ -16,13 +18,22 @@ class WeeklyChartItemModel extends Equatable {
   final int mobil;
 
   @JsonKey(fromJson: _toDouble)
-  final double total;
+  final double nominalTotal;
+
+  @JsonKey(fromJson: _toDouble)
+  final double nominalMotor;
+
+  @JsonKey(fromJson: _toDouble)
+  final double nominalMobil;
 
   const WeeklyChartItemModel({
     required this.tgl,
+    required this.hari,
     required this.motor,
     required this.mobil,
-    required this.total,
+    required this.nominalTotal,
+    required this.nominalMotor,
+    required this.nominalMobil,
   });
 
   factory WeeklyChartItemModel.fromJson(Map<String, dynamic> json) =>
@@ -31,5 +42,13 @@ class WeeklyChartItemModel extends Equatable {
   Map<String, dynamic> toJson() => _$WeeklyChartItemModelToJson(this);
 
   @override
-  List<Object?> get props => [tgl, motor, mobil, total];
+  List<Object?> get props => [
+    tgl,
+    hari,
+    motor,
+    mobil,
+    nominalTotal,
+    nominalMotor,
+    nominalMobil,
+  ];
 }

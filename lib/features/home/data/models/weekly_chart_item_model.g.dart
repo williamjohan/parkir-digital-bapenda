@@ -10,16 +10,22 @@ WeeklyChartItemModel _$WeeklyChartItemModelFromJson(
   Map<String, dynamic> json,
 ) => WeeklyChartItemModel(
   tgl: DateTime.parse(json['tgl'] as String),
+  hari: json['hari'] as String,
   motor: (json['motor'] as num?)?.toInt() ?? 0,
   mobil: (json['mobil'] as num?)?.toInt() ?? 0,
-  total: _toDouble(json['total']),
+  nominalTotal: _toDouble(json['nominalTotal']),
+  nominalMotor: _toDouble(json['nominalMotor']),
+  nominalMobil: _toDouble(json['nominalMobil']),
 );
 
 Map<String, dynamic> _$WeeklyChartItemModelToJson(
   WeeklyChartItemModel instance,
 ) => <String, dynamic>{
   'tgl': instance.tgl.toIso8601String(),
+  'hari': instance.hari,
   'motor': instance.motor,
   'mobil': instance.mobil,
-  'total': instance.total,
+  'nominalTotal': instance.nominalTotal,
+  'nominalMotor': instance.nominalMotor,
+  'nominalMobil': instance.nominalMobil,
 };

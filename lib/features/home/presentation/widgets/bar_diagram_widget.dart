@@ -4,6 +4,7 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 
 class BarDiagramWithLabels extends StatelessWidget {
   final List<double> weeklyIncome;
+  final List<String> dayLabels; // ✅ dari API
   final String selectedVehicleType;
   final List<String> vehicleTypes;
   final ValueChanged<String> onVehicleTypeChanged;
@@ -11,34 +12,35 @@ class BarDiagramWithLabels extends StatelessWidget {
   const BarDiagramWithLabels({
     super.key,
     required this.weeklyIncome,
+    required this.dayLabels,
     required this.selectedVehicleType,
     required this.vehicleTypes,
     required this.onVehicleTypeChanged,
   });
 
-  /// 🔹 FORMAT TOOLTIP (PAKAI NILAI ASLI)
+  /// 🔹 FORMAT TOOLTIP
   String _formatLabel(double value) {
     if (value >= 1000000) {
       return '${(value / 1000000).toStringAsFixed(1)}jt';
     }
     if (value >= 1000) {
-      return '${(value / 1000).toStringAsFixed(0)}rb';
+      double result = value / 1000;
+      if (result % 1 == 0) {
+        return '${result.toStringAsFixed(0)}rb';
+      } else {
+        return '${result.toStringAsFixed(1)}rb';
+      }
     }
     return value.toInt().toString();
   }
 
-  /// 🔹 FORMAT Y AXIS (TOP JADI >500rb)
+  /// 🔹 FORMAT Y AXIS
   String _formatYLabel(double value, double maxY) {
-    if (value == maxY) return '>500rb';
+    if (value == maxY) return '≥500rb';
     if (value >= 1000) {
       return '${(value / 1000).toStringAsFixed(0)}rb';
     }
     return value.toInt().toString();
-  }
-
-  String _getDayLabel(int index) {
-    const days = ['SN', 'SL', 'R', 'K', 'J', 'SB', 'M'];
-    return days[index];
   }
 
   int _getTodayIndex() {
@@ -49,12 +51,8 @@ class BarDiagramWithLabels extends StatelessWidget {
   Widget build(BuildContext context) {
     final todayIndex = _getTodayIndex();
 
-    /// 🔥 MAX Y FIX 500rb
     const double maxY = 500000;
-
-    /// 🔥 STEP BIAR RAPI (0,125,250,375,500)
     final double step = maxY / 4;
-
     final List<double> yLabels = [0, step, step * 2, step * 3, maxY];
 
     return Container(
@@ -75,7 +73,10 @@ class BarDiagramWithLabels extends StatelessWidget {
                   'Pendapatan Mingguan',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               Container(
@@ -84,46 +85,44 @@ class BarDiagramWithLabels extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child:
-                    // Alternatif dengan PopupMenuButton (lebih customizable)
-                    PopupMenuButton<String>(
-                      initialValue: selectedVehicleType,
-                      offset: const Offset(0, 40), // Memastikan muncul di bawah
-                      constraints: BoxConstraints(
-                        maxHeight: 200,
-                        maxWidth: 200,
-                      ),
-                      onSelected: onVehicleTypeChanged,
-                      itemBuilder: (context) {
-                        return vehicleTypes.map((type) {
-                          return PopupMenuItem<String>(
-                            value: type,
-                            child: SizedBox(
-                              width: 180,
-                              child: Text(
-                                type,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ),
-                          );
-                        }).toList();
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            selectedVehicleType,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
-                            ),
+                child: PopupMenuButton<String>(
+                  initialValue: selectedVehicleType,
+                  offset: const Offset(0, 40),
+                  constraints: const BoxConstraints(
+                    maxHeight: 200,
+                    maxWidth: 200,
+                  ),
+                  onSelected: onVehicleTypeChanged,
+                  itemBuilder: (context) {
+                    return vehicleTypes.map((type) {
+                      return PopupMenuItem<String>(
+                        value: type,
+                        child: SizedBox(
+                          width: 180,
+                          child: Text(
+                            type,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 12),
                           ),
-                          const Icon(Icons.arrow_drop_down, size: 20),
-                        ],
+                        ),
+                      );
+                    }).toList();
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        selectedVehicleType,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
                       ),
-                    ),
+                      const Icon(Icons.arrow_drop_down, size: 20),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -179,14 +178,21 @@ class BarDiagramWithLabels extends StatelessWidget {
                     ),
                   ),
 
+                  /// 🔥 BOTTOM LABEL DARI API
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+
+                        if (index < 0 || index >= dayLabels.length) {
+                          return const SizedBox();
+                        }
+
                         return Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(
-                            _getDayLabel(value.toInt()),
+                            dayLabels[index],
                             style: const TextStyle(fontSize: 12),
                           ),
                         );
@@ -206,7 +212,6 @@ class BarDiagramWithLabels extends StatelessWidget {
                 barGroups: List.generate(weeklyIncome.length, (index) {
                   final isToday = index == todayIndex;
 
-                  /// 🔥 CLAMP BIAR GA LEBIH DARI 500rb
                   final double visualHeight = weeklyIncome[index].clamp(
                     0,
                     maxY,
@@ -214,6 +219,7 @@ class BarDiagramWithLabels extends StatelessWidget {
 
                   return BarChartGroupData(
                     x: index,
+                    showingTooltipIndicators: [0], // 🔥 selalu tampil
                     barRods: [
                       BarChartRodData(
                         toY: visualHeight,
@@ -227,19 +233,29 @@ class BarDiagramWithLabels extends StatelessWidget {
                   );
                 }),
 
-                /// 🔹 TOOLTIP (PAKAI NILAI ASLI)
+                /// 🔹 TOOLTIP
                 barTouchData: BarTouchData(
-                  enabled: true,
+                  enabled: false,
+
                   touchTooltipData: BarTouchTooltipData(
-                    tooltipPadding: EdgeInsets.zero,
-                    tooltipMargin: 6,
+                    tooltipPadding: EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    tooltipMargin: 8,
+
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final actualValue = weeklyIncome[group.x.toInt()];
                       return BarTooltipItem(
                         _formatLabel(actualValue),
-                        const TextStyle(fontSize: 10, color: Colors.white),
+
+                        const TextStyle(
+                          fontSize: 10,
+                          color: AppColors.textSecondary,
+                        ),
                       );
                     },
+                    getTooltipColor: (_) => Colors.transparent,
                   ),
                 ),
               ),
