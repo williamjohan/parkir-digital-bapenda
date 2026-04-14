@@ -46,8 +46,32 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
     try {
       final response = await _dio.get(ApiEndpoints.weeklyChart);
 
+      // ==========================================================
+      // 🔍 [LOG X-RAY] RESPONSE WEEKLY CHART
+      // ==========================================================
+      AppLogger.debug('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓');
+      AppLogger.debug('┃ 📥 RESPONSE WEEKLY CHART');
+      AppLogger.debug('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫');
+      AppLogger.debug('┃ ✅ STATUS CODE : ${response.statusCode}');
+      AppLogger.debug('┃ 📦 RAW DATA : ${response.data}');
+      AppLogger.debug('┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛');
+
       if (response.data['isSuccess'] == true) {
         final List<dynamic> dataList = response.data['data'];
+
+        // ==========================================================
+        // 🔍 [LOG X-RAY] PARSED DATA
+        // ==========================================================
+        AppLogger.debug('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓');
+        AppLogger.debug('┃ 📊 PARSED WEEKLY CHART');
+        AppLogger.debug('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫');
+        AppLogger.debug('┃ 📈 TOTAL DATA : ${dataList.length}');
+        for (var i = 0; i < dataList.length; i++) {
+          AppLogger.debug('┃ 📌 ITEM[$i] : ${dataList[i]}');
+        }
+        AppLogger.debug('┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛');
+        // ==========================================================
+
         return dataList
             .map((json) => WeeklyChartItemModel.fromJson(json))
             .toList();
