@@ -50,6 +50,14 @@ class _HomePageState extends State<HomePage> {
   String _selectedVehicleType = 'Semua Kendaraan';
   final List<String> _vehicleTypes = ['Semua Kendaraan', 'Motor', 'Mobil'];
 
+  // Add this helper method to extract day labels
+  List<String> _getDayLabels(List<WeeklyChartItemModel> chartData) {
+    if (chartData.isEmpty) {
+      return ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+    }
+    return chartData.map((data) => data.hariSingkat).toList();
+  }
+
   // 🚀 [REFACTOR] Fungsi Mapper Asli dari WeeklyChartItemModel ke List<double>
   List<double> _getWeeklyIncomeData(
     List<WeeklyChartItemModel> chartData,
@@ -58,15 +66,15 @@ class _HomePageState extends State<HomePage> {
     if (chartData.isEmpty) {
       return List.filled(7, 0.0); // Fallback jika data kosong
     }
-
+    // disini
     return chartData.map((data) {
       switch (type) {
         case 'Motor':
-          return data.motor.toDouble();
+          return data.nominalMotor.toDouble();
         case 'Mobil':
-          return data.mobil.toDouble();
+          return data.nominalMobil.toDouble();
         default:
-          return data.total.toDouble();
+          return data.nominalTotal.toDouble();
       }
     }).toList();
   }
@@ -141,7 +149,6 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: BarDiagramWithLabels(
-                        // 🚀 [REFACTOR] Inject hasil mapping data chart dari state
                         weeklyIncome: _getWeeklyIncomeData(
                           state.weeklyChartData,
                           _selectedVehicleType,
@@ -153,7 +160,26 @@ class _HomePageState extends State<HomePage> {
                             _selectedVehicleType = newType;
                           });
                         },
+                        dayLabels: _getDayLabels(
+                          state.weeklyChartData,
+                        ), // ✅ Pass actual labels
                       ),
+
+                      // BarDiagramWithLabels(
+                      //   // 🚀 [REFACTOR] Inject hasil mapping data chart dari state
+                      //   weeklyIncome: _getWeeklyIncomeData(
+                      //     state.weeklyChartData,
+                      //     _selectedVehicleType,
+                      //   ),
+                      //   selectedVehicleType: _selectedVehicleType,
+                      //   vehicleTypes: _vehicleTypes,
+                      //   onVehicleTypeChanged: (newType) {
+                      //     setState(() {
+                      //       _selectedVehicleType = newType;
+                      //     });
+                      //   },
+                      //   dayLabels: [],
+                      // ),
                     ),
                     // 🚀 [REFACTOR] Mengirimkan data transaksi ke widget anak
                     LastActivityWidget(transactions: state.recentTransactions),
