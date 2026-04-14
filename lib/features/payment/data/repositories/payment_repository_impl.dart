@@ -1,68 +1,65 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
-import '../../domain/repositories/i_payment_repository.dart';
-import '../../domain/entities/qris_entity.dart';
 import '../datasources/payment_remote_datasource.dart';
+import '../datasources/qris_signalr_datasource.dart';
+import '../models/qris_model.dart';
+import '../../domain/entities/payment_status.dart';
+import '../../domain/entities/qris_entity.dart';
+import '../../domain/repositories/i_payment_repository.dart';
 
 @LazySingleton(as: IPaymentRepository)
 class PaymentRepositoryImpl implements IPaymentRepository {
-  final ISecureStorageManager _secureStorage;
   final IPaymentRemoteDataSource _remoteDataSource;
+  final QrisSignalRDatasource _signalRDataSource;
 
-  PaymentRepositoryImpl(this._secureStorage, this._remoteDataSource);
+  PaymentRepositoryImpl(this._remoteDataSource, this._signalRDataSource);
 
   @override
   Future<Either<Failure, QrisEntity>> generateQris({
-    required String idTransaksiLokal,
-    required String kategoriKendaraan,
+    required String nop,
+    required double amount,
   }) async {
     try {
-      // 1. Ambil Identitas Jukir dari Brankas (Bisa dipakai untuk payload API nanti)
-      final jukirProfile = await _secureStorage.getJukirProfile();
-      if (jukirProfile == null) {
-        return const Left(
-          CacheFailure('Data Jukir tidak ditemukan. Silakan login ulang.'),
-        );
-      }
-
-      // 2. HIT API (Minta Tarif dan QR ke Backend via Datasource)
-      final responseMap = await _remoteDataSource.requestQrisData(
-        kategoriKendaraan,
+      final result = await _remoteDataSource.generateQris(
+        nop: nop,
+        amount: amount,
       );
-
-      final int nominalDariServer = responseMap['data']['nominal'];
-      final String qrStringDariServer = responseMap['data']['qr_string'];
-
-      // 3. Kembalikan Entity Murni
-      // Kita langsung tempelkan idTransaksiLokal yang dilempar dari fitur parkir
-      return Right(
-        QrisEntity(
-          idTransaksi: idTransaksiLokal,
-          nominal: nominalDariServer,
-          qrString: qrStringDariServer,
-        ),
-      );
+      return Right(QrisModel.fromJson(result).toEntity());
     } catch (e) {
-      return Left(ServerFailure('Gagal memproses QRIS: ${e.toString()}'));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> confirmPayment(String idTransaksi) async {
+  Future<Either<Failure, PaymentStatus>> checkStatusManual(
+    String kodeQris,
+  ) async {
     try {
-      // Logika di sini murni HANYA menembak API Bapenda untuk cek mutasi QRIS.
-      // Tidak ada lagi intervensi ke SQLite (DatabaseHelper)!
-
-      // Simulasi latency jaringan
-      await Future.delayed(const Duration(seconds: 1));
-
-      return const Right(unit);
-    } catch (e) {
-      return Left(
-        ServerFailure('Gagal mengecek status pembayaran: ${e.toString()}'),
+      final result = await _remoteDataSource.checkQrisCallback(
+        kodeQris: kodeQris,
       );
+      // Mapping string status dari API ke Enum Domain
+      final statusStr = result['status']?.toString() ?? 'PENDING';
+      return Right(PaymentStatus.fromString(statusStr));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
     }
+  }
+
+  @override
+  Stream<PaymentStatus> watchPaymentStatus(String kodeQris) async* {
+    // 1. Hubungkan SignalR
+    await _signalRDataSource.connectAndJoin(kodeQris);
+
+    // 2. Transform Stream String -> Stream Enum
+    yield* _signalRDataSource.qrisStatusStream.map((statusStr) {
+      return PaymentStatus.fromString(statusStr);
+    });
+  }
+
+  @override
+  Future<void> stopMonitoring() async {
+    await _signalRDataSource.disconnect();
   }
 }

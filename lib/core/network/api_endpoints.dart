@@ -18,4 +18,6 @@ class ApiEndpoints {
   static const String weeklyChart = '/api/mobile/parking/weekly-chart';
   static const String laporanPendapatan =
       '/api/mobile/parking/laporan-pendapatan';
+  static const String generateQris = '/api/mobile/parking/generate-qris';
+  static const String callBack = '/api/mobile/parking/callback-qris';
 }
