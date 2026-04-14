@@ -1,5 +1,3 @@
-// lib/features/parking_transaction/data/datasources/parking_transaction_local_datasource_impl.dart
-
 import 'dart:io';
 import 'package:injectable/injectable.dart';
 import '../../../../core/storage/database_helper.dart';
@@ -17,9 +15,9 @@ class ParkingTransactionLocalDataSourceImpl
   @override
   Future<LocalTransactionModel> saveNewTransaction({
     String? platNomor,
-    required String jenisTarif, // 🚀 Sesuai Swagger
-    required int nominal, // 🚀 Sesuai Swagger
-    required String metodePembayaran, // 🚀 Sesuai Swagger
+    required String jenisTarif,
+    required int nominal,
+    required String metodePembayaran,
     String? rawImagePath,
     required bool isFree,
     required String idJukir,
@@ -31,7 +29,6 @@ class ParkingTransactionLocalDataSourceImpl
   }) async {
     String? finalImagePath;
 
-    // 🚀 [PERBAIKAN LOGIKA]: Kalau ada foto, langsung kompres
     if (rawImagePath != null && rawImagePath.isNotEmpty) {
       final String fileName = 'parkir_${DateTime.now().millisecondsSinceEpoch}';
       finalImagePath = await _imageService.compressAndSaveImage(
@@ -46,23 +43,22 @@ class ParkingTransactionLocalDataSourceImpl
       }
     }
 
-    // 🚀 [PERBAIKAN UTILS]: Generate manual sementara atau sesuaikan utils Anda nanti
     final String idTransaksi = 'TRX-${DateTime.now().millisecondsSinceEpoch}';
     final String waktuTransaksi = DateTime.now().toIso8601String();
-    final String status = isFree
-        ? 'FREE_OFFLINE'
-        : (metodePembayaran == 'qris' ? 'PENDING_QRIS' : 'PENDING_CARD');
+
+    // 🚀 [PERBAIKAN RANJAU 2]: Kembalikan ke PENDING_PAYMENT agar tidak menghancurkan flow CapturePage!
+    // Metode pembayaran (qris/card) sudah tersimpan dengan aman di kolom "metodePembayaran",
+    // jadi status transaksi cukup "PENDING_PAYMENT".
+    final String status = isFree ? 'FREE_OFFLINE' : 'PENDING_PAYMENT';
 
     final transaction = LocalTransactionModel(
       idTransaksiLokal: idTransaksi,
-      kategoriKendaraan:
-          jenisTarif, // 🚀 [TRIK AMAN]: Map jenisTarif ke kolom kategoriKendaraan lama!
-      nominal: isFree ? 0 : nominal, // Harga dinamis dari API
-      metodePembayaran:
-          metodePembayaran, // 🚀 [SATU-SATUNYA YANG BARU]: Harus ditambahkan ke Model nanti
+      kategoriKendaraan: jenisTarif,
+      nominal: isFree ? 0 : nominal,
+      metodePembayaran: metodePembayaran,
       platNomor: platNomor ?? 'TANPA PLAT',
       waktuTransaksi: waktuTransaksi,
-      status: status,
+      status: status, // 🚀 Aman!
       idJukir: idJukir,
       namaJukir: namaJukir,
       nop: nop,
@@ -95,5 +91,25 @@ class ParkingTransactionLocalDataSourceImpl
     final List<Map<String, dynamic>> maps = await DatabaseHelper.instance
         .getUnsyncedTransactions();
     return maps.map((map) => LocalTransactionModel.fromJson(map)).toList();
+  }
+
+  @override
+  Future<void> updateSyncStatus({
+    required String idTransaksiLokal,
+    required int isSync,
+  }) async {
+    try {
+      // 🚀 [PERBAIKAN RANJAU 1]: Gunakan DatabaseHelper.instance.database
+      final db = await DatabaseHelper.instance.database;
+
+      await db.update(
+        'transactions', // Pastikan nama tabel ini sesuai dengan yang ada di DatabaseHelper Anda
+        {'is_sync': isSync},
+        where: 'id_transaksi_lokal = ?',
+        whereArgs: [idTransaksiLokal],
+      );
+    } catch (e) {
+      throw Exception('Gagal update status sync: $e');
+    }
   }
 }

@@ -70,10 +70,10 @@ class ParkingTransactionRepositoryImpl
           jukirProfile: jukirProfile,
         );
 
-        // 5. ✅ Kalau remote berhasil, tandai SYNCED di SQLite
-        await _localDataSource.updateTransactionStatus(
+        // 5. 🚀 [PERBAIKAN]: Panggil fungsi updateSyncStatus, BUKAN updateTransactionStatus
+        await _localDataSource.updateSyncStatus(
           idTransaksiLokal: transaction.idTransaksiLokal,
-          newStatus: 'SYNCED',
+          isSync: 1, // 1 berarti sukses terkirim ke API
         );
       } catch (remoteError) {
         // Tidak throw ke atas — user tetap dapat success response

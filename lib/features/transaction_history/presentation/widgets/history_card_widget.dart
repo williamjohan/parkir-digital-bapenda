@@ -128,7 +128,7 @@ class HistoryCardWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Petugas: ${item.namaPetugasBersih} (Shift ${item.isFreeTransaction ? '-' : '1'})', // 🚀 Langsung Panggil
+                    'Petugas: ${item.namaPetugasBersih} (Shift ${item.shift})',
                     style: const TextStyle(fontSize: 11, color: Colors.grey),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

@@ -4,16 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/components/pb_calendar_range_picker.dart';
-import '../../../../core/design_system/components/pb_ticket_preview_widget.dart';
-// 🚀 [BARU] Pastikan import Snackbar sudah ada
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
+import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
 import '../../data/models/history_item_model.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
 
 class TransactionHistoryPage extends StatefulWidget {
-  // 🚀 [BARU] Parameter untuk menangkap tanggal dari Home
   final DateTime? initialDate;
 
   const TransactionHistoryPage({super.key, this.initialDate});
@@ -30,17 +28,14 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   void initState() {
     super.initState();
 
-    // 🚀 [REFACTOR] Gunakan tanggal kiriman dari Home, atau hari ini jika null
     final targetDate = widget.initialDate ?? DateTime.now();
 
     _startDate = DateTime(targetDate.year, targetDate.month, targetDate.day);
     _endDate = DateTime(targetDate.year, targetDate.month, targetDate.day);
 
-    // Tarik data saat landing
     context.read<TransactionHistoryCubit>().fetchHistory(_startDate, _endDate);
   }
 
-  // --- Date picker
   Future<void> _showCalendarDialog() async {
     final DateTimeRange? picked = await PbCalendarRangePicker.show(
       context: context,
@@ -49,8 +44,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     );
 
     if (picked != null) {
-      // 🚀 [UI VALIDATION]: Pencegahan ganda (Opsional).
-      // Cubit akan menolak > 30 hari, tapi kita juga bisa mencegah state UI berubah jika tidak valid.
       final difference = picked.end.difference(picked.start).inDays.abs();
       if (difference > 30) {
         PbStatusSnackbar.show(
@@ -58,7 +51,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
           message: 'Rentang waktu maksimal pencarian adalah 30 hari.',
           isError: true,
         );
-        return; // Batal mengubah tanggal
+        return;
       }
 
       setState(() {
@@ -86,51 +79,21 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     }
   }
 
-  // Bottom Sheet untuk Modal Preview Karcis
+  // 🚀 [REFACTOR CLEAN CODE]: Cukup Panggil Pintu Masuk 2 dari Dialog Engine Anda!
   void _showPreviewKarcis(
     BuildContext context,
     HistoryItemModel item,
     Map<String, dynamic> profile,
   ) {
-    showDialog(
+    PbTicketPrintDialog.showFromHistory(
       context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        String formattedDate = item.tglTrx;
-        try {
-          final date = DateTime.parse(item.tglTrx);
-          formattedDate = DateFormat(
-            'dd MMM yyyy • HH:mm',
-            'id_ID',
-          ).format(date);
-        } catch (_) {}
-
-        return Dialog(
-          child: PbPreviewTicketWidget(
-            deviceId: profile['idDevice']?.toString() ?? '',
-            orderId: item.orderId,
-            objekPajak: profile['namaObjekPajak'] ?? 'Objek Pajak',
-            alamatObjekPajak: profile['alamat'] ?? 'Alamat Objek Pajak',
-            waktuParkir: formattedDate,
-            tipeKendaraan: item.jenisTarif,
-            isQuickMode: item.modePlat == 0,
-            isFree: item.kredit == 0 || item.jenisTarif == 'FREE',
-            noKendaraan: item.platNumber == '-' ? '' : item.platNumber,
-            tarifParkir: item.kredit,
-            idTransaksi: item.orderId,
-            okPressed: () => Navigator.pop(context),
-            printPressed: () {
-              // TODO: Integrasi Printer Bluetooth
-            },
-          ),
-        );
-      },
+      historyTx: item,
+      profile: profile,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // 🚀 [BARU] Bungkus Scaffold dengan BlocListener untuk menangkap pesan Error/Validasi
     return BlocListener<TransactionHistoryCubit, TransactionHistoryState>(
       listener: (context, state) {
         if (state is TransactionHistoryError) {
@@ -142,7 +105,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
         appBar: AppBar(title: const Text('Riwayat Pendapatan')),
         body: Column(
           children: [
-            // --- INFO FILTER BAR DI ATAS ---
             Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -176,14 +138,12 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             ),
             const Divider(height: 1),
 
-            // --- LIST DATA ---
             Expanded(
               child: BlocBuilder<TransactionHistoryCubit, TransactionHistoryState>(
                 builder: (context, state) {
                   if (state is TransactionHistoryLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is TransactionHistoryError) {
-                    // Tampilkan pesan error di tengah layar selain dari Snackbar
                     return Center(
                       child: Padding(
                         padding: const EdgeInsets.all(32.0),
@@ -232,7 +192,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                           ),
                         ),
 
-                        // AREA LIST TRANSAKSI
                         Expanded(
                           child: data.isEmpty
                               ? Center(

@@ -25,5 +25,10 @@ abstract class IParkingTransactionLocalDataSource {
     required String newStatus,
   });
 
+  Future<void> updateSyncStatus({
+    required String idTransaksiLokal,
+    required int isSync,
+  });
+
   Future<List<LocalTransactionModel>> getUnsyncedTransactions();
 }

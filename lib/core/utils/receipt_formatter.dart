@@ -61,8 +61,7 @@ class ReceiptFormatter {
     // --- 6. TEXT 3 SEGMENT (Digabung 1 Baris Agar Hemat!) ---
     // Format: Motor * L 1234 AB * Rp2.000
     String segmen3 =
-        // "${transaction.jenisTarif} * $platBersih * ${transaction.formattedNominal}";
-        "${transaction.jenisTarif} * $platBersih * 5000";
+        "${transaction.jenisTarif} * $platBersih * ${transaction.formattedNominal}";
     bytes += generator.text(
       segmen3,
       styles: const PosStyles(align: PosAlign.center, bold: true),
@@ -104,7 +103,7 @@ class ReceiptFormatter {
     );
 
     // Jarak aman untuk disobek dari printer
-    bytes += generator.feed(2);
+    bytes += generator.feed(4);
 
     return bytes;
   }

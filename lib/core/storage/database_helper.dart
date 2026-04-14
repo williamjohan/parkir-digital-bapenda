@@ -111,14 +111,13 @@ class DatabaseHelper {
   ) async {
     final db = await instance.database;
 
-    final Map<String, dynamic> updateData = {'status': newStatus};
-
-    // ✅ Jika SYNCED, tandai is_sync = 1 sekalian
-    // Ini penting agar getUnsyncedDailySummary tidak hitung double
+    // 🚀 [PENJAGA GERBANG]: Jangan biarkan status pembayaran dirusak!
     if (newStatus == 'SYNCED') {
-      updateData['is_sync'] = 1;
+      // Abaikan secara paksa! Gunakan updateSyncStatus atau markTransactionAsSynced.
+      return 0;
     }
 
+    final Map<String, dynamic> updateData = {'status': newStatus};
     return await db.update(
       tableTransactions,
       updateData,

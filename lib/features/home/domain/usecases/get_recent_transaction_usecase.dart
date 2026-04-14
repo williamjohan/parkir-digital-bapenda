@@ -37,14 +37,16 @@ class GetRecentTransactionsUseCase {
       final int petugasId = (rawPetugasId is int)
           ? rawPetugasId
           : int.tryParse(rawPetugasId?.toString() ?? '0') ?? 0;
+      final now = DateTime.now();
+      final normalizedDate = DateTime(now.year, now.month, now.day, 12);
 
       // 3. Selalu tembak API untuk data lengkap dari server
       final apiTransactions = await _remoteDataSource.getHistory(
         nop: nop,
         petugasId: petugasId,
         shift: shift,
-        startDate: DateTime.now(),
-        endDate: DateTime.now(),
+        startDate: normalizedDate,
+        endDate: normalizedDate,
         limit: limit,
       );
 

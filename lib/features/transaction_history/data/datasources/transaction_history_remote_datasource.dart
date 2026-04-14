@@ -33,25 +33,46 @@ class TransactionHistoryRemoteDataSourceImpl
     required DateTime endDate,
     int? limit,
   }) async {
-    // 🚀 [STRATEGI AMAN]: Set jam ke 12:00 agar saat .toUtc() tidak lompat ke hari kemarin
-    final sDate = DateTime(startDate.year, startDate.month, startDate.day, 12);
-    final eDate = DateTime(endDate.year, endDate.month, endDate.day, 12);
+    final sDate = DateTime(
+      startDate.year,
+      startDate.month,
+      startDate.day,
+      0,
+      0,
+      0,
+    );
+    final eDate = DateTime(
+      endDate.year,
+      endDate.month,
+      endDate.day,
+      23,
+      59,
+      59,
+    );
 
-    // 🚀 [STANDAR SWAGGER]: Ambil 23 karakter (milidetik) + Z
-    final String startIso =
-        "${sDate.toUtc().toIso8601String().substring(0, 23)}Z";
-    final String endIso =
-        "${eDate.toUtc().toIso8601String().substring(0, 23)}Z";
+    final String startIso = "${sDate.toIso8601String().substring(0, 23)}Z";
+    final String endIso = "${eDate.toIso8601String().substring(0, 23)}Z";
 
     final formData = FormData.fromMap({
       'nop': nop,
-      'petugasId': petugasId
-          .toString(), // Pastikan String sesuai praktik aman BE
+      'petugasId': petugasId.toString(),
       'shift': shift,
       'tglAwal': startIso,
       'tglAkhir': endIso,
-      if (limit != null) 'limit': limit.toString(),
+      'limit': limit?.toString() ?? '',
     });
+
+    // ==========================================================
+    // 🔍 [LOG X-RAY] CEK PAYLOAD HISTORY
+    // ==========================================================
+    AppLogger.debug('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓');
+    AppLogger.debug('┃ 🔍 MENGIRIM GET HISTORY KE /laporan-pendapatan');
+    AppLogger.debug('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫');
+    for (var field in formData.fields) {
+      AppLogger.debug('┃ 🔑 ${field.key} : ${field.value}');
+    }
+    AppLogger.debug('┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛');
+    // ==========================================================
 
     try {
       final response = await _dio.post(
@@ -75,7 +96,7 @@ class TransactionHistoryRemoteDataSourceImpl
 
       throw const ServerException(
         statusCode: 500,
-        message: 'Terjadi kesalahan internal saat memproses data login.',
+        message: 'Terjadi kesalahan internal saat memproses data riwayat.',
       );
     }
   }

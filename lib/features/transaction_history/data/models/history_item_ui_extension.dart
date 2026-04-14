@@ -53,7 +53,10 @@ extension HistoryItemUiX on HistoryItemModel {
   // 6. Logika Plat Nomor (Title & Subtitle)
   bool get isNoPlate {
     final cleanPlat = platNumber.trim().toLowerCase();
-    return cleanPlat.isEmpty || cleanPlat == '-' || cleanPlat == 'null';
+    return cleanPlat.isEmpty ||
+        cleanPlat == '-' ||
+        cleanPlat == 'null' ||
+        cleanPlat == 'tanpa plat';
   }
 
   String get titleText => isNoPlate ? 'TANPA PLAT' : 'PLAT';

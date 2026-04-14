@@ -52,7 +52,6 @@ class TransactionCubit extends Cubit<TransactionState> {
     final List<TarifModel> dummyFree = [
       const TarifModel(id: -1, jenisTarif: 'Motor', tarif: 0),
       const TarifModel(id: -2, jenisTarif: 'Mobil', tarif: 0),
-      const TarifModel(id: -3, jenisTarif: 'Bus / Truk', tarif: 0),
     ];
     emit(
       state.copyWith(status: TransactionStatus.initial, tarifList: dummyFree),

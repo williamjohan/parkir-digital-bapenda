@@ -12,6 +12,7 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
 
+import '../../home/presentation/cubit/home_cubit.dart';
 import '../cubit/transaction_cubit.dart';
 import '../cubit/transaction_state.dart';
 import '../widgets/card_jenis_kendaraan.dart';
@@ -63,7 +64,8 @@ class _TransactionPageState extends State<TransactionPage> {
               context,
               message: 'Data Parkir Gratis Tersimpan!',
             );
-            context.pop(); // Kembali ke Dashboard / Home
+            context.read<HomeCubit>().loadDashboardData();
+            context.pop();
           } else {
             // Jika Anda sudah menyiapkan PaymentPageArgs, Anda bisa mem-passingnya di sini
             // contoh: final args = PaymentPageArgs(...); context.push(AppRoutes.payment, extra: args);

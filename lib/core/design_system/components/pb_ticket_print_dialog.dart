@@ -17,6 +17,7 @@ class PbTicketPrintDialog {
     required bool isQuickMode,
     required String noKendaraan,
     required int tarifParkir,
+    required String shift,
     VoidCallback? onClosed, // 🚀 Delegasi Callback untuk pembersihan layar
   }) {
     // Adapter: Ubah dari LocalTransactionModel menjadi HistoryItemModel di udara
@@ -30,6 +31,7 @@ class PbTicketPrintDialog {
       kredit: tarifParkir,
       namaPetugas: profile['namaUser'] ?? 'Petugas',
       modePlat: isQuickMode ? 0 : 1,
+      shift: shift,
     );
 
     _showCoreDialog(
