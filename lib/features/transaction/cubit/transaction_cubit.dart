@@ -3,14 +3,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../core/storage/secure_storage_manager.dart';
+import '../../home/domain/usecases/get_hybrid_tarif_usecase.dart';
 import 'transaction_state.dart';
 import '../../home/data/models/tarif_model.dart';
-import '../../home/domain/usecases/get_local_tarif_usecase.dart';
 import '../../parking_transaction/domain/usecases/save_parking_transaction_usecase.dart';
 
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
-  final GetLocalTarifUseCase _getTarifUseCase;
+  final GetHybridTarifUseCase _getTarifUseCase;
   final SaveParkingTransactionUseCase _saveTransactionUseCase;
   final ISecureStorageManager _secureStorage;
 
@@ -24,11 +24,10 @@ class TransactionCubit extends Cubit<TransactionState> {
     emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
 
     final result = await _getTarifUseCase.execute();
-
+    if (isClosed) return;
     result.fold(
       (failure) {
         if (isFree) {
-          // 🚀 Jika gagal baca atau belum sync, tetap berikan pilihan untuk OP Gratis
           _injectFreeTariff();
         } else {
           emit(
@@ -103,6 +102,7 @@ class TransactionCubit extends Cubit<TransactionState> {
       modePlat: modePlat,
       rawImagePath: state.imagePath,
     );
+    if (isClosed) return;
 
     await result.fold(
       (failure) async => emit(
