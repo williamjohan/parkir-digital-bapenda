@@ -11,9 +11,7 @@ import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
-
 import '../../../core/design_system/components/pb_ticket_print_dialog.dart';
-import '../../home/presentation/cubit/home_cubit.dart';
 import '../../payment/presentation/pages/payment_page.dart';
 import '../cubit/transaction_cubit.dart';
 import '../cubit/transaction_state.dart';

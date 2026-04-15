@@ -7,6 +7,7 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
@@ -162,16 +163,25 @@ class HomeDrawer extends StatelessWidget {
               ],
             ),
             onTap: () {
-              Navigator.pop(context); // Tutup laci
+              final safeNavigator = Navigator.of(context, rootNavigator: true);
+              final safeContext = safeNavigator.context;
+
+              Navigator.pop(context);
 
               PbShowDialog.show(
-                context,
+                safeContext,
                 title: 'Konfirmasi Logout',
                 description: 'Apakah Anda yakin ingin keluar dari aplikasi?',
-                onConfirm: () {
-                  // [PERBAIKAN 2]: Panggil langsung lewat Locator GetIt!
-                  // Ini akan mengabaikan masalah "Context" pada Dialog.
-                  locator<AppAuthCubit>().forceLogout();
+                onConfirm: () async {
+                  showDialog(
+                    context: safeContext,
+                    barrierDismissible: false,
+                    builder: (BuildContext dialogContext) {
+                      return const Center(child: AppLoadingWidget(size: 150));
+                    },
+                  );
+                  await Future.delayed(const Duration(milliseconds: 800));
+                  await locator<AppAuthCubit>().forceLogout();
                 },
               );
             },
