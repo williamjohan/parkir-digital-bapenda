@@ -1,33 +1,81 @@
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
+import '../../../../core/errors/exception.dart';
+import '../../../../core/network/dio_error_handler.dart';
 
 abstract class IPaymentRemoteDataSource {
-  /// Menerima kategori (Mobil/Motor) dan mengembalikan respons mentah (JSON/Map)
-  Future<Map<String, dynamic>> requestQrisData(String kategoriKendaraan);
+  Future<Map<String, dynamic>> generateQris({
+    required String nop,
+    required double amount,
+  });
+
+  Future<Map<String, dynamic>> checkQrisCallback({required String kodeQris});
 }
 
 @LazySingleton(as: IPaymentRemoteDataSource)
 class PaymentRemoteDataSourceImpl implements IPaymentRemoteDataSource {
+  final Dio _dio;
+
+  PaymentRemoteDataSourceImpl(this._dio);
+
   @override
-  Future<Map<String, dynamic>> requestQrisData(String kategoriKendaraan) async {
-    // 1. SIMULASI LATENCY JARINGAN (Seolah-olah nunggu server Bapenda)
-    await Future.delayed(const Duration(seconds: 2));
+  Future<Map<String, dynamic>> generateQris({
+    required String nop,
+    required double amount,
+  }) async {
+    try {
+      final formData = FormData.fromMap({"nop": nop, "amount": amount.toInt()});
 
-    // 2. LOGIK BISNIS (DUMMY SERVER)
-    // Nanti saat BE siap, blok ini tinggal diganti dengan:
-    // final response = await dio.post('/api/qris', data: {'kategori': kategoriKendaraan});
-    // return response.data;
+      final response = await _dio.post(
+        ApiEndpoints.generateQris,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
 
-    final isMobil = kategoriKendaraan.toLowerCase() == 'mobil';
-    final int nominalTarif = isMobil ? 5000 : 2000;
+      if (response.data['isSuccess'] == true) {
+        return response.data['data'];
+      } else {
+        throw ServerException(
+          statusCode: response.data['statusCode'] ?? response.statusCode ?? 500,
+          message: response.data['message'] ?? 'Gagal generate QRIS',
+        );
+      }
+    } on DioException catch (e) {
+      throw DioErrorHandler.handle(e);
+    } catch (e) {
+      throw ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal: $e',
+      );
+    }
+  }
 
-    // Kembalikan dalam bentuk "Raw JSON" layaknya respons API asli
-    return {
-      'status': 'success',
-      'data': {
-        'nominal': nominalTarif,
-        'qr_string':
-            '00020101021226590011ID.CO.BPDJATIM.WWW0118936001220000028247020F00000000000000005204581453033605802ID5919BAPENDA KOTA SURABAYA6013KOTA SURABAYA610560275624701140224021204090507202741910712202402122404073347526304EDCB',
-      },
-    };
+  @override
+  Future<Map<String, dynamic>> checkQrisCallback({
+    required String kodeQris,
+  }) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.callBack,
+        data: {"kodeQris": kodeQris},
+      );
+
+      if (response.data['isSuccess'] == true) {
+        return response.data['data'];
+      } else {
+        throw ServerException(
+          statusCode: response.data['statusCode'] ?? response.statusCode ?? 500,
+          message: response.data['message'] ?? 'Gagal mengecek status QRIS',
+        );
+      }
+    } on DioException catch (e) {
+      throw DioErrorHandler.handle(e);
+    } catch (e) {
+      throw ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan pengecekan: $e',
+      );
+    }
   }
 }

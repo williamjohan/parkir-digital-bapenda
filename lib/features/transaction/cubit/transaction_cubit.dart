@@ -2,6 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../core/storage/secure_storage_manager.dart';
 import 'transaction_state.dart';
 import '../../home/data/models/tarif_model.dart';
 import '../../home/domain/usecases/get_local_tarif_usecase.dart';
@@ -11,9 +12,13 @@ import '../../parking_transaction/domain/usecases/save_parking_transaction_useca
 class TransactionCubit extends Cubit<TransactionState> {
   final GetLocalTarifUseCase _getTarifUseCase;
   final SaveParkingTransactionUseCase _saveTransactionUseCase;
+  final ISecureStorageManager _secureStorage;
 
-  TransactionCubit(this._getTarifUseCase, this._saveTransactionUseCase)
-    : super(const TransactionState());
+  TransactionCubit(
+    this._getTarifUseCase,
+    this._saveTransactionUseCase,
+    this._secureStorage,
+  ) : super(const TransactionState());
 
   Future<void> init(bool isFree) async {
     emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
@@ -47,7 +52,6 @@ class TransactionCubit extends Cubit<TransactionState> {
     );
   }
 
-  // 🚀 FUNGSI KHUSUS UNTUK MEMBUAT LIST KENDARAAN GRATIS
   void _injectFreeTariff() {
     final List<TarifModel> dummyFree = [
       const TarifModel(id: -1, jenisTarif: 'Motor', tarif: 0),
@@ -100,19 +104,24 @@ class TransactionCubit extends Cubit<TransactionState> {
       rawImagePath: state.imagePath,
     );
 
-    result.fold(
-      (failure) => emit(
+    await result.fold(
+      (failure) async => emit(
         state.copyWith(
           status: TransactionStatus.failure,
           errorMessage: failure.message,
         ),
       ),
-      (transactionResult) => emit(
-        state.copyWith(
-          status: TransactionStatus.success,
-          savedTransaction: transactionResult,
-        ),
-      ),
+      (transactionResult) async {
+        final profile = await _secureStorage.getJukirProfile() ?? {};
+
+        emit(
+          state.copyWith(
+            status: TransactionStatus.success,
+            savedTransaction: transactionResult,
+            jukirProfile: profile,
+          ),
+        );
+      },
     );
   }
 }

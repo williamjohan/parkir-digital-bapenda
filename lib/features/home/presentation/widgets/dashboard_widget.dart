@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
@@ -6,6 +7,7 @@ import 'package:parkir_digital_bapenda/features/home/presentation/widgets/dashbo
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../cubit/home_cubit.dart';
 
 class DashboardWidget extends StatelessWidget {
   // <--- Public Class
@@ -105,9 +107,16 @@ class DashboardWidget extends StatelessWidget {
           PbPrimaryButton(
             text: "Tambah Transaksi",
             variant: PbButtonVariant.outlinedSecondaryLight,
-            onPressed: () {
-              // context.push(AppRoutes.transaction);
-              context.push(AppRoutes.transaction, extra: isFree);
+            onPressed: () async {
+              final result = await context.push<bool?>(
+                AppRoutes.transaction,
+                extra: isFree,
+              );
+
+              if (!context.mounted) return;
+              if (result == true) {
+                context.read<HomeCubit>().loadDashboardData();
+              }
             },
           ),
         ],

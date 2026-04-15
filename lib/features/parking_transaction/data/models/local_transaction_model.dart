@@ -16,9 +16,8 @@ class LocalTransactionModel {
   final String? platNomor;
 
   @JsonKey(name: 'kategori_kendaraan')
-  final String kategoriKendaraan; // 🚀 Nanti diisi pakai nilai jenisTarif dari API
+  final String kategoriKendaraan;
 
-  // 🚀 [TAMBAHAN BARU]: Untuk mapping ke field "sof" di Swagger
   @JsonKey(name: 'metode_pembayaran')
   final String metodePembayaran;
 

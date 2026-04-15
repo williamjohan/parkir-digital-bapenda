@@ -16,6 +16,7 @@ class TransactionState extends Equatable {
   final String? errorMessage;
   final String? imagePath;
   final LocalTransactionModel? savedTransaction;
+  final Map<String, dynamic> jukirProfile;
 
   const TransactionState({
     this.status = TransactionStatus.initial,
@@ -27,16 +28,15 @@ class TransactionState extends Equatable {
     this.errorMessage,
     this.imagePath,
     this.savedTransaction,
+    this.jukirProfile = const {},
   });
 
-  // 🚀 [PERBAIKAN VALIDASI]:
   // Jika Gratis: Cukup pilih kendaraan. Jika Bayar: Wajib kendaraan + metode pembayaran.
   bool get isValid {
     if (isFree) return selectedTarif != null;
     return selectedTarif != null && metodePembayaran != null;
   }
 
-  // 🚀 [TAMBAHAN]: Cek apakah data tarif dari SQLite kosong
   bool get isTarifEmpty => tarifList.isEmpty;
 
   TransactionState copyWith({
@@ -49,6 +49,7 @@ class TransactionState extends Equatable {
     String? errorMessage,
     String? imagePath,
     LocalTransactionModel? savedTransaction,
+    Map<String, dynamic>? jukirProfile,
   }) {
     return TransactionState(
       status: status ?? this.status,
@@ -60,6 +61,7 @@ class TransactionState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       imagePath: imagePath ?? this.imagePath,
       savedTransaction: savedTransaction ?? this.savedTransaction,
+      jukirProfile: jukirProfile ?? this.jukirProfile,
     );
   }
 
@@ -74,5 +76,6 @@ class TransactionState extends Equatable {
     errorMessage,
     imagePath,
     savedTransaction,
+    jukirProfile,
   ];
 }

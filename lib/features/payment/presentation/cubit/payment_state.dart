@@ -1,6 +1,5 @@
-// lib/features/payment/presentation/cubit/payment_state.dart
-
 import 'package:equatable/equatable.dart';
+import '../../domain/entities/qris_entity.dart';
 
 abstract class PaymentState extends Equatable {
   const PaymentState();
@@ -13,41 +12,34 @@ class PaymentInitial extends PaymentState {}
 
 class PaymentLoading extends PaymentState {}
 
-// State ketika UI harus menggambar QRIS di layar
-class PaymentQrisGenerated extends PaymentState {
-  final String idTransaksi;
-  final String qrisData;
-  final int nominal;
-  final Map<String, dynamic>? profile;
-
-  const PaymentQrisGenerated(
-    this.idTransaksi,
-    this.qrisData,
-    this.nominal,
-    this.profile,
-  );
+class PaymentQrisReady extends PaymentState {
+  final QrisEntity qris;
+  const PaymentQrisReady(this.qris);
 
   @override
-  List<Object?> get props => [idTransaksi, qrisData, nominal, profile];
+  List<Object?> get props => [qris];
 }
 
-// State ketika Jukir menekan "OK/Selesai"
-class PaymentConfirmed extends PaymentState {}
-
-class PaymentFailure extends PaymentState {
+class PaymentSuccess extends PaymentState {
   final String message;
-
-  const PaymentFailure(this.message);
+  const PaymentSuccess(this.message);
 
   @override
   List<Object?> get props => [message];
 }
 
-class PaymentProfileLoaded extends PaymentState {
-  final Map<String, dynamic> profile;
-
-  const PaymentProfileLoaded(this.profile);
+class PaymentError extends PaymentState {
+  final String message;
+  const PaymentError(this.message);
 
   @override
-  List<Object?> get props => [profile];
+  List<Object?> get props => [message];
+}
+
+class PaymentTimeout extends PaymentState {
+  final String message;
+  const PaymentTimeout(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }
