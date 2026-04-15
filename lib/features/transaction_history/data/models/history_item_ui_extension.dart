@@ -52,17 +52,24 @@ extension HistoryItemUiX on HistoryItemModel {
 
   // 6. Logika Plat Nomor (Title & Subtitle)
   bool get isNoPlate {
-    final cleanPlat = platNumber.trim().toLowerCase();
+    // 🚀 [PERISAI NULL]: Gunakan fallback string kosong ('') jika platNumber adalah null
+    final cleanPlat = (platNumber ?? '').trim().toLowerCase();
+
     return cleanPlat.isEmpty ||
         cleanPlat == '-' ||
         cleanPlat == 'null' ||
         cleanPlat == 'tanpa plat';
   }
 
-  String get titleText => isNoPlate ? 'TANPA PLAT' : 'PLAT';
+  String get titleText => isNoPlate ? 'TANPA PLAT' : platNumber!.toUpperCase();
 
   String get subtitleText {
-    final String displayPlat = isNoPlate ? 'Tanpa Plat' : platNumber;
+    // Gunakan titleText agar konsisten (huruf besar/kecilnya terjaga)
+    final String displayPlat = isNoPlate
+        ? 'Tanpa Plat'
+        : platNumber!.toUpperCase();
+
+    // Hasil: "Motor" atau "Motor ( L 1234 AB )"
     return isNoPlate ? jenisKendaraan : '$jenisKendaraan ( $displayPlat )';
   }
 }

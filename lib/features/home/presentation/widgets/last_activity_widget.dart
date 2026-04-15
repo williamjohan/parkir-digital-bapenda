@@ -109,7 +109,7 @@ class LastActivityWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.isNoPlate ? 'TANPA PLAT' : item.platNumber,
+                            item.titleText,
                             style: AppTypography.heading6.copyWith(
                               color: AppColors.primaryDark,
                               fontSize: 14, // Teks tidak terlalu mendominasi

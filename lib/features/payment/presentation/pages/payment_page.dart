@@ -116,7 +116,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 status: 'PAID_ONLINE',
                 idJukir: _profile?['idUser']?.toString() ?? '',
                 namaJukir: _profile?['namaUser'] ?? '',
-                nop: _profile?['nop'] ?? '',
+                // nop: _profile?['nop'] ?? '',
                 modePlat:
                     widget.args.platNomor.isEmpty ||
                         widget.args.platNomor == '-'
@@ -169,9 +169,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CardQrisWidget(
-                        url: state
-                            .qris
-                            .qrisValue, // 🚀 Tampilkan string QRIS asli dari API Bapenda!
+                        url: state.qris.qrisValue,
                         objekPajak:
                             _profile?['namaObjekPajak'] ?? 'Objek Pajak',
                         idTransaksi: widget.args.idTransaksiLokal,

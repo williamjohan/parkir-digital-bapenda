@@ -14,23 +14,24 @@ class ParkingTransactionLocalDataSourceImpl
   ParkingTransactionLocalDataSourceImpl(this._imageService);
 
   @override
+  @override
   Future<LocalTransactionModel> saveNewTransaction({
     String? platNomor,
     required String jenisTarif,
     required int nominal,
     required String metodePembayaran,
+    String? noKartuKue, // 🚀 Masuk ke parameter
     String? rawImagePath,
     required bool isFree,
+    required int modePlat,
     required String idJukir,
     required String namaJukir,
-    required String nop,
-    required int modePlat,
     String? latitude,
     String? longitude,
   }) async {
     String? finalImagePath;
 
-    if (rawImagePath != null && rawImagePath.isNotEmpty) {
+    if (rawImagePath != null && rawImagePath.trim().isNotEmpty) {
       final String fileName = 'parkir_${DateTime.now().millisecondsSinceEpoch}';
       finalImagePath = await _imageService.compressAndSaveImage(
         originalFile: File(rawImagePath),
@@ -44,24 +45,21 @@ class ParkingTransactionLocalDataSourceImpl
       }
     }
 
-    final String idTransaksi = TransactionIdUtils.generateOrderId();
-    final String waktuTransaksi = DateTime.now().toIso8601String();
-
-    // Metode pembayaran (qris/card) sudah tersimpan dengan aman di kolom "metodePembayaran",
-    // jadi status transaksi cukup "PENDING_PAYMENT".
-    final String status = isFree ? 'FREE_OFFLINE' : 'PENDING_PAYMENT';
+    final String safePlat = (platNomor == null || platNomor.trim().isEmpty)
+        ? '-'
+        : platNomor.trim().toUpperCase();
 
     final transaction = LocalTransactionModel(
-      idTransaksiLokal: idTransaksi,
+      idTransaksiLokal: TransactionIdUtils.generateOrderId(),
       kategoriKendaraan: jenisTarif,
       nominal: isFree ? 0 : nominal,
       metodePembayaran: metodePembayaran,
-      platNomor: platNomor ?? 'TANPA PLAT',
-      waktuTransaksi: waktuTransaksi,
-      status: status,
+      noKartuKue: noKartuKue,
+      platNomor: safePlat,
+      waktuTransaksi: DateTime.now().toIso8601String(),
+      status: isFree ? 'FREE_OFFLINE' : 'PENDING_PAYMENT',
       idJukir: idJukir,
       namaJukir: namaJukir,
-      nop: nop,
       fotoKendaraan: finalImagePath,
       modePlat: modePlat,
       isSync: 0,
@@ -69,7 +67,6 @@ class ParkingTransactionLocalDataSourceImpl
       longitude: longitude,
     );
 
-    // SIMPAN KE SQLite
     await DatabaseHelper.instance.insertTransaction(transaction.toJson());
 
     return transaction;

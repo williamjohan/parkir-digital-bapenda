@@ -30,19 +30,19 @@ class DatabaseHelper {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // 🚀 [SKEMA BARU V5]: Tambahkan metode_pembayaran
+    // 🚀 [SKEMA FINAL]: Bersih, ramping, dan 100% sesuai API Bapenda terbaru
     await db.execute('''
       CREATE TABLE $tableTransactions (
         id_transaksi_lokal TEXT PRIMARY KEY,
         nominal INTEGER NOT NULL,
         plat_nomor TEXT, 
         kategori_kendaraan TEXT NOT NULL,
-        metode_pembayaran TEXT NOT NULL, -- 🚀 [TAMBAHAN BARU]
+        metode_pembayaran TEXT NOT NULL, 
         waktu_transaksi TEXT NOT NULL,
         status TEXT NOT NULL,
         id_jukir TEXT NOT NULL,
         nama_jukir TEXT NOT NULL,
-        nop TEXT NOT NULL,
+        -- 🚀 KOLOM 'nop' RESMI DIMUSNAHKAN DARI SINI
         foto_kendaraan TEXT, 
         mode_plat INTEGER NOT NULL,
         is_sync INTEGER NOT NULL DEFAULT 0,

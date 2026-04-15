@@ -1,11 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/utils/permission_utils.dart';
-import '../../../../core/storage/secure_storage_manager.dart'; // 🚀 [BARU] Import Brankas
+import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
 import '../../domain/usecases/get_recent_transaction_usecase.dart';
 import '../../domain/usecases/get_weekly_chart_usecase.dart';
-import '../../domain/usecases/sync_tarif_usecase.dart';
 import 'home_state.dart';
 
 @injectable
@@ -13,14 +12,12 @@ class HomeCubit extends Cubit<HomeState> {
   final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
   final GetWeeklyChartUseCase _getWeeklyChartUseCase;
-  final SyncTarifUseCase _syncTarifUseCase;
   final ISecureStorageManager _secureStorage; // 🚀 [BARU]
 
   HomeCubit(
     this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
     this._getWeeklyChartUseCase,
-    this._syncTarifUseCase,
     this._secureStorage, // 🚀 [BARU]
   ) : super(const HomeState());
 

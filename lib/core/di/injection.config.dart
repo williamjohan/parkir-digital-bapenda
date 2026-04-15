@@ -212,9 +212,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(
     () => _i847.ProfileRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i461.IParkingTransactionRemoteDataSource>(
-    () => _i798.ParkingTransactionRemoteDataSourceImpl(gh<_i361.Dio>()),
-  );
   gh.lazySingleton<_i879.IProfileRepository>(
     () => _i334.ProfileRepositoryImpl(
       gh<_i847.IProfileRemoteDataSource>(),
@@ -242,17 +239,10 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i1054.IParkingTransactionRepository>(
-    () => _i14.ParkingTransactionRepositoryImpl(
-      gh<_i92.IParkingTransactionLocalDataSource>(),
-      gh<_i461.IParkingTransactionRemoteDataSource>(),
+  gh.lazySingleton<_i461.IParkingTransactionRemoteDataSource>(
+    () => _i798.ParkingTransactionRemoteDataSourceImpl(
+      gh<_i361.Dio>(),
       gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
-  gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
-    () => _i512.SaveParkingTransactionUseCase(
-      gh<_i1054.IParkingTransactionRepository>(),
-      gh<_i988.IAppLocationService>(),
     ),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
@@ -286,18 +276,6 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i269.UpdateParkingStatusUseCase>(
-    () => _i269.UpdateParkingStatusUseCase(
-      gh<_i1054.IParkingTransactionRepository>(),
-    ),
-  );
-  gh.lazySingleton<_i785.SyncParkingTransactionsUseCase>(
-    () => _i785.SyncParkingTransactionsUseCase(
-      gh<_i1054.IParkingTransactionRepository>(),
-      gh<_i461.IParkingTransactionRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
   gh.lazySingleton<_i808.AppAuthCubit>(
     () => _i808.AppAuthCubit(
       gh<_i52.CheckAuthStatusUseCase>(),
@@ -307,13 +285,6 @@ _i174.GetIt init(
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
-  );
-  gh.factory<_i877.ParkingTransactionCubit>(
-    () => _i877.ParkingTransactionCubit(
-      gh<_i512.SaveParkingTransactionUseCase>(),
-      gh<_i269.UpdateParkingStatusUseCase>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
   );
   gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
     () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
@@ -339,6 +310,19 @@ _i174.GetIt init(
   gh.lazySingleton<_i232.WatchPaymentStatusUseCase>(
     () => _i232.WatchPaymentStatusUseCase(gh<_i1004.IPaymentRepository>()),
   );
+  gh.lazySingleton<_i1054.IParkingTransactionRepository>(
+    () => _i14.ParkingTransactionRepositoryImpl(
+      gh<_i92.IParkingTransactionLocalDataSource>(),
+      gh<_i461.IParkingTransactionRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
+    () => _i512.SaveParkingTransactionUseCase(
+      gh<_i1054.IParkingTransactionRepository>(),
+      gh<_i988.IAppLocationService>(),
+    ),
+  );
   gh.factory<_i629.TransactionCubit>(
     () => _i629.TransactionCubit(
       gh<_i1057.GetHybridTarifUseCase>(),
@@ -352,6 +336,14 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.factory<_i9.HomeCubit>(
+    () => _i9.HomeCubit(
+      gh<_i421.GetHybridDashboardSummaryUseCase>(),
+      gh<_i77.GetRecentTransactionsUseCase>(),
+      gh<_i33.GetWeeklyChartUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(
       gh<_i831.GenerateQrisUseCase>(),
@@ -360,17 +352,27 @@ _i174.GetIt init(
       gh<_i907.StopMonitoringPaymentUseCase>(),
     ),
   );
-  gh.factory<_i420.SyncCubit>(
-    () => _i420.SyncCubit(gh<_i785.SyncParkingTransactionsUseCase>()),
+  gh.lazySingleton<_i269.UpdateParkingStatusUseCase>(
+    () => _i269.UpdateParkingStatusUseCase(
+      gh<_i1054.IParkingTransactionRepository>(),
+    ),
   );
-  gh.factory<_i9.HomeCubit>(
-    () => _i9.HomeCubit(
-      gh<_i421.GetHybridDashboardSummaryUseCase>(),
-      gh<_i77.GetRecentTransactionsUseCase>(),
-      gh<_i33.GetWeeklyChartUseCase>(),
-      gh<_i770.SyncTarifUseCase>(),
+  gh.lazySingleton<_i785.SyncParkingTransactionsUseCase>(
+    () => _i785.SyncParkingTransactionsUseCase(
+      gh<_i1054.IParkingTransactionRepository>(),
+      gh<_i461.IParkingTransactionRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
+  );
+  gh.factory<_i877.ParkingTransactionCubit>(
+    () => _i877.ParkingTransactionCubit(
+      gh<_i512.SaveParkingTransactionUseCase>(),
+      gh<_i269.UpdateParkingStatusUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i420.SyncCubit>(
+    () => _i420.SyncCubit(gh<_i785.SyncParkingTransactionsUseCase>()),
   );
   return getIt;
 }

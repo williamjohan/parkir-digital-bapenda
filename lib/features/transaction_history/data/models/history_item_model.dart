@@ -16,7 +16,7 @@ class HistoryItemModel {
   @JsonKey(name: 'sof', defaultValue: 'FREE')
   final String sof;
 
-  @JsonKey(name: 'platNumber', defaultValue: '-')
+  @JsonKey(name: 'platNumber')
   final String platNumber;
 
   @JsonKey(name: 'tglTrx', defaultValue: '')
@@ -52,7 +52,7 @@ class HistoryItemModel {
 
   factory HistoryItemModel.fromLocalDatabase(Map<String, dynamic> map) {
     return HistoryItemModel(
-      id: 0, // SQLite lokal tidak punya id dari server, pakai 0 sebagai sentinel
+      id: 0,
       orderId: map['id_transaksi_lokal']?.toString() ?? '',
       jenisTarif: map['kategori_kendaraan']?.toString() ?? '-',
       sof: map['metode_pembayaran']?.toString() ?? 'FREE',

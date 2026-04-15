@@ -12,7 +12,7 @@ HistoryItemModel _$HistoryItemModelFromJson(Map<String, dynamic> json) =>
       orderId: json['orderId'] as String? ?? '',
       jenisTarif: json['jenisTarif'] as String? ?? 'FREE',
       sof: json['sof'] as String? ?? 'FREE',
-      platNumber: json['platNumber'] as String? ?? '-',
+      platNumber: json['platNumber'] as String,
       tglTrx: json['tglTrx'] as String? ?? '',
       kredit: (json['kredit'] as num?)?.toInt() ?? 0,
       namaPetugas: json['namaPetugas'] as String? ?? '',

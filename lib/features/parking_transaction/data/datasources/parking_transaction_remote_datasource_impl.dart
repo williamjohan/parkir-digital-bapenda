@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart'; // Jika tidak dipakai bisa dihapus
 import 'package:injectable/injectable.dart';
 import '../../../../core/network/dio_error_handler.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/utils/device_id_utils.dart';
 import '../models/local_transaction_model.dart';
 import 'i_parking_transaction_remote_datasource.dart';
 
@@ -11,8 +13,9 @@ import 'i_parking_transaction_remote_datasource.dart';
 class ParkingTransactionRemoteDataSourceImpl
     implements IParkingTransactionRemoteDataSource {
   final Dio _dio;
+  final ISecureStorageManager _secureStorage;
 
-  ParkingTransactionRemoteDataSourceImpl(this._dio);
+  ParkingTransactionRemoteDataSourceImpl(this._dio, this._secureStorage);
 
   @override
   Future<void> insertTransaction({
@@ -34,35 +37,37 @@ class ParkingTransactionRemoteDataSourceImpl
       }
     }
 
-    // --- 2. PENANGANAN PLAT NOMOR ---
-    String safePlatNumber = transaction.platNomor?.trim() ?? '';
-    if (safePlatNumber.isEmpty) {
-      safePlatNumber =
-          '-'; // Hanya ubah ke strip JIKA memang benar-benar kosong
-    }
-
     // --- 3. PENANGANAN PETUGAS ID ---
     final dynamic rawPetugasId = jukirProfile['idUser'];
     final int safePetugasId = (rawPetugasId is int)
         ? rawPetugasId
         : int.tryParse(rawPetugasId?.toString() ?? '0') ?? 0;
+
     // --- 3.5. PERBAIKAN FORMAT TANGGAL BAPENDA ---
     String safeDate = transaction.waktuTransaksi;
     try {
       final parsedDate = DateTime.parse(transaction.waktuTransaksi);
-      // Memotong ".046488" agar server Bapenda tidak meledak
       safeDate = parsedDate.toIso8601String().split('.').first;
     } catch (_) {}
 
-    // --- 4. RAKIT PAYLOAD ---
+    // ==========================================
+    // 🚀 4. GENERATE / AMBIL DEVICE ID DARI UTILS
+    // ==========================================
+    final String secureDeviceId = await DeviceIdUtils.getSecureDeviceId(
+      _secureStorage,
+    );
+
+    // --- 5. RAKIT PAYLOAD ---
     final formData = FormData.fromMap({
       'orderId': transaction.idTransaksiLokal,
       'jenisTarif': transaction.kategoriKendaraan.toUpperCase(),
       'sof': isFree ? 'FREE' : transaction.metodePembayaran.toUpperCase(),
       'acquirer': isFree ? 'FREE' : 'BANK BPD JATIM',
       'noKartuKUE': isFree ? '-' : (transaction.noKartuKue ?? '-'),
-      'noTRX': isFree ? '-' : transaction.idTransaksiLokal,
-      'platNumber': safePlatNumber,
+      'noTRX': transaction.idTransaksiLokal,
+      'platNumber': (isFree || transaction.platNomor == '-')
+          ? null
+          : transaction.platNomor,
       'tglTrx': safeDate,
       'kredit': isFree ? 0 : transaction.nominal,
       'saldo': 0,
@@ -74,25 +79,21 @@ class ParkingTransactionRemoteDataSourceImpl
       'lokasiId': jukirProfile['lokasiId'] ?? 0,
       'namaLokasi':
           jukirProfile['namaLokasi'] ?? jukirProfile['namaObjekPajak'] ?? '',
-      'deviceId': jukirProfile['idDevice'] ?? '',
-      'nop': jukirProfile['nop'] ?? '',
+      'deviceId': secureDeviceId,
       'latitude': transaction.latitude ?? '0',
       'longitude': transaction.longitude ?? '0',
       'jenisParkir': 'IN',
       'modePlat': transaction.modePlat,
     });
 
-    // --- 5. INJEKSI FOTO ---
+    // --- 6. INJEKSI FOTO ---
     if (multipartImage != null) {
       formData.files.add(MapEntry('fotoNopol', multipartImage));
     } else {
-      // ✅ Kirim field kosong agar BE tidak reject karena field tidak ada
       formData.fields.add(const MapEntry('fotoNopol', ''));
     }
 
-    // ==========================================================
-    // 🔍 [LOG X-RAY] TAMPILKAN PAYLOAD SEBELUM DITEMBAK KE BE
-    // ==========================================================
+    // --- [LOG X-RAY] TAMPILKAN PAYLOAD ---
     AppLogger.debug(
       '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓',
     );
@@ -118,27 +119,19 @@ class ParkingTransactionRemoteDataSourceImpl
     AppLogger.debug(
       '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛',
     );
-    // ==========================================================
 
     try {
       AppLogger.debug('>>> [SYNC] Mengeksekusi API POST...');
-
-      // 🚀 [BYPASS DICABUT]: Kita kembalikan ke mode normal
       final response = await _dio.post(
         '/api/mobile/parking/insert-transaction',
         data: formData,
       );
-
       AppLogger.debug('>>> [SYNC SUCCESS] Bapenda membalas: ${response.data}');
     } on DioException catch (e) {
       AppLogger.error('>>> [SYNC ERROR] DioException: ${e.message}');
-
-      // 🚀 [SABUK PENGAMAN]: Jika setelah 3x retry tetap Error (misal 500 lagi),
-      // kita tetap bisa melihat alasan penolakannya di terminal tanpa bypass.
       if (e.response != null) {
         AppLogger.error('>>> [RESPONSE BAPENDA]: ${e.response?.data}');
       }
-
       AppLogger.info(('Gagal Sinkronisasi : ${e.message}'));
       throw DioErrorHandler.handle(e);
     }

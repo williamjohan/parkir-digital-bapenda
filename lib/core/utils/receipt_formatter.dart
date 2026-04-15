@@ -1,5 +1,8 @@
+// lib/features/printer/utils/receipt_formatter.dart
+
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:parkir_digital_bapenda/core/utils/ticket_crypto_utils.dart';
+// Pastikan path extension ini benar
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_ui_extension.dart';
 import '../../features/transaction_history/data/models/history_item_model.dart';
 
@@ -7,20 +10,21 @@ class ReceiptFormatter {
   static Future<List<int>> generateBytes(
     HistoryItemModel transaction,
     String deviceId,
-    Map<String, dynamic>
-    profile, // 🚀 [TAMBAHAN]: Wajib agar bisa cetak nama & alamat lokasi
+    Map<String, dynamic> profile,
   ) async {
     final capabilityProfile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, capabilityProfile);
     List<int> bytes = [];
 
-    // Persiapan Variabel Data
+    // ==========================================
+    // 🚀 [PERBAIKAN CLEAN CODE]: Persiapan Variabel Data
+    // ==========================================
     final String namaLokasi = profile['namaObjekPajak'] ?? "Parkiran Fulan's";
     final String alamat = profile['alamat'] ?? "Surabaya";
-    final String platBersih =
-        (transaction.platNumber == '-' || transaction.platNumber.isEmpty)
-        ? "Tanpa Plat"
-        : transaction.platNumber;
+
+    // 🚀 Gunakan titleText dari Extension!
+    // Otomatis meng-handle null, '-', '', dan 'tanpa plat' menjadi 'TANPA PLAT'
+    final String platBersih = transaction.titleText;
 
     // --- 1. BAPENDA SURABAYA (Font Besar) ---
     bytes += generator.text(
@@ -59,16 +63,16 @@ class ReceiptFormatter {
     bytes += generator.hr();
 
     // --- 6. TEXT 3 SEGMENT (Digabung 1 Baris Agar Hemat!) ---
-    // Format: Motor * L 1234 AB * Rp2.000
+    // Format: Motor * L 1234 AB * Rp2.000 atau Motor * TANPA PLAT * Rp2.000
     String segmen3 =
-        "${transaction.jenisTarif} * $platBersih * ${transaction.formattedNominal}";
+        "${transaction.jenisTarif.toUpperCase()} * $platBersih * ${transaction.formattedNominal}";
     bytes += generator.text(
       segmen3,
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
 
     // --- 7. JARAK VERTIKAL KECIL ---
-    bytes += generator.hr(); // Garis tutup atau bisa diganti feed(1)
+    bytes += generator.hr();
 
     // --- 8. QR CODE ---
     final String encryptedUrl = TicketCryptoUtils.encryptPayload(
@@ -85,7 +89,7 @@ class ReceiptFormatter {
     bytes += generator.text(
       ' ',
       styles: const PosStyles(height: PosTextSize.size1),
-    ); // 🚀 Trik spasi tipis
+    ); // Spasi tipis
     bytes += generator.text(
       transaction.orderId,
       styles: const PosStyles(align: PosAlign.center),

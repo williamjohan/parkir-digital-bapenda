@@ -1,5 +1,3 @@
-// lib/features/parking_transaction/data/repositories/parking_transaction_repository_impl.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
@@ -28,6 +26,7 @@ class ParkingTransactionRepositoryImpl
     required String jenisTarif,
     required int nominal,
     required String metodePembayaran,
+    String? noKartuKue,
     required int modePlat,
     String? rawImagePath,
     String? latitude,
@@ -52,12 +51,12 @@ class ParkingTransactionRepositoryImpl
         jenisTarif: jenisTarif,
         nominal: nominal,
         metodePembayaran: metodePembayaran,
+        noKartuKue: noKartuKue,
         rawImagePath: rawImagePath,
         modePlat: modePlat,
         isFree: isFree,
         idJukir: jukirProfile['idUser'] ?? '',
         namaJukir: jukirProfile['namaUser'] ?? '',
-        nop: jukirProfile['nop'] ?? '',
         latitude: latitude,
         longitude: longitude,
       );
@@ -70,15 +69,11 @@ class ParkingTransactionRepositoryImpl
           jukirProfile: jukirProfile,
         );
 
-        // 5. 🚀 [PERBAIKAN]: Panggil fungsi updateSyncStatus, BUKAN updateTransactionStatus
         await _localDataSource.updateSyncStatus(
           idTransaksiLokal: transaction.idTransaksiLokal,
           isSync: 1, // 1 berarti sukses terkirim ke API
         );
-      } catch (remoteError) {
-        // Tidak throw ke atas — user tetap dapat success response
-        // Data akan di-retry oleh background sync worker nantinya
-      }
+      } catch (remoteError) {}
 
       return Right(transaction);
     } catch (e) {
