@@ -41,8 +41,8 @@ import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
 import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart'
     as _i421;
-import '../../features/home/domain/usecases/get_local_tarif_usecase.dart'
-    as _i138;
+import '../../features/home/domain/usecases/get_hybrid_tarif_usecase.dart'
+    as _i1057;
 import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
     as _i77;
 import '../../features/home/domain/usecases/get_weekly_chart_usecase.dart'
@@ -318,8 +318,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
     () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
   );
-  gh.lazySingleton<_i138.GetLocalTarifUseCase>(
-    () => _i138.GetLocalTarifUseCase(gh<_i274.IHomeRepository>()),
+  gh.lazySingleton<_i1057.GetHybridTarifUseCase>(
+    () => _i1057.GetHybridTarifUseCase(gh<_i274.IHomeRepository>()),
   );
   gh.lazySingleton<_i33.GetWeeklyChartUseCase>(
     () => _i33.GetWeeklyChartUseCase(gh<_i274.IHomeRepository>()),
@@ -341,7 +341,7 @@ _i174.GetIt init(
   );
   gh.factory<_i629.TransactionCubit>(
     () => _i629.TransactionCubit(
-      gh<_i138.GetLocalTarifUseCase>(),
+      gh<_i1057.GetHybridTarifUseCase>(),
       gh<_i512.SaveParkingTransactionUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
     ),

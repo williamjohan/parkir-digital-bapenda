@@ -61,10 +61,6 @@ class HomeCubit extends Cubit<HomeState> {
       isFreeStatus = (rawPungutTarif == 1 || rawPungutTarif == '1');
     }
 
-    // 1. TUGAS BAYANGAN (SILENT SYNC): Ambil Master Tarif dan simpan ke SQLite/Brankas
-    // Kita panggil tanpa "await" agar UI Dashboard tidak perlu menunggunya selesai.
-    _syncTarifUseCase.execute();
-
     // 2. TUGAS UTAMA: Ambil Dashboard Summary (Hybrid Logic di dalam UseCase)
     final summaryResult = await _getHybridDashboardSummaryUseCase.execute();
     summaryResult.fold(
