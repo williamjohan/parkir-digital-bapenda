@@ -44,7 +44,7 @@ class TransactionCubit extends Cubit<TransactionState> {
           _injectFreeTariff();
         } else {
           emit(
-            state.copyWith(status: TransactionStatus.initial, tarifList: data),
+            state.copyWith(status: TransactionStatus.ready, tarifList: data),
           );
         }
       },
@@ -56,9 +56,7 @@ class TransactionCubit extends Cubit<TransactionState> {
       const TarifModel(id: -1, jenisTarif: 'Motor', tarif: 0),
       const TarifModel(id: -2, jenisTarif: 'Mobil', tarif: 0),
     ];
-    emit(
-      state.copyWith(status: TransactionStatus.initial, tarifList: dummyFree),
-    );
+    emit(state.copyWith(status: TransactionStatus.ready, tarifList: dummyFree));
   }
 
   void updateNopol(String value) {

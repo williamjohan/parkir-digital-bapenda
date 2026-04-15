@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import '../../home/data/models/tarif_model.dart';
 import '../../parking_transaction/data/models/local_transaction_model.dart';
 
-enum TransactionStatus { initial, loading, submitting, success, failure }
+enum TransactionStatus { ready, loading, submitting, success, failure }
 
 class TransactionState extends Equatable {
   final TransactionStatus status;
@@ -19,7 +19,7 @@ class TransactionState extends Equatable {
   final Map<String, dynamic> jukirProfile;
 
   const TransactionState({
-    this.status = TransactionStatus.initial,
+    this.status = TransactionStatus.ready,
     this.tarifList = const [],
     this.nopol = '',
     this.selectedTarif,

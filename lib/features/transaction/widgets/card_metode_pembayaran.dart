@@ -54,14 +54,14 @@ class CardMetodePembayaranWidget extends StatelessWidget {
           const SizedBox(height: 8),
 
           /// E-CARD
-          PaymentItem(
-            title: "Kartu Elektronik",
-            subTitle: "e-Money, Flazz, Brizzi, TapCash",
-            icon: Icons.credit_card,
-            isSelected:
-                selectedValue == "card", // 🚀 [ENHANCE]: Cek dari Cubit State
-            onTap: () => onTap("card"),
-          ),
+          // PaymentItem(
+          //   title: "Kartu Elektronik",
+          //   subTitle: "e-Money, Flazz, Brizzi, TapCash",
+          //   icon: Icons.credit_card,
+          //   isSelected:
+          //       selectedValue == "card",
+          //   onTap: () => onTap("card"),
+          // ),
         ],
       ),
     );
