@@ -13,7 +13,6 @@ import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/di/injection.dart';
-import '../../../../core/routes/app_back_handler.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../../core/utils/permission_utils.dart';
 import '../../data/models/weekly_chart_item_model.dart';

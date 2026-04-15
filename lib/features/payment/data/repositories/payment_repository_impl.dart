@@ -17,14 +17,10 @@ class PaymentRepositoryImpl implements IPaymentRepository {
 
   @override
   Future<Either<Failure, QrisEntity>> generateQris({
-    required String nop,
     required double amount,
   }) async {
     try {
-      final result = await _remoteDataSource.generateQris(
-        nop: nop,
-        amount: amount,
-      );
+      final result = await _remoteDataSource.generateQris(amount: amount);
       return Right(QrisModel.fromJson(result).toEntity());
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -39,7 +35,6 @@ class PaymentRepositoryImpl implements IPaymentRepository {
       final result = await _remoteDataSource.checkQrisCallback(
         kodeQris: kodeQris,
       );
-      // Mapping string status dari API ke Enum Domain
       final statusStr = result['status']?.toString() ?? 'PENDING';
       return Right(PaymentStatus.fromString(statusStr));
     } catch (e) {
@@ -48,12 +43,16 @@ class PaymentRepositoryImpl implements IPaymentRepository {
   }
 
   @override
-  Stream<PaymentStatus> watchPaymentStatus(String kodeQris) async* {
-    // 1. Hubungkan SignalR
-    await _signalRDataSource.connectAndJoin(kodeQris);
+  Stream<PaymentStatus> watchPaymentStatus(String kodeQris) {
+    // FIX: Hapus async* generator — connect dijalankan secara fire-and-forget
+    // agar stream langsung siap di-listen SEBELUM connect selesai.
+    // Ini menghilangkan window blind spot antara connect dan yield*.
+    _signalRDataSource.connectAndJoin(kodeQris).catchError((e) {
+      // Error connect akan masuk ke stream via _statusController?.add("ERROR")
+      // yang sudah ada di dalam connectAndJoin
+    });
 
-    // 2. Transform Stream String -> Stream Enum
-    yield* _signalRDataSource.qrisStatusStream.map((statusStr) {
+    return _signalRDataSource.qrisStatusStream.map((statusStr) {
       return PaymentStatus.fromString(statusStr);
     });
   }

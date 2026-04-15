@@ -1,4 +1,3 @@
-// lib/features/payment/presentation/pages/payment_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -15,8 +14,11 @@ import '../widgets/card_detail_parkir.dart';
 import '../widgets/card_qris_widget.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
+import '../../domain/usecases/check_payment_status_usecase.dart';
+import '../../domain/usecases/generate_qris_usecase.dart';
+import '../../domain/usecases/stop_monitoring_payment_usecase.dart';
+import '../../domain/usecases/watch_payment_status_usecase.dart';
 
-// 1. KELAS BUNGKUS ARGUMEN
 class PaymentPageArgs {
   final String idTransaksiLokal;
   final String kategoriKendaraan;
@@ -40,7 +42,9 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  late PaymentCubit _cubit;
+  // FIX: Cubit dibuat fresh per instance halaman, bukan dari locator langsung
+  // Ini mencegah penggunaan Cubit yang sudah di-close dari sesi sebelumnya
+  late final PaymentCubit _cubit;
   Map<String, dynamic>? _profile;
 
   @override
@@ -50,25 +54,27 @@ class _PaymentPageState extends State<PaymentPage> {
     _initPayment();
   }
 
-  // 🚀 Tarik Profil dulu, baru perintahkan Cubit untuk minta QRIS
   Future<void> _initPayment() async {
     _profile = await locator<ISecureStorageManager>().getJukirProfile();
     if (mounted) {
-      final nop = _profile?['nop'] ?? '';
-      _cubit.initiateQrisPayment(nop, widget.args.nominal.toDouble());
+      // final nop = _profile?['nop'] ?? '';
+      _cubit.initiateQrisPayment(widget.args.nominal.toDouble());
     }
   }
 
   @override
   void dispose() {
-    _cubit.close(); // 🚀 Memastikan SignalR mati saat Jukir back/keluar
+    // FIX: Tidak perlu close manual karena BlocProvider yang handle lifecycle
+    // _cubit.close() ← DIHAPUS
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _cubit,
+    return BlocProvider(
+      // FIX: Pakai BlocProvider biasa (bukan .value) agar lifecycle dikelola
+      // otomatis — close() dipanggil saat widget di-dispose oleh Flutter
+      create: (_) => _cubit,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Pembayaran QRIS', style: AppTypography.heading3),
@@ -77,6 +83,12 @@ class _PaymentPageState extends State<PaymentPage> {
           iconTheme: const IconThemeData(color: AppColors.textPrimary),
         ),
         body: BlocConsumer<PaymentCubit, PaymentState>(
+          buildWhen: (previous, current) {
+            if (current is PaymentError && previous is PaymentQrisReady) {
+              return false; // Jangan rebuild builder, tetap tampilkan state Ready (QRIS)
+            }
+            return true;
+          },
           listener: (context, state) async {
             if (state is PaymentError) {
               PbStatusSnackbar.show(
@@ -90,13 +102,12 @@ class _PaymentPageState extends State<PaymentPage> {
                 message: state.message,
                 isError: true,
               );
-              context.pop(); // Kembali ke home karena QRIS kedaluwarsa
-            }
-            // 🚀 JIKA SIGNALR ATAU MANUAL CHECK BILANG LUNAS:
-            else if (state is PaymentSuccess) {
+              // FIX: Delay agar snackbar sempat tampil sebelum pop
+              await Future.delayed(const Duration(seconds: 2));
+              if (context.mounted) context.pop();
+            } else if (state is PaymentSuccess) {
               PbStatusSnackbar.show(context, message: state.message);
 
-              // 1. Update Database Lokal menjadi PAID_ONLINE & SYNCED
               await DatabaseHelper.instance.updateTransactionStatus(
                 widget.args.idTransaksiLokal,
                 'PAID_ONLINE',
@@ -105,7 +116,6 @@ class _PaymentPageState extends State<PaymentPage> {
                 widget.args.idTransaksiLokal,
               );
 
-              // 2. Buat Dummy Local Data untuk dilempar ke Printer Dialog
               final dummyTxForPrint = LocalTransactionModel(
                 idTransaksiLokal: widget.args.idTransaksiLokal,
                 nominal: widget.args.nominal,
@@ -116,7 +126,6 @@ class _PaymentPageState extends State<PaymentPage> {
                 status: 'PAID_ONLINE',
                 idJukir: _profile?['idUser']?.toString() ?? '',
                 namaJukir: _profile?['namaUser'] ?? '',
-                // nop: _profile?['nop'] ?? '',
                 modePlat:
                     widget.args.platNomor.isEmpty ||
                         widget.args.platNomor == '-'
@@ -125,7 +134,6 @@ class _PaymentPageState extends State<PaymentPage> {
                 isSync: 1,
               );
 
-              // 3. Tampilkan Layar Karcis & Print!
               if (mounted) {
                 PbTicketPrintDialog.showFromLocalTransaction(
                   context: context,
@@ -139,9 +147,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   tarifParkir: widget.args.nominal,
                   shift: _profile?['shift']?.toString() ?? '1',
                   onClosed: () {
-                    context.pop(
-                      true,
-                    ); // Tutup halaman payment setelah dialog karcis ditutup
+                    context.pop(true);
                   },
                 );
               }
@@ -186,8 +192,6 @@ class _PaymentPageState extends State<PaymentPage> {
                         style: AppTypography.caption,
                       ),
                       const SizedBox(height: 32),
-
-                      // 🚀 TOMBOL MANUAL CHECK (Penyelamat jika SignalR delay)
                       PbPrimaryButton(
                         text: 'Cek Status Pembayaran',
                         onPressed: () {

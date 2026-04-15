@@ -25,56 +25,56 @@ class PaymentCubit extends Cubit<PaymentState> {
   ) : super(PaymentInitial());
 
   /// 1. Request QRIS ke API Bapenda
-  Future<void> initiateQrisPayment(String nop, double amount) async {
+  Future<void> initiateQrisPayment(double amount) async {
     emit(PaymentLoading());
 
-    final result = await _generateQrisUseCase.execute(nop: nop, amount: amount);
+    final result = await _generateQrisUseCase.execute(amount: amount);
 
     if (isClosed) return;
 
     result.fold((failure) => emit(PaymentError(failure.message)), (qris) {
       emit(PaymentQrisReady(qris));
-      // 🚀 Begitu QRIS sukses di-generate, langsung nyalakan radar SignalR!
       _startListeningToSignalR(qris.kodeQris);
     });
   }
 
   /// 2. Dengarkan Stream SignalR secara Real-Time
   void _startListeningToSignalR(String kodeQris) {
-    // Pastikan subscription lama dibersihkan dulu
     _statusSubscription?.cancel();
 
     _statusSubscription = _watchPaymentStatusUseCase
         .execute(kodeQris)
         .listen(
-          (status) {
-            _handlePaymentStatus(status);
-          },
+          (status) => _handlePaymentStatus(status),
           onError: (error) {
-            emit(PaymentError("Koneksi Real-Time terputus: $error"));
+            if (!isClosed) {
+              emit(PaymentError("Koneksi Real-Time terputus: $error"));
+            }
           },
         );
   }
 
-  /// 3. Cek Status Manual (Untuk Tombol Refresh)
+  /// 3. Cek Status Manual (Tombol Refresh)
   Future<void> checkStatusManual(String kodeQris) async {
-    // Jangan ubah state jadi loading agar QR code tidak hilang berkedip di UI
     final result = await _checkPaymentStatusUseCase.execute(kodeQris);
 
-    result.fold(
-      (failure) => emit(PaymentError(failure.message)),
-      (status) => _handlePaymentStatus(status),
-    );
+    result.fold((failure) {
+      if (!isClosed) emit(PaymentError(failure.message));
+    }, (status) => _handlePaymentStatus(status));
   }
 
-  /// 4. Otak Penerjemah Status
+  /// 4. Handler status — dengan guard cegah double emit
   void _handlePaymentStatus(PaymentStatus status) {
-    if (isClosed) return; // Cegah crash jika halaman sudah ditutup
+    if (isClosed) return;
+
+    // FIX: Jangan proses status baru jika sudah final (LUNAS/TIMEOUT)
+    // Ini mencegah race condition antara SignalR event terakhir dan cleanup
+    if (state is PaymentSuccess || state is PaymentTimeout) return;
 
     switch (status) {
       case PaymentStatus.lunas:
         emit(const PaymentSuccess("Pembayaran QRIS Berhasil!"));
-        _cleanupConnection(); // 🚀 Lunas = Tutup koneksi agar hemat RAM!
+        _cleanupConnection();
         break;
       case PaymentStatus.timeout:
         emit(const PaymentTimeout("Waktu pembayaran QRIS habis."));
@@ -86,18 +86,18 @@ class PaymentCubit extends Cubit<PaymentState> {
       case PaymentStatus.pending:
       case PaymentStatus.idle:
       case PaymentStatus.unknown:
-        // Tetap di state QrisReady (diam saja menunggu pengendara bayar)
+        // Tetap menunggu — tidak ubah state
         break;
     }
   }
 
-  /// 5. Pembersih Memori (Sanitation)
+  /// 5. Cleanup koneksi SignalR dan subscription
   void _cleanupConnection() {
     _statusSubscription?.cancel();
+    _statusSubscription = null;
     _stopMonitoringPaymentUseCase.execute();
   }
 
-  /// 🚀 DIPANGGIL OTOMATIS OLEH FLUTTER SAAT PINDAH HALAMAN
   @override
   Future<void> close() {
     _cleanupConnection();

@@ -5,10 +5,7 @@ import '../../../../core/errors/exception.dart';
 import '../../../../core/network/dio_error_handler.dart';
 
 abstract class IPaymentRemoteDataSource {
-  Future<Map<String, dynamic>> generateQris({
-    required String nop,
-    required double amount,
-  });
+  Future<Map<String, dynamic>> generateQris({required double amount});
 
   Future<Map<String, dynamic>> checkQrisCallback({required String kodeQris});
 }
@@ -20,12 +17,9 @@ class PaymentRemoteDataSourceImpl implements IPaymentRemoteDataSource {
   PaymentRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<Map<String, dynamic>> generateQris({
-    required String nop,
-    required double amount,
-  }) async {
+  Future<Map<String, dynamic>> generateQris({required double amount}) async {
     try {
-      final formData = FormData.fromMap({"nop": nop, "amount": amount.toInt()});
+      final formData = FormData.fromMap({"amount": amount.toInt()});
 
       final response = await _dio.post(
         ApiEndpoints.generateQris,
