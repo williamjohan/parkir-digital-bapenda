@@ -59,7 +59,7 @@ class ParkingTransactionRemoteDataSourceImpl
       'orderId': transaction.idTransaksiLokal,
       'jenisTarif': transaction.kategoriKendaraan.toUpperCase(),
       'sof': isFree ? 'FREE' : transaction.metodePembayaran.toUpperCase(),
-      'acquirer': isFree ? 'FREE' : 'BAPENDA',
+      'acquirer': isFree ? 'FREE' : 'BANK BPD JATIM',
       'noKartuKUE': isFree ? '-' : (transaction.noKartuKue ?? '-'),
       'noTRX': isFree ? '-' : transaction.idTransaksiLokal,
       'platNumber': safePlatNumber,

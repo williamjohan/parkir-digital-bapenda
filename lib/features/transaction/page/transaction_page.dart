@@ -134,80 +134,89 @@ class _TransactionPageState extends State<TransactionPage> {
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    // 🚀 1. CARD NOPOL (Dilengkapi tombol Kamera AI)
-                    CardNopolWidget(
-                      controller: _nopolController,
-                      onChanged: (val) =>
-                          context.read<TransactionCubit>().updateNopol(val),
-                      onCameraTap: () async {
-                        final result = await context.push<Map<String, dynamic>>(
-                          AppRoutes.capture,
-                        );
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          // 🚀 1. CARD NOPOL (Dilengkapi tombol Kamera AI)
+                          CardNopolWidget(
+                            controller: _nopolController,
+                            onChanged: (val) => context
+                                .read<TransactionCubit>()
+                                .updateNopol(val),
+                            onCameraTap: () async {
+                              final result = await context
+                                  .push<Map<String, dynamic>>(
+                                    AppRoutes.capture,
+                                  );
 
-                        if (!context.mounted) return;
+                              if (!context.mounted) return;
 
-                        if (result != null) {
-                          final plat = result['platNomor'] as String;
-                          final image = result['imagePath'] as String;
+                              if (result != null) {
+                                final plat = result['platNomor'] as String;
+                                final image = result['imagePath'] as String;
 
-                          _nopolController.text = plat;
-                          context.read<TransactionCubit>().updateFromOcr(
-                            plat,
-                            image,
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 16),
+                                _nopolController.text = plat;
+                                context.read<TransactionCubit>().updateFromOcr(
+                                  plat,
+                                  image,
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
 
-                    // 🚀 2. CARD KENDARAAN (Adaptif untuk Gratis maupun Berbayar)
-                    CardJenisKendaraan(
-                      tarifList: state.tarifList,
-                      selectedTarif: state.selectedTarif,
-                      isFree: widget
-                          .isFree, // Gunakan widget.isFree untuk menghindari glitch UI
-                      onSelected: (tarif) =>
-                          context.read<TransactionCubit>().selectTarif(tarif),
-                    ),
+                          // 🚀 2. CARD KENDARAAN (Adaptif untuk Gratis maupun Berbayar)
+                          CardJenisKendaraan(
+                            tarifList: state.tarifList,
+                            selectedTarif: state.selectedTarif,
+                            isFree: widget
+                                .isFree, // Gunakan widget.isFree untuk menghindari glitch UI
+                            onSelected: (tarif) => context
+                                .read<TransactionCubit>()
+                                .selectTarif(tarif),
+                          ),
 
-                    const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                    // 🚀 3. CARD PEMBAYARAN (ANTI-GLITCH: Pakai widget.isFree!)
-                    // Karena widget.isFree sudah ada sejak frame ke-1, UI tidak akan berkedip
-                    if (!widget.isFree) ...[
-                      CardMetodePembayaranWidget(
-                        selectedValue: state.metodePembayaran,
-                        onTap: (value) => context
-                            .read<TransactionCubit>()
-                            .selectPayment(value),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    // 🚀 4. TOMBOL SIMPAN
-                    PbPrimaryButton(
-                      text: widget.isFree
-                          ? "Simpan Parkir Gratis"
-                          : "Lanjut Pembayaran",
-                      isLoading: state.status == TransactionStatus.submitting,
-                      onPressed: state.isValid
-                          ? () {
-                              FocusScope.of(
-                                context,
-                              ).unfocus(); // Tutup keyboard otomatis
-                              context
+                          // 🚀 3. CARD PEMBAYARAN (ANTI-GLITCH: Pakai widget.isFree!)
+                          // Karena widget.isFree sudah ada sejak frame ke-1, UI tidak akan berkedip
+                          if (!widget.isFree) ...[
+                            CardMetodePembayaranWidget(
+                              selectedValue: state.metodePembayaran,
+                              onTap: (value) => context
                                   .read<TransactionCubit>()
-                                  .submitTransaction();
-                            }
-                          : null, // Disabled jika data belum lengkap (Cubit yang menentukan!)
+                                  .selectPayment(value),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 32),
-                  ],
-                ),
+                  ),
+                  // 🚀 4. TOMBOL SIMPAN
+                  const SizedBox(height: 8),
+                  PbPrimaryButton(
+                    text: widget.isFree
+                        ? "Simpan Parkir Gratis"
+                        : "Lanjut Pembayaran",
+                    isLoading: state.status == TransactionStatus.submitting,
+                    onPressed: state.isValid
+                        ? () {
+                            FocusScope.of(
+                              context,
+                            ).unfocus(); // Tutup keyboard otomatis
+                            context
+                                .read<TransactionCubit>()
+                                .submitTransaction();
+                          }
+                        : null, // Disabled jika data belum lengkap (Cubit yang menentukan!)
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
             );
           },

@@ -34,6 +34,8 @@ abstract class ISecureStorageManager {
   Future<void> saveDashboardAnchor(String jsonString);
   Future<String?> getDashboardAnchor();
   Future<void> clearDashboardAnchor();
+  Future<void> saveDeviceId(String deviceId);
+  Future<String?> getDeviceId();
 }
 
 @LazySingleton(as: ISecureStorageManager)
@@ -45,10 +47,9 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyAccessToken = 'ACCESS_TOKEN';
   static const String _keyRefreshToken = 'REFRESH_TOKEN';
   static const String _keyJukirProfile = 'JUKIR_PROFILE';
-
-  // 🚀 [BARU] Kunci Brankas Baru
   static const String _keyMasterTarif = 'MASTER_TARIF';
   static const String _keyDashboardAnchor = 'DASHBOARD_ANCHOR';
+  static const String _keyDeviceId = 'DEVICE_ID';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -160,5 +161,15 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<void> clearJukirProfile() async {
     await _storage.delete(key: _keyJukirProfile);
+  }
+
+  @override
+  Future<void> saveDeviceId(String deviceId) async {
+    await _storage.write(key: _keyDeviceId, value: deviceId);
+  }
+
+  @override
+  Future<String?> getDeviceId() async {
+    return await _storage.read(key: _keyDeviceId);
   }
 }

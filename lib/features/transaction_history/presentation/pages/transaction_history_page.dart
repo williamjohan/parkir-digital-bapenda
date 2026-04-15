@@ -3,9 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:parkir_digital_bapenda/shared/loading/app_loading_widget.dart';
+import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import '../../../../core/design_system/components/pb_calendar_range_picker.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
+import '../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../data/models/history_item_model.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
@@ -102,7 +106,16 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       },
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
-        appBar: AppBar(title: const Text('Riwayat Pendapatan')),
+        appBar: AppBar(
+          title: const Text(
+            'Riwayat Pendapatan',
+            style: AppTypography.heading5,
+          ),
+          centerTitle: true,
+          backgroundColor: AppColors.surface,
+          elevation: 0,
+          foregroundColor: Colors.black,
+        ),
         body: Column(
           children: [
             Container(
@@ -142,7 +155,9 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               child: BlocBuilder<TransactionHistoryCubit, TransactionHistoryState>(
                 builder: (context, state) {
                   if (state is TransactionHistoryLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return AppLoadingWidget();
+                    // return const Center(child: CircularProgressIndicator());
+                    // final bool isLoading = state is TransactionHistoryLoading;
                   } else if (state is TransactionHistoryError) {
                     return Center(
                       child: Padding(

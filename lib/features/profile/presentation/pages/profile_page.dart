@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: AppColors.surface,
         elevation: 0,
         centerTitle: true,
-        title: Text('Profil Saya', style: AppTypography.heading3),
+        title: Text('Profil Saya', style: AppTypography.heading5),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => context.pop(),
