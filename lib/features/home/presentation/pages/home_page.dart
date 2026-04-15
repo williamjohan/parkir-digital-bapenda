@@ -29,11 +29,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Track apakah ini pertama kali load
+  bool _isFirstLoad = true;
+
   @override
   void initState() {
     super.initState();
-    context.read<HomeCubit>().loadDashboardData();
+    _loadData();
+    // context.read<HomeCubit>().loadDashboardData();
     _checkSecureStorageProfile();
+  }
+
+  // Method untuk load data
+  Future<void> _loadData() async {
+    await context.read<HomeCubit>().loadDashboardData();
+    if (_isFirstLoad) {
+      _isFirstLoad = false;
+    }
   }
 
   Future<void> _checkSecureStorageProfile() async {
@@ -112,27 +124,28 @@ class _HomePageState extends State<HomePage> {
             break;
         }
       },
-      child: AppBackHandler(
-        child: Scaffold(
-          backgroundColor: AppColors.background,
-          drawer: const HomeDrawer(),
-          appBar: AppBar(
-            title: GestureDetector(
-              onDoubleTap: () {
-                if (kDebugMode) {
-                  ChuckerFlutter.showChuckerScreen();
-                }
-              },
-              child: const Text(
-                'Parkir Digital Bapenda',
-                style: AppTypography.heading5,
-              ),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        drawer: const HomeDrawer(),
+        appBar: AppBar(
+          title: GestureDetector(
+            onDoubleTap: () {
+              if (kDebugMode) {
+                ChuckerFlutter.showChuckerScreen();
+              }
+            },
+            child: const Text(
+              'Parkir Digital Bapenda',
+              style: AppTypography.heading5,
             ),
-            backgroundColor: AppColors.surface,
-            elevation: 0,
-            centerTitle: true,
           ),
-          body: SingleChildScrollView(
+          backgroundColor: AppColors.surface,
+          elevation: 0,
+          centerTitle: true,
+        ),
+        body: RefreshIndicator(
+          onRefresh: _loadData,
+          child: SingleChildScrollView(
             // 🚀 [REFACTOR] Dihapus buildWhen agar semua state baru bisa ter-render
             child: BlocBuilder<HomeCubit, HomeState>(
               builder: (context, state) {

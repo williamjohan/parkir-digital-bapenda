@@ -122,6 +122,7 @@ class _TransactionPageState extends State<TransactionPage> {
           isLoading: isOverlayActive,
           // message: overlayMessage,
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
             appBar: AppBar(
               title: GestureDetector(
