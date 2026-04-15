@@ -40,7 +40,14 @@ class PrinterCubit extends Cubit<PrinterState> {
     final currentState = state;
     if (currentState is! PrinterLoaded) return;
 
-    emit(PrinterLoading());
+    // emit(PrinterLoading());
+    emit(
+      PrinterLoaded(
+        devices: currentState.devices,
+        connectedDevice: currentState.connectedDevice,
+        isLoading: true,
+      ),
+    );
 
     final success = await _printerService.connect(device);
 

@@ -14,11 +14,16 @@ class PrinterLoading extends PrinterState {}
 class PrinterLoaded extends PrinterState {
   final List<BluetoothDevice> devices;
   final BluetoothDevice? connectedDevice;
+  final bool isLoading;
 
-  const PrinterLoaded({required this.devices, this.connectedDevice});
+  const PrinterLoaded({
+    required this.devices,
+    this.connectedDevice,
+    this.isLoading = false,
+  });
 
   @override
-  List<Object?> get props => [devices, connectedDevice];
+  List<Object?> get props => [devices, connectedDevice, isLoading];
 }
 
 class PrinterError extends PrinterState {
