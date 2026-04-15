@@ -27,11 +27,17 @@ class CardNopolWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            "NOMOR POLISI KENDARAAN",
-            style: AppTypography.heading6.copyWith(
-              color: AppColors.textSecondary,
-            ),
+          Row(
+            children: [
+              Text(
+                "NOMOR POLISI KENDARAAN",
+                style: AppTypography.heading6.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              SizedBox(width: 8),
+              Text("(OPSIONAL)", style: AppTypography.caption),
+            ],
           ),
           const SizedBox(height: 8),
           Row(

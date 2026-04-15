@@ -94,7 +94,7 @@ class PbPrimaryButton extends StatelessWidget {
           backgroundColor: backgroundColor,
           disabledBackgroundColor: isOutlined
               ? Colors.transparent
-              : AppColors.primaryLight,
+              : AppColors.textHint,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

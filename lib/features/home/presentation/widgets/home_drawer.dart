@@ -170,6 +170,7 @@ class HomeDrawer extends StatelessWidget {
 
               PbShowDialog.show(
                 safeContext,
+                showBtnKeluar: true,
                 title: 'Konfirmasi Logout',
                 description: 'Apakah Anda yakin ingin keluar dari aplikasi?',
                 onConfirm: () async {

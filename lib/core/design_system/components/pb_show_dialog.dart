@@ -10,6 +10,7 @@ class PbShowDialog {
     BuildContext context, {
     required String title,
     required String description,
+    bool showBtnKeluar = false,
     IconData icon = Icons.warning_amber_outlined,
     Color iconColor = AppColors.error, // Default hijau untuk sukses
     String buttonText = 'Keluar',
@@ -48,29 +49,32 @@ class PbShowDialog {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  if (showBtnKeluar) ...[
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                      ),
-                      onPressed: () {
-                        // 1. Selalu tutup modalnya terlebih dahulu
-                        Navigator.of(dialogContext).pop();
-                      },
-                      child: Text(
-                        "Batal",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        onPressed: () {
+                          // 1. Selalu tutup modalnya terlebih dahulu
+                          Navigator.of(dialogContext).pop();
+                        },
+                        child: Text(
+                          "Batal",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 16),
+                    SizedBox(width: 16),
+                  ],
+
                   Expanded(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(

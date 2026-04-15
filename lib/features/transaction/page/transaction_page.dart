@@ -108,6 +108,7 @@ class _TransactionPageState extends State<TransactionPage> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: GestureDetector(

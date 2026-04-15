@@ -27,11 +27,17 @@ class CardMetodePembayaranWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "METODE PEMBAYARAN",
-            style: AppTypography.heading6.copyWith(
-              color: AppColors.textSecondary,
-            ),
+          Row(
+            children: [
+              Text(
+                "METODE PEMBAYARAN",
+                style: AppTypography.heading6.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              SizedBox(width: 2),
+              Text("*", style: TextStyle(color: AppColors.error)),
+            ],
           ),
           const SizedBox(height: 16),
 
