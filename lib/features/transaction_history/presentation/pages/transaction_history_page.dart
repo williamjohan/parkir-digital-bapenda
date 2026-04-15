@@ -155,7 +155,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               child: BlocBuilder<TransactionHistoryCubit, TransactionHistoryState>(
                 builder: (context, state) {
                   if (state is TransactionHistoryLoading) {
-                    return AppLoadingWidget();
+                    return LoadingOverlay(isLoading: true, child: Center());
                     // return const Center(child: CircularProgressIndicator());
                     // final bool isLoading = state is TransactionHistoryLoading;
                   } else if (state is TransactionHistoryError) {

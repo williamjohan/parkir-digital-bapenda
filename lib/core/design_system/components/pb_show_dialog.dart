@@ -10,9 +10,9 @@ class PbShowDialog {
     BuildContext context, {
     required String title,
     required String description,
-    IconData icon = Icons.check_circle,
-    Color iconColor = Colors.green, // Default hijau untuk sukses
-    String buttonText = 'OK',
+    IconData icon = Icons.warning_amber_outlined,
+    Color iconColor = AppColors.error, // Default hijau untuk sukses
+    String buttonText = 'Keluar',
     VoidCallback? onConfirm, // Aksi tambahan saat tombol ditekan
   }) {
     return showDialog<void>(
@@ -45,33 +45,60 @@ class PbShowDialog {
                 ),
               ),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity, // Tombol penuh secara horizontal
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        // 1. Selalu tutup modalnya terlebih dahulu
+                        Navigator.of(dialogContext).pop();
+                      },
+                      child: Text(
+                        "Batal",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                  onPressed: () {
-                    // 1. Selalu tutup modalnya terlebih dahulu
-                    Navigator.of(dialogContext).pop();
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.error,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        // 1. Selalu tutup modalnya terlebih dahulu
+                        Navigator.of(dialogContext).pop();
 
-                    // 2. Eksekusi fungsi tambahan jika ada (misal: kembali ke Home)
-                    if (onConfirm != null) {
-                      onConfirm();
-                    }
-                  },
-                  child: Text(
-                    buttonText,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                        // 2. Eksekusi fungsi tambahan jika ada (misal: kembali ke Home)
+                        if (onConfirm != null) {
+                          onConfirm();
+                        }
+                      },
+                      child: Text(
+                        buttonText,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
