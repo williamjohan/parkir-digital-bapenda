@@ -8,6 +8,7 @@ import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../../shared/loading/loading_overlay.dart';
 import '../../data/models/history_item_model.dart';
 import '../cubit/transaction_history_cubit.dart';
@@ -97,170 +98,176 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TransactionHistoryCubit, TransactionHistoryState>(
+    return BlocConsumer<TransactionHistoryCubit, TransactionHistoryState>(
       listener: (context, state) {
         if (state is TransactionHistoryError) {
           PbStatusSnackbar.show(context, message: state.message, isError: true);
         }
       },
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
-        appBar: AppBar(
-          title: const Text(
-            'Riwayat Pendapatan',
-            style: AppTypography.heading5,
-          ),
-          centerTitle: true,
-          backgroundColor: AppColors.surface,
-          elevation: 0,
-          foregroundColor: Colors.black,
-        ),
-        body: Column(
-          children: [
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Menampilkan data:',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+      builder: (context, state) {
+        final bool isLoading = state is TransactionHistoryLoading;
+        return LoadingOverlay(
+          isLoading: isLoading,
+          child: Scaffold(
+            backgroundColor: Colors.grey.shade50,
+            appBar: AppBar(
+              title: const Text(
+                'Riwayat Pendapatan',
+                style: AppTypography.heading5,
+              ),
+              centerTitle: true,
+              backgroundColor: AppColors.surface,
+              elevation: 0,
+              foregroundColor: Colors.black,
+            ),
+            body: Column(
+              children: [
+                // --- HEADER TANGGAL (Selalu Tampil) ---
+                Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Menampilkan data:',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Text(
+                              '${DateFormat('dd MMM yyyy').format(_startDate)} - ${DateFormat('dd MMM yyyy').format(_endDate)}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          '${DateFormat('dd MMM yyyy').format(_startDate)} - ${DateFormat('dd MMM yyyy').format(_endDate)}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: _showCalendarDialog,
+                        icon: const Icon(Icons.calendar_month, size: 16),
+                        label: const Text('Ubah'),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+
+                // --- AREA KONTEN BAWAH ---
+                Expanded(child: _buildContent(context, state)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, TransactionHistoryState state) {
+    if (state is TransactionHistoryError) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Text(
+            state.message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    } else if (state is TransactionHistoryLoaded) {
+      final data = state.filteredTransactions;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Filter Kategori (Motor/Mobil/Semua)
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                _buildFilterChip(
+                  context,
+                  'SEMUA',
+                  state.selectedKategori,
+                  'Semua',
+                ),
+                const SizedBox(width: 8),
+                _buildFilterChip(
+                  context,
+                  'MOBIL',
+                  state.selectedKategori,
+                  'Mobil',
+                ),
+                const SizedBox(width: 8),
+                _buildFilterChip(
+                  context,
+                  'MOTOR',
+                  state.selectedKategori,
+                  'Motor',
+                ),
+              ],
+            ),
+          ),
+
+          // List Data atau Empty State
+          Expanded(
+            child: data.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.receipt_long,
+                          size: 80,
+                          color: Colors.grey.shade300,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Tidak ada transaksi untuk filter ini.',
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ],
                     ),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: _showCalendarDialog,
-                    icon: const Icon(Icons.calendar_month, size: 16),
-                    label: const Text('Ubah'),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-
-            Expanded(
-              child: BlocBuilder<TransactionHistoryCubit, TransactionHistoryState>(
-                builder: (context, state) {
-                  if (state is TransactionHistoryLoading) {
-                    return LoadingOverlay(isLoading: true, child: Center());
-                    // return const Center(child: CircularProgressIndicator());
-                    // final bool isLoading = state is TransactionHistoryLoading;
-                  } else if (state is TransactionHistoryError) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Text(
-                          state.message,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    );
-                  } else if (state is TransactionHistoryLoaded) {
-                    final data = state.filteredTransactions;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => context
+                        .read<TransactionHistoryCubit>()
+                        .fetchHistory(_startDate, _endDate),
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(top: 8, bottom: 80),
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return HistoryCardWidget(
+                          item: data[index],
+                          onPreviewTap: () => _showPreviewKarcis(
+                            context,
+                            data[index],
+                            state.jukirProfile,
                           ),
-                          child: Row(
-                            children: [
-                              _buildFilterChip(
-                                context,
-                                'SEMUA',
-                                state.selectedKategori,
-                                'Semua',
-                              ),
-                              const SizedBox(width: 8),
-                              _buildFilterChip(
-                                context,
-                                'MOBIL',
-                                state.selectedKategori,
-                                'Mobil',
-                              ),
-                              const SizedBox(width: 8),
-                              _buildFilterChip(
-                                context,
-                                'MOTOR',
-                                state.selectedKategori,
-                                'Motor',
-                              ),
-                            ],
-                          ),
-                        ),
+                        );
+                      },
+                    ),
+                  ),
+          ),
+        ],
+      );
+    }
 
-                        Expanded(
-                          child: data.isEmpty
-                              ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.receipt_long,
-                                        size: 80,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      const SizedBox(height: 16),
-                                      const Text(
-                                        'Tidak ada transaksi untuk filter ini.',
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : RefreshIndicator(
-                                  onRefresh: () => context
-                                      .read<TransactionHistoryCubit>()
-                                      .fetchHistory(_startDate, _endDate),
-                                  child: ListView.builder(
-                                    physics:
-                                        const AlwaysScrollableScrollPhysics(),
-                                    padding: const EdgeInsets.only(
-                                      top: 8,
-                                      bottom: 80,
-                                    ),
-                                    itemCount: data.length,
-                                    itemBuilder: (context, index) {
-                                      return HistoryCardWidget(
-                                        item: data[index],
-                                        onPreviewTap: () => _showPreviewKarcis(
-                                          context,
-                                          data[index],
-                                          state.jukirProfile,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                        ),
-                      ],
-                    );
-                  }
-                  return const SizedBox();
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    // Jika state sedang Loading atau Initial, render area kosong
+    // karena layar SUDAH DITUTUPI oleh LoadingOverlay dari luar.
+    return const SizedBox();
   }
 
   Widget _buildFilterChip(

@@ -81,7 +81,6 @@ class _TransactionPageState extends State<TransactionPage> {
               tarifParkir: tx.nominal,
               shift: profile['shift']?.toString() ?? '1',
               onClosed: () {
-                // context.read<HomeCubit>().loadDashboardData();
                 context.pop();
               },
             );
@@ -100,9 +99,7 @@ class _TransactionPageState extends State<TransactionPage> {
                   ),
                 )
                 .then((result) {
-                  if (context.mounted) {
-                    // context.read<HomeCubit>().loadDashboardData();
-                  }
+                  if (context.mounted) {}
                 });
           }
         }
