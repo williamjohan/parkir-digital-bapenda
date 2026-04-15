@@ -1,17 +1,15 @@
-// lib/features/transaction/page/transaction_page.dart
-
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../core/design_system/components/pb_ticket_print_dialog.dart';
+import '../../../shared/loading/loading_overlay.dart';
 import '../../payment/presentation/pages/payment_page.dart';
 import '../cubit/transaction_cubit.dart';
 import '../cubit/transaction_state.dart';
@@ -44,8 +42,10 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return BlocListener<TransactionCubit, TransactionState>(
+    // 🚀 1. Gunakan BlocConsumer sebagai "Root" untuk menyatukan Listener & Builder
+    return BlocConsumer<TransactionCubit, TransactionState>(
       listener: (context, state) {
         // [SCENARIO GAGAL]
         if (state.status == TransactionStatus.failure) {
@@ -63,9 +63,6 @@ class _TransactionPageState extends State<TransactionPage> {
           final profile = state.jukirProfile;
 
           if (state.isFree) {
-            // ==========================================
-            // 🚀 ALUR GRATIS: UI hanya memanggil Dialog
-            // ==========================================
             PbStatusSnackbar.show(
               context,
               message: 'Data Parkir Gratis Tersimpan!',
@@ -81,14 +78,10 @@ class _TransactionPageState extends State<TransactionPage> {
               tarifParkir: tx.nominal,
               shift: profile['shift']?.toString() ?? '1',
               onClosed: () {
-                // context.read<HomeCubit>().loadDashboardData();
-                context.pop();
+                context.pop(true); // Lempar sinyal true ke Home!
               },
             );
           } else {
-            // ==========================================
-            // 🚀 ALUR BERBAYAR: UI hanya melakukan Routing
-            // ==========================================
             context
                 .push(
                   AppRoutes.payment,
@@ -101,37 +94,52 @@ class _TransactionPageState extends State<TransactionPage> {
                 )
                 .then((result) {
                   if (context.mounted) {
-                    // context.read<HomeCubit>().loadDashboardData();
+                    context.pop(true); // Lempar sinyal true ke Home!
                   }
                 });
           }
         }
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: GestureDetector(
-            onDoubleTap: () {
-              if (kDebugMode) ChuckerFlutter.showChuckerScreen();
-            },
-            child: const Text(
-              'Transaksi Parkir',
-              style: AppTypography.heading5,
-            ),
-          ),
-          backgroundColor: AppColors.surface,
-          elevation: 0,
-          centerTitle: true,
-        ),
-        body: BlocBuilder<TransactionCubit, TransactionState>(
-          builder: (context, state) {
-            // Tampilkan loading saat Cubit sedang membuka Brankas (SQLite/Storage)
-            if (state.status == TransactionStatus.loading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      builder: (context, state) {
+        // ==========================================
+        // 🚀 2. LOGIKA DYNAMIC OVERLAY
+        // ==========================================
+        final bool isOverlayActive =
+            state.status == TransactionStatus.loading ||
+            state.status == TransactionStatus.submitting;
 
-            return Padding(
+        // String overlayMessage = 'Memuat...';
+        // if (state.status == TransactionStatus.loading) {
+        //   overlayMessage = 'Menyiapkan Halaman...';
+        // } else if (state.status == TransactionStatus.submitting) {
+        //   overlayMessage = 'Menyimpan Transaksi...';
+        // }
+
+        // ==========================================
+        // 🚀 3. BUNGKUS SCAFFOLD DARI LUAR
+        // ==========================================
+        return LoadingOverlay(
+          isLoading: isOverlayActive,
+          // message: overlayMessage,
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              title: GestureDetector(
+                onDoubleTap: () {
+                  if (kDebugMode) ChuckerFlutter.showChuckerScreen();
+                },
+                child: const Text(
+                  'Transaksi Parkir',
+                  style: AppTypography.heading5,
+                ),
+              ),
+              backgroundColor: AppColors.surface,
+              elevation: 0,
+              centerTitle: true,
+            ),
+
+            // 🚀 4. Hapus CircularProgressIndicator di sini, langsung render isinya
+            body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
                 children: [
@@ -140,7 +148,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       physics: const BouncingScrollPhysics(),
                       child: Column(
                         children: [
-                          // 🚀 1. CARD NOPOL (Dilengkapi tombol Kamera AI)
+                          // 🚀 CARD NOPOL
                           CardNopolWidget(
                             controller: _nopolController,
                             onChanged: (val) => context
@@ -168,12 +176,11 @@ class _TransactionPageState extends State<TransactionPage> {
                           ),
                           const SizedBox(height: 16),
 
-                          // 🚀 2. CARD KENDARAAN (Adaptif untuk Gratis maupun Berbayar)
+                          // 🚀 CARD KENDARAAN
                           CardJenisKendaraan(
                             tarifList: state.tarifList,
                             selectedTarif: state.selectedTarif,
-                            isFree: widget
-                                .isFree, // Gunakan widget.isFree untuk menghindari glitch UI
+                            isFree: widget.isFree,
                             onSelected: (tarif) => context
                                 .read<TransactionCubit>()
                                 .selectTarif(tarif),
@@ -181,8 +188,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
                           const SizedBox(height: 16),
 
-                          // 🚀 3. CARD PEMBAYARAN (ANTI-GLITCH: Pakai widget.isFree!)
-                          // Karena widget.isFree sudah ada sejak frame ke-1, UI tidak akan berkedip
+                          // 🚀 CARD PEMBAYARAN
                           if (!widget.isFree) ...[
                             CardMetodePembayaranWidget(
                               selectedValue: state.metodePembayaran,
@@ -196,31 +202,29 @@ class _TransactionPageState extends State<TransactionPage> {
                       ),
                     ),
                   ),
-                  // 🚀 4. TOMBOL SIMPAN
+
+                  // 🚀 TOMBOL SIMPAN
                   const SizedBox(height: 8),
                   PbPrimaryButton(
                     text: widget.isFree
                         ? "Simpan Parkir Gratis"
                         : "Lanjut Pembayaran",
-                    isLoading: state.status == TransactionStatus.submitting,
                     onPressed: state.isValid
                         ? () {
-                            FocusScope.of(
-                              context,
-                            ).unfocus(); // Tutup keyboard otomatis
+                            FocusScope.of(context).unfocus(); // Tutup keyboard
                             context
                                 .read<TransactionCubit>()
                                 .submitTransaction();
                           }
-                        : null, // Disabled jika data belum lengkap (Cubit yang menentukan!)
+                        : null,
                   ),
                   const SizedBox(height: 16),
                 ],
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
