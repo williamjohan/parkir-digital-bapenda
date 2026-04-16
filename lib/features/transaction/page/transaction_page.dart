@@ -59,7 +59,7 @@ class _TransactionPageState extends State<TransactionPage> {
         }
 
         // 🚀 2. Setelah loading selesai & kosong
-        if (state.isTarifEmpty) {
+        if (state.isTarifEmpty && state.isFree == false) {
           setState(() {
             isTarifEmpty = true;
           });
