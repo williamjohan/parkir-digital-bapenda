@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/qris_entity.dart';
+// 🚀 [SESUAIKAN PATH INI]: Import model transaksi lokal Anda
+import '../../../parking_transaction/data/models/local_transaction_model.dart';
 
 abstract class PaymentState extends Equatable {
   const PaymentState();
@@ -20,12 +22,16 @@ class PaymentQrisReady extends PaymentState {
   List<Object?> get props => [qris];
 }
 
+class PaymentSyncing extends PaymentState {}
+
 class PaymentSuccess extends PaymentState {
   final String message;
-  const PaymentSuccess(this.message);
+  final LocalTransactionModel transaction;
+
+  const PaymentSuccess(this.message, this.transaction);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, transaction];
 }
 
 class PaymentError extends PaymentState {

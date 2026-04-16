@@ -9,7 +9,6 @@ import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
-import '../../../core/design_system/components/pb_ticket_print_dialog.dart';
 import '../../../shared/loading/loading_overlay.dart';
 import '../../payment/presentation/pages/payment_page.dart';
 import '../cubit/transaction_cubit.dart';
@@ -44,12 +43,10 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
-    // 🚀 1. Gunakan BlocConsumer sebagai "Root" untuk menyatukan Listener & Builder
     return BlocConsumer<TransactionCubit, TransactionState>(
       listener: (context, state) {
-        // [SCENARIO GAGAL]
+        // [SCENARIO GAGAL VALIDASI/SYSTEM]
         if (state.status == TransactionStatus.failure) {
           PbStatusSnackbar.show(
             context,
@@ -65,71 +62,46 @@ class _TransactionPageState extends State<TransactionPage> {
           });
         }
 
-        // [SCENARIO BERHASIL]
-        if (state.status == TransactionStatus.success &&
-            state.savedTransaction != null) {
-          final tx = state.savedTransaction!;
-          final profile = state.jukirProfile;
+        // 🚀 [SCENARIO BERHASIL VALIDASI FORM]
+        if (state.status == TransactionStatus.success) {
+          // 1. Rakit Data
+          final finalJenisTarif =
+              state.selectedTarif?.jenisTarif ?? 'Objek Pajak Gratis';
+          final finalNominal = state.selectedTarif?.tarif.toInt() ?? 0;
+          final finalPlat = state.nopol.trim();
 
-          if (state.isFree) {
-            PbStatusSnackbar.show(
-              context,
-              message: 'Data Parkir Gratis Tersimpan!',
-            );
+          // ID Sementara, karena ID asli akan dibuat oleh SQLite nanti saat Lunas
+          final dummyId = "TRX-${DateTime.now().millisecondsSinceEpoch}";
 
-            PbTicketPrintDialog.showFromLocalTransaction(
-              context: context,
-              localTx: tx,
-              profile: profile,
-              kategoriKendaraan: tx.kategoriKendaraan,
-              isQuickMode: tx.modePlat == 0,
-              noKendaraan: tx.platNomor ?? '-',
-              tarifParkir: tx.nominal,
-              shift: profile['shift']?.toString() ?? '1',
-              onClosed: () {
-                context.pop(true); // Lempar sinyal true ke Home!
-              },
-            );
-          } else {
-            context
-                .push(
-                  AppRoutes.payment,
-                  extra: PaymentPageArgs(
-                    idTransaksiLokal: tx.idTransaksiLokal,
-                    kategoriKendaraan: tx.kategoriKendaraan,
-                    platNomor: tx.platNomor ?? '-',
-                    nominal: tx.nominal,
-                  ),
-                )
-                .then((result) {
-                  if (context.mounted) {
-                    context.pop(true); // Lempar sinyal true ke Home!
-                  }
-                });
-          }
+          final args = PaymentPageArgs(
+            idTransaksiLokal: dummyId,
+            kategoriKendaraan: finalJenisTarif,
+            platNomor: finalPlat,
+            nominal: finalNominal,
+          );
+
+          // 2. Lempar ke PaymentPage (Untuk Semua Transaksi: Bayar & Gratis)
+          // PaymentPage akan mem-bypass QRIS secara otomatis jika nominal == 0
+          context.push(AppRoutes.payment, extra: args).then((result) {
+            // 3. Jika kembali dengan status sukses (karcis tercetak)
+            if (context.mounted && result == true) {
+              // Reset UI Form
+              context.read<TransactionCubit>().resetForm();
+              _nopolController.clear();
+
+              // Tutup halaman Transaksi dan kembalikan sinyal sukses ke Home
+              context.pop(true);
+            }
+          });
         }
       },
       builder: (context, state) {
-        // ==========================================
-        // 🚀 2. LOGIKA DYNAMIC OVERLAY
-        // ==========================================
         final bool isOverlayActive =
             state.status == TransactionStatus.loading ||
             state.status == TransactionStatus.submitting;
 
-        // String overlayMessage = 'Memuat...';
-        // if (state.status == TransactionStatus.loading) {
-        //   overlayMessage = 'Menyiapkan Halaman...';
-        // } else if (state.status == TransactionStatus.submitting) {
-        //   overlayMessage = 'Menyimpan Transaksi...';
-        // }
-
-        // ==========================================
-        // 🚀 3. BUNGKUS SCAFFOLD DARI LUAR
-        // ==========================================
         return LoadingOverlay(
           isLoading: isOverlayActive,
-          // message: overlayMessage,
           child: Scaffold(
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
@@ -147,8 +119,6 @@ class _TransactionPageState extends State<TransactionPage> {
               elevation: 0,
               centerTitle: true,
             ),
-
-            // 🚀 4. Hapus CircularProgressIndicator di sini, langsung render isinya
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: isTarifEmpty

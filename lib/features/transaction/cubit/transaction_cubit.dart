@@ -2,29 +2,22 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../core/storage/secure_storage_manager.dart';
 import '../../home/domain/usecases/get_hybrid_tarif_usecase.dart';
 import 'transaction_state.dart';
 import '../../home/data/models/tarif_model.dart';
-import '../../parking_transaction/domain/usecases/save_parking_transaction_usecase.dart';
 
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
   final GetHybridTarifUseCase _getTarifUseCase;
-  final SaveParkingTransactionUseCase _saveTransactionUseCase;
-  final ISecureStorageManager _secureStorage;
 
-  TransactionCubit(
-    this._getTarifUseCase,
-    this._saveTransactionUseCase,
-    this._secureStorage,
-  ) : super(const TransactionState());
+  TransactionCubit(this._getTarifUseCase) : super(const TransactionState());
 
   Future<void> init(bool isFree) async {
     emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
 
     final result = await _getTarifUseCase.execute();
     if (isClosed) return;
+
     result.fold(
       (failure) {
         if (isFree) {
@@ -40,7 +33,7 @@ class TransactionCubit extends Cubit<TransactionState> {
       },
       (data) {
         if (data.isEmpty && isFree) {
-          // 🚀 Jika data kosong dari Brankas, suntikkan kategori default
+          // Jika data kosong dari Brankas, suntikkan kategori default
           _injectFreeTariff();
         } else {
           emit(
@@ -60,7 +53,7 @@ class TransactionCubit extends Cubit<TransactionState> {
   }
 
   void updateNopol(String value) {
-    emit(state.copyWith(nopol: value.toUpperCase(), imagePath: null));
+    emit(state.copyWith(nopol: value.toUpperCase(), clearImagePath: true));
   }
 
   void updateFromOcr(String platNomor, String imagePath) {
@@ -75,51 +68,35 @@ class TransactionCubit extends Cubit<TransactionState> {
     emit(state.copyWith(metodePembayaran: method));
   }
 
+  /// 🚀 FUNGSI BARU: VALIDATOR MURNI
   Future<void> submitTransaction() async {
     if (!state.isValid) return;
 
+    // Ubah ke submitting (trigger animasi loading sebentar di tombol)
     emit(state.copyWith(status: TransactionStatus.submitting));
 
-    final int modePlat = state.nopol.trim().isNotEmpty ? 1 : 0;
-    final String? finalPlat = state.nopol.trim().isEmpty
-        ? null
-        : state.nopol.trim();
+    // Jeda sedikit agar transisi UI terlihat halus & natural
+    await Future.delayed(const Duration(milliseconds: 300));
 
-    final String finalJenisTarif =
-        state.selectedTarif?.jenisTarif ?? 'Objek Pajak Gratis';
-    final int finalNominal = state.selectedTarif?.tarif.toInt() ?? 0;
-    final String finalSof = state.isFree
-        ? 'FREE'
-        : (state.metodePembayaran ?? 'UNKNOWN');
-
-    final result = await _saveTransactionUseCase.execute(
-      platNomor: finalPlat,
-      jenisTarif: finalJenisTarif,
-      nominal: finalNominal,
-      metodePembayaran: finalSof,
-      modePlat: modePlat,
-      rawImagePath: state.imagePath,
-    );
     if (isClosed) return;
 
-    await result.fold(
-      (failure) async => emit(
-        state.copyWith(
-          status: TransactionStatus.failure,
-          errorMessage: failure.message,
-        ),
-      ),
-      (transactionResult) async {
-        final profile = await _secureStorage.getJukirProfile() ?? {};
+    // Lampu hijau! Lemparkan status success ke UI agar UI yang berpindah halaman
+    emit(state.copyWith(status: TransactionStatus.success));
+  }
 
-        emit(
-          state.copyWith(
-            status: TransactionStatus.success,
-            savedTransaction: transactionResult,
-            jukirProfile: profile,
-          ),
-        );
-      },
+  /// 🚀 FUNGSI BARU: RESET FORM SETELAH KEMBALI DARI HALAMAN QRIS
+  void resetForm() {
+    // Kita buat ulang state, TAPI pertahankan list tarif & isFree agar tidak perlu fetch API ulang
+    emit(
+      TransactionState(
+        status: TransactionStatus.ready,
+        tarifList: state.tarifList,
+        isFree: state.isFree,
+        nopol: '', // Kosongkan
+        selectedTarif: null, // Kosongkan
+        metodePembayaran: null, // Kosongkan
+        imagePath: null,
+      ),
     );
   }
 }
