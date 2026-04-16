@@ -10,10 +10,7 @@ class GenerateQrisUseCase {
 
   GenerateQrisUseCase(this.repository);
 
-  Future<Either<Failure, QrisEntity>> execute({
-    required String nop,
-    required double amount,
-  }) {
-    return repository.generateQris(nop: nop, amount: amount);
+  Future<Either<Failure, QrisEntity>> execute({required double amount}) {
+    return repository.generateQris(amount: amount);
   }
 }
