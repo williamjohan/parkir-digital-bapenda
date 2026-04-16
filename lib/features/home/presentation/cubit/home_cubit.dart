@@ -49,6 +49,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Mengambil data dashboard secara lengkap dan terstruktur
   Future<void> loadDashboardData() async {
+    // 🚀 1. SET LOADING
+    emit(state.copyWith(status: HomeStatus.loading));
+
     // 0. 🚀 [BARU] BONGKAR BRANKAS: Ambil status isFree dari profil Jukir
     final profile = await _secureStorage.getJukirProfile();
     bool isFreeStatus = false;
@@ -95,5 +98,9 @@ class HomeCubit extends Cubit<HomeState> {
         emit(state.copyWith(weeklyChartData: chartData));
       }
     });
+
+    if (!isClosed) {
+      emit(state.copyWith(status: HomeStatus.success));
+    }
   }
 }

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/bar_diagram_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/last_activity_widget.dart';
+import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -30,7 +31,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Track apakah ini pertama kali load
   bool _isFirstLoad = true;
-
   @override
   void initState() {
     super.initState();
@@ -123,84 +123,82 @@ class _HomePageState extends State<HomePage> {
             break;
         }
       },
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        drawer: const HomeDrawer(),
-        appBar: AppBar(
-          title: GestureDetector(
-            onDoubleTap: () {
-              if (kDebugMode) {
-                ChuckerFlutter.showChuckerScreen();
-              }
-            },
-            child: const Text(
-              'Parkir Digital Bapenda',
-              style: AppTypography.heading5,
-            ),
-          ),
-          backgroundColor: AppColors.surface,
-          elevation: 0,
-          centerTitle: true,
-        ),
-        body: RefreshIndicator(
-          onRefresh: _loadData,
-          child: SingleChildScrollView(
-            // 🚀 [REFACTOR] Dihapus buildWhen agar semua state baru bisa ter-render
-            child: BlocBuilder<HomeCubit, HomeState>(
-              builder: (context, state) {
-                return Column(
-                  children: [
-                    DashboardWidget(
-                      // 🚀 [REFACTOR] Gunakan state.totalPendapatan
-                      totalPendapatan: state.totalPendapatan,
-                      totalTransaksi: (state.motorCount + state.mobilCount),
-                      motorCount: state.motorCount,
-                      mobilCount: state.mobilCount,
-                      isFree: state.isFree,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: BarDiagramWithLabels(
-                        weeklyIncome: _getWeeklyIncomeData(
-                          state.weeklyChartData,
-                          _selectedVehicleType,
-                        ),
-                        selectedVehicleType: _selectedVehicleType,
-                        vehicleTypes: _vehicleTypes,
-                        onVehicleTypeChanged: (newType) {
-                          setState(() {
-                            _selectedVehicleType = newType;
-                          });
-                        },
-                        dayLabels: _getDayLabels(
-                          state.weeklyChartData,
-                        ), // ✅ Pass actual labels
+      child: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          return LoadingOverlay(
+            isLoading: state.status == HomeStatus.loading,
+            child: Scaffold(
+              backgroundColor: AppColors.background,
+              drawer: const HomeDrawer(),
+              appBar: AppBar(
+                title: GestureDetector(
+                  onDoubleTap: () {
+                    if (kDebugMode) {
+                      ChuckerFlutter.showChuckerScreen();
+                    }
+                  },
+                  child: const Text(
+                    'Parkir Digital Bapenda',
+                    style: AppTypography.heading5,
+                  ),
+                ),
+                backgroundColor: AppColors.surface,
+                elevation: 0,
+                centerTitle: true,
+              ),
+              body: RefreshIndicator(
+                onRefresh: _loadData,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  // 🚀 [REFACTOR] Dihapus buildWhen agar semua state baru bisa ter-render
+                  child: Column(
+                    children: [
+                      DashboardWidget(
+                        // 🚀 [REFACTOR] Gunakan state.totalPendapatan
+                        totalPendapatan: state.totalPendapatan,
+                        totalTransaksi: (state.motorCount + state.mobilCount),
+                        motorCount: state.motorCount,
+                        mobilCount: state.mobilCount,
+                        isFree: state.isFree,
+                        isSuccess: state.status == HomeStatus.success,
                       ),
-
-                      // BarDiagramWithLabels(
-                      //   // 🚀 [REFACTOR] Inject hasil mapping data chart dari state
-                      //   weeklyIncome: _getWeeklyIncomeData(
-                      //     state.weeklyChartData,
-                      //     _selectedVehicleType,
-                      //   ),
-                      //   selectedVehicleType: _selectedVehicleType,
-                      //   vehicleTypes: _vehicleTypes,
-                      //   onVehicleTypeChanged: (newType) {
-                      //     setState(() {
-                      //       _selectedVehicleType = newType;
-                      //     });
-                      //   },
-                      //   dayLabels: [],
-                      // ),
-                    ),
-                    // 🚀 [REFACTOR] Mengirimkan data transaksi ke widget anak
-                    LastActivityWidget(transactions: state.recentTransactions),
-                  ],
-                );
-              },
+                      if (state.status == HomeStatus.success) ...[
+                        if (!state.isFree)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              top: 16,
+                            ),
+                            child: BarDiagramWithLabels(
+                              weeklyIncome: _getWeeklyIncomeData(
+                                state.weeklyChartData,
+                                _selectedVehicleType,
+                              ),
+                              selectedVehicleType: _selectedVehicleType,
+                              vehicleTypes: _vehicleTypes,
+                              onVehicleTypeChanged: (newType) {
+                                setState(() {
+                                  _selectedVehicleType = newType;
+                                });
+                              },
+                              dayLabels: _getDayLabels(
+                                state.weeklyChartData,
+                              ), // ✅ Pass actual labels
+                            ),
+                          ),
+                        LastActivityWidget(
+                          transactions: state.recentTransactions,
+                          isFree: state.isFree,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

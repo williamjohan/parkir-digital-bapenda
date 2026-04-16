@@ -12,13 +12,18 @@ import '../../../../core/routes/app_routes.dart';
 
 class LastActivityWidget extends StatelessWidget {
   final List<HistoryItemModel> transactions;
+  final bool isFree;
 
-  const LastActivityWidget({super.key, required this.transactions});
+  const LastActivityWidget({
+    super.key,
+    required this.transactions,
+    this.isFree = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
+      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 24, top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white, // Tambahkan warna dasar putih
@@ -61,9 +66,12 @@ class LastActivityWidget extends StatelessWidget {
           const SizedBox(height: 16),
 
           if (transactions.isEmpty)
-            const Center(
+            Center(
               child: Padding(
-                padding: EdgeInsets.all(32.0),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: isFree ? 200 : 32,
+                ),
                 child: Text(
                   'Belum ada transaksi hari ini',
                   style: TextStyle(color: Colors.grey),

@@ -16,6 +16,7 @@ class DashboardWidget extends StatelessWidget {
   final int motorCount;
   final int mobilCount;
   final bool isFree;
+  final bool isSuccess;
 
   const DashboardWidget({
     super.key,
@@ -24,6 +25,7 @@ class DashboardWidget extends StatelessWidget {
     required this.motorCount,
     required this.mobilCount,
     required this.isFree,
+    this.isSuccess = false,
   });
   @override
   Widget build(BuildContext context) {
@@ -46,47 +48,77 @@ class DashboardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'TOTAL PENDAPATAN',
-            style: AppTypography.bodyRegular.copyWith(
-              color: AppColors.surface,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Text(
-            DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(DateTime.now()),
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.surface,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Rp$totalPendapatan",
-                style: AppTypography.heading1.copyWith(
-                  color: AppColors.surface,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'TOTAL PENDAPATAN',
+                    style: AppTypography.bodyRegular.copyWith(
+                      color: AppColors.surface,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    DateFormat(
+                      'EEEE, d MMMM yyyy',
+                      'id_ID',
+                    ).format(DateTime.now()),
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.surface,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(20),
+              if (isFree && isSuccess)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "${motorCount + mobilCount} transaksi",
+                    style: AppTypography.caption.copyWith(color: Colors.white),
+                  ),
                 ),
-                child: Text(
-                  "${motorCount + mobilCount} transaksi",
-                  style: AppTypography.caption.copyWith(color: Colors.white),
-                ),
-              ),
             ],
           ),
-          const SizedBox(height: 8),
-          Divider(color: AppColors.surface),
-          const SizedBox(height: 8),
+          SizedBox(height: 16),
+
+          if (!isFree && isSuccess) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Rp$totalPendapatan",
+                  style: AppTypography.heading1.copyWith(
+                    color: AppColors.surface,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "${motorCount + mobilCount} transaksi",
+                    style: AppTypography.caption.copyWith(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Divider(color: AppColors.surface),
+            const SizedBox(height: 8),
+          ],
           Row(
             children: [
               DashboardItem(

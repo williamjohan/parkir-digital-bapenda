@@ -3,6 +3,8 @@ import '../../../../core/utils/permission_utils.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 import '../../data/models/weekly_chart_item_model.dart';
 
+enum HomeStatus { initial, loading, success, failure }
+
 class HomeState extends Equatable {
   final CameraPermissionStatus? permissionActionStatus;
   final String? selectedVehicleForCapture;
@@ -14,8 +16,10 @@ class HomeState extends Equatable {
   final List<HistoryItemModel> recentTransactions;
   final List<WeeklyChartItemModel> weeklyChartData;
   final bool isFree;
+  final HomeStatus status;
 
   const HomeState({
+    this.status = HomeStatus.initial,
     this.permissionActionStatus,
     this.selectedVehicleForCapture,
     this.actionTimestamp,
@@ -29,6 +33,7 @@ class HomeState extends Equatable {
   });
 
   HomeState copyWith({
+    HomeStatus? status,
     CameraPermissionStatus? permissionActionStatus,
     String? selectedVehicleForCapture,
     int? actionTimestamp,
@@ -41,6 +46,7 @@ class HomeState extends Equatable {
     bool? isFree,
   }) {
     return HomeState(
+      status: status ?? this.status,
       permissionActionStatus:
           permissionActionStatus ?? this.permissionActionStatus,
       selectedVehicleForCapture:
@@ -58,6 +64,7 @@ class HomeState extends Equatable {
 
   @override
   List<Object?> get props => [
+    status,
     permissionActionStatus,
     selectedVehicleForCapture,
     actionTimestamp,
