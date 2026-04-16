@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/transaction/widgets/tarif_empty_widget.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -28,6 +29,7 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   final TextEditingController _nopolController = TextEditingController();
+  bool isTarifEmpty = false;
 
   @override
   void initState() {
@@ -54,6 +56,13 @@ class _TransactionPageState extends State<TransactionPage> {
             message: state.errorMessage ?? 'Gagal memproses',
             isError: true,
           );
+        }
+
+        // 🚀 2. Setelah loading selesai & kosong
+        if (state.isTarifEmpty) {
+          setState(() {
+            isTarifEmpty = true;
+          });
         }
 
         // [SCENARIO BERHASIL]
@@ -142,86 +151,91 @@ class _TransactionPageState extends State<TransactionPage> {
             // 🚀 4. Hapus CircularProgressIndicator di sini, langsung render isinya
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          // 🚀 CARD NOPOL
-                          CardNopolWidget(
-                            controller: _nopolController,
-                            onChanged: (val) => context
-                                .read<TransactionCubit>()
-                                .updateNopol(val),
-                            onCameraTap: () async {
-                              final result = await context
-                                  .push<Map<String, dynamic>>(
-                                    AppRoutes.capture,
-                                  );
+              child: isTarifEmpty
+                  ? TarifEmptyWidget()
+                  : Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Column(
+                              children: [
+                                // 🚀 CARD NOPOL
+                                CardNopolWidget(
+                                  controller: _nopolController,
+                                  onChanged: (val) => context
+                                      .read<TransactionCubit>()
+                                      .updateNopol(val),
+                                  onCameraTap: () async {
+                                    final result = await context
+                                        .push<Map<String, dynamic>>(
+                                          AppRoutes.capture,
+                                        );
 
-                              if (!context.mounted) return;
+                                    if (!context.mounted) return;
 
-                              if (result != null) {
-                                final plat = result['platNomor'] as String;
-                                final image = result['imagePath'] as String;
+                                    if (result != null) {
+                                      final plat =
+                                          result['platNomor'] as String;
+                                      final image =
+                                          result['imagePath'] as String;
 
-                                _nopolController.text = plat;
-                                context.read<TransactionCubit>().updateFromOcr(
-                                  plat,
-                                  image,
-                                );
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 16),
+                                      _nopolController.text = plat;
+                                      context
+                                          .read<TransactionCubit>()
+                                          .updateFromOcr(plat, image);
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 16),
 
-                          // 🚀 CARD KENDARAAN
-                          CardJenisKendaraan(
-                            tarifList: state.tarifList,
-                            selectedTarif: state.selectedTarif,
-                            isFree: widget.isFree,
-                            onSelected: (tarif) => context
-                                .read<TransactionCubit>()
-                                .selectTarif(tarif),
-                          ),
+                                // 🚀 CARD KENDARAAN
+                                CardJenisKendaraan(
+                                  tarifList: state.tarifList,
+                                  selectedTarif: state.selectedTarif,
+                                  isFree: widget.isFree,
+                                  onSelected: (tarif) => context
+                                      .read<TransactionCubit>()
+                                      .selectTarif(tarif),
+                                ),
 
-                          const SizedBox(height: 16),
+                                const SizedBox(height: 16),
 
-                          // 🚀 CARD PEMBAYARAN
-                          if (!widget.isFree) ...[
-                            CardMetodePembayaranWidget(
-                              selectedValue: state.metodePembayaran,
-                              onTap: (value) => context
-                                  .read<TransactionCubit>()
-                                  .selectPayment(value),
+                                // 🚀 CARD PEMBAYARAN
+                                if (!widget.isFree) ...[
+                                  CardMetodePembayaranWidget(
+                                    selectedValue: state.metodePembayaran,
+                                    onTap: (value) => context
+                                        .read<TransactionCubit>()
+                                        .selectPayment(value),
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
+                          ),
+                        ),
 
-                  // 🚀 TOMBOL SIMPAN
-                  const SizedBox(height: 8),
-                  PbPrimaryButton(
-                    text: widget.isFree
-                        ? "Simpan Parkir Gratis"
-                        : "Lanjut Pembayaran",
-                    onPressed: state.isValid
-                        ? () {
-                            FocusScope.of(context).unfocus(); // Tutup keyboard
-                            context
-                                .read<TransactionCubit>()
-                                .submitTransaction();
-                          }
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
+                        // 🚀 TOMBOL SIMPAN
+                        const SizedBox(height: 8),
+                        PbPrimaryButton(
+                          text: widget.isFree
+                              ? "Simpan Parkir Gratis"
+                              : "Lanjut Pembayaran",
+                          onPressed: state.isValid
+                              ? () {
+                                  FocusScope.of(
+                                    context,
+                                  ).unfocus(); // Tutup keyboard
+                                  context
+                                      .read<TransactionCubit>()
+                                      .submitTransaction();
+                                }
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
             ),
           ),
         );

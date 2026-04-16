@@ -229,12 +229,12 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         Icon(
                           Icons.receipt_long,
                           size: 80,
-                          color: Colors.grey.shade300,
+                          color: AppColors.textHint,
                         ),
                         const SizedBox(height: 16),
                         const Text(
                           'Tidak ada transaksi untuk filter ini.',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: AppColors.textHint),
                         ),
                       ],
                     ),
