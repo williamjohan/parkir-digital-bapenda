@@ -87,11 +87,14 @@ class PbPreviewTicketWidget extends StatelessWidget {
               ), // Style dasar
               children: [
                 TextSpan(text: tipeKendaraan),
-                const TextSpan(
-                  text: '  •  ',
-                  style: TextStyle(color: Colors.grey),
-                ),
-                TextSpan(text: isQuickMode ? 'Tanpa Plat' : noKendaraan),
+
+                if (noKendaraan != '') ...[
+                  const TextSpan(
+                    text: '  •  ',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  TextSpan(text: noKendaraan),
+                ],
                 const TextSpan(
                   text: '  •  ',
                   style: TextStyle(color: Colors.grey),

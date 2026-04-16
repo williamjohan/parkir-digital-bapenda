@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../core/design_system/components/pb_primary_button.dart';
 import '../../home/data/models/tarif_model.dart';
-import 'botsheet_tarif_widget.dart';
 
 // 🚀 [ENHANCE]: Menjadi StatelessWidget (Dumb Widget)
 class CardJenisKendaraan extends StatelessWidget {
@@ -24,10 +24,18 @@ class CardJenisKendaraan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Penentuan teks dinamis
-    final displayJenis = selectedTarif?.jenisTarif ?? "Pilih Jenis Kendaraan";
+    // final displayJenis = selectedTarif?.jenisTarif ?? "Pilih Jenis Kendaraan";
     final displayTarif = selectedTarif != null
         ? (isFree ? "Rp0 (GRATIS)" : "Rp${selectedTarif!.tarif.toInt()}")
         : "Rp0";
+
+    // untuk testing
+    // final List<TarifModel> dummyTarifList = [
+    //   const TarifModel(id: 1, jenisTarif: "Motor", tarif: 2000),
+    //   const TarifModel(id: 2, jenisTarif: "Mobil", tarif: 5000),
+    //   const TarifModel(id: 3, jenisTarif: "Bus", tarif: 10000),
+    //   const TarifModel(id: 4, jenisTarif: "Truk", tarif: 15000),
+    // ];
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -52,39 +60,29 @@ class CardJenisKendaraan extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          /// Dropdown Button
-          InkWell(
-            onTap: () {
-              // 🚀 [ENHANCE]: Panggil BottomSheet yang sudah menggunakan TarifModel
-              BottomSheetTarifParkir.show(
-                context,
-                tarifList: tarifList,
-                isFree: isFree,
-                onTap: onSelected,
+          /// Grid Jenis Kendaraan
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: tarifList.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, // 🚀 max 3 per baris
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              childAspectRatio: 2.5, // biar tombol tidak terlalu tinggi
+            ),
+            itemBuilder: (context, index) {
+              final tarif = tarifList[index];
+              final isSelected = selectedTarif?.id == tarif.id;
+
+              return PbPrimaryButton(
+                text: tarif.jenisTarif,
+                onPressed: () => onSelected(tarif),
+                variant: isSelected
+                    ? PbButtonVariant.outlinedPrimary
+                    : PbButtonVariant.outlinedSecondaryDark,
               );
             },
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    displayJenis,
-                    style: AppTypography.bodyText.copyWith(
-                      color: selectedTarif == null
-                          ? AppColors.textSecondary
-                          : AppColors.textPrimary,
-                    ),
-                  ),
-                  const Icon(Icons.arrow_drop_down),
-                ],
-              ),
-            ),
           ),
 
           const SizedBox(height: 16),

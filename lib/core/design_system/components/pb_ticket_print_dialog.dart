@@ -66,7 +66,10 @@ class PbTicketPrintDialog {
       kategoriKendaraan: formattedKategori,
       isQuickMode: historyTx.modePlat == 0,
       // 🚀 [FIX UTAMA]: Gunakan titleText (Extension) untuk mengubah String? menjadi String ("TANPA PLAT" atau "L 1234 AB")
-      noKendaraan: historyTx.titleText,
+      // noKendaraan: historyTx.platNumber,
+      noKendaraan: historyTx.isNoPlate
+          ? ''
+          : historyTx.platNumber.toUpperCase(),
       tarifParkir: historyTx.kredit,
       onClosed: onClosed,
     );

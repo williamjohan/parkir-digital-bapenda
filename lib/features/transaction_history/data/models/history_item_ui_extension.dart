@@ -61,9 +61,9 @@ extension HistoryItemUiX on HistoryItemModel {
         cleanPlat == 'tanpa plat';
   }
 
-  String get titleText => isNoPlate ? 'TANPA PLAT' : platNumber!.toUpperCase();
+  String get subtitleText => isNoPlate ? '-' : platNumber!.toUpperCase();
 
-  String get subtitleText {
+  String get titleText {
     // Gunakan titleText agar konsisten (huruf besar/kecilnya terjaga)
     final String displayPlat = isNoPlate
         ? 'Tanpa Plat'
