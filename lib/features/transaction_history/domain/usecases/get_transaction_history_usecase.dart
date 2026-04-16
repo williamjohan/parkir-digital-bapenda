@@ -53,25 +53,12 @@ class GetTransactionHistoryUseCase {
           ? rawPetugasId
           : int.tryParse(rawPetugasId?.toString() ?? '0') ?? 0;
 
-      final normalizedStart = DateTime(
-        startDate.year,
-        startDate.month,
-        startDate.day,
-        12,
-      );
-      final normalizedEnd = DateTime(
-        endDate.year,
-        endDate.month,
-        endDate.day,
-        12,
-      );
-
       final apiResult = await _remoteDataSource.getHistory(
         nop: nop,
         petugasId: petugasId,
         shift: shift,
-        startDate: normalizedStart,
-        endDate: normalizedEnd,
+        startDate: startDate,
+        endDate: endDate,
         limit: null,
       );
 

@@ -56,7 +56,7 @@ class DashboardWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'TOTAL PENDAPATAN',
+                    isFree ? 'TOTAL KENDARAAN' : 'TOTAL PENDAPATAN',
                     style: AppTypography.bodyRegular.copyWith(
                       color: AppColors.surface,
                       fontWeight: FontWeight.w500,
@@ -83,7 +83,7 @@ class DashboardWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    "${motorCount + mobilCount} transaksi",
+                    "${motorCount + mobilCount} kendaraan",
                     style: AppTypography.caption.copyWith(color: Colors.white),
                   ),
                 ),

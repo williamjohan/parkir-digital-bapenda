@@ -16,7 +16,7 @@ class HistoryItemModel {
   @JsonKey(name: 'sof', defaultValue: 'FREE')
   final String sof;
 
-  @JsonKey(name: 'platNumber')
+  @JsonKey(name: 'platNumber', defaultValue: '-')
   final String platNumber;
 
   @JsonKey(name: 'tglTrx', defaultValue: '')

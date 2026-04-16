@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import '../../../../core/design_system/components/pb_calendar_range_picker.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/hidtory_recap_widget.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -36,50 +36,10 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     _startDate = DateTime(targetDate.year, targetDate.month, targetDate.day);
     _endDate = DateTime(targetDate.year, targetDate.month, targetDate.day);
 
+    print(_startDate);
+    print(_endDate);
+
     context.read<TransactionHistoryCubit>().fetchHistory(_startDate, _endDate);
-  }
-
-  Future<void> _showCalendarDialog() async {
-    final DateTimeRange? picked = await PbCalendarRangePicker.show(
-      context: context,
-      initialStartDate: _startDate,
-      initialEndDate: _endDate,
-    );
-
-    if (picked != null) {
-      final difference = picked.end.difference(picked.start).inDays.abs();
-      if (difference > 30) {
-        PbStatusSnackbar.show(
-          context,
-          message: 'Rentang waktu maksimal pencarian adalah 30 hari.',
-          isError: true,
-        );
-        return;
-      }
-
-      setState(() {
-        _startDate = DateTime(
-          picked.start.year,
-          picked.start.month,
-          picked.start.day,
-        );
-        _endDate = DateTime(
-          picked.end.year,
-          picked.end.month,
-          picked.end.day,
-          23,
-          59,
-          59,
-        );
-      });
-
-      if (mounted) {
-        context.read<TransactionHistoryCubit>().fetchHistory(
-          _startDate,
-          _endDate,
-        );
-      }
-    }
   }
 
   // 🚀 [REFACTOR CLEAN CODE]: Cukup Panggil Pintu Masuk 2 dari Dialog Engine Anda!
@@ -122,45 +82,33 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             body: Column(
               children: [
                 // --- HEADER TANGGAL (Selalu Tampil) ---
-                Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Menampilkan data:',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              '${DateFormat('dd MMM yyyy').format(_startDate)} - ${DateFormat('dd MMM yyyy').format(_endDate)}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: _showCalendarDialog,
-                        icon: const Icon(Icons.calendar_month, size: 16),
-                        label: const Text('Ubah'),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 1),
+                RangeFilterWidget(
+                  onApply:
+                      ({
+                        required String startDate,
+                        required String endDate,
+                        required String startTime,
+                        required String endTime,
+                      }) {
+                        final start = DateTime.parse("$startDate $startTime");
+                        final end = DateTime.parse("$endDate $endTime");
+                        print("🔥 onApply KEPAKE");
+                        print("START RAW: $startDate $startTime");
+                        print("END RAW: $endDate $endTime");
+                        print("✅ PARSED START: $start");
+                        print("✅ PARSED END: $end");
 
+                        setState(() {
+                          _startDate = start;
+                          _endDate = end;
+                        });
+
+                        context.read<TransactionHistoryCubit>().fetchHistory(
+                          start,
+                          end,
+                        );
+                      },
+                ),
                 // --- AREA KONTEN BAWAH ---
                 Expanded(child: _buildContent(context, state)),
               ],
@@ -190,34 +138,45 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Filter Kategori (Motor/Mobil/Semua)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                _buildFilterChip(
-                  context,
-                  'SEMUA',
-                  state.selectedKategori,
-                  'Semua',
+          Column(
+            children: [
+              Container(
+                width: double.infinity,
+                color: Colors.white,
+                padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildFilterChip(
+                        context,
+                        'SEMUA',
+                        state.selectedKategori,
+                        'Semua',
+                      ),
+                      const SizedBox(width: 8),
+                      _buildFilterChip(
+                        context,
+                        'MOBIL',
+                        state.selectedKategori,
+                        'Mobil',
+                      ),
+                      const SizedBox(width: 8),
+                      _buildFilterChip(
+                        context,
+                        'MOTOR',
+                        state.selectedKategori,
+                        'Motor',
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 8),
-                _buildFilterChip(
-                  context,
-                  'MOBIL',
-                  state.selectedKategori,
-                  'Mobil',
-                ),
-                const SizedBox(width: 8),
-                _buildFilterChip(
-                  context,
-                  'MOTOR',
-                  state.selectedKategori,
-                  'Motor',
-                ),
-              ],
-            ),
+              ),
+              Divider(color: AppColors.textHint),
+            ],
           ),
+          SizedBox(height: 8),
+          HistoryRecapWidget(),
 
           // List Data atau Empty State
           Expanded(

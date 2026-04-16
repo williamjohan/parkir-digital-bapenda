@@ -33,25 +33,11 @@ class TransactionHistoryRemoteDataSourceImpl
     required DateTime endDate,
     int? limit,
   }) async {
-    final sDate = DateTime(
-      startDate.year,
-      startDate.month,
-      startDate.day,
-      0,
-      0,
-      0,
-    );
-    final eDate = DateTime(
-      endDate.year,
-      endDate.month,
-      endDate.day,
-      23,
-      59,
-      59,
-    );
+    final String startIso =
+        "${startDate.toUtc().toIso8601String().substring(0, 23)}Z";
 
-    final String startIso = "${sDate.toIso8601String().substring(0, 23)}Z";
-    final String endIso = "${eDate.toIso8601String().substring(0, 23)}Z";
+    final String endIso =
+        "${endDate.toUtc().toIso8601String().substring(0, 23)}Z";
 
     final formData = FormData.fromMap({
       'nop': nop,
