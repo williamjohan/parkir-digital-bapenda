@@ -324,11 +324,7 @@ _i174.GetIt init(
     ),
   );
   gh.factory<_i629.TransactionCubit>(
-    () => _i629.TransactionCubit(
-      gh<_i1057.GetHybridTarifUseCase>(),
-      gh<_i512.SaveParkingTransactionUseCase>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
+    () => _i629.TransactionCubit(gh<_i1057.GetHybridTarifUseCase>()),
   );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(
@@ -344,14 +340,6 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.factory<_i513.PaymentCubit>(
-    () => _i513.PaymentCubit(
-      gh<_i831.GenerateQrisUseCase>(),
-      gh<_i232.WatchPaymentStatusUseCase>(),
-      gh<_i191.CheckPaymentStatusUseCase>(),
-      gh<_i907.StopMonitoringPaymentUseCase>(),
-    ),
-  );
   gh.lazySingleton<_i269.UpdateParkingStatusUseCase>(
     () => _i269.UpdateParkingStatusUseCase(
       gh<_i1054.IParkingTransactionRepository>(),
@@ -362,6 +350,15 @@ _i174.GetIt init(
       gh<_i1054.IParkingTransactionRepository>(),
       gh<_i461.IParkingTransactionRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i513.PaymentCubit>(
+    () => _i513.PaymentCubit(
+      gh<_i831.GenerateQrisUseCase>(),
+      gh<_i232.WatchPaymentStatusUseCase>(),
+      gh<_i191.CheckPaymentStatusUseCase>(),
+      gh<_i907.StopMonitoringPaymentUseCase>(),
+      gh<_i512.SaveParkingTransactionUseCase>(),
     ),
   );
   gh.factory<_i877.ParkingTransactionCubit>(

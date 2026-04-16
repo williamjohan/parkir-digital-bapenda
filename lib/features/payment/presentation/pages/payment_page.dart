@@ -8,19 +8,14 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
-import '../../../../core/storage/database_helper.dart';
-import '../../../parking_transaction/data/models/local_transaction_model.dart';
 import '../widgets/card_detail_parkir.dart';
 import '../widgets/card_qris_widget.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
-import '../../domain/usecases/check_payment_status_usecase.dart';
-import '../../domain/usecases/generate_qris_usecase.dart';
-import '../../domain/usecases/stop_monitoring_payment_usecase.dart';
-import '../../domain/usecases/watch_payment_status_usecase.dart';
 
 class PaymentPageArgs {
-  final String idTransaksiLokal;
+  final String
+  idTransaksiLokal; // Tetap dipertahankan agar tidak merusak Router
   final String kategoriKendaraan;
   final String platNomor;
   final int nominal;
@@ -42,10 +37,11 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  // FIX: Cubit dibuat fresh per instance halaman, bukan dari locator langsung
-  // Ini mencegah penggunaan Cubit yang sudah di-close dari sesi sebelumnya
   late final PaymentCubit _cubit;
   Map<String, dynamic>? _profile;
+
+  // 🚀 Indikator untuk memastikan kita bisa pop dialog loading dengan aman
+  bool _isSyncDialogOpen = false;
 
   @override
   void initState() {
@@ -57,27 +53,32 @@ class _PaymentPageState extends State<PaymentPage> {
   Future<void> _initPayment() async {
     _profile = await locator<ISecureStorageManager>().getJukirProfile();
     if (mounted) {
-      // final nop = _profile?['nop'] ?? '';
-      _cubit.initiateQrisPayment(widget.args.nominal.toDouble());
+      // 🚀 THE MAGIC ROUTER: Tentukan apakah ini gratis atau berbayar!
+      if (widget.args.nominal == 0) {
+        // Langsung lompat ke Finalisasi (Insert data & Print)
+        _cubit.processFreePayment(widget.args);
+      } else {
+        // Lanjut tampilkan QRIS
+        _cubit.initiateQrisPayment(widget.args);
+      }
     }
   }
 
-  @override
-  void dispose() {
-    // FIX: Tidak perlu close manual karena BlocProvider yang handle lifecycle
-    // _cubit.close() ← DIHAPUS
-    super.dispose();
+  /// Helper untuk mematikan dialog loading jika sedang menyala
+  void _dismissSyncDialog() {
+    if (_isSyncDialogOpen && mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+      _isSyncDialogOpen = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // FIX: Pakai BlocProvider biasa (bukan .value) agar lifecycle dikelola
-      // otomatis — close() dipanggil saat widget di-dispose oleh Flutter
       create: (_) => _cubit,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Pembayaran QRIS', style: AppTypography.heading3),
+          title: const Text('Pembayaran', style: AppTypography.heading3),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: const IconThemeData(color: AppColors.textPrimary),
@@ -85,68 +86,91 @@ class _PaymentPageState extends State<PaymentPage> {
         body: BlocConsumer<PaymentCubit, PaymentState>(
           buildWhen: (previous, current) {
             if (current is PaymentError && previous is PaymentQrisReady) {
-              return false; // Jangan rebuild builder, tetap tampilkan state Ready (QRIS)
+              return false; // Perisai QRIS: Cegah layar blank jika ada false alarm
             }
             return true;
           },
           listener: (context, state) async {
-            if (state is PaymentError) {
+            // ----------------------------------------------------
+            // 1. FASE MENYIMPAN DATA (SYNCING)
+            // ----------------------------------------------------
+            if (state is PaymentSyncing) {
+              _isSyncDialogOpen = true;
+              showDialog(
+                context: context,
+                barrierDismissible: false, // Tidak bisa di-klik di luar
+                builder: (context) => PopScope(
+                  canPop: false, // Back button Android dimatikan
+                  child: AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    content: const Row(
+                      children: [
+                        CircularProgressIndicator(color: AppColors.primary),
+                        SizedBox(width: 24),
+                        Expanded(
+                          child: Text(
+                            "Memproses Transaksi...",
+                            style: AppTypography.bodyText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ).then((_) => _isSyncDialogOpen = false);
+            }
+            // ----------------------------------------------------
+            // 2. FASE ERROR
+            // ----------------------------------------------------
+            else if (state is PaymentError) {
+              _dismissSyncDialog(); // Tutup loading jika ada
               PbStatusSnackbar.show(
                 context,
                 message: state.message,
                 isError: true,
               );
-            } else if (state is PaymentTimeout) {
+            }
+            // ----------------------------------------------------
+            // 3. FASE TIMEOUT
+            // ----------------------------------------------------
+            else if (state is PaymentTimeout) {
+              _dismissSyncDialog();
               PbStatusSnackbar.show(
                 context,
                 message: state.message,
                 isError: true,
               );
-              // FIX: Delay agar snackbar sempat tampil sebelum pop
               await Future.delayed(const Duration(seconds: 2));
               if (context.mounted) context.pop();
-            } else if (state is PaymentSuccess) {
+            }
+            // ----------------------------------------------------
+            // 4. FASE SUKSES & AUTO-PRINT 🚀
+            // ----------------------------------------------------
+            else if (state is PaymentSuccess) {
+              _dismissSyncDialog(); // Tutup loading memproses
+
+              // Munculkan notifikasi hijau
               PbStatusSnackbar.show(context, message: state.message);
 
-              await DatabaseHelper.instance.updateTransactionStatus(
-                widget.args.idTransaksiLokal,
-                'PAID_ONLINE',
-              );
-              await DatabaseHelper.instance.markTransactionAsSynced(
-                widget.args.idTransaksiLokal,
-              );
-
-              final dummyTxForPrint = LocalTransactionModel(
-                idTransaksiLokal: widget.args.idTransaksiLokal,
-                nominal: widget.args.nominal,
-                platNomor: widget.args.platNomor,
-                kategoriKendaraan: widget.args.kategoriKendaraan,
-                metodePembayaran: 'QRIS',
-                waktuTransaksi: DateTime.now().toIso8601String(),
-                status: 'PAID_ONLINE',
-                idJukir: _profile?['idUser']?.toString() ?? '',
-                namaJukir: _profile?['namaUser'] ?? '',
-                modePlat:
-                    widget.args.platNomor.isEmpty ||
-                        widget.args.platNomor == '-'
-                    ? 0
-                    : 1,
-                isSync: 1,
-              );
+              // 🚀 AMBIL DATA ASLI DARI CUBIT (Sudah tersimpan di DB & API)
+              final savedTx = state.transaction;
 
               if (mounted) {
+                // Munculkan dialog print otomatis!
                 PbTicketPrintDialog.showFromLocalTransaction(
                   context: context,
-                  localTx: dummyTxForPrint,
+                  localTx: savedTx,
                   profile: _profile ?? {},
-                  kategoriKendaraan: widget.args.kategoriKendaraan,
-                  isQuickMode:
-                      widget.args.platNomor.isEmpty ||
-                      widget.args.platNomor == '-',
-                  noKendaraan: widget.args.platNomor,
-                  tarifParkir: widget.args.nominal,
+                  kategoriKendaraan: savedTx.kategoriKendaraan,
+                  isQuickMode: savedTx.modePlat == 0,
+                  noKendaraan: savedTx.platNomor ?? '-',
+                  tarifParkir: savedTx.nominal,
                   shift: _profile?['shift']?.toString() ?? '1',
                   onClosed: () {
+                    // Jika dialog print ditutup, tendang kembali ke Transaction Page
+                    // Bawa parameter 'true' agar halaman depan tahu transaksi berhasil direfresh
                     context.pop(true);
                   },
                 );
@@ -154,7 +178,14 @@ class _PaymentPageState extends State<PaymentPage> {
             }
           },
           builder: (context, state) {
-            if (state is PaymentLoading || state is PaymentInitial) {
+            // Jika state Syncing, pertahankan UI terakhir (QRIS) agar layar tidak putih
+            if (state is PaymentLoading ||
+                state is PaymentInitial ||
+                state is PaymentSyncing) {
+              // Jika ini transaksi gratis (nominal 0), tidak perlu tampilkan "Menghasilkan QRIS"
+              // Biarkan layar putih kosong sedikit sebelum popup loading muncul
+              if (widget.args.nominal == 0) return const SizedBox.shrink();
+
               return const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -178,7 +209,8 @@ class _PaymentPageState extends State<PaymentPage> {
                         url: state.qris.qrisValue,
                         objekPajak:
                             _profile?['namaObjekPajak'] ?? 'Objek Pajak',
-                        idTransaksi: widget.args.idTransaksiLokal,
+                        idTransaksi:
+                            widget.args.idTransaksiLokal, // sekadar display ID
                       ),
                       const SizedBox(height: 16),
                       CardDetailParkirWidget(
@@ -204,10 +236,21 @@ class _PaymentPageState extends State<PaymentPage> {
               );
             }
 
-            return const Center(
-              child: Text(
-                'Terjadi kesalahan. Silakan kembali.',
-                style: AppTypography.bodyText,
+            // Fallback (Error State yang tidak tertahan perisai)
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Terjadi kesalahan.',
+                    style: AppTypography.bodyText,
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () => context.pop(),
+                    child: const Text('Kembali'),
+                  ),
+                ],
               ),
             );
           },

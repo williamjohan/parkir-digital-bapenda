@@ -7,13 +7,9 @@ import '../../../../core/utils/app_logger.dart';
 class QrisSignalRDatasource {
   HubConnection? _connection;
 
-  // StreamController dibuat nullable agar bisa di-reset per sesi
   StreamController<String>? _statusController;
-
-  // Simpan kodeQris aktif untuk keperluan re-join saat reconnect
   String? _activeKodeQris;
 
-  /// Expose stream — dibuat fresh setiap sesi connectAndJoin
   Stream<String> get qrisStatusStream {
     _statusController ??= StreamController<String>.broadcast();
     return _statusController!.stream;
@@ -22,12 +18,7 @@ class QrisSignalRDatasource {
   /// Buka koneksi dan join group kodeQris
   Future<void> connectAndJoin(String kodeQris) async {
     try {
-      // Matikan koneksi lama jika masih ada
       await disconnect();
-
-      // Reset stream controller untuk sesi baru
-      // await _statusController?.close();
-      // _statusController = StreamController<String>.broadcast();
 
       _activeKodeQris = kodeQris;
 
@@ -36,13 +27,12 @@ class QrisSignalRDatasource {
           .withAutomaticReconnect()
           .build();
 
-      // Daftarkan listeners SEBELUM start — urutan ini penting
       _registerListeners();
 
       await _connection!.start();
       AppLogger.debug('✅ [SignalR] Connected! State: ${_connection!.state}');
 
-      // Join group di BE
+      // 🚀 SATU KALI TEMBAKAN SAJA: Join group & Bangunkan BE
       await _joinGroup(kodeQris);
     } catch (e) {
       AppLogger.error('🚨 [SignalR] Gagal connect: $e');
@@ -50,18 +40,19 @@ class QrisSignalRDatasource {
     }
   }
 
-  /// Join group — dipisah agar bisa dipanggil ulang saat reconnect
+  /// Invoke QrisStatus
   Future<void> _joinGroup(String kodeQris) async {
     try {
-      await _connection!.invoke("QrisStatus", args: [kodeQris]);
-      AppLogger.debug('📡 [SignalR] Joined group: $kodeQris');
+      if (_connection?.state == HubConnectionState.Connected) {
+        await _connection!.invoke("QrisStatus", args: [kodeQris]);
+        AppLogger.debug('📡 [SignalR] Joined group: $kodeQris');
+      }
     } catch (e) {
-      AppLogger.error('❌ [SignalR] Gagal join group: $e');
-      _statusController?.add("ERROR");
+      AppLogger.error('❌ [SignalR] Gagal invoke QrisStatus: $e');
     }
   }
 
-  /// Daftarkan semua event listeners + reconnect handler
+  /// Event Listeners
   void _registerListeners() {
     _connection?.on("QRIS_LUNAS", (arguments) {
       AppLogger.debug('💰 [SignalR] QRIS_LUNAS — args: $arguments');
@@ -70,18 +61,19 @@ class QrisSignalRDatasource {
 
     _connection?.on("QRIS_PENDING", (arguments) {
       AppLogger.debug('⏳ [SignalR] QRIS_PENDING — args: $arguments');
-      _statusController?.add("PENDING");
+      // Tidak perlu diteruskan ke Cubit agar layar tidak kedip
     });
 
     _connection?.on("QRIS_TIMEOUT", (arguments) {
       AppLogger.debug('⏰ [SignalR] QRIS_TIMEOUT — args: $arguments');
+      // 🚀 KEMBALIKAN FUNGSI INI: Karena BE sudah valid 3 menit,
+      // Jika BE bilang Timeout, berarti memang sudah waktunya!
       _statusController?.add("TIMEOUT");
     });
 
+    // Error handles BE problem (Filter False Alarm tetap dipertahankan)
     _connection?.on("QRIS_ERROR", (arguments) {
       AppLogger.debug('❌ [SignalR] QRIS_ERROR — args: $arguments');
-
-      // 🚀 [FILTER]: Cek apakah ini error palsu
       try {
         if (arguments != null && arguments.isNotEmpty) {
           final payload = arguments[0] as Map<dynamic, dynamic>?;
@@ -89,18 +81,15 @@ class QrisSignalRDatasource {
             AppLogger.debug(
               '🛡️ False Alarm ditahan! Status sebenarnya masih PENDING.',
             );
-            return; // Berhenti di sini, jangan kirim "ERROR" ke stream
+            return;
           }
         }
       } catch (e) {
         AppLogger.error('Gagal parsing error payload: $e');
       }
-
       _statusController?.add("ERROR");
     });
 
-    // FIX KRITIS: Re-join group saat koneksi reconnect otomatis
-    // Tanpa ini, setelah reconnect device tidak ada di group kodeQris lagi
     _connection?.onreconnected(({connectionId}) async {
       AppLogger.debug('🔄 [SignalR] Reconnected — connectionId: $connectionId');
       if (_activeKodeQris != null) {
@@ -113,11 +102,10 @@ class QrisSignalRDatasource {
     });
   }
 
-  /// Tutup koneksi dengan urutan yang benar
+  /// Close
   Future<void> disconnect() async {
     if (_connection != null &&
         _connection!.state == HubConnectionState.Connected) {
-      // FIX: .off() dulu sebelum .stop()
       _connection!.off("QRIS_LUNAS");
       _connection!.off("QRIS_PENDING");
       _connection!.off("QRIS_TIMEOUT");
@@ -129,7 +117,7 @@ class QrisSignalRDatasource {
     _activeKodeQris = null;
   }
 
-  /// Dispose total — dipanggil saat datasource di-destroy
+  /// Dispose
   Future<void> dispose() async {
     await disconnect();
     await _statusController?.close();

@@ -2,7 +2,6 @@
 
 import 'package:equatable/equatable.dart';
 import '../../home/data/models/tarif_model.dart';
-import '../../parking_transaction/data/models/local_transaction_model.dart';
 
 enum TransactionStatus { ready, loading, submitting, success, failure }
 
@@ -15,8 +14,6 @@ class TransactionState extends Equatable {
   final bool isFree;
   final String? errorMessage;
   final String? imagePath;
-  final LocalTransactionModel? savedTransaction;
-  final Map<String, dynamic> jukirProfile;
 
   const TransactionState({
     this.status = TransactionStatus.ready,
@@ -27,8 +24,6 @@ class TransactionState extends Equatable {
     this.isFree = false,
     this.errorMessage,
     this.imagePath,
-    this.savedTransaction,
-    this.jukirProfile = const {},
   });
 
   // Jika Gratis: Cukup pilih kendaraan. Jika Bayar: Wajib kendaraan + metode pembayaran.
@@ -44,24 +39,27 @@ class TransactionState extends Equatable {
     List<TarifModel>? tarifList,
     String? nopol,
     TarifModel? selectedTarif,
+    bool clearSelectedTarif = false, // 🚀 Helper untuk mereset ke null
     String? metodePembayaran,
+    bool clearMetodePembayaran = false, // 🚀 Helper untuk mereset ke null
     bool? isFree,
     String? errorMessage,
     String? imagePath,
-    LocalTransactionModel? savedTransaction,
-    Map<String, dynamic>? jukirProfile,
+    bool clearImagePath = false, // 🚀 Helper untuk mereset ke null
   }) {
     return TransactionState(
       status: status ?? this.status,
       tarifList: tarifList ?? this.tarifList,
       nopol: nopol ?? this.nopol,
-      selectedTarif: selectedTarif ?? this.selectedTarif,
-      metodePembayaran: metodePembayaran ?? this.metodePembayaran,
+      selectedTarif: clearSelectedTarif
+          ? null
+          : (selectedTarif ?? this.selectedTarif),
+      metodePembayaran: clearMetodePembayaran
+          ? null
+          : (metodePembayaran ?? this.metodePembayaran),
       isFree: isFree ?? this.isFree,
       errorMessage: errorMessage ?? this.errorMessage,
-      imagePath: imagePath ?? this.imagePath,
-      savedTransaction: savedTransaction ?? this.savedTransaction,
-      jukirProfile: jukirProfile ?? this.jukirProfile,
+      imagePath: clearImagePath ? null : (imagePath ?? this.imagePath),
     );
   }
 
@@ -75,7 +73,5 @@ class TransactionState extends Equatable {
     isFree,
     errorMessage,
     imagePath,
-    savedTransaction,
-    jukirProfile,
   ];
 }
