@@ -15,6 +15,7 @@ class PaymentQrisView extends StatelessWidget {
   final String kategoriKendaraan;
   final int nominal;
   final VoidCallback onCheckStatus;
+  final int durasi;
 
   const PaymentQrisView({
     super.key,
@@ -26,39 +27,48 @@ class PaymentQrisView extends StatelessWidget {
     required this.kategoriKendaraan,
     required this.nominal,
     required this.onCheckStatus,
+    required this.durasi,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CardQrisWidget(
-              url: qrisUrl,
-              objekPajak: objekPajak,
-              idTransaksi: idTransaksi,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CardQrisWidget(
+                    durasi: durasi,
+                    url: qrisUrl,
+                    objekPajak: objekPajak,
+                    idTransaksi: idTransaksi,
+                  ),
+                  const SizedBox(height: 16),
+                  CardDetailParkirWidget(
+                    platNomor: platNomor,
+                    kategoriKendaraan: kategoriKendaraan,
+                    nominal: nominal,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Diterima di semua e-wallet dan bank",
+                    style: AppTypography.caption,
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            CardDetailParkirWidget(
-              platNomor: platNomor,
-              kategoriKendaraan: kategoriKendaraan,
-              nominal: nominal,
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              "Diterima di semua e-wallet dan bank",
-              style: AppTypography.caption,
-            ),
-            const SizedBox(height: 32),
-            PbPrimaryButton(
-              text: 'Cek Status Pembayaran',
-              onPressed: onCheckStatus,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          PbPrimaryButton(
+            text: 'Cek Status Pembayaran',
+            onPressed: onCheckStatus,
+          ),
+        ],
       ),
     );
   }
