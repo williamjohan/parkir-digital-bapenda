@@ -2,6 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../core/services/location/i_app_location_service.dart';
 import '../../home/domain/usecases/get_hybrid_tarif_usecase.dart';
 import 'transaction_state.dart';
 import '../../home/data/models/tarif_model.dart';
@@ -9,8 +10,10 @@ import '../../home/data/models/tarif_model.dart';
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
   final GetHybridTarifUseCase _getTarifUseCase;
+  final IAppLocationService _locationService;
 
-  TransactionCubit(this._getTarifUseCase) : super(const TransactionState());
+  TransactionCubit(this._getTarifUseCase, this._locationService)
+    : super(const TransactionState());
 
   Future<void> init(bool isFree) async {
     emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
@@ -75,12 +78,19 @@ class TransactionCubit extends Cubit<TransactionState> {
     // Ubah ke submitting (trigger animasi loading sebentar di tombol)
     emit(state.copyWith(status: TransactionStatus.submitting));
 
-    // Jeda sedikit agar transisi UI terlihat halus & natural
+    final isGpsOn = await _locationService.isLocationServiceEnabled();
+
+    if (isClosed) return;
+
+    if (!isGpsOn) {
+      emit(state.copyWith(status: TransactionStatus.locationDisabled));
+      return;
+    }
+
     await Future.delayed(const Duration(milliseconds: 300));
 
     if (isClosed) return;
 
-    // Lampu hijau! Lemparkan status success ke UI agar UI yang berpindah halaman
     emit(state.copyWith(status: TransactionStatus.success));
   }
 

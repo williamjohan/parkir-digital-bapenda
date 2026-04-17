@@ -2,6 +2,7 @@
 
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/services/location/i_app_location_service.dart';
 import '../../data/models/local_transaction_model.dart';
@@ -16,24 +17,33 @@ class SaveParkingTransactionUseCase {
 
   Future<Either<Failure, LocalTransactionModel>> execute({
     String? platNomor,
-    required String jenisTarif, // Kirim teks "Motor"/"Mobil" sesuai Swagger
+    required String jenisTarif,
     required int nominal,
-    required int modePlat, // Kirim harga (kredit)
-    required String metodePembayaran, // Untuk mapping ke 'sof' di Swagger
+    required int modePlat,
+    required String metodePembayaran,
     String? rawImagePath,
   }) async {
-    // Ambil GPS real-time
-    final location = await locationService.getCurrentLocation();
+    try {
+      final location = await locationService.getCurrentLocation();
 
-    return repository.saveNewTransaction(
-      platNomor: platNomor,
-      jenisTarif: jenisTarif,
-      nominal: nominal,
-      modePlat: modePlat,
-      metodePembayaran: metodePembayaran,
-      rawImagePath: rawImagePath,
-      latitude: location['latitude'],
-      longitude: location['longitude'],
-    );
+      return await repository.saveNewTransaction(
+        platNomor: platNomor,
+        jenisTarif: jenisTarif,
+        nominal: nominal,
+        modePlat: modePlat,
+        metodePembayaran: metodePembayaran,
+        rawImagePath: rawImagePath,
+        latitude: location['latitude'],
+        longitude: location['longitude'],
+      );
+    } on LocationDisabledException {
+      return Left(DatabaseFailure("GPS tidak aktif. Mohon aktifkan lokasi."));
+    } on LocationPermissionDeniedException catch (e) {
+      final cleanMessage = e.toString().replaceAll('Exception: ', '');
+      return Left(DatabaseFailure("Izin lokasi ditolak: $cleanMessage"));
+    } catch (e) {
+      final cleanMessage = e.toString().replaceAll('Exception: ', '');
+      return Left(DatabaseFailure(cleanMessage));
+    }
   }
 }

@@ -14,7 +14,6 @@ class AppLocationServiceImpl implements IAppLocationService {
       // 1. Cek Hardware
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        // 🚀 Hanya lapor, tidak membuka settings!
         throw LocationDisabledException();
       }
 
@@ -45,10 +44,12 @@ class AppLocationServiceImpl implements IAppLocationService {
       };
     } on TimeoutException {
       return _fallbackLocation();
-    } catch (e) {
-      // 🚀 Teruskan exception agar ditangkap oleh Cubit/UI
-      rethrow;
     }
+  }
+
+  @override
+  Future<bool> isLocationServiceEnabled() async {
+    return await Geolocator.isLocationServiceEnabled();
   }
 
   Map<String, String> _fallbackLocation() => {

@@ -326,13 +326,16 @@ _i174.GetIt init(
       gh<_i988.IAppLocationService>(),
     ),
   );
-  gh.factory<_i629.TransactionCubit>(
-    () => _i629.TransactionCubit(gh<_i1057.GetHybridTarifUseCase>()),
-  );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(
       gh<_i965.GetProfileUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i629.TransactionCubit>(
+    () => _i629.TransactionCubit(
+      gh<_i1057.GetHybridTarifUseCase>(),
+      gh<_i988.IAppLocationService>(),
     ),
   );
   gh.factory<_i9.HomeCubit>(

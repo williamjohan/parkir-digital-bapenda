@@ -67,21 +67,6 @@ class _PaymentPageState extends State<PaymentPage> {
     }
   }
 
-  void _showGpsErrorSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red.shade800,
-        behavior: SnackBarBehavior.floating,
-        action: SnackBarAction(
-          label: "BUKA SETTING",
-          textColor: Colors.white,
-          onPressed: () async => await Geolocator.openLocationSettings(),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -102,16 +87,12 @@ class _PaymentPageState extends State<PaymentPage> {
               PaymentDialogHelpers.showSyncingDialog(context);
             } else if (state is PaymentError) {
               _dismissSyncDialog();
-              if (state.message.contains("GPS") ||
-                  state.message.contains("lokasi")) {
-                _showGpsErrorSnackbar(context, state.message);
-              } else {
-                PbStatusSnackbar.show(
-                  context,
-                  message: state.message,
-                  isError: true,
-                );
-              }
+
+              PbStatusSnackbar.show(
+                context,
+                message: state.message,
+                isError: true,
+              );
             } else if (state is PaymentTimeout) {
               _dismissSyncDialog();
               PbStatusSnackbar.show(

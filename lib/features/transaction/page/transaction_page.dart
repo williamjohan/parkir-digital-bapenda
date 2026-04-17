@@ -2,6 +2,7 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/transaction/widgets/tarif_empty_widget.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
@@ -9,6 +10,7 @@ import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../shared/loading/loading_overlay.dart';
 import '../../payment/presentation/pages/payment_page.dart';
 import '../cubit/transaction_cubit.dart';
@@ -42,6 +44,19 @@ class _TransactionPageState extends State<TransactionPage> {
     super.dispose();
   }
 
+  void _showLocationDisabledDialog(BuildContext context) {
+    PbShowDialog.show(
+      context,
+      icon: Icons.location_off_outlined,
+      iconColor: AppColors.error,
+      title: 'Lokasi Tidak Aktif',
+      description: 'Aktifkan layanan GPS untuk menyimpan transaksi parkir.',
+      showBtnKeluar: true,
+      buttonText: 'Aktifkan',
+      onConfirm: () => Geolocator.openLocationSettings(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TransactionCubit, TransactionState>(
@@ -53,6 +68,10 @@ class _TransactionPageState extends State<TransactionPage> {
             message: state.errorMessage ?? 'Gagal memproses',
             isError: true,
           );
+        }
+
+        if (state.status == TransactionStatus.locationDisabled) {
+          _showLocationDisabledDialog(context);
         }
 
         // 🚀 2. Setelah loading selesai & kosong

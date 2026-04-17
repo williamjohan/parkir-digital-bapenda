@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -30,7 +29,6 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        // 1. Jenderal Auth (Dipertahankan)
         BlocProvider<AppAuthCubit>(
           lazy: false,
           create: (_) => appAuthCubit..checkStatus(isFromSplash: true),
@@ -60,10 +58,7 @@ class MyApp extends StatelessWidget {
             textDirection: TextDirection.ltr,
             child: Stack(
               children: [
-                // Render halaman utama aplikasi di lapisan paling bawah
                 child ?? const SizedBox.shrink(),
-
-                // Lapisan atas: Dengarkan status Network
                 BlocBuilder<NetworkCubit, NetworkState>(
                   builder: (context, state) {
                     if (state is NetworkDisconnected) {
@@ -71,10 +66,10 @@ class MyApp extends StatelessWidget {
                         top: 0,
                         left: 0,
                         right: 0,
-                        child: GlobalNoInternetBanner(), // UI Banner kita
+                        child: GlobalNoInternetBanner(),
                       );
                     }
-                    return const SizedBox.shrink(); // Hilang jika internet nyala
+                    return const SizedBox.shrink();
                   },
                 ),
               ],

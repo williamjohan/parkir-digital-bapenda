@@ -3,7 +3,7 @@ import 'history_item_model.dart';
 
 part 'history_response_data_model.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class HistoryResponseData {
   @JsonKey(name: 'roda2', defaultValue: 0)
   final int roda2;

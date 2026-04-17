@@ -3,7 +3,14 @@
 import 'package:equatable/equatable.dart';
 import '../../home/data/models/tarif_model.dart';
 
-enum TransactionStatus { ready, loading, submitting, success, failure }
+enum TransactionStatus {
+  ready,
+  loading,
+  submitting,
+  success,
+  failure,
+  locationDisabled,
+}
 
 class TransactionState extends Equatable {
   final TransactionStatus status;

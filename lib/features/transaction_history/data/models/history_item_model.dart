@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'history_item_model.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class HistoryItemModel {
   @JsonKey(name: 'id')
   final int id;
