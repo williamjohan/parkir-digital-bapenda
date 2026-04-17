@@ -166,7 +166,8 @@ class _PaymentPageState extends State<PaymentPage> {
             if (state is PaymentQrisReady) {
               // 🚀 Memanggil Stateless Widget yang Bersih
               return PaymentQrisView(
-                qrisUrl: state.qris.qrisValue,
+                durasi: state.qris.expTimeMenit,
+                qrisUrl: state.qris.qrisBase64,
                 kodeQris: state.qris.kodeQris,
                 objekPajak: _profile?['namaObjekPajak'] ?? 'Objek Pajak',
                 idTransaksi: widget.args.idTransaksiLokal,
