@@ -19,6 +19,9 @@ class PbPreviewTicketWidget extends StatelessWidget {
   final String orderId;
   final String deviceId;
 
+  // 🚀 JADIKAN DEFAULT TRUE (Mencegah crash jika dipanggil dari layar jadul)
+  final bool isPrinterReady;
+
   const PbPreviewTicketWidget({
     super.key,
     required this.objekPajak,
@@ -34,6 +37,7 @@ class PbPreviewTicketWidget extends StatelessWidget {
     required this.printPressed,
     required this.orderId,
     required this.deviceId,
+    this.isPrinterReady = true, // 🚀 UBAH DI SINI
   });
 
   String get _urlAfterPayment {
@@ -81,10 +85,7 @@ class PbPreviewTicketWidget extends StatelessWidget {
           /// DETAIL KENDARAAN
           Text.rich(
             TextSpan(
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-              ), // Style dasar
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
               children: [
                 TextSpan(text: tipeKendaraan),
 
@@ -143,12 +144,36 @@ class PbPreviewTicketWidget extends StatelessWidget {
                 child: PbPrimaryButton(text: "OK", onPressed: okPressed),
               ),
               const SizedBox(width: 8),
+
+              // 🚀 LOGIKA TOMBOL DINAMIS: CEK PRINTER READY ATAU TIDAK
               Expanded(
-                child: PbPrimaryButton(
-                  text: "",
-                  iconRight: Icons.print,
-                  onPressed: printPressed,
-                ),
+                child: isPrinterReady
+                    // JIKA READY: Tampilkan Tombol Cetak Biru Biasa
+                    ? PbPrimaryButton(
+                        text: "Cetak",
+                        iconRight: Icons.print,
+                        onPressed: printPressed,
+                      )
+                    // JIKA BELUM SETTING: Tampilkan Tombol Merah "Hubungkan"
+                    : ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red.shade600,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: printPressed,
+                        icon: const Icon(Icons.bluetooth_disabled, size: 18),
+                        label: const FittedBox(
+                          child: Text(
+                            "Hubungkan",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
               ),
             ],
           ),

@@ -9,6 +9,6 @@ class AppRoutes {
   static const String quickPark = '/quick-park';
   static const String profile = '/profile';
   static const String history = '/history';
-  static const String printerSettings = '/printer-settings';
+  static const String printerSetting = '/printer-settings';
   static const String transaction = '/transaction';
 }

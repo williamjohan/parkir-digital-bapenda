@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+// import 'package:lottie/lottie.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
 import '../../../../core/di/injection.dart';
@@ -8,14 +9,15 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../features/printer/presentation/cubit/printer_cubit.dart';
+import '../../../../features/transaction_history/data/models/history_item_model.dart';
 import '../widgets/card_detail_parkir.dart';
 import '../widgets/card_qris_widget.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
 
 class PaymentPageArgs {
-  final String
-  idTransaksiLokal; // Tetap dipertahankan agar tidak merusak Router
+  final String idTransaksiLokal;
   final String kategoriKendaraan;
   final String platNomor;
   final int nominal;
@@ -40,7 +42,6 @@ class _PaymentPageState extends State<PaymentPage> {
   late final PaymentCubit _cubit;
   Map<String, dynamic>? _profile;
 
-  // 🚀 Indikator untuk memastikan kita bisa pop dialog loading dengan aman
   bool _isSyncDialogOpen = false;
 
   @override
@@ -53,22 +54,63 @@ class _PaymentPageState extends State<PaymentPage> {
   Future<void> _initPayment() async {
     _profile = await locator<ISecureStorageManager>().getJukirProfile();
     if (mounted) {
-      // 🚀 THE MAGIC ROUTER: Tentukan apakah ini gratis atau berbayar!
       if (widget.args.nominal == 0) {
-        // Langsung lompat ke Finalisasi (Insert data & Print)
         _cubit.processFreePayment(widget.args);
       } else {
-        // Lanjut tampilkan QRIS
         _cubit.initiateQrisPayment(widget.args);
       }
     }
   }
 
-  /// Helper untuk mematikan dialog loading jika sedang menyala
   void _dismissSyncDialog() {
     if (_isSyncDialogOpen && mounted) {
       Navigator.of(context, rootNavigator: true).pop();
       _isSyncDialogOpen = false;
+    }
+  }
+
+  /// 🚀 HELPER: Tampilkan Lottie Transisi Sukses
+  Future<void> _showSuccessLottie() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Nanti ganti path asset ini dengan file JSON Lottie Anda
+              // Lottie.asset('assets/lottie/success_payment.json', width: 200, height: 200, repeat: false),
+
+              // Placeholder sementara sebelum Anda punya file Lottie:
+              const Icon(
+                Icons.check_circle,
+                color: Colors.greenAccent,
+                size: 120,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Pembayaran Berhasil!",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    // Beri jeda 2 detik agar animasi dinikmati pengguna
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop(); // Tutup Lottie
     }
   }
 
@@ -86,21 +128,18 @@ class _PaymentPageState extends State<PaymentPage> {
         body: BlocConsumer<PaymentCubit, PaymentState>(
           buildWhen: (previous, current) {
             if (current is PaymentError && previous is PaymentQrisReady) {
-              return false; // Perisai QRIS: Cegah layar blank jika ada false alarm
+              return false;
             }
             return true;
           },
           listener: (context, state) async {
-            // ----------------------------------------------------
-            // 1. FASE MENYIMPAN DATA (SYNCING)
-            // ----------------------------------------------------
             if (state is PaymentSyncing) {
               _isSyncDialogOpen = true;
               showDialog(
                 context: context,
-                barrierDismissible: false, // Tidak bisa di-klik di luar
+                barrierDismissible: false,
                 builder: (context) => PopScope(
-                  canPop: false, // Back button Android dimatikan
+                  canPop: false,
                   child: AlertDialog(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -120,22 +159,14 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 ),
               ).then((_) => _isSyncDialogOpen = false);
-            }
-            // ----------------------------------------------------
-            // 2. FASE ERROR
-            // ----------------------------------------------------
-            else if (state is PaymentError) {
-              _dismissSyncDialog(); // Tutup loading jika ada
+            } else if (state is PaymentError) {
+              _dismissSyncDialog();
               PbStatusSnackbar.show(
                 context,
                 message: state.message,
                 isError: true,
               );
-            }
-            // ----------------------------------------------------
-            // 3. FASE TIMEOUT
-            // ----------------------------------------------------
-            else if (state is PaymentTimeout) {
+            } else if (state is PaymentTimeout) {
               _dismissSyncDialog();
               PbStatusSnackbar.show(
                 context,
@@ -144,21 +175,51 @@ class _PaymentPageState extends State<PaymentPage> {
               );
               await Future.delayed(const Duration(seconds: 2));
               if (context.mounted) context.pop();
-            }
-            // ----------------------------------------------------
-            // 4. FASE SUKSES & AUTO-PRINT 🚀
-            // ----------------------------------------------------
-            else if (state is PaymentSuccess) {
-              _dismissSyncDialog(); // Tutup loading memproses
+            } else if (state is PaymentSuccess) {
+              _dismissSyncDialog();
 
-              // Munculkan notifikasi hijau
-              PbStatusSnackbar.show(context, message: state.message);
-
-              // 🚀 AMBIL DATA ASLI DARI CUBIT (Sudah tersimpan di DB & API)
               final savedTx = state.transaction;
+              final secureStorage = locator<ISecureStorageManager>();
 
+              // 🚀 1. CEK STATUS KESIAPAN PRINTER
+              final savedMac = await secureStorage.getPrinterMacAddress();
+              final bool isPrinterReady =
+                  savedMac != null && savedMac.isNotEmpty;
+              final String deviceId =
+                  _profile?['idDevice']?.toString() ?? 'UNKNOWN_DEVICE';
+
+              // 🚀 2. AUTO-PRINT (SILENT BACKGROUND) JIKA PRINTER READY
+              if (isPrinterReady) {
+                // Adapter Manual: Ubah LocalTransactionModel ke HistoryItemModel
+                final mappedTransaction = HistoryItemModel(
+                  id: 0,
+                  orderId: savedTx.idTransaksiLokal,
+                  jenisTarif: savedTx.kategoriKendaraan,
+                  sof: savedTx.nominal == 0 ? 'FREE' : 'CASH', // Sesuaikan
+                  platNumber: savedTx.platNomor ?? '-',
+                  tglTrx: savedTx.waktuTransaksi,
+                  kredit: savedTx.nominal,
+                  namaPetugas: _profile?['namaUser'] ?? 'Petugas',
+                  modePlat: savedTx.modePlat,
+                  shift: _profile?['shift']?.toString() ?? '1',
+                );
+
+                // Tembak print siluman tanpa menunggu await secara penuh (Fire and Forget ringan)
+                // agar animasi Lottie bisa langsung jalan tanpa ngelag
+                locator<PrinterCubit>().autoConnectAndPrint(
+                  mappedTransaction,
+                  deviceId,
+                  _profile ?? {},
+                );
+              }
+
+              // 🚀 3. TAMPILKAN ANIMASI LOTTIE (JEDA 2 DETIK)
+              if (mounted) await _showSuccessLottie();
+
+              // 🚀 4. MUNCULKAN DIALOG TIKET FINAL
               if (mounted) {
-                // Munculkan dialog print otomatis!
+                // Nanti di dalam PbTicketPrintDialog, kita akan butuh mengirim parameter `isPrinterReady`
+                // agar dialog tahu apakah harus menampilkan tombol biru atau tombol merah.
                 PbTicketPrintDialog.showFromLocalTransaction(
                   context: context,
                   localTx: savedTx,
@@ -168,9 +229,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   noKendaraan: savedTx.platNomor ?? '-',
                   tarifParkir: savedTx.nominal,
                   shift: _profile?['shift']?.toString() ?? '1',
+                  isPrinterReady:
+                      isPrinterReady, // ⚠️ PARAMETER BARU UNTUK DIALOG
                   onClosed: () {
-                    // Jika dialog print ditutup, tendang kembali ke Transaction Page
-                    // Bawa parameter 'true' agar halaman depan tahu transaksi berhasil direfresh
                     context.pop(true);
                   },
                 );
@@ -178,12 +239,9 @@ class _PaymentPageState extends State<PaymentPage> {
             }
           },
           builder: (context, state) {
-            // Jika state Syncing, pertahankan UI terakhir (QRIS) agar layar tidak putih
             if (state is PaymentLoading ||
                 state is PaymentInitial ||
                 state is PaymentSyncing) {
-              // Jika ini transaksi gratis (nominal 0), tidak perlu tampilkan "Menghasilkan QRIS"
-              // Biarkan layar putih kosong sedikit sebelum popup loading muncul
               if (widget.args.nominal == 0) return const SizedBox.shrink();
 
               return const Center(
@@ -209,8 +267,7 @@ class _PaymentPageState extends State<PaymentPage> {
                         url: state.qris.qrisValue,
                         objekPajak:
                             _profile?['namaObjekPajak'] ?? 'Objek Pajak',
-                        idTransaksi:
-                            widget.args.idTransaksiLokal, // sekadar display ID
+                        idTransaksi: widget.args.idTransaksiLokal,
                       ),
                       const SizedBox(height: 16),
                       CardDetailParkirWidget(
@@ -236,7 +293,6 @@ class _PaymentPageState extends State<PaymentPage> {
               );
             }
 
-            // Fallback (Error State yang tidak tertahan perisai)
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

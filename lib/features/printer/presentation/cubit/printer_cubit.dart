@@ -2,7 +2,9 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/storage/secure_storage_manager.dart';
 import '../../../../core/services/printer/i_printer_service.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 
 part 'printer_state.dart';
@@ -10,8 +12,10 @@ part 'printer_state.dart';
 @injectable
 class PrinterCubit extends Cubit<PrinterState> {
   final IPrinterService _printerService;
+  final ISecureStorageManager _secureStorage;
 
-  PrinterCubit(this._printerService) : super(PrinterInitial());
+  PrinterCubit(this._printerService, this._secureStorage)
+    : super(PrinterInitial());
 
   // 1. Memindai perangkat Bluetooth di sekitar/yang sudah dipair
   Future<void> scanDevices() async {
@@ -40,7 +44,6 @@ class PrinterCubit extends Cubit<PrinterState> {
     final currentState = state;
     if (currentState is! PrinterLoaded) return;
 
-    // emit(PrinterLoading());
     emit(
       PrinterLoaded(
         devices: currentState.devices,
@@ -51,10 +54,14 @@ class PrinterCubit extends Cubit<PrinterState> {
 
     final success = await _printerService.connect(device);
 
-    // 🚀 GEMBOK PENGAMAN SEBELUM EMIT
     if (isClosed) return;
 
     if (success) {
+      if (device.address != null) {
+        await _secureStorage.savePrinterMacAddress(device.address!);
+        AppLogger.debug("🖨️ MAC Address ${device.address} tersimpan!");
+      }
+
       emit(
         PrinterLoaded(devices: currentState.devices, connectedDevice: device),
       );
@@ -64,7 +71,7 @@ class PrinterCubit extends Cubit<PrinterState> {
           'Gagal terhubung ke ${device.name}. Pastikan printer menyala.',
         ),
       );
-      emit(PrinterLoaded(devices: currentState.devices)); // Kembalikan list
+      emit(PrinterLoaded(devices: currentState.devices));
     }
   }
 
@@ -75,20 +82,20 @@ class PrinterCubit extends Cubit<PrinterState> {
 
     await _printerService.disconnect();
 
-    // 🚀 GEMBOK PENGAMAN
+    // 🚀 HAPUS MAC ADDRESS DARI BRANKAS AGAR AUTO-PRINT BERHENTI!
+    await _secureStorage.clearPrinterMacAddress();
+
     if (isClosed) return;
 
     emit(PrinterLoaded(devices: currentState.devices, connectedDevice: null));
   }
 
-  // 4. 🚀 Print Karcis (Pipa parameter sudah SEMPURNA)
+  // 4. Print Karcis
   Future<bool> printReceipt(
     HistoryItemModel transaction,
     String deviceId,
     Map<String, dynamic> profile,
   ) async {
-    // Fungsi ini aman karena tidak memanggil emit() di dalamnya.
-    // Dia hanya melempar tugas ke Service dan mengembalikan true/false.
     final success = await _printerService.printReceipt(
       transaction,
       deviceId,
@@ -96,5 +103,70 @@ class PrinterCubit extends Cubit<PrinterState> {
     );
 
     return success;
+  }
+
+  // 5. Auto connect & Silent Print
+  Future<bool> autoConnectAndPrint(
+    HistoryItemModel transaction,
+    String deviceId,
+    Map<String, dynamic> profile,
+  ) async {
+    try {
+      final isConnected = await _printerService.isConnected;
+      if (isConnected) {
+        AppLogger.debug(
+          "🖨️ [Auto-Print] Printer sudah terhubung. Langsung cetak!",
+        );
+        return await _printerService.printReceipt(
+          transaction,
+          deviceId,
+          profile,
+        );
+      }
+
+      final savedMacAddress = await _secureStorage.getPrinterMacAddress();
+      if (savedMacAddress == null || savedMacAddress.isEmpty) {
+        AppLogger.debug(
+          "🖨️ [Auto-Print] Dibatalkan: Tidak ada Printer yang tersimpan.",
+        );
+        return false;
+      }
+
+      AppLogger.debug(
+        "🖨️ [Auto-Print] Mencoba menyambung siluman ke MAC: $savedMacAddress...",
+      );
+      final pairedDevices = await _printerService.getPairedDevices();
+
+      BluetoothDevice? targetDevice;
+      for (var device in pairedDevices) {
+        if (device.address == savedMacAddress) {
+          targetDevice = device;
+          break;
+        }
+      }
+
+      if (targetDevice == null) {
+        AppLogger.error(
+          "🖨️ [Auto-Print] Gagal: MAC Address $savedMacAddress tidak ditemukan di daftar Paired Devices HP ini.",
+        );
+        return false;
+      }
+
+      // 4. Lakukan Silent Connect
+      final connectSuccess = await _printerService.connect(targetDevice);
+      if (!connectSuccess) {
+        AppLogger.error(
+          "🖨️ [Auto-Print] Gagal terhubung ke printer $savedMacAddress.",
+        );
+        return false;
+      }
+
+      // 5. Jika sukses nyambung, langsung tembak Karcis!
+      AppLogger.debug("🖨️ [Auto-Print] Konek Siluman Sukses! Mencetak...");
+      return await _printerService.printReceipt(transaction, deviceId, profile);
+    } catch (e) {
+      AppLogger.error("🖨️ [Auto-Print] Terjadi kesalahan fatal: $e");
+      return false;
+    }
   }
 }

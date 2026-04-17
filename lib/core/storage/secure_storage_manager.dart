@@ -9,7 +9,19 @@ abstract class ISecureStorageManager {
   Future<String?> getRefreshToken();
   Future<void> clearAllTokens();
   Future<bool> hasValidToken();
-
+  Future<Map<String, dynamic>?> getJukirProfile();
+  Future<void> clearJukirProfile();
+  Future<void> saveMasterTarif(String jsonString);
+  Future<String?> getMasterTarif();
+  Future<void> clearMasterTarif();
+  Future<void> saveDashboardAnchor(String jsonString);
+  Future<String?> getDashboardAnchor();
+  Future<void> clearDashboardAnchor();
+  Future<void> saveDeviceId(String deviceId);
+  Future<String?> getDeviceId();
+  Future<void> savePrinterMacAddress(String macAdress);
+  Future<String?> getPrinterMacAddress();
+  Future<void> clearPrinterMacAddress();
   Future<void> saveJukirProfile({
     required String idUserStorage,
     required String namaUserStorage,
@@ -24,18 +36,6 @@ abstract class ISecureStorageManager {
     String? namaGate,
     String? shift,
   });
-  Future<Map<String, dynamic>?> getJukirProfile();
-  Future<void> clearJukirProfile();
-
-  Future<void> saveMasterTarif(String jsonString);
-  Future<String?> getMasterTarif();
-  Future<void> clearMasterTarif();
-
-  Future<void> saveDashboardAnchor(String jsonString);
-  Future<String?> getDashboardAnchor();
-  Future<void> clearDashboardAnchor();
-  Future<void> saveDeviceId(String deviceId);
-  Future<String?> getDeviceId();
 }
 
 @LazySingleton(as: ISecureStorageManager)
@@ -50,6 +50,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyMasterTarif = 'MASTER_TARIF';
   static const String _keyDashboardAnchor = 'DASHBOARD_ANCHOR';
   static const String _keyDeviceId = 'DEVICE_ID';
+  static const String _keyPrinterMacAddress = 'PRINTER_MAC_ADDRESS';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -117,6 +118,45 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   }
 
   @override
+  Future<Map<String, dynamic>?> getJukirProfile() async {
+    final jsonString = await _storage.read(key: _keyJukirProfile);
+    if (jsonString != null) {
+      return jsonDecode(jsonString) as Map<String, dynamic>;
+    }
+    return null;
+  }
+
+  @override
+  Future<void> clearJukirProfile() async {
+    await _storage.delete(key: _keyJukirProfile);
+  }
+
+  @override
+  Future<void> saveDeviceId(String deviceId) async {
+    await _storage.write(key: _keyDeviceId, value: deviceId);
+  }
+
+  @override
+  Future<String?> getDeviceId() async {
+    return await _storage.read(key: _keyDeviceId);
+  }
+
+  @override
+  Future<void> savePrinterMacAddress(String macAddress) async {
+    await _storage.write(key: _keyPrinterMacAddress, value: macAddress);
+  }
+
+  @override
+  Future<String?> getPrinterMacAddress() async {
+    return await _storage.read(key: _keyPrinterMacAddress);
+  }
+
+  @override
+  Future<void> clearPrinterMacAddress() async {
+    await _storage.delete(key: _keyPrinterMacAddress);
+  }
+
+  @override
   Future<void> saveJukirProfile({
     required String idUserStorage,
     required String namaUserStorage,
@@ -147,29 +187,5 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     };
     final jsonString = jsonEncode(profileData);
     await _storage.write(key: _keyJukirProfile, value: jsonString);
-  }
-
-  @override
-  Future<Map<String, dynamic>?> getJukirProfile() async {
-    final jsonString = await _storage.read(key: _keyJukirProfile);
-    if (jsonString != null) {
-      return jsonDecode(jsonString) as Map<String, dynamic>;
-    }
-    return null;
-  }
-
-  @override
-  Future<void> clearJukirProfile() async {
-    await _storage.delete(key: _keyJukirProfile);
-  }
-
-  @override
-  Future<void> saveDeviceId(String deviceId) async {
-    await _storage.write(key: _keyDeviceId, value: deviceId);
-  }
-
-  @override
-  Future<String?> getDeviceId() async {
-    return await _storage.read(key: _keyDeviceId);
   }
 }

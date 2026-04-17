@@ -129,7 +129,7 @@ class AppRouter {
         ),
 
         GoRoute(
-          path: AppRoutes.printerSettings,
+          path: AppRoutes.printerSetting,
           builder: (context, state) => BlocProvider(
             create: (_) => locator<PrinterCubit>(),
             child: const PrinterSettingsPage(),
