@@ -2,6 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../core/errors/exception.dart';
 import '../../../core/services/location/i_app_location_service.dart';
 import '../../home/domain/usecases/get_hybrid_tarif_usecase.dart';
 import 'transaction_state.dart';
@@ -71,40 +72,55 @@ class TransactionCubit extends Cubit<TransactionState> {
     emit(state.copyWith(metodePembayaran: method));
   }
 
-  /// 🚀 FUNGSI BARU: VALIDATOR MURNI
   Future<void> submitTransaction() async {
     if (!state.isValid) return;
 
-    // Ubah ke submitting (trigger animasi loading sebentar di tombol)
+    // Trigger animasi loading di tombol
     emit(state.copyWith(status: TransactionStatus.submitting));
 
-    final isGpsOn = await _locationService.isLocationServiceEnabled();
+    try {
+      final location = await _locationService.getCurrentLocation();
 
-    if (isClosed) return;
+      if (isClosed) return;
 
-    if (!isGpsOn) {
+      emit(
+        state.copyWith(
+          status: TransactionStatus.success,
+          latitude: location['latitude'],
+          longitude: location['longitude'],
+        ),
+      );
+    } on LocationDisabledException {
+      if (isClosed) return;
       emit(state.copyWith(status: TransactionStatus.locationDisabled));
-      return;
+    } on LocationPermissionDeniedException catch (e) {
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          status: TransactionStatus.locationPermissionDenied,
+          errorMessage: e.message,
+        ),
+      );
+    } catch (e) {
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          status: TransactionStatus.failure,
+          errorMessage: "Gagal mendapatkan lokasi.",
+        ),
+      );
     }
-
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    if (isClosed) return;
-
-    emit(state.copyWith(status: TransactionStatus.success));
   }
 
-  /// 🚀 FUNGSI BARU: RESET FORM SETELAH KEMBALI DARI HALAMAN QRIS
   void resetForm() {
-    // Kita buat ulang state, TAPI pertahankan list tarif & isFree agar tidak perlu fetch API ulang
     emit(
       TransactionState(
         status: TransactionStatus.ready,
         tarifList: state.tarifList,
         isFree: state.isFree,
-        nopol: '', // Kosongkan
-        selectedTarif: null, // Kosongkan
-        metodePembayaran: null, // Kosongkan
+        nopol: '',
+        selectedTarif: null,
+        metodePembayaran: null,
         imagePath: null,
       ),
     );

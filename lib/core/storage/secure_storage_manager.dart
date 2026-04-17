@@ -22,6 +22,8 @@ abstract class ISecureStorageManager {
   Future<void> savePrinterMacAddress(String macAdress);
   Future<String?> getPrinterMacAddress();
   Future<void> clearPrinterMacAddress();
+  Future<void> saveLastLocation(String latitude, String longitude);
+  Future<Map<String, String>?> getLastLocation();
   Future<void> saveJukirProfile({
     required String idUserStorage,
     required String namaUserStorage,
@@ -49,6 +51,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyDashboardAnchor = 'DASHBOARD_ANCHOR';
   static const String _keyDeviceId = 'DEVICE_ID';
   static const String _keyPrinterMacAddress = 'PRINTER_MAC_ADDRESS';
+  static const String _keyDeviceLocation = 'DEVICE_LOCATION';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -152,6 +155,30 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<void> clearPrinterMacAddress() async {
     await _storage.delete(key: _keyPrinterMacAddress);
+  }
+
+  @override
+  Future<void> saveLastLocation(String latitude, String longitude) async {
+    final locationMap = {'latitude': latitude, 'longitude': longitude};
+    final jsonString = jsonEncode(locationMap);
+    await _storage.write(key: _keyDeviceLocation, value: jsonString);
+  }
+
+  @override
+  Future<Map<String, String>?> getLastLocation() async {
+    try {
+      final jsonString = await _storage.read(key: _keyDeviceLocation);
+      if (jsonString != null) {
+        final Map<String, dynamic> decodedData = jsonDecode(jsonString);
+        return {
+          'latitude': decodedData['latitude'].toString(),
+          'longitude': decodedData['longitude'].toString(),
+        };
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
   }
 
   @override

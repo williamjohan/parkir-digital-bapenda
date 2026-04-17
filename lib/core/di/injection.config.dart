@@ -151,9 +151,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i232.CheckDeviceReadinessUseCase>(
     () => _i232.CheckDeviceReadinessUseCase(gh<_i515.IDeviceCheckRepository>()),
   );
-  gh.lazySingleton<_i988.IAppLocationService>(
-    () => _i35.AppLocationServiceImpl(),
-  );
   gh.lazySingleton<_i37.IImageService>(() => _i81.ImageServiceImpl());
   gh.lazySingleton<_i437.IOcrLocalDataSource>(
     () => _i437.OcrLocalDataSourceImpl(),
@@ -166,6 +163,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i734.IOcrRepository>(
     () => _i419.OcrRepositoryImpl(gh<_i437.IOcrLocalDataSource>()),
+  );
+  gh.lazySingleton<_i988.IAppLocationService>(
+    () => _i35.AppLocationServiceImpl(gh<_i1042.ISecureStorageManager>()),
   );
   gh.lazySingleton<_i342.ExtractLicensePlateUseCase>(
     () => _i342.ExtractLicensePlateUseCase(gh<_i734.IOcrRepository>()),
@@ -320,12 +320,6 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
-    () => _i512.SaveParkingTransactionUseCase(
-      gh<_i1054.IParkingTransactionRepository>(),
-      gh<_i988.IAppLocationService>(),
-    ),
-  );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(
       gh<_i965.GetProfileUseCase>(),
@@ -344,6 +338,11 @@ _i174.GetIt init(
       gh<_i77.GetRecentTransactionsUseCase>(),
       gh<_i33.GetWeeklyChartUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
+    () => _i512.SaveParkingTransactionUseCase(
+      gh<_i1054.IParkingTransactionRepository>(),
     ),
   );
   gh.lazySingleton<_i269.UpdateParkingStatusUseCase>(

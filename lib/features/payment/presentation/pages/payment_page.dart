@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
@@ -20,12 +19,16 @@ class PaymentPageArgs {
   final String kategoriKendaraan;
   final String platNomor;
   final int nominal;
+  final String latitude;
+  final String longitude;
 
   PaymentPageArgs({
     required this.idTransaksiLokal,
     required this.kategoriKendaraan,
     required this.platNomor,
     required this.nominal,
+    required this.latitude,
+    required this.longitude,
   });
 }
 

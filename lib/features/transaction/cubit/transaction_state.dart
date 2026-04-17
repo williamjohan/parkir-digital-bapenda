@@ -10,6 +10,7 @@ enum TransactionStatus {
   success,
   failure,
   locationDisabled,
+  locationPermissionDenied,
 }
 
 class TransactionState extends Equatable {
@@ -21,6 +22,8 @@ class TransactionState extends Equatable {
   final bool isFree;
   final String? errorMessage;
   final String? imagePath;
+  final String? latitude;
+  final String? longitude;
 
   const TransactionState({
     this.status = TransactionStatus.ready,
@@ -31,9 +34,10 @@ class TransactionState extends Equatable {
     this.isFree = false,
     this.errorMessage,
     this.imagePath,
+    this.latitude,
+    this.longitude,
   });
 
-  // Jika Gratis: Cukup pilih kendaraan. Jika Bayar: Wajib kendaraan + metode pembayaran.
   bool get isValid {
     if (isFree) return selectedTarif != null;
     return selectedTarif != null && metodePembayaran != null;
@@ -46,13 +50,15 @@ class TransactionState extends Equatable {
     List<TarifModel>? tarifList,
     String? nopol,
     TarifModel? selectedTarif,
-    bool clearSelectedTarif = false, // 🚀 Helper untuk mereset ke null
+    bool clearSelectedTarif = false,
     String? metodePembayaran,
-    bool clearMetodePembayaran = false, // 🚀 Helper untuk mereset ke null
+    bool clearMetodePembayaran = false,
     bool? isFree,
     String? errorMessage,
     String? imagePath,
-    bool clearImagePath = false, // 🚀 Helper untuk mereset ke null
+    bool clearImagePath = false,
+    String? latitude,
+    String? longitude,
   }) {
     return TransactionState(
       status: status ?? this.status,
@@ -67,6 +73,8 @@ class TransactionState extends Equatable {
       isFree: isFree ?? this.isFree,
       errorMessage: errorMessage ?? this.errorMessage,
       imagePath: clearImagePath ? null : (imagePath ?? this.imagePath),
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
     );
   }
 
@@ -80,5 +88,7 @@ class TransactionState extends Equatable {
     isFree,
     errorMessage,
     imagePath,
+    latitude,
+    longitude,
   ];
 }

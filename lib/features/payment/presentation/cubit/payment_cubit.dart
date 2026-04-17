@@ -132,6 +132,8 @@ class PaymentCubit extends Cubit<PaymentState> {
       metodePembayaran: metodeBayar,
       modePlat: modePlat,
       rawImagePath: null,
+      latitude: _pendingArgs!.latitude,
+      longitude: _pendingArgs!.longitude,
     );
 
     result.fold(

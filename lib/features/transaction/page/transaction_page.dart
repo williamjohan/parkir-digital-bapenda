@@ -57,6 +57,20 @@ class _TransactionPageState extends State<TransactionPage> {
     );
   }
 
+  void _showPermissionDeniedDialog(BuildContext context, String message) {
+    PbShowDialog.show(
+      context,
+      icon: Icons.security_outlined,
+      iconColor: AppColors.error,
+      title: 'Izin Lokasi Ditolak',
+      description: message, // Pesan ini dikirim dari Location Service
+      showBtnKeluar: true,
+      buttonText: 'Buka Pengaturan',
+      // openAppSettings() akan membuka info aplikasi agar user bisa mencentang izin lokasi
+      onConfirm: () => Geolocator.openAppSettings(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TransactionCubit, TransactionState>(
@@ -72,9 +86,13 @@ class _TransactionPageState extends State<TransactionPage> {
 
         if (state.status == TransactionStatus.locationDisabled) {
           _showLocationDisabledDialog(context);
+        } else if (state.status == TransactionStatus.locationPermissionDenied) {
+          _showPermissionDeniedDialog(
+            context,
+            state.errorMessage ?? 'Izin lokasi dibutuhkan.',
+          );
         }
 
-        // 🚀 2. Setelah loading selesai & kosong
         if (state.isTarifEmpty && state.isFree == false) {
           setState(() {
             isTarifEmpty = true;
@@ -97,6 +115,8 @@ class _TransactionPageState extends State<TransactionPage> {
             kategoriKendaraan: finalJenisTarif,
             platNomor: finalPlat,
             nominal: finalNominal,
+            latitude: state.latitude ?? '0',
+            longitude: state.longitude ?? '0',
           );
 
           // 2. Lempar ke PaymentPage (Untuk Semua Transaksi: Bayar & Gratis)
