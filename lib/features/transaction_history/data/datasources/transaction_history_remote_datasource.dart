@@ -64,9 +64,6 @@ class TransactionHistoryRemoteDataSourceImpl
       final response = await _dio.post(
         ApiEndpoints.laporanPendapatan,
         data: formData,
-        options: Options(
-          contentType: 'multipart/form-data', // 🔥 INI KUNCI NYA
-        ),
       );
 
       final responseData = response.data;
