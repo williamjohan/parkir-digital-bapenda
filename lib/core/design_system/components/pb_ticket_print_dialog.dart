@@ -43,9 +43,11 @@ class PbTicketPrintDialog {
       transaction: mappedTransaction,
       kategoriKendaraan: kategoriKendaraan,
       isQuickMode: isQuickMode,
-      noKendaraan: mappedTransaction.titleText,
+      noKendaraan: mappedTransaction.isNoPlate
+          ? ''
+          : mappedTransaction.platNumber.toUpperCase(),
       tarifParkir: tarifParkir,
-      isPrinterReady: isPrinterReady, // 🚀 Teruskan ke Core
+      isPrinterReady: isPrinterReady,
       onClosed: onClosed,
     );
   }
@@ -78,7 +80,7 @@ class PbTicketPrintDialog {
     );
   }
 
-  /// ⚙️ CORE ENGINE: Merender UI Dialog dan Logika Bluetooth Printer (Private)
+  ///  Merender UI Dialog dan Logika Bluetooth Printer (Private)
   static void _showCoreDialog({
     required BuildContext context,
     required Map<String, dynamic> profile,
@@ -87,7 +89,7 @@ class PbTicketPrintDialog {
     required bool isQuickMode,
     required String noKendaraan,
     required int tarifParkir,
-    required bool isPrinterReady, // 🚀 PARAMETER WAJIB DI CORE
+    required bool isPrinterReady,
     VoidCallback? onClosed,
   }) {
     showDialog(
@@ -110,9 +112,7 @@ class PbTicketPrintDialog {
             noKendaraan: noKendaraan,
             tarifParkir: tarifParkir,
             idTransaksi: transaction.orderId,
-            isPrinterReady:
-                isPrinterReady, // ⚠️ PARAMETER KE WIDGET UI (Lihat PR di bawah)
-            // --- 🚀 TOMBOL OK ---
+            isPrinterReady: isPrinterReady,
             okPressed: () {
               Navigator.pop(dialogContext);
               if (onClosed != null) {
@@ -122,10 +122,7 @@ class PbTicketPrintDialog {
 
             // TOMBOL CETAK / HUBUNGKAN PRINTER ---
             printPressed: () async {
-              // 🚨 JIKA PRINTER BELUM SIAP, ALIHKAN FUNGSI TOMBOL!
               if (!isPrinterReady) {
-                // Jangan tutup dialog karcis, biarkan melayang di bawah
-                // Buka halaman setting printer di atasnya
                 context.push(AppRoutes.printerSetting);
                 return;
               }

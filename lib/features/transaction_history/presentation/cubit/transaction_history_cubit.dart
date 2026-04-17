@@ -49,7 +49,6 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           selectedKategori: 'SEMUA',
           selectedMode: -1,
           jukirProfile: profile,
-          // ✅ TAMBAHAN SUMMARY
           roda2: data.roda2,
           roda4: data.roda4,
           totalTransaksi: data.jumlahTransaksi,

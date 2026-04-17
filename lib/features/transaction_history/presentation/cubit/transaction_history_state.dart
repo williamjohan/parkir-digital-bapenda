@@ -15,14 +15,11 @@ class TransactionHistoryLoading extends TransactionHistoryState {}
 class TransactionHistoryLoaded extends TransactionHistoryState {
   final List<HistoryItemModel> allTransactions;
   final List<HistoryItemModel> filteredTransactions;
-
   final DateTime startDate;
   final DateTime endDate;
   final String selectedKategori;
   final int selectedMode;
   final Map<String, dynamic> jukirProfile;
-
-  // ✅ TAMBAHAN
   final int roda2;
   final int roda4;
   final int totalTransaksi;
@@ -36,8 +33,6 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     this.selectedKategori = 'SEMUA',
     this.selectedMode = -1,
     required this.jukirProfile,
-
-    // ✅ wajib diisi
     required this.roda2,
     required this.roda4,
     required this.totalTransaksi,
@@ -52,8 +47,6 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     String? selectedKategori,
     int? selectedMode,
     Map<String, dynamic>? jukirProfile,
-
-    // ✅ tambahan
     int? roda2,
     int? roda4,
     int? totalTransaksi,

@@ -48,6 +48,20 @@ class PbPreviewTicketWidget extends StatelessWidget {
     return 'https://bapenda.surabaya.go.id:7077/CongratulationTaxPayment?id=$encrypted';
   }
 
+  bool get _hasValidPlate {
+    final cleanPlat = noKendaraan.trim().toLowerCase();
+    return cleanPlat.isNotEmpty &&
+        cleanPlat != '-' &&
+        cleanPlat != 'null' &&
+        cleanPlat != 'tanpa plat';
+  }
+
+  //
+  String get _formattedTarif {
+    if (tarifParkir == 0 || isFree) return "Gratis";
+    return "Rp$tarifParkir";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,24 +101,31 @@ class PbPreviewTicketWidget extends StatelessWidget {
             TextSpan(
               style: const TextStyle(fontSize: 14, color: Colors.black87),
               children: [
+                // 1. Tipe Kendaraan (Contoh: Motor)
                 TextSpan(text: tipeKendaraan),
 
-                if (noKendaraan != '') ...[
+                // 2. Plat Nomor (Hanya muncul jika string tidak kosong)
+                if (noKendaraan.isNotEmpty) ...[
                   const TextSpan(
                     text: '  •  ',
                     style: TextStyle(color: Colors.grey),
                   ),
                   TextSpan(text: noKendaraan),
                 ],
+
+                // 3. Tarif / Gratis
                 const TextSpan(
                   text: '  •  ',
                   style: TextStyle(color: Colors.grey),
                 ),
                 TextSpan(
-                  text: "Rp$tarifParkir",
-                  style: const TextStyle(
+                  text: _formattedTarif,
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    // Sentuhan UX: Hijau jika Gratis, Hitam jika Bayar
+                    color: (tarifParkir == 0 || isFree)
+                        ? Colors.green.shade700
+                        : Colors.black,
                   ),
                 ),
               ],
