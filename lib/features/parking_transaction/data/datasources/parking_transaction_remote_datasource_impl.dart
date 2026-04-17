@@ -65,7 +65,8 @@ class ParkingTransactionRemoteDataSourceImpl
       'acquirer': isFree ? 'FREE' : 'BANK BPD JATIM',
       'noKartuKUE': isFree ? '-' : (transaction.noKartuKue ?? '-'),
       'noTRX': transaction.idTransaksiLokal,
-      'platNumber': (isFree || transaction.platNomor == '-')
+      'platNumber':
+          (transaction.platNomor.isEmpty || transaction.platNomor == '-')
           ? null
           : transaction.platNomor,
       'tglTrx': safeDate,
