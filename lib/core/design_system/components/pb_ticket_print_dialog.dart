@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// 🚀 [TAMBAH IMPORT EXTENSION INI]
+import 'package:go_router/go_router.dart'; // 🚀 IMPORT GOROUTER
+import 'package:parkir_digital_bapenda/core/routes/app_routes.dart'; // 🚀 IMPORT APPROUTES
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_ticket_preview_widget.dart';
 import 'package:parkir_digital_bapenda/core/di/injection.dart';
@@ -19,14 +20,15 @@ class PbTicketPrintDialog {
     required String noKendaraan,
     required int tarifParkir,
     required String shift,
+    bool isPrinterReady =
+        true, // 🚀 PARAMETER BARU (Default True agar tidak merusak page lain)
     VoidCallback? onClosed,
   }) {
-    // Adapter: Ubah dari LocalTransactionModel menjadi HistoryItemModel di udara
     final mappedTransaction = HistoryItemModel(
       id: 0,
       orderId: localTx.idTransaksiLokal,
       jenisTarif: kategoriKendaraan,
-      sof: 'CASH',
+      sof: 'CASH', // Akan di-override jika pakai logic dinamis sebelumnya
       platNumber: noKendaraan,
       tglTrx: localTx.waktuTransaksi,
       kredit: tarifParkir,
@@ -43,6 +45,7 @@ class PbTicketPrintDialog {
       isQuickMode: isQuickMode,
       noKendaraan: mappedTransaction.titleText,
       tarifParkir: tarifParkir,
+      isPrinterReady: isPrinterReady, // 🚀 Teruskan ke Core
       onClosed: onClosed,
     );
   }
@@ -52,6 +55,7 @@ class PbTicketPrintDialog {
     required BuildContext context,
     required HistoryItemModel historyTx,
     required Map<String, dynamic> profile,
+    bool isPrinterReady = true, // 🚀 PARAMETER BARU
     VoidCallback? onClosed,
   }) {
     final String rawKategori = historyTx.jenisTarif;
@@ -65,12 +69,11 @@ class PbTicketPrintDialog {
       transaction: historyTx,
       kategoriKendaraan: formattedKategori,
       isQuickMode: historyTx.modePlat == 0,
-      // 🚀 [FIX UTAMA]: Gunakan titleText (Extension) untuk mengubah String? menjadi String ("TANPA PLAT" atau "L 1234 AB")
-      // noKendaraan: historyTx.platNumber,
       noKendaraan: historyTx.isNoPlate
           ? ''
           : historyTx.platNumber.toUpperCase(),
       tarifParkir: historyTx.kredit,
+      isPrinterReady: isPrinterReady, // 🚀 Teruskan ke Core
       onClosed: onClosed,
     );
   }
@@ -84,6 +87,7 @@ class PbTicketPrintDialog {
     required bool isQuickMode,
     required String noKendaraan,
     required int tarifParkir,
+    required bool isPrinterReady, // 🚀 PARAMETER WAJIB DI CORE
     VoidCallback? onClosed,
   }) {
     showDialog(
@@ -103,11 +107,11 @@ class PbTicketPrintDialog {
             tipeKendaraan: kategoriKendaraan,
             isQuickMode: isQuickMode,
             isFree: profile['pungutTarif'] == 1,
-            noKendaraan:
-                noKendaraan, // 🚀 Ini sekarang menerima String yang sudah bersih
+            noKendaraan: noKendaraan,
             tarifParkir: tarifParkir,
             idTransaksi: transaction.orderId,
-
+            isPrinterReady:
+                isPrinterReady, // ⚠️ PARAMETER KE WIDGET UI (Lihat PR di bawah)
             // --- 🚀 TOMBOL OK ---
             okPressed: () {
               Navigator.pop(dialogContext);
@@ -116,8 +120,16 @@ class PbTicketPrintDialog {
               }
             },
 
-            // --- 🚀 TOMBOL CETAK ---
+            // --- 🚀 TOMBOL CETAK / HUBUNGKAN PRINTER ---
             printPressed: () async {
+              // 🚨 JIKA PRINTER BELUM SIAP, ALIHKAN FUNGSI TOMBOL!
+              if (!isPrinterReady) {
+                // Jangan tutup dialog karcis, biarkan melayang di bawah
+                // Buka halaman setting printer di atasnya
+                context.push(AppRoutes.printerSetting);
+                return;
+              }
+
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Mengirim ke printer...'),

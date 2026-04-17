@@ -188,14 +188,17 @@ _i174.GetIt init(
   gh.lazySingleton<_i59.ITarifRemoteDataSource>(
     () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
-  gh.factory<_i377.PrinterCubit>(
-    () => _i377.PrinterCubit(gh<_i1003.IPrinterService>()),
-  );
   gh.lazySingleton<_i92.IParkingTransactionLocalDataSource>(
     () => _i462.ParkingTransactionLocalDataSourceImpl(gh<_i37.IImageService>()),
   );
   gh.lazySingleton<_i896.ITransactionHistoryRemoteDataSource>(
     () => _i896.TransactionHistoryRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.factory<_i377.PrinterCubit>(
+    () => _i377.PrinterCubit(
+      gh<_i1003.IPrinterService>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
   );
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),

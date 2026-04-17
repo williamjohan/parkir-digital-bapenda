@@ -131,7 +131,7 @@ class HomeDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context); // Tutup drawer
-                    context.push(AppRoutes.printerSettings);
+                    context.push(AppRoutes.printerSetting);
                   },
                 ),
               ],
