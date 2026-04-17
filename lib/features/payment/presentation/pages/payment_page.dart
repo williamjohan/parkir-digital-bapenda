@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:lottie/lottie.dart';
+import 'package:lottie/lottie.dart';
+import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
 import '../../../../core/di/injection.dart';
@@ -70,7 +71,7 @@ class _PaymentPageState extends State<PaymentPage> {
   }
 
   /// 🚀 HELPER: Tampilkan Lottie Transisi Sukses
-  Future<void> _showSuccessLottie() async {
+  Future<void> _showSuccessLottie(bool isFree) async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -82,19 +83,17 @@ class _PaymentPageState extends State<PaymentPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Nanti ganti path asset ini dengan file JSON Lottie Anda
-              // Lottie.asset('assets/lottie/success_payment.json', width: 200, height: 200, repeat: false),
-
-              // Placeholder sementara sebelum Anda punya file Lottie:
-              const Icon(
-                Icons.check_circle,
-                color: Colors.greenAccent,
-                size: 120,
+              Lottie.asset(
+                AppAssetLottie.paymentSuccess,
+                width: 200,
+                height: 200,
+                repeat: false,
               ),
+
               const SizedBox(height: 16),
-              const Text(
-                "Pembayaran Berhasil!",
-                style: TextStyle(
+              Text(
+                isFree ? "Data Parkir Tersimpan!" : "Pembayaran Berhasil!",
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -214,8 +213,10 @@ class _PaymentPageState extends State<PaymentPage> {
               }
 
               // 🚀 3. TAMPILKAN ANIMASI LOTTIE (JEDA 2 DETIK)
-              if (mounted) await _showSuccessLottie();
-
+              if (mounted) {
+                final isFree = widget.args.nominal == 0;
+                await _showSuccessLottie(isFree);
+              }
               // 🚀 4. MUNCULKAN DIALOG TIKET FINAL
               if (mounted) {
                 // Nanti di dalam PbTicketPrintDialog, kita akan butuh mengirim parameter `isPrinterReady`

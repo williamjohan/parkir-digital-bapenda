@@ -120,7 +120,7 @@ class PbTicketPrintDialog {
               }
             },
 
-            // --- 🚀 TOMBOL CETAK / HUBUNGKAN PRINTER ---
+            // TOMBOL CETAK / HUBUNGKAN PRINTER ---
             printPressed: () async {
               // 🚨 JIKA PRINTER BELUM SIAP, ALIHKAN FUNGSI TOMBOL!
               if (!isPrinterReady) {

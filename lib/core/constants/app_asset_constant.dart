@@ -19,4 +19,5 @@ class AppAssetFonts {
 class AppAssetLottie {
   AppAssetLottie._();
   static const loading = 'assets/lottie/Sandy_Loading.json';
+  static const paymentSuccess = 'assets/lottie/Success_Animation_Blue.json';
 }
