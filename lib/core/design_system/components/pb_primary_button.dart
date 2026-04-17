@@ -120,9 +120,7 @@ class PbPrimaryButton extends StatelessWidget {
                     : const SizedBox(),
               )
             : Row(
-                mainAxisAlignment: iconRight != null
-                    ? MainAxisAlignment.spaceBetween
-                    : MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     children: [
@@ -140,8 +138,10 @@ class PbPrimaryButton extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (iconRight != null)
+                  if (iconRight != null) ...[
+                    SizedBox(width: 8),
                     Icon(iconRight, color: textColor, size: iconSize),
+                  ],
                 ],
               ),
       ),
