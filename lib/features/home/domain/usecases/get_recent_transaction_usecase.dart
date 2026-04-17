@@ -41,18 +41,8 @@ class GetRecentTransactionsUseCase {
       final now = DateTime.now();
       final startDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
       final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
-      // final normalizedDate = DateTime(now.year, now.month, now.day, 12);
 
       // 3. Selalu tembak API untuk data lengkap dari server
-      // final apiTransactions = await _remoteDataSource.getHistory(
-      //   nop: nop,
-      //   petugasId: petugasId,
-      //   shift: shift,
-      //   startDate: normalizedDate,
-      //   endDate: normalizedDate,
-      //   limit: limit,
-      // );
-
       final HistoryResponseData apiResult = await _remoteDataSource.getHistory(
         nop: nop,
         petugasId: petugasId,
