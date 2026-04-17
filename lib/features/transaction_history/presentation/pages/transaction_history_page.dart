@@ -34,10 +34,15 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     final targetDate = widget.initialDate ?? DateTime.now();
 
     _startDate = DateTime(targetDate.year, targetDate.month, targetDate.day);
-    _endDate = DateTime(targetDate.year, targetDate.month, targetDate.day);
 
-    print(_startDate);
-    print(_endDate);
+    _endDate = DateTime(
+      targetDate.year,
+      targetDate.month,
+      targetDate.day,
+      23,
+      59,
+      59,
+    );
 
     context.read<TransactionHistoryCubit>().fetchHistory(_startDate, _endDate);
   }
@@ -92,11 +97,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                       }) {
                         final start = DateTime.parse("$startDate $startTime");
                         final end = DateTime.parse("$endDate $endTime");
-                        print("🔥 onApply KEPAKE");
-                        print("START RAW: $startDate $startTime");
-                        print("END RAW: $endDate $endTime");
-                        print("✅ PARSED START: $start");
-                        print("✅ PARSED END: $end");
 
                         setState(() {
                           _startDate = start;
