@@ -22,10 +22,6 @@ class ReceiptFormatter {
     final String namaLokasi = profile['namaObjekPajak'] ?? "Parkiran Fulan's";
     final String alamat = profile['alamat'] ?? "Surabaya";
 
-    // 🚀 Gunakan titleText dari Extension!
-    // Otomatis meng-handle null, '-', '', dan 'tanpa plat' menjadi 'TANPA PLAT'
-    final String platBersih = transaction.titleText;
-
     // --- 1. Tiket Parkir ---
     bytes += generator.text(
       'Tiket Parkir',
@@ -59,12 +55,27 @@ class ReceiptFormatter {
     // --- 5. GARIS HORIZONTAL ---
     bytes += generator.hr();
 
-    // --- 6. TEXT 3 SEGMENT (Digabung 1 Baris Agar Hemat!) ---
-    // Format: Motor * L 1234 AB * Rp2.000 atau Motor * TANPA PLAT * Rp2.000
-    String segmen3 =
-        "${transaction.jenisTarif.toUpperCase()} * $platBersih * ${transaction.formattedNominal}";
+    // ==========================================
+    // --- 6. TEXT SEGMENT (Dinamis 2 atau 3 Elemen) ---
+    // ==========================================
+    final String priceText = transaction.isFreeTransaction
+        ? 'Gratis'
+        : transaction.formattedNominal;
+    final String segmenDinamis;
+
+    if (transaction.isNoPlate) {
+      // Skenario Tanpa Plat (Hanya 2 Elemen)
+      // Contoh: "Mobil - Gratis" atau "Mobil - Rp 5.000"
+      segmenDinamis = "${transaction.jenisKendaraan} - $priceText";
+    } else {
+      // Skenario Ada Plat (3 Elemen)
+      // Contoh: "Mobil - L 231 AB - Gratis" atau "Mobil - L 231 AB - Rp 5.000"
+      final String cleanPlat = transaction.platNumber.trim().toUpperCase();
+      segmenDinamis = "${transaction.jenisKendaraan} - $cleanPlat - $priceText";
+    }
+
     bytes += generator.text(
-      segmen3,
+      segmenDinamis,
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
 
@@ -82,11 +93,6 @@ class ReceiptFormatter {
     bytes += generator.qrcode(qrUrl, size: QRSize.size5);
 
     // --- 9. ID TRANSAKSI ---
-    // bytes += generator.text(
-    //   ' ',
-    //   styles: const PosStyles(height: PosTextSize.size1),
-    // ); // Spasi tipis
-
     bytes += generator.text('');
 
     bytes += generator.text(
@@ -98,6 +104,7 @@ class ReceiptFormatter {
       transaction.orderId,
       styles: const PosStyles(align: PosAlign.center),
     );
+
     // Jarak aman untuk disobek dari printer
     bytes += generator.feed(4);
 
