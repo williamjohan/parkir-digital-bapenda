@@ -18,29 +18,19 @@ class HistoryRecapItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: AppColors.surface.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.primary),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(title, style: AppTypography.caption),
-            Text(
-              value,
-              style: AppTypography.heading1.copyWith(color: AppColors.primary),
-            ),
-            Text(
-              subTitle,
-              style: AppTypography.bodySemiBold.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            style: AppTypography.caption.copyWith(color: AppColors.textPrimary),
+          ),
+          Text(
+            value,
+            style: AppTypography.heading4.copyWith(color: AppColors.primary),
+          ),
+          Text(subTitle, style: AppTypography.caption),
+        ],
       ),
     );
   }

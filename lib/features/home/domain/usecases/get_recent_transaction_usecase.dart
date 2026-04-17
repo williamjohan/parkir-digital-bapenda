@@ -5,6 +5,7 @@ import '../../../../core/storage/database_helper.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../transaction_history/data/datasources/transaction_history_remote_datasource.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
+import '../../../transaction_history/data/models/history_response_data_model.dart';
 
 @lazySingleton
 class GetRecentTransactionsUseCase {
@@ -41,7 +42,16 @@ class GetRecentTransactionsUseCase {
       final normalizedDate = DateTime(now.year, now.month, now.day, 12);
 
       // 3. Selalu tembak API untuk data lengkap dari server
-      final apiTransactions = await _remoteDataSource.getHistory(
+      // final apiTransactions = await _remoteDataSource.getHistory(
+      //   nop: nop,
+      //   petugasId: petugasId,
+      //   shift: shift,
+      //   startDate: normalizedDate,
+      //   endDate: normalizedDate,
+      //   limit: limit,
+      // );
+
+      final HistoryResponseData apiResult = await _remoteDataSource.getHistory(
         nop: nop,
         petugasId: petugasId,
         shift: shift,
@@ -49,6 +59,8 @@ class GetRecentTransactionsUseCase {
         endDate: normalizedDate,
         limit: limit,
       );
+
+      final apiTransactions = apiResult.detail; // ✅ FIX
 
       // 4. Merge: lokal + API, dedup by orderId
       // Lokal diutamakan karena lebih fresh (baru diinput)

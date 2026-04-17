@@ -4,10 +4,10 @@ import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
 import 'package:parkir_digital_bapenda/core/network/dio_error_handler.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/utils/app_logger.dart';
-import '../models/history_item_model.dart';
+import '../models/history_response_data_model.dart';
 
 abstract class ITransactionHistoryRemoteDataSource {
-  Future<List<HistoryItemModel>> getHistory({
+  Future<HistoryResponseData> getHistory({
     required String nop,
     required int petugasId,
     required String shift,
@@ -25,7 +25,7 @@ class TransactionHistoryRemoteDataSourceImpl
   TransactionHistoryRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<List<HistoryItemModel>> getHistory({
+  Future<HistoryResponseData> getHistory({
     required String nop,
     required int petugasId,
     required String shift,
@@ -64,13 +64,25 @@ class TransactionHistoryRemoteDataSourceImpl
       final response = await _dio.post(
         ApiEndpoints.laporanPendapatan,
         data: formData,
+        options: Options(
+          contentType: 'multipart/form-data', // 🔥 INI KUNCI NYA
+        ),
       );
 
       final responseData = response.data;
       if (responseData['isSuccess'] == true &&
           responseData['statusCode'] == 200) {
-        final List<dynamic> dataList = responseData['data'] ?? [];
-        return dataList.map((json) => HistoryItemModel.fromJson(json)).toList();
+        final data = responseData['data'];
+
+        return HistoryResponseData.fromJson(data);
+        // final List<dynamic> detailList = data?['detail'] ?? [];
+
+        // return detailList
+        //     .map((json) => HistoryItemModel.fromJson(json))
+        //     .toList();
+
+        // final List<dynamic> dataList = responseData['data'] ?? [];
+        // return dataList.map((json) => HistoryItemModel.fromJson(json)).toList();
       } else {
         throw Exception(responseData['message'] ?? 'Gagal mengambil riwayat');
       }

@@ -176,7 +176,11 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             ],
           ),
           SizedBox(height: 8),
-          HistoryRecapWidget(),
+          HistoryRecapWidget(
+            roda2: state.roda2.toString(),
+            roda4: state.roda4.toString(),
+            totalPendapatan: state.totalPendapatan.toString(),
+          ),
 
           // List Data atau Empty State
           Expanded(

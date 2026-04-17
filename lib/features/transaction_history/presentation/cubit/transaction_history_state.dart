@@ -13,18 +13,20 @@ class TransactionHistoryInitial extends TransactionHistoryState {}
 class TransactionHistoryLoading extends TransactionHistoryState {}
 
 class TransactionHistoryLoaded extends TransactionHistoryState {
-  // [DATA MASTER]: Data utuh dari API, tidak boleh diubah-ubah
   final List<HistoryItemModel> allTransactions;
-
-  // [DATA TAMPIL]: Data hasil filter yang akan digambar oleh UI
   final List<HistoryItemModel> filteredTransactions;
 
-  // [PARAMETER FILTER]
   final DateTime startDate;
   final DateTime endDate;
-  final String selectedKategori; // 'SEMUA', 'MOBIL', 'MOTOR'
-  final int selectedMode; // -1 (Semua), 0 (Tanpa Plat), 1 (Pakai Plat)
+  final String selectedKategori;
+  final int selectedMode;
   final Map<String, dynamic> jukirProfile;
+
+  // ✅ TAMBAHAN
+  final int roda2;
+  final int roda4;
+  final int totalTransaksi;
+  final int totalPendapatan;
 
   const TransactionHistoryLoaded({
     required this.allTransactions,
@@ -34,6 +36,12 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     this.selectedKategori = 'SEMUA',
     this.selectedMode = -1,
     required this.jukirProfile,
+
+    // ✅ wajib diisi
+    required this.roda2,
+    required this.roda4,
+    required this.totalTransaksi,
+    required this.totalPendapatan,
   });
 
   TransactionHistoryLoaded copyWith({
@@ -44,6 +52,12 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     String? selectedKategori,
     int? selectedMode,
     Map<String, dynamic>? jukirProfile,
+
+    // ✅ tambahan
+    int? roda2,
+    int? roda4,
+    int? totalTransaksi,
+    int? totalPendapatan,
   }) {
     return TransactionHistoryLoaded(
       allTransactions: allTransactions ?? this.allTransactions,
@@ -53,6 +67,11 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       selectedKategori: selectedKategori ?? this.selectedKategori,
       selectedMode: selectedMode ?? this.selectedMode,
       jukirProfile: jukirProfile ?? this.jukirProfile,
+
+      roda2: roda2 ?? this.roda2,
+      roda4: roda4 ?? this.roda4,
+      totalTransaksi: totalTransaksi ?? this.totalTransaksi,
+      totalPendapatan: totalPendapatan ?? this.totalPendapatan,
     );
   }
 
@@ -65,6 +84,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     selectedKategori,
     selectedMode,
     jukirProfile,
+    roda2,
+    roda4,
+    totalTransaksi,
+    totalPendapatan,
   ];
 }
 
