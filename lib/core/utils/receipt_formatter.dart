@@ -26,28 +26,25 @@ class ReceiptFormatter {
     // Otomatis meng-handle null, '-', '', dan 'tanpa plat' menjadi 'TANPA PLAT'
     final String platBersih = transaction.titleText;
 
-    // --- 1. BAPENDA SURABAYA (Font Besar) ---
+    // --- 1. Tiket Parkir ---
     bytes += generator.text(
-      'BAPENDA KOTA SURABAYA',
-      styles: const PosStyles(
-        align: PosAlign.center,
-        height: PosTextSize.size2,
-        width: PosTextSize.size1,
-        bold: true,
-      ),
-    );
-
-    // --- 2. KARCIS PARKIR DIGITAL (Font Sedang/Normal) ---
-    bytes += generator.text(
-      'KARCIS PARKIR DIGITAL',
+      'Tiket Parkir',
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
 
-    // --- 3. ALAMAT LOKASI ---
+    // --- 2. BAPENDA Kota Surabaya ---
     bytes += generator.text(
-      namaLokasi,
+      'BAPENDA Kota Surabaya',
       styles: const PosStyles(align: PosAlign.center),
     );
+
+    // --- 3. LOKASI ---
+    bytes += generator.text(
+      namaLokasi,
+      styles: const PosStyles(align: PosAlign.center, bold: true),
+    );
+
+    // --- 4. ALAMAT ---
     bytes += generator.text(
       alamat,
       styles: const PosStyles(align: PosAlign.center),
@@ -71,10 +68,9 @@ class ReceiptFormatter {
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
 
-    // --- 7. JARAK VERTIKAL KECIL ---
-    bytes += generator.hr();
+    bytes += generator.text('');
 
-    // --- 8. QR CODE ---
+    // --- 7. QR CODE ---
     final String encryptedUrl = TicketCryptoUtils.encryptPayload(
       orderId: transaction.orderId,
       deviceId: deviceId,
@@ -83,29 +79,25 @@ class ReceiptFormatter {
         'https://bapenda.surabaya.go.id:7077/CongratulationTaxPayment?id=$encryptedUrl';
 
     // QRSize.size6 cukup ideal untuk kertas 58mm
-    bytes += generator.qrcode(qrUrl, size: QRSize.size6);
+    bytes += generator.qrcode(qrUrl, size: QRSize.size5);
 
     // --- 9. ID TRANSAKSI ---
+    // bytes += generator.text(
+    //   ' ',
+    //   styles: const PosStyles(height: PosTextSize.size1),
+    // ); // Spasi tipis
+
+    bytes += generator.text('');
+
     bytes += generator.text(
-      ' ',
-      styles: const PosStyles(height: PosTextSize.size1),
-    ); // Spasi tipis
+      'ID TRANSAKSI',
+      styles: const PosStyles(align: PosAlign.center),
+    );
+
     bytes += generator.text(
       transaction.orderId,
       styles: const PosStyles(align: PosAlign.center),
     );
-    bytes += generator.feed(1);
-
-    // --- 10. KATA TERIMA KASIH ---
-    bytes += generator.text(
-      'Terima kasih telah',
-      styles: const PosStyles(align: PosAlign.center, bold: true),
-    );
-    bytes += generator.text(
-      'membayar parkir resmi!',
-      styles: const PosStyles(align: PosAlign.center),
-    );
-
     // Jarak aman untuk disobek dari printer
     bytes += generator.feed(4);
 
