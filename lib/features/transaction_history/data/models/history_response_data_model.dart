@@ -3,7 +3,7 @@ import 'history_item_model.dart';
 
 part 'history_response_data_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class HistoryResponseData {
   @JsonKey(name: 'roda2', defaultValue: 0)
   final int roda2;
@@ -30,4 +30,6 @@ class HistoryResponseData {
 
   factory HistoryResponseData.fromJson(Map<String, dynamic> json) =>
       _$HistoryResponseDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HistoryResponseDataToJson(this);
 }

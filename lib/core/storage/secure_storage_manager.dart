@@ -40,9 +40,7 @@ abstract class ISecureStorageManager {
 
 @LazySingleton(as: ISecureStorageManager)
 class SecureStorageManagerImpl implements ISecureStorageManager {
-  final FlutterSecureStorage _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   static const String _keyAccessToken = 'ACCESS_TOKEN';
   static const String _keyRefreshToken = 'REFRESH_TOKEN';

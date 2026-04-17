@@ -26,6 +26,8 @@ class QrisModel {
   factory QrisModel.fromJson(Map<String, dynamic> json) =>
       _$QrisModelFromJson(json);
 
+  Map<String, dynamic> toJson() => _$QrisModelToJson(this);
+
   /// 🚀 MAPPING: Mengubah Model (Data) menjadi Entity (Domain)
   QrisEntity toEntity() => QrisEntity(
     kodeQris: kodeQris,

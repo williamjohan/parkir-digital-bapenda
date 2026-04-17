@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/repositories/i_parking_transaction_repository.dart';
 import '../datasources/i_parking_transaction_local_datasource.dart';
 import '../datasources/i_parking_transaction_remote_datasource.dart';
@@ -61,8 +62,6 @@ class ParkingTransactionRepositoryImpl
         longitude: longitude,
       );
 
-      // 4. ✅ Fire-and-forget: coba sync ke BE
-      // Jika gagal, data tetap aman di SQLite dengan is_sync = 0
       try {
         await _remoteDataSource.insertTransaction(
           transaction: transaction,
@@ -73,7 +72,11 @@ class ParkingTransactionRepositoryImpl
           idTransaksiLokal: transaction.idTransaksiLokal,
           isSync: 1, // 1 berarti sukses terkirim ke API
         );
-      } catch (remoteError) {}
+      } catch (remoteError) {
+        AppLogger.error(
+          'Auto-sync gagal (akan di-retry oleh sistem background): $remoteError',
+        );
+      }
 
       return Right(transaction);
     } catch (e) {

@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/services/image/i_image_service.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/usecases/extract_license_plate_usecase.dart';
 import 'vehicle_capture_state.dart';
 
@@ -20,15 +21,18 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
     : super(const VehicleCaptureState());
 
   Future<void> toggleFlash() async {
-    if (_cameraController == null || !_cameraController!.value.isInitialized)
+    if (_cameraController == null || !_cameraController!.value.isInitialized) {
       return;
+    }
     final newFlashState = !state.isFlashOn;
     try {
       await _cameraController!.setFlashMode(
         newFlashState ? FlashMode.torch : FlashMode.off,
       );
       _safeEmit(state.copyWith(isFlashOn: newFlashState));
-    } catch (_) {}
+    } catch (e) {
+      AppLogger.error('Gagal mengubah status senter/flash: $e');
+    }
   }
 
   Future<void> retakePhoto() async {
@@ -50,8 +54,9 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   }
 
   Future<void> captureAndProcessImage() async {
-    if (_cameraController == null || !_cameraController!.value.isInitialized)
+    if (_cameraController == null || !_cameraController!.value.isInitialized) {
       return;
+    }
     if (_cameraController!.value.isTakingPicture) return;
 
     _safeEmit(state.copyWith(status: CaptureStatus.capturing));
@@ -151,11 +156,16 @@ class VehicleCaptureCubit extends Cubit<VehicleCaptureState> {
   Future<void> disposeCamera() async {
     final oldController = _cameraController;
     _cameraController = null;
+
     try {
-      if (_initializeControllerFuture != null)
+      if (_initializeControllerFuture != null) {
         await _initializeControllerFuture;
+      }
+
       await oldController?.dispose();
-    } catch (e) {}
+    } catch (e) {
+      AppLogger.error('Gagal melakukan dispose pada CameraController: $e');
+    }
   }
 
   @override

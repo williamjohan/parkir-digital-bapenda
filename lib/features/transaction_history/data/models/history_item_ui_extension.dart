@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// Sesuaikan path import ini ke lokasi model Anda
 import '../models/history_item_model.dart';
 
 extension HistoryItemUiX on HistoryItemModel {
@@ -18,7 +17,7 @@ extension HistoryItemUiX on HistoryItemModel {
       final DateTime date = DateTime.parse(tglTrx);
       return DateFormat('dd MMM yyyy • HH:mm').format(date);
     } catch (_) {
-      return tglTrx; // Fallback jika gagal parse
+      return tglTrx;
     }
   }
 
@@ -52,8 +51,8 @@ extension HistoryItemUiX on HistoryItemModel {
 
   // 6. Logika Plat Nomor (Title & Subtitle)
   bool get isNoPlate {
-    // 🚀 [PERISAI NULL]: Gunakan fallback string kosong ('') jika platNumber adalah null
-    final cleanPlat = (platNumber ?? '').trim().toLowerCase();
+    // 🚀 FIX: Langsung trim() karena platNumber dijamin BUKAN null
+    final cleanPlat = platNumber.trim().toLowerCase();
 
     return cleanPlat.isEmpty ||
         cleanPlat == '-' ||
@@ -61,15 +60,15 @@ extension HistoryItemUiX on HistoryItemModel {
         cleanPlat == 'tanpa plat';
   }
 
-  String get subtitleText => isNoPlate ? '-' : platNumber!.toUpperCase();
+  // 🚀 FIX: Buang tanda seru (!)
+  String get subtitleText => isNoPlate ? '-' : platNumber.toUpperCase();
 
   String get titleText {
-    // Gunakan titleText agar konsisten (huruf besar/kecilnya terjaga)
+    // 🚀 FIX: Buang tanda seru (!)
     final String displayPlat = isNoPlate
         ? 'Tanpa Plat'
-        : platNumber!.toUpperCase();
+        : platNumber.toUpperCase();
 
-    // Hasil: "Motor" atau "Motor ( L 1234 AB )"
     return isNoPlate ? jenisKendaraan : '$jenisKendaraan ( $displayPlat )';
   }
 }

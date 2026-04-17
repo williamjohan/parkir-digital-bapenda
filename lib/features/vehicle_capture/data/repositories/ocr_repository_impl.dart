@@ -1,5 +1,4 @@
 // lib/features/vehicle_capture/data/repositories/ocr_repository_impl.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
@@ -18,10 +17,8 @@ class OcrRepositoryImpl implements IOcrRepository {
     String imagePath,
   ) async {
     try {
-      // Panggil data source
       final rawText = await localDataSource.recognizeText(imagePath);
 
-      // Cek apakah hasilnya kosong
       if (rawText.trim().isEmpty) {
         return const Left(
           OcrFailure('Tidak ada teks yang terdeteksi pada gambar.'),
@@ -30,8 +27,7 @@ class OcrRepositoryImpl implements IOcrRepository {
 
       return Right(rawText);
     } on OcrException catch (e) {
-      // Tangkap error spesifik OCR
-      return Left(OcrFailure(e.message ?? 'Gagal memproses gambar.'));
+      return Left(OcrFailure(e.message));
     } catch (e) {
       // Tangkap error tidak terduga lainnya (misal: file tidak ditemukan, dll)
       return const Left(

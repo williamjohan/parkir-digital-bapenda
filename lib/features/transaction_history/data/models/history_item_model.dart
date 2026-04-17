@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'history_item_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class HistoryItemModel {
   @JsonKey(name: 'id')
   final int id;
@@ -49,6 +49,8 @@ class HistoryItemModel {
 
   factory HistoryItemModel.fromJson(Map<String, dynamic> json) =>
       _$HistoryItemModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HistoryItemModelToJson(this);
 
   factory HistoryItemModel.fromLocalDatabase(Map<String, dynamic> map) {
     return HistoryItemModel(
