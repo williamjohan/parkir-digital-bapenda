@@ -9,8 +9,6 @@ abstract class AppException implements Exception {
 
 class ServerException extends AppException {
   final int statusCode;
-
-  // message wajib diisi saat dilempar oleh Data Source
   const ServerException({required this.statusCode, required super.message});
 }
 
@@ -28,7 +26,16 @@ class OcrException extends AppException {
   const OcrException({super.message = 'Gagal memproses teks dari gambar.'});
 }
 
-// AuthException sekarang resmi menjadi bagian dari keluarga AppException
 class AuthException extends AppException {
   const AuthException({required super.message});
+}
+
+class LocationDisabledException implements Exception {
+  final String message;
+  LocationDisabledException([this.message = 'GPS (Lokasi) tidak aktif.']);
+}
+
+class LocationPermissionDeniedException implements Exception {
+  final String message;
+  LocationPermissionDeniedException([this.message = 'Izin lokasi ditolak.']);
 }

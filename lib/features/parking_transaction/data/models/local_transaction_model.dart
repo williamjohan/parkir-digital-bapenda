@@ -2,6 +2,8 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../transaction_history/data/models/history_item_model.dart';
+
 part 'local_transaction_model.g.dart';
 
 @JsonSerializable()
@@ -68,4 +70,21 @@ class LocalTransactionModel {
       _$LocalTransactionModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$LocalTransactionModelToJson(this);
+}
+
+extension LocalTransactionMapper on LocalTransactionModel {
+  HistoryItemModel toHistoryItem(Map<String, dynamic> profile) {
+    return HistoryItemModel(
+      id: 0,
+      orderId: idTransaksiLokal,
+      jenisTarif: kategoriKendaraan,
+      sof: nominal == 0 ? 'FREE' : 'CASH',
+      platNumber: platNomor,
+      tglTrx: waktuTransaksi,
+      kredit: nominal,
+      namaPetugas: profile['namaUser'] ?? 'Petugas',
+      modePlat: modePlat,
+      shift: profile['shift']?.toString() ?? '1',
+    );
+  }
 }

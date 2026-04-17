@@ -48,15 +48,6 @@ class PbPreviewTicketWidget extends StatelessWidget {
     return 'https://bapenda.surabaya.go.id:7077/CongratulationTaxPayment?id=$encrypted';
   }
 
-  bool get _hasValidPlate {
-    final cleanPlat = noKendaraan.trim().toLowerCase();
-    return cleanPlat.isNotEmpty &&
-        cleanPlat != '-' &&
-        cleanPlat != 'null' &&
-        cleanPlat != 'tanpa plat';
-  }
-
-  //
   String get _formattedTarif {
     if (tarifParkir == 0 || isFree) return "Gratis";
     return "Rp$tarifParkir";
