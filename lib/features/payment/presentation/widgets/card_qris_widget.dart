@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/features/payment/presentation/widgets/timer_widget.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';

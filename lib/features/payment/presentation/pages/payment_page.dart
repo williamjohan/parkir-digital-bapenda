@@ -144,8 +144,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 if (!context.mounted) return;
 
                 PbTicketPrintDialog.showFromLocalTransaction(
-                  context:
-                      context, // Menggunakan context listener yang sudah dijamin mounted!
+                  context: context,
                   localTx: savedTx,
                   profile: _profile ?? {},
                   kategoriKendaraan: savedTx.kategoriKendaraan,
