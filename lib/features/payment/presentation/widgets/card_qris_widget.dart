@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/features/payment/presentation/widgets/timer_widget.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
 class CardQrisWidget extends StatefulWidget {
-  final String url;
+  final Uint8List imageBytes;
   final String objekPajak;
   final String idTransaksi;
   final int durasi;
@@ -14,7 +16,7 @@ class CardQrisWidget extends StatefulWidget {
 
   const CardQrisWidget({
     super.key,
-    required this.url,
+    required this.imageBytes,
     required this.objekPajak,
     required this.idTransaksi,
     required this.durasi,
@@ -66,7 +68,24 @@ class _CardQrisWidgetState extends State<CardQrisWidget> {
               // borderRadius: BorderRadius.circular(20),
               // border: Border.all(color: AppColors.warning, width: 0.5),
             ),
-            child: Image.memory(base64Decode(widget.url), fit: BoxFit.cover),
+            child: Image.memory(
+              width: 300,
+              height: 300,
+              widget.imageBytes,
+              fit: BoxFit.cover,
+              gaplessPlayback: true,
+              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                if (frame != null) {
+                  return AnimatedOpacity(
+                    opacity: 1,
+                    duration: const Duration(milliseconds: 300),
+                    child: child,
+                  );
+                }
+
+                return const QrShimmer();
+              },
+            ),
           ),
           SizedBox(height: 16),
           Row(
@@ -83,6 +102,30 @@ class _CardQrisWidgetState extends State<CardQrisWidget> {
           Text(widget.objekPajak, style: AppTypography.heading5),
           Text("ID : ${widget.idTransaksi}", style: AppTypography.caption),
         ],
+      ),
+    );
+  }
+}
+
+class QrShimmer extends StatelessWidget {
+  const QrShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer(
+      duration: const Duration(seconds: 2),
+      interval: const Duration(seconds: 0),
+      color: Colors.white,
+      colorOpacity: 0.3,
+      enabled: true,
+      direction: const ShimmerDirection.fromLTRB(),
+      child: Container(
+        width: 300,
+        height: 300,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/qris_entity.dart';
 // 🚀 [SESUAIKAN PATH INI]: Import model transaksi lokal Anda
@@ -16,10 +18,12 @@ class PaymentLoading extends PaymentState {}
 
 class PaymentQrisReady extends PaymentState {
   final QrisEntity qris;
-  const PaymentQrisReady(this.qris);
+  final Uint8List qrisBytes;
+
+  const PaymentQrisReady(this.qris, this.qrisBytes);
 
   @override
-  List<Object?> get props => [qris];
+  List<Object?> get props => [qris, qrisBytes];
 }
 
 class PaymentSyncing extends PaymentState {}

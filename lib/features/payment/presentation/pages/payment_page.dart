@@ -162,20 +162,20 @@ class _PaymentPageState extends State<PaymentPage> {
               }
             },
             builder: (context, state) {
-              if (state is PaymentLoading ||
-                  state is PaymentInitial ||
-                  state is PaymentSyncing) {
-                if (widget.args.nominal == 0) return const SizedBox.shrink();
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
-              }
+              // if (state is PaymentLoading ||
+              //     state is PaymentInitial ||
+              //     state is PaymentSyncing) {
+              //   if (widget.args.nominal == 0) return const SizedBox.shrink();
+              //   return const Center(
+              //     child: CircularProgressIndicator(color: AppColors.primary),
+              //   );
+              // }
 
               if (state is PaymentQrisReady) {
                 // 🚀 Memanggil Stateless Widget yang Bersih
                 return PaymentQrisView(
                   durasi: state.qris.expTimeMenit,
-                  qrisUrl: state.qris.qrisBase64,
+                  qrisBytes: state.qrisBytes,
                   kodeQris: state.qris.kodeQris,
                   objekPajak: _profile?['namaObjekPajak'] ?? 'Objek Pajak',
                   idTransaksi: widget.args.idTransaksiLokal,
@@ -187,11 +187,14 @@ class _PaymentPageState extends State<PaymentPage> {
                 );
               }
 
+              // return const Center(
+              //   child: Text(
+              //     'Terjadi kesalahan.',
+              //     style: AppTypography.bodyText,
+              //   ),
+              // );
               return const Center(
-                child: Text(
-                  'Terjadi kesalahan.',
-                  style: AppTypography.bodyText,
-                ),
+                child: CircularProgressIndicator(color: AppColors.primary),
               );
             },
           ),
