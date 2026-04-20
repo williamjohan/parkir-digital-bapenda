@@ -1,11 +1,14 @@
-import 'package:app_settings/app_settings.dart' as external_settings;
+// lib/features/printer/presentation/screen/printer_settings_page.dart
+
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../shared/loading/loading_overlay.dart';
+import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../shared/loading/loading_overlay.dart';
 import '../cubit/printer_cubit.dart';
+import '../widgets/list_device_widget.dart'; // 🚀 Import Widget Anak
 
 class PrinterSettingsPage extends StatefulWidget {
   const PrinterSettingsPage({super.key});
@@ -18,7 +21,6 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
   @override
   void initState() {
     super.initState();
-    // 🚀 Jalankan scan otomatis saat halaman pertama kali dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PrinterCubit>().scanDevices();
     });
@@ -30,6 +32,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
       bottom: true,
       top: false,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
             'Pengaturan Printer',
@@ -49,12 +52,10 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
         body: BlocConsumer<PrinterCubit, PrinterState>(
           listener: (context, state) {
             if (state is PrinterError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.red,
-                  behavior: SnackBarBehavior.floating,
-                ),
+              PbStatusSnackbar.show(
+                context,
+                message: state.message,
+                isError: true,
               );
             }
           },
@@ -72,16 +73,14 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
             return LoadingOverlay(
               isLoading: isLoading,
               child: Column(
-                // 🚀 Ganti Stack dengan Column murni (lebih aman)
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- KARTU STATUS KONEKSI ---
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     color: connectedDevice != null
-                        ? Colors.green.shade50
-                        : Colors.red.shade50,
+                        ? AppColors.success.withValues(alpha: 0.1)
+                        : AppColors.error.withValues(alpha: 0.1),
                     child: Column(
                       children: [
                         Icon(
@@ -90,8 +89,8 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                               : Icons.print_disabled,
                           size: 48,
                           color: connectedDevice != null
-                              ? Colors.green
-                              : Colors.red,
+                              ? AppColors.success
+                              : AppColors.error,
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -103,17 +102,19 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: connectedDevice != null
-                                ? Colors.green.shade800
-                                : Colors.red.shade800,
+                                ? AppColors.success
+                                : AppColors.error,
                           ),
                         ),
                         if (connectedDevice != null) ...[
                           const SizedBox(height: 12),
                           ElevatedButton.icon(
-                            onPressed: () =>
-                                context.read<PrinterCubit>().disconnect(),
+                            onPressed: isLoading
+                                ? null
+                                : () =>
+                                      context.read<PrinterCubit>().disconnect(),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
+                              backgroundColor: AppColors.error,
                               foregroundColor: Colors.white,
                             ),
                             icon: const Icon(Icons.link_off),
@@ -124,111 +125,56 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                     ),
                   ),
 
+                  // 🚀 SECTION 2: BANNER EDUKASI UX (Pre-Permission Education)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    color: Colors.blue.shade50,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 20,
+                          color: Colors.blue.shade700,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Pencarian printer membutuhkan akses Lokasi dan Bluetooth aktif pada perangkat Anda.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue.shade900,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // 🚀 SECTION 3: AREA LIST & PULL TO REFRESH
                   const Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: Text(
                       'Perangkat Tersimpan (Paired Devices):',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
 
-                  // --- DAFTAR BLUETOOTH ---
+                  // List Device Anak yang di-maintain terpisah
                   Expanded(
-                    child: devices.isEmpty
-                        ? const Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 24.0),
-                              child: Text(
-                                'Tidak ada perangkat Bluetooth yang di-pair.\nSilakan sambungkan Printer di pengaturan Android Anda terlebih dahulu.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  height: 1.5,
-                                ),
-                              ),
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: devices.length,
-                            itemBuilder: (context, index) {
-                              final device = devices[index];
-                              final isThisConnected =
-                                  connectedDevice?.address == device.address;
-
-                              return ListTile(
-                                leading: Icon(
-                                  Icons.bluetooth,
-                                  color: isThisConnected
-                                      ? Colors.green
-                                      : Colors.grey,
-                                ),
-                                title: Text(
-                                  device.name ?? 'Unknown Device',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Text(device.address ?? ''),
-                                trailing: isThisConnected
-                                    ? const Icon(
-                                        Icons.check_circle,
-                                        color: Colors.green,
-                                      )
-                                    : ElevatedButton(
-                                        onPressed: () => context
-                                            .read<PrinterCubit>()
-                                            .connectDevice(device),
-                                        child: const Text('Konek'),
-                                      ),
-                              );
-                            },
-                          ),
-                  ),
-
-                  //-- Info untuk buka pengaturan Bluetooth --
-                  Padding(
-                    padding: const EdgeInsets.all(16.0), // 🚀 Beri jarak aman
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue.shade200),
-                      ),
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Printer tidak ditemukan?",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            "Pastikan printer sudah di-pairing (sambungkan) di menu pengaturan Bluetooth HP Anda.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          const SizedBox(height: 8),
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              await external_settings
-                                  .AppSettings.openAppSettings(
-                                type:
-                                    external_settings.AppSettingsType.bluetooth,
-                              );
-                            },
-                            icon: const Icon(Icons.settings_bluetooth),
-                            label: const Text("Buka Pengaturan Bluetooth"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: ListDeviceWidget(
+                      devices: devices,
+                      connectedDevice: connectedDevice,
+                      isLoading: isLoading,
+                      // onRefresh: () async {
+                      //   await context.read<PrinterCubit>().scanDevices();
+                      // },
+                      onConnect: (device) {
+                        context.read<PrinterCubit>().connectDevice(device);
+                      },
                     ),
                   ),
                 ],

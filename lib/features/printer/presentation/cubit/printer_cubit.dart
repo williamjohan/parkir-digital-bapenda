@@ -19,23 +19,49 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   // 1. Memindai perangkat Bluetooth di sekitar/yang sudah dipair
   Future<void> scanDevices() async {
-    emit(PrinterLoading());
+    final currentState = state;
+
+    if (currentState is PrinterLoaded) {
+      emit(
+        PrinterLoaded(
+          devices: currentState.devices,
+          connectedDevice: currentState.connectedDevice,
+          isLoading: true, // Beri sinyal loading saja
+        ),
+      );
+    } else {
+      // Jika ini murni pertama kali buka halaman, baru pakai PrinterLoading murni
+      emit(PrinterLoading());
+    }
+
     try {
+      await Future.delayed(const Duration(milliseconds: 1000));
       final devices = await _printerService.getPairedDevices();
       final isConnected = await _printerService.isConnected;
 
-      // 🚀 GEMBOK PENGAMAN: Cegah crash jika Jukir tutup halaman saat loading!
       if (isClosed) return;
 
       emit(
         PrinterLoaded(
           devices: devices,
           connectedDevice: isConnected ? devices.firstOrNull : null,
+          isLoading: false, // Matikan sinyal loading
         ),
       );
     } catch (e) {
-      if (isClosed) return; // 🚀 Gembok juga di catch!
+      if (isClosed) return;
       emit(PrinterError('Gagal memindai perangkat Bluetooth.'));
+
+      // Kembalikan ke state sebelumnya jika gagal
+      if (currentState is PrinterLoaded) {
+        emit(
+          PrinterLoaded(
+            devices: currentState.devices,
+            connectedDevice: currentState.connectedDevice,
+            isLoading: false,
+          ),
+        );
+      }
     }
   }
 
