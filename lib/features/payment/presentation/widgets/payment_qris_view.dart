@@ -1,5 +1,7 @@
 // lib/features/payment/presentation/widgets/payment_qris_view.dart
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
@@ -7,7 +9,7 @@ import 'card_detail_parkir.dart';
 import 'card_qris_widget.dart';
 
 class PaymentQrisView extends StatelessWidget {
-  final String qrisUrl;
+  final Uint8List qrisBytes;
   final String kodeQris;
   final String objekPajak;
   final String idTransaksi;
@@ -19,7 +21,7 @@ class PaymentQrisView extends StatelessWidget {
 
   const PaymentQrisView({
     super.key,
-    required this.qrisUrl,
+    required this.qrisBytes,
     required this.kodeQris,
     required this.objekPajak,
     required this.idTransaksi,
@@ -43,7 +45,7 @@ class PaymentQrisView extends StatelessWidget {
                 children: [
                   CardQrisWidget(
                     durasi: durasi,
-                    url: qrisUrl,
+                    imageBytes: qrisBytes,
                     objekPajak: objekPajak,
                     idTransaksi: idTransaksi,
                   ),

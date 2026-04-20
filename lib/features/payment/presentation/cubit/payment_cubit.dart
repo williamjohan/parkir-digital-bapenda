@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../parking_transaction/domain/usecases/save_parking_transaction_usecase.dart';
@@ -44,7 +45,10 @@ class PaymentCubit extends Cubit<PaymentState> {
     if (isClosed) return;
 
     result.fold((failure) => emit(PaymentError(failure.message)), (qris) {
-      emit(PaymentQrisReady(qris));
+      final bytes = base64Decode(qris.qrisBase64); // ✅ decode di sini
+
+      emit(PaymentQrisReady(qris, bytes)); // kirim ke UI
+
       _startListeningToSignalR(qris.kodeQris);
     });
   }
