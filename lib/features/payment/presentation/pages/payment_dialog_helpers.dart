@@ -45,28 +45,32 @@ class PaymentDialogHelpers {
       barrierDismissible: false,
       barrierColor: Colors.black54,
       builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Lottie.asset(
-                AppAssetLottie.paymentSuccess,
-                width: 200,
-                height: 200,
-                repeat: false,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                isFree ? "Data Parkir Tersimpan!" : "Pembayaran Berhasil!",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+        // 🚀 THE FIX: KUNCI TOMBOL KEMBALI HP SELAMA ANIMASI LOTTIE JALAN!
+        return PopScope(
+          canPop: false,
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Lottie.asset(
+                  AppAssetLottie.paymentSuccess,
+                  width: 200,
+                  height: 200,
+                  repeat: false,
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                Text(
+                  isFree ? "Data Parkir Tersimpan!" : "Pembayaran Berhasil!",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

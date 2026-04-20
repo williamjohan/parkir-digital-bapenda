@@ -1,12 +1,12 @@
+// lib/features/payment/presentation/widgets/timer_widget.dart
 import 'dart:async';
 import 'package:flutter/widgets.dart';
-
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
 class TimerWidget extends StatefulWidget {
-  final int durasi; // dalam menit
-  final VoidCallback? onFinish; // action saat timer habis
+  final int durasi;
+  final VoidCallback? onFinish;
 
   const TimerWidget({super.key, required this.durasi, this.onFinish});
 
@@ -15,41 +15,53 @@ class TimerWidget extends StatefulWidget {
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
-  late int sisaWaktu;
-  Timer? timer;
+  late DateTime _endTime; // 🚀 Waktu target kedaluwarsa absolut
+  int _sisaWaktu = 0;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    sisaWaktu = widget.durasi * 60;
-    startTimer();
+    // Set target waktu kedaluwarsa (Sekarang + Durasi)
+    _endTime = DateTime.now().add(Duration(minutes: widget.durasi));
+    _sisaWaktu = widget.durasi * 60;
+    _startTimer();
   }
 
-  void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (t) {
-      if (sisaWaktu > 0) {
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      // 🚀 ASYNC SAFETY: Cegah error jika widget mati
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+
+      final now = DateTime.now();
+      if (now.isBefore(_endTime)) {
         setState(() {
-          sisaWaktu--;
+          // Hitung selisih waktu secara absolut
+          _sisaWaktu = _endTime.difference(now).inSeconds;
         });
       } else {
         t.cancel();
         if (widget.onFinish != null) {
-          widget.onFinish!(); // jalankan action saat timer habis
+          widget.onFinish!();
         }
       }
     });
   }
 
-  String formatWaktu(int detik) {
+  String _formatWaktu(int detik) {
     final menit = detik ~/ 60;
     final sisaDetik = detik % 60;
-
-    return "$menit menit : $sisaDetik detik";
+    // Format detik agar selalu 2 digit (contoh: 05, bukan 5)
+    final formattedDetik = sisaDetik.toString().padLeft(2, '0');
+    return "$menit menit : $formattedDetik detik";
   }
 
   @override
   void dispose() {
-    timer?.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -58,9 +70,9 @@ class _TimerWidgetState extends State<TimerWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Masa berlaku : ", style: AppTypography.caption),
+        const Text("Masa berlaku : ", style: AppTypography.caption),
         Text(
-          formatWaktu(sisaWaktu),
+          _formatWaktu(_sisaWaktu),
           style: AppTypography.caption.copyWith(color: AppColors.error),
         ),
       ],
