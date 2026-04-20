@@ -39,46 +39,20 @@ class HomeDrawer extends StatelessWidget {
                   );
                 }
 
-                // Ambil data dari brankas
-                final String namaJukir =
-                    snapshot.data?['namaUser'] ?? 'Juru Parkir';
-                final String nop = snapshot.data?['nop'] ?? '-';
-                final String lokasi =
-                    snapshot.data?['namaObjekPajak'] ?? 'Bapenda Surabaya';
-
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const CircleAvatar(
-                      radius: 32,
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.person,
-                        size: 40,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // [PERBAIKAN 1]: Menggunakan variabel namaJukir, bukan hardcode
                     Text(
-                      namaJukir,
-                      style: AppTypography.heading3.copyWith(
+                      "PARKIR DIGITAL",
+                      style: AppTypography.heading1.copyWith(
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'NOP: $nop',
+                      "Version 1.0.2",
                       style: AppTypography.caption.copyWith(
                         color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      lokasi,
-                      style: AppTypography.caption.copyWith(
-                        color: Colors.white70,
-                        fontStyle: FontStyle.italic,
                       ),
                     ),
                   ],
@@ -146,21 +120,12 @@ class HomeDrawer extends StatelessWidget {
               vertical: 8,
             ),
             trailing: const Icon(Icons.logout, color: Colors.redAccent),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Version 1.0.2',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                Text(
-                  'Logout',
-                  style: AppTypography.bodyRegular.copyWith(
-                    color: Colors.redAccent,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            title: Text(
+              'Logout',
+              style: AppTypography.bodyRegular.copyWith(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             onTap: () {
               final safeNavigator = Navigator.of(context, rootNavigator: true);

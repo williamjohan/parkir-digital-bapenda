@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 
 abstract class AppColors {
   // Primary Palette (Warna Utama Bapenda)
-  static const Color primary = Color(0xFF1E88E5); // Biru Profesional
-  static const Color primaryDark = Color(0xFF1565C0);
-  static const Color primaryLight = Color(0xFF64B5F6);
+  // static const Color primary = Color(0xFF1E88E5); // Biru Profesional
+  // static const Color primaryDark = Color(0xFF1565C0);
+  // static const Color primaryLight = Color(0xFF64B5F6);
+
+  static const Color primary = Color(0xFFe48901);
+  static const Color primaryLight = Color(0xFFfeb74d);
+  static const Color primaryDark = Color(0xFFbf7200);
 
   // Background & Surface
   static const Color background = Color(
@@ -25,4 +29,12 @@ abstract class AppColors {
   static const Color warning = Color(0xFFFFA000);
 
   static const Color border = Color(0xFFE0E0E0);
+
+  // Gradient
+
+  static const LinearGradient headerGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [primaryDark, primary],
+  );
 }
