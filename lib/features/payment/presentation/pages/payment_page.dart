@@ -74,118 +74,127 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => _cubit,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Pembayaran', style: AppTypography.heading3),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: const IconThemeData(color: AppColors.textPrimary),
-        ),
-        body: BlocConsumer<PaymentCubit, PaymentState>(
-          buildWhen: (previous, current) =>
-              !(current is PaymentError && previous is PaymentQrisReady),
-          listener: (context, state) async {
-            if (state is PaymentSyncing) {
-              _isSyncDialogOpen = true;
-              PaymentDialogHelpers.showSyncingDialog(context);
-            } else if (state is PaymentError) {
-              _dismissSyncDialog();
+      child: SafeArea(
+        bottom: true,
+        top: false,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Pembayaran', style: AppTypography.heading3),
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: AppColors.textPrimary),
+          ),
+          body: BlocConsumer<PaymentCubit, PaymentState>(
+            buildWhen: (previous, current) =>
+                !(current is PaymentError && previous is PaymentQrisReady),
+            listener: (context, state) async {
+              if (state is PaymentSyncing) {
+                _isSyncDialogOpen = true;
+                PaymentDialogHelpers.showSyncingDialog(context);
+              } else if (state is PaymentError) {
+                _dismissSyncDialog();
 
-              PbStatusSnackbar.show(
-                context,
-                message: state.message,
-                isError: true,
-              );
-            } else if (state is PaymentTimeout) {
-              _dismissSyncDialog();
-              PbStatusSnackbar.show(
-                context,
-                message: state.message,
-                isError: true,
-              );
+                PbStatusSnackbar.show(
+                  context,
+                  message: state.message,
+                  isError: true,
+                );
+              } else if (state is PaymentTimeout) {
+                _dismissSyncDialog();
+                PbStatusSnackbar.show(
+                  context,
+                  message: state.message,
+                  isError: true,
+                );
 
-              await Future.delayed(const Duration(seconds: 2));
+                await Future.delayed(const Duration(seconds: 2));
 
-              if (!context.mounted) return;
-              context.pop();
-            } else if (state is PaymentSuccess) {
-              _dismissSyncDialog();
-              final savedTx = state.transaction;
-              final secureStorage = locator<ISecureStorageManager>();
+                if (!context.mounted) return;
+                context.pop();
+              } else if (state is PaymentSuccess) {
+                _dismissSyncDialog();
+                final savedTx = state.transaction;
+                final secureStorage = locator<ISecureStorageManager>();
 
-              final savedMac = await secureStorage.getPrinterMacAddress();
+                final savedMac = await secureStorage.getPrinterMacAddress();
 
-              if (!context.mounted) return;
+                if (!context.mounted) return;
 
-              final bool isPrinterReady =
-                  savedMac != null && savedMac.isNotEmpty;
-              final String deviceId =
-                  _profile?['idDevice']?.toString() ?? 'UNKNOWN_DEVICE';
+                final bool isPrinterReady =
+                    savedMac != null && savedMac.isNotEmpty;
+                final String deviceId =
+                    _profile?['idDevice']?.toString() ?? 'UNKNOWN_DEVICE';
 
-              if (isPrinterReady) {
-                final mappedTransaction = savedTx.toHistoryItem(_profile ?? {});
-                locator<PrinterCubit>().autoConnectAndPrint(
-                  mappedTransaction,
-                  deviceId,
-                  _profile ?? {},
+                if (isPrinterReady) {
+                  final mappedTransaction = savedTx.toHistoryItem(
+                    _profile ?? {},
+                  );
+                  locator<PrinterCubit>().autoConnectAndPrint(
+                    mappedTransaction,
+                    deviceId,
+                    _profile ?? {},
+                  );
+                }
+
+                await PaymentDialogHelpers.showSuccessLottie(
+                  context,
+                  widget.args.nominal == 0,
+                );
+
+                if (!context.mounted) return;
+
+                PbTicketPrintDialog.showFromLocalTransaction(
+                  context:
+                      context, // Menggunakan context listener yang sudah dijamin mounted!
+                  localTx: savedTx,
+                  profile: _profile ?? {},
+                  kategoriKendaraan: savedTx.kategoriKendaraan,
+                  isQuickMode: savedTx.modePlat == 0,
+                  noKendaraan: savedTx.platNomor,
+                  tarifParkir: savedTx.nominal,
+                  shift: _profile?['shift']?.toString() ?? '1',
+                  isPrinterReady: isPrinterReady,
+                  onClosed: () {
+                    // 🚀 FIX 4: Callback ini bisa dieksekusi kapan saja di masa depan
+                    if (context.mounted) context.pop(true);
+                  },
+                );
+              }
+            },
+            builder: (context, state) {
+              if (state is PaymentLoading ||
+                  state is PaymentInitial ||
+                  state is PaymentSyncing) {
+                if (widget.args.nominal == 0) return const SizedBox.shrink();
+                return const Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
                 );
               }
 
-              await PaymentDialogHelpers.showSuccessLottie(
-                context,
-                widget.args.nominal == 0,
-              );
+              if (state is PaymentQrisReady) {
+                // 🚀 Memanggil Stateless Widget yang Bersih
+                return PaymentQrisView(
+                  durasi: state.qris.expTimeMenit,
+                  qrisUrl: state.qris.qrisBase64,
+                  kodeQris: state.qris.kodeQris,
+                  objekPajak: _profile?['namaObjekPajak'] ?? 'Objek Pajak',
+                  idTransaksi: widget.args.idTransaksiLokal,
+                  platNomor: widget.args.platNomor,
+                  kategoriKendaraan: widget.args.kategoriKendaraan,
+                  nominal: widget.args.nominal,
+                  onCheckStatus: () =>
+                      _cubit.checkStatusManual(state.qris.kodeQris),
+                );
+              }
 
-              if (!context.mounted) return;
-
-              PbTicketPrintDialog.showFromLocalTransaction(
-                context:
-                    context, // Menggunakan context listener yang sudah dijamin mounted!
-                localTx: savedTx,
-                profile: _profile ?? {},
-                kategoriKendaraan: savedTx.kategoriKendaraan,
-                isQuickMode: savedTx.modePlat == 0,
-                noKendaraan: savedTx.platNomor,
-                tarifParkir: savedTx.nominal,
-                shift: _profile?['shift']?.toString() ?? '1',
-                isPrinterReady: isPrinterReady,
-                onClosed: () {
-                  // 🚀 FIX 4: Callback ini bisa dieksekusi kapan saja di masa depan
-                  if (context.mounted) context.pop(true);
-                },
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state is PaymentLoading ||
-                state is PaymentInitial ||
-                state is PaymentSyncing) {
-              if (widget.args.nominal == 0) return const SizedBox.shrink();
               return const Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
+                child: Text(
+                  'Terjadi kesalahan.',
+                  style: AppTypography.bodyText,
+                ),
               );
-            }
-
-            if (state is PaymentQrisReady) {
-              // 🚀 Memanggil Stateless Widget yang Bersih
-              return PaymentQrisView(
-                durasi: state.qris.expTimeMenit,
-                qrisUrl: state.qris.qrisBase64,
-                kodeQris: state.qris.kodeQris,
-                objekPajak: _profile?['namaObjekPajak'] ?? 'Objek Pajak',
-                idTransaksi: widget.args.idTransaksiLokal,
-                platNomor: widget.args.platNomor,
-                kategoriKendaraan: widget.args.kategoriKendaraan,
-                nominal: widget.args.nominal,
-                onCheckStatus: () =>
-                    _cubit.checkStatusManual(state.qris.kodeQris),
-              );
-            }
-
-            return const Center(
-              child: Text('Terjadi kesalahan.', style: AppTypography.bodyText),
-            );
-          },
+            },
+          ),
         ),
       ),
     );

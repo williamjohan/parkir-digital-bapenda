@@ -83,84 +83,88 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
 
           return LoadingOverlay(
             isLoading: isLoading,
-            child: Scaffold(
-              resizeToAvoidBottomInset: true,
-              body: Stack(
-                children: [
-                  // LoginBackgroundWidget(
-                  //   isHidden: _isFormVisible,
-                  //   onLoginPressed: () => _toggleForm(true),
-                  //   onRegisterPressed: () {},
-                  // ),
-                  // AnimatedContainer(
-                  //   duration: const Duration(milliseconds: 600),
-                  //   curve: Curves.easeOutCubic,
-                  //   transform: Matrix4.translationValues(
-                  //     0,
-                  //     _isFormVisible
-                  //         ? -formHeight * 0.3
-                  //         : 0, // naik dikit aja (30%)
-                  //     0,
-                  //   ),
-                  //   child: LoginBackgroundWidget(
-                  //     isHidden: _isFormVisible,
-                  //     onLoginPressed: () => _toggleForm(true),
-                  //     onRegisterPressed: () {},
-                  //   ),
-                  // ),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 600),
-                    curve: Curves.easeOutCubic,
-                    // transform: Matrix4.translationValues(
-                    //   0,
-                    //   _isFormVisible ? -screenHeight * 0.09 : 0,
-                    //   0,
+            child: SafeArea(
+              bottom: true,
+              top: false,
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                body: Stack(
+                  children: [
+                    // LoginBackgroundWidget(
+                    //   isHidden: _isFormVisible,
+                    //   onLoginPressed: () => _toggleForm(true),
+                    //   onRegisterPressed: () {},
                     // ),
-                    transform: Matrix4.translationValues(
-                      0,
-                      (_isFormVisible && isSmallDevice)
-                          ? -screenHeight * 0.09
-                          : 0,
-                      0,
-                    ),
-                    child: LoginBackgroundWidget(
-                      isHidden: _isFormVisible,
-                      onLoginPressed: () => _toggleForm(true),
-                      onRegisterPressed: () {},
-                    ),
-                  ),
-                  if (_isFormVisible)
-                    GestureDetector(
-                      onTap: () => _toggleForm(false),
-                      child: Container(
-                        color: Colors.transparent,
-                        width: double.infinity,
-                        height: double.infinity,
+                    // AnimatedContainer(
+                    //   duration: const Duration(milliseconds: 600),
+                    //   curve: Curves.easeOutCubic,
+                    //   transform: Matrix4.translationValues(
+                    //     0,
+                    //     _isFormVisible
+                    //         ? -formHeight * 0.3
+                    //         : 0, // naik dikit aja (30%)
+                    //     0,
+                    //   ),
+                    //   child: LoginBackgroundWidget(
+                    //     isHidden: _isFormVisible,
+                    //     onLoginPressed: () => _toggleForm(true),
+                    //     onRegisterPressed: () {},
+                    //   ),
+                    // ),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 600),
+                      curve: Curves.easeOutCubic,
+                      // transform: Matrix4.translationValues(
+                      //   0,
+                      //   _isFormVisible ? -screenHeight * 0.09 : 0,
+                      //   0,
+                      // ),
+                      transform: Matrix4.translationValues(
+                        0,
+                        (_isFormVisible && isSmallDevice)
+                            ? -screenHeight * 0.09
+                            : 0,
+                        0,
+                      ),
+                      child: LoginBackgroundWidget(
+                        isHidden: _isFormVisible,
+                        onLoginPressed: () => _toggleForm(true),
+                        onRegisterPressed: () {},
                       ),
                     ),
+                    if (_isFormVisible)
+                      GestureDetector(
+                        onTap: () => _toggleForm(false),
+                        child: Container(
+                          color: Colors.transparent,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                      ),
 
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 600),
-                    curve: Curves.easeOutCubic,
-                    // bottom: _isFormVisible ? 0 : -formHeight,
-                    bottom: _isFormVisible ? 0 : -formHeight,
-                    left: 0,
-                    right: 0,
-                    // height: formHeight,
-                    child: LoginFormSheetWidget(
-                      usernameController: _usernameController,
-                      passwordController: _passwordController,
-                      onClose: () => _toggleForm(false),
-                      onLogin: () {
-                        // [PERUBAHAN 4]: Panggil fungsi loginSubmited milik LoginCubit
-                        context.read<LoginCubit>().loginSubmited(
-                          _usernameController.text,
-                          _passwordController.text,
-                        );
-                      },
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 600),
+                      curve: Curves.easeOutCubic,
+                      // bottom: _isFormVisible ? 0 : -formHeight,
+                      bottom: _isFormVisible ? 0 : -formHeight,
+                      left: 0,
+                      right: 0,
+                      // height: formHeight,
+                      child: LoginFormSheetWidget(
+                        usernameController: _usernameController,
+                        passwordController: _passwordController,
+                        onClose: () => _toggleForm(false),
+                        onLogin: () {
+                          // [PERUBAHAN 4]: Panggil fungsi loginSubmited milik LoginCubit
+                          context.read<LoginCubit>().loginSubmited(
+                            _usernameController.text,
+                            _passwordController.text,
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

@@ -102,214 +102,219 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
             }
           },
           child: PbKeyboardDismissWrapper(
-            child: Scaffold(
-              backgroundColor: Colors.black,
-              body: SafeArea(
-                child: Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Expanded(
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              if (hasCapturedImage)
-                                Image.file(
-                                  File(state.capturedImagePath!),
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                )
-                              else if (cubit.cameraController != null &&
-                                  cubit.cameraController!.value.isInitialized)
-                                SizedBox.expand(
-                                  child: FittedBox(
+            child: SafeArea(
+              bottom: true,
+              top: false,
+              child: Scaffold(
+                backgroundColor: Colors.black,
+                body: SafeArea(
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Expanded(
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                if (hasCapturedImage)
+                                  Image.file(
+                                    File(state.capturedImagePath!),
                                     fit: BoxFit.cover,
-                                    child: SizedBox(
-                                      width:
-                                          cubit
-                                              .cameraController!
-                                              .value
-                                              .previewSize
-                                              ?.height ??
-                                          1,
-                                      height:
-                                          cubit
-                                              .cameraController!
-                                              .value
-                                              .previewSize
-                                              ?.width ??
-                                          1,
-                                      child: CameraPreview(
-                                        cubit.cameraController!,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  )
+                                else if (cubit.cameraController != null &&
+                                    cubit.cameraController!.value.isInitialized)
+                                  SizedBox.expand(
+                                    child: FittedBox(
+                                      fit: BoxFit.cover,
+                                      child: SizedBox(
+                                        width:
+                                            cubit
+                                                .cameraController!
+                                                .value
+                                                .previewSize
+                                                ?.height ??
+                                            1,
+                                        height:
+                                            cubit
+                                                .cameraController!
+                                                .value
+                                                .previewSize
+                                                ?.width ??
+                                            1,
+                                        child: CameraPreview(
+                                          cubit.cameraController!,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  const Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+
+                                if (!hasCapturedImage && isCameraReady)
+                                  Positioned(
+                                    top: 16,
+                                    right: 16,
+                                    child: IconButton(
+                                      onPressed: () => cubit.toggleFlash(),
+                                      icon: Icon(
+                                        state.isFlashOn
+                                            ? Icons.flash_on
+                                            : Icons.flash_off,
+                                        color: Colors.white,
+                                        size: 32,
                                       ),
                                     ),
                                   ),
-                                )
-                              else
-                                const Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.primary,
-                                  ),
-                                ),
 
-                              if (!hasCapturedImage && isCameraReady)
                                 Positioned(
                                   top: 16,
-                                  right: 16,
+                                  left: 16,
                                   child: IconButton(
-                                    onPressed: () => cubit.toggleFlash(),
-                                    icon: Icon(
-                                      state.isFlashOn
-                                          ? Icons.flash_on
-                                          : Icons.flash_off,
+                                    onPressed: isLoading
+                                        ? null
+                                        : () => Navigator.of(context).pop(),
+                                    icon: const Icon(
+                                      Icons.arrow_back_ios_new,
                                       color: Colors.white,
-                                      size: 32,
+                                      size: 28,
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
 
-                              Positioned(
-                                top: 16,
-                                left: 16,
-                                child: IconButton(
-                                  onPressed: isLoading
-                                      ? null
-                                      : () => Navigator.of(context).pop(),
-                                  icon: const Icon(
-                                    Icons.arrow_back_ios_new,
-                                    color: Colors.white,
-                                    size: 28,
-                                  ),
+                          // AREA BAWAH: FORM & BUTTON
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 10,
+                                  offset: Offset(0, -4),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              ],
+                            ),
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  PbTextField(
+                                    controller: _plateController,
+                                    hintText: hasCapturedImage
+                                        ? 'Ketik manual (Contoh: L 1234 AB)'
+                                        : 'Wajib foto kendaraan dulu',
+                                    labelText: 'Nomor Plat Kendaraan',
+                                    enabled: hasCapturedImage && !isLoading,
+                                    isLoading: false,
+                                  ),
+                                  const SizedBox(height: 16),
 
-                        // AREA BAWAH: FORM & BUTTON
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 10,
-                                offset: Offset(0, -4),
+                                  if (hasCapturedImage)
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: OutlinedButton(
+                                            onPressed: isLoading
+                                                ? null
+                                                : () => cubit.retakePhoto(),
+                                            style: OutlinedButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 14,
+                                                  ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            child: const Text('Foto Ulang'),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: PbPrimaryButton(
+                                            text:
+                                                'Gunakan Plat Ini', // 🚀 NAMA TOMBOL DIUBAH
+                                            isLoading: false,
+                                            onPressed: isLoading
+                                                ? null
+                                                : () {
+                                                    final plat =
+                                                        _plateController.text
+                                                            .trim();
+                                                    if (plat.isEmpty) {
+                                                      PbStatusSnackbar.show(
+                                                        context,
+                                                        message:
+                                                            'Plat nomor tidak boleh kosong',
+                                                        isError: true,
+                                                      );
+                                                      return;
+                                                    }
+
+                                                    // 🚀 KEMBALIKAN DATA KE TRANSACTION PAGE!
+                                                    Navigator.pop(context, {
+                                                      'platNomor': plat,
+                                                      'imagePath': state
+                                                          .capturedImagePath,
+                                                    });
+                                                  },
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  else
+                                    PbPrimaryButton(
+                                      text: 'Ambil Foto Kendaraan',
+                                      iconLeft: Icons.camera_alt,
+                                      isLoading: false,
+                                      onPressed: isCameraReady
+                                          ? () => cubit.captureAndProcessImage()
+                                          : null,
+                                    ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
+                        ],
+                      ),
+
+                      if (isLoading)
+                        Container(
+                          color: Colors.black.withValues(alpha: 0.7),
+                          child: Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                PbTextField(
-                                  controller: _plateController,
-                                  hintText: hasCapturedImage
-                                      ? 'Ketik manual (Contoh: L 1234 AB)'
-                                      : 'Wajib foto kendaraan dulu',
-                                  labelText: 'Nomor Plat Kendaraan',
-                                  enabled: hasCapturedImage && !isLoading,
-                                  isLoading: false,
+                                const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 5,
                                 ),
-                                const SizedBox(height: 16),
-
-                                if (hasCapturedImage)
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: OutlinedButton(
-                                          onPressed: isLoading
-                                              ? null
-                                              : () => cubit.retakePhoto(),
-                                          style: OutlinedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 14,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                          ),
-                                          child: const Text('Foto Ulang'),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: PbPrimaryButton(
-                                          text:
-                                              'Gunakan Plat Ini', // 🚀 NAMA TOMBOL DIUBAH
-                                          isLoading: false,
-                                          onPressed: isLoading
-                                              ? null
-                                              : () {
-                                                  final plat = _plateController
-                                                      .text
-                                                      .trim();
-                                                  if (plat.isEmpty) {
-                                                    PbStatusSnackbar.show(
-                                                      context,
-                                                      message:
-                                                          'Plat nomor tidak boleh kosong',
-                                                      isError: true,
-                                                    );
-                                                    return;
-                                                  }
-
-                                                  // 🚀 KEMBALIKAN DATA KE TRANSACTION PAGE!
-                                                  Navigator.pop(context, {
-                                                    'platNomor': plat,
-                                                    'imagePath':
-                                                        state.capturedImagePath,
-                                                  });
-                                                },
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                else
-                                  PbPrimaryButton(
-                                    text: 'Ambil Foto Kendaraan',
-                                    iconLeft: Icons.camera_alt,
-                                    isLoading: false,
-                                    onPressed: isCameraReady
-                                        ? () => cubit.captureAndProcessImage()
-                                        : null,
+                                const SizedBox(height: 24),
+                                Text(
+                                  'Harap tunggu...\nSedang membaca plat nomor.',
+                                  textAlign: TextAlign.center,
+                                  style: AppTypography.heading3.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                ),
                               ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
-
-                    if (isLoading)
-                      Container(
-                        color: Colors.black.withValues(alpha: 0.7),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 5,
-                              ),
-                              const SizedBox(height: 24),
-                              Text(
-                                'Harap tunggu...\nSedang membaca plat nomor.',
-                                textAlign: TextAlign.center,
-                                style: AppTypography.heading3.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

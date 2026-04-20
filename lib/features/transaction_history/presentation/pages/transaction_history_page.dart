@@ -72,46 +72,50 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
         final bool isLoading = state is TransactionHistoryLoading;
         return LoadingOverlay(
           isLoading: isLoading,
-          child: Scaffold(
-            backgroundColor: Colors.grey.shade50,
-            appBar: AppBar(
-              title: const Text(
-                'Riwayat Pendapatan',
-                style: AppTypography.heading5,
-              ),
-              centerTitle: true,
-              backgroundColor: AppColors.surface,
-              elevation: 0,
-              foregroundColor: Colors.black,
-            ),
-            body: Column(
-              children: [
-                // --- HEADER TANGGAL (Selalu Tampil) ---
-                RangeFilterWidget(
-                  onApply:
-                      ({
-                        required String startDate,
-                        required String endDate,
-                        required String startTime,
-                        required String endTime,
-                      }) {
-                        final start = DateTime.parse("$startDate $startTime");
-                        final end = DateTime.parse("$endDate $endTime");
-
-                        setState(() {
-                          _startDate = start;
-                          _endDate = end;
-                        });
-
-                        context.read<TransactionHistoryCubit>().fetchHistory(
-                          start,
-                          end,
-                        );
-                      },
+          child: SafeArea(
+            bottom: true,
+            top: false,
+            child: Scaffold(
+              backgroundColor: Colors.grey.shade50,
+              appBar: AppBar(
+                title: const Text(
+                  'Riwayat Pendapatan',
+                  style: AppTypography.heading5,
                 ),
-                // --- AREA KONTEN BAWAH ---
-                Expanded(child: _buildContent(context, state)),
-              ],
+                centerTitle: true,
+                backgroundColor: AppColors.surface,
+                elevation: 0,
+                foregroundColor: Colors.black,
+              ),
+              body: Column(
+                children: [
+                  // --- HEADER TANGGAL (Selalu Tampil) ---
+                  RangeFilterWidget(
+                    onApply:
+                        ({
+                          required String startDate,
+                          required String endDate,
+                          required String startTime,
+                          required String endTime,
+                        }) {
+                          final start = DateTime.parse("$startDate $startTime");
+                          final end = DateTime.parse("$endDate $endTime");
+
+                          setState(() {
+                            _startDate = start;
+                            _endDate = end;
+                          });
+
+                          context.read<TransactionHistoryCubit>().fetchHistory(
+                            start,
+                            end,
+                          );
+                        },
+                  ),
+                  // --- AREA KONTEN BAWAH ---
+                  Expanded(child: _buildContent(context, state)),
+                ],
+              ),
             ),
           ),
         );
