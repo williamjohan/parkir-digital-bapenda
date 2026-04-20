@@ -1,25 +1,21 @@
-// lib/features/home/presentation/pages/home_page.dart
-
-import 'package:chucker_flutter/chucker_flutter.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:parkir_digital_bapenda/features/home/presentation/widgets/bar_diagram_widget.dart';
+import 'package:intl/intl.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/item_kendaraan_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/last_activity_widget.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
-import '../../../../core/design_system/components/pb_permission_dialog.dart';
-import '../../../../core/design_system/components/pb_status_snackbar.dart';
+import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
-import '../../../../core/utils/permission_utils.dart';
-import '../../data/models/weekly_chart_item_model.dart';
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
-import '../widgets/dashboard_widget.dart';
+import '../widgets/home_header_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,6 +27,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Track apakah ini pertama kali load
   bool _isFirstLoad = true;
+
+  String? namaJukir;
+  String? nop;
+  String? namaLokasi;
+
   @override
   void initState() {
     super.initState();
@@ -51,43 +52,11 @@ class _HomePageState extends State<HomePage> {
     final secureStorage = locator<ISecureStorageManager>();
     final profile = await secureStorage.getJukirProfile();
 
-    debugPrint('=== AUDIT SECURE STORAGE ===');
-    debugPrint('Isi Profil: $profile');
-    debugPrint('Pungut Tarif: ${profile?['pungutTarif']}');
-    debugPrint('============================');
-  }
-
-  // 🚀 [REFACTOR] State untuk filter kendaraan (Ojol dihapus)
-  String _selectedVehicleType = 'Semua Kendaraan';
-  final List<String> _vehicleTypes = ['Semua Kendaraan', 'Motor', 'Mobil'];
-
-  // Add this helper method to extract day labels
-  List<String> _getDayLabels(List<WeeklyChartItemModel> chartData) {
-    if (chartData.isEmpty) {
-      return ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-    }
-    return chartData.map((data) => data.hariSingkat).toList();
-  }
-
-  // 🚀 [REFACTOR] Fungsi Mapper Asli dari WeeklyChartItemModel ke List<double>
-  List<double> _getWeeklyIncomeData(
-    List<WeeklyChartItemModel> chartData,
-    String type,
-  ) {
-    if (chartData.isEmpty) {
-      return List.filled(7, 0.0); // Fallback jika data kosong
-    }
-    // disini
-    return chartData.map((data) {
-      switch (type) {
-        case 'Motor':
-          return data.nominalMotor.toDouble();
-        case 'Mobil':
-          return data.nominalMobil.toDouble();
-        default:
-          return data.nominalTotal.toDouble();
-      }
-    }).toList();
+    setState(() {
+      namaJukir = profile?['namaUser'];
+      nop = profile?['nop'];
+      namaLokasi = profile?['namaObjekPajak'];
+    });
   }
 
   @override
@@ -95,109 +64,163 @@ class _HomePageState extends State<HomePage> {
     return BlocListener<HomeCubit, HomeState>(
       listenWhen: (previous, current) =>
           previous.actionTimestamp != current.actionTimestamp,
-      listener: (context, state) async {
-        switch (state.permissionActionStatus) {
-          case CameraPermissionStatus.granted:
-            await context.push('/capture/${state.selectedVehicleForCapture}');
-            if (context.mounted) {
-              context.read<HomeCubit>().loadDashboardData();
-            }
-            break;
-          case CameraPermissionStatus.permanentlyDenied:
-            await PbPermissionDialog.show(
-              context,
-              title: 'Akses Kamera Diblokir',
-              description:
-                  'Anda telah menolak akses kamera secara permanen. Mohon izinkan melalui Pengaturan HP.',
-            );
-            break;
-          case CameraPermissionStatus.denied:
-          case CameraPermissionStatus.error:
-            PbStatusSnackbar.show(
-              context,
-              message: 'Akses kamera dibutuhkan.',
-              isError: true,
-            );
-            break;
-          default:
-            break;
-        }
-      },
+      listener: (context, state) async {},
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           return LoadingOverlay(
             isLoading: state.status == HomeStatus.loading,
             child: SafeArea(
-              bottom: true,
               top: false,
+              bottom: true,
               child: Scaffold(
                 backgroundColor: AppColors.background,
                 drawer: const HomeDrawer(),
-                appBar: AppBar(
-                  title: GestureDetector(
-                    onDoubleTap: () {
-                      if (kDebugMode) {
-                        ChuckerFlutter.showChuckerScreen();
-                      }
-                    },
-                    child: const Text(
-                      'Parkir Digital Bapenda',
-                      style: AppTypography.heading5,
+                body: Stack(
+                  children: [
+                    // 1. BACKGROUND GRADIENT
+                    Container(
+                      height: 300,
+                      decoration: const BoxDecoration(
+                        gradient: AppColors.headerGradient,
+                      ),
                     ),
-                  ),
-                  backgroundColor: AppColors.surface,
-                  elevation: 0,
-                  centerTitle: true,
-                ),
-                body: RefreshIndicator(
-                  onRefresh: _loadData,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    // 🚀 [REFACTOR] Dihapus buildWhen agar semua state baru bisa ter-render
-                    child: Column(
-                      children: [
-                        DashboardWidget(
-                          // 🚀 [REFACTOR] Gunakan state.totalPendapatan
-                          totalPendapatan: state.totalPendapatan,
-                          totalTransaksi: (state.motorCount + state.mobilCount),
-                          motorCount: state.motorCount,
-                          mobilCount: state.mobilCount,
-                          isFree: state.isFree,
-                          isSuccess: state.status == HomeStatus.success,
+
+                    // 2. ORNAMEN
+                    Positioned(
+                      top: 5,
+                      right: -20,
+                      child: Opacity(
+                        opacity: 0.2,
+                        child: Image.asset(
+                          AppAssetImages.logosurabayasiloute,
+                          height: 230,
+                          width: 230,
                         ),
-                        if (state.status == HomeStatus.success) ...[
-                          if (!state.isFree)
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                top: 16,
-                              ),
-                              child: BarDiagramWithLabels(
-                                weeklyIncome: _getWeeklyIncomeData(
-                                  state.weeklyChartData,
-                                  _selectedVehicleType,
+                      ),
+                    ),
+                    SafeArea(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              top: 32,
+                            ),
+                            child: HomeHeaderWidget(
+                              namaJukir: namaJukir ?? '-',
+                              nop: nop ?? '-',
+                              namaLokasi: namaLokasi,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              margin: EdgeInsets.only(top: 25),
+                              padding: EdgeInsets.all(16),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(40),
+                                  topRight: Radius.circular(40),
                                 ),
-                                selectedVehicleType: _selectedVehicleType,
-                                vehicleTypes: _vehicleTypes,
-                                onVehicleTypeChanged: (newType) {
-                                  setState(() {
-                                    _selectedVehicleType = newType;
-                                  });
-                                },
-                                dayLabels: _getDayLabels(
-                                  state.weeklyChartData,
-                                ), // ✅ Pass actual labels
+                              ),
+                              child: Column(
+                                children: [
+                                  if (state.status != HomeStatus.loading) ...[
+                                    if (!state.isFree)
+                                      CardTotalPendapatan(
+                                        totalPendapatan: state.totalPendapatan
+                                            .toString(),
+                                      ),
+                                    SizedBox(height: 16),
+                                    Container(
+                                      padding: EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.08,
+                                            ),
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: IntrinsicHeight(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                ItemKendaraanWidget(
+                                                  icon: Icons.two_wheeler,
+                                                  judul: "Roda 2",
+                                                  jumlah: state.motorCount
+                                                      .toString(),
+                                                ),
+                                                SizedBox(height: 8),
+                                                ItemKendaraanWidget(
+                                                  icon: Icons.directions_car,
+                                                  judul: "Roda 4",
+                                                  jumlah: state.mobilCount
+                                                      .toString(),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(width: 8),
+                                            Expanded(
+                                              child: ItemKendaraanWidget(
+                                                isLeftIcon: false,
+                                                isSolid: true,
+                                                icon: Icons.people,
+                                                judul: "Semua Kendaraan",
+                                                jumlah:
+                                                    "${state.mobilCount + state.motorCount}",
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: LastActivityWidget(
+                                        transactions: state.recentTransactions,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
                             ),
-                          LastActivityWidget(
-                            transactions: state.recentTransactions,
-                            isFree: state.isFree,
                           ),
                         ],
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
+                ),
+
+                floatingActionButton: FloatingActionButton(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white, // semua isi jadi putih
+                  shape: const CircleBorder(),
+                  onPressed: () async {
+                    final result = await context.push(
+                      AppRoutes.transaction,
+                      extra: state.isFree,
+                    );
+
+                    // kalau transaksi sukses
+                    if (result == true) {
+                      _loadData(); // reload data home
+                    }
+                  },
+                  child: const Icon(Icons.add),
                 ),
               ),
             ),
