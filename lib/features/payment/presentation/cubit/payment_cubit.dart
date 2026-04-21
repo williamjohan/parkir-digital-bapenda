@@ -79,10 +79,41 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   /// 3. Cek Status Manual (Tombol Refresh)
   Future<void> checkStatusManual(String kodeQris) async {
+    final currentState = state;
+    if (currentState is! PaymentQrisReady) return;
+
+    // 🚀 1. Tembakkan sinyal Loading ke UI
+    emit(PaymentCheckLoading());
+
     final result = await _checkPaymentStatusUseCase.execute(kodeQris);
-    result.fold((failure) {
-      if (!isClosed) emit(PaymentError(failure.message));
-    }, (status) => _handlePaymentStatus(status));
+
+    if (isClosed) return;
+
+    result.fold(
+      (failure) {
+        emit(PaymentError(failure.message));
+        emit(currentState); // 🚀 Bounce: Kembalikan QRIS ke layar
+      },
+      (status) {
+        if (status == PaymentStatus.pending ||
+            status == PaymentStatus.idle ||
+            status == PaymentStatus.unknown) {
+          // 🚀 2. Jika masih PENDING, Tembakkan sinyal Snackbar
+          emit(
+            const PaymentPendingInfo(
+              "Pembayaran belum diselesaikan oleh Customer.",
+            ),
+          );
+          emit(
+            currentState,
+          ); // 🚀 Bounce: Kembalikan QRIS ke layar agar Timer tidak mati
+        } else {
+          // 🚀 3. Jika LUNAS/TIMEOUT, amankan QRIS dulu lalu lempar ke handler utama
+          emit(currentState);
+          _handlePaymentStatus(status);
+        }
+      },
+    );
   }
 
   /// 4. Handler status

@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/qris_entity.dart';
-// 🚀 [SESUAIKAN PATH INI]: Import model transaksi lokal Anda
 import '../../../parking_transaction/data/models/local_transaction_model.dart';
 
 abstract class PaymentState extends Equatable {
@@ -10,6 +9,17 @@ abstract class PaymentState extends Equatable {
 
   @override
   List<Object?> get props => [];
+}
+
+class PaymentCheckLoading extends PaymentState {}
+
+// 🚀 Sinyal untuk memunculkan Snackbar Info
+class PaymentPendingInfo extends PaymentState {
+  final String message;
+  const PaymentPendingInfo(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }
 
 class PaymentInitial extends PaymentState {}

@@ -9,17 +9,28 @@ class PbStatusSnackbar {
     BuildContext context, {
     required String message,
     bool isError = false,
+    bool isInfo = false, // 🚀 NEW: Tambahan parameter untuk status Pending/Info
     Duration duration = const Duration(seconds: 3),
     IconData? customIcon,
   }) {
     final overlayState = Overlay.of(context);
     late OverlayEntry overlayEntry;
+    final Color backgroundColor;
+    final IconData iconData;
 
-    // Menentukan warna dan ikon berdasarkan tipe status
-    final backgroundColor = isError ? AppColors.error : AppColors.success;
-    final iconData =
-        customIcon ??
-        (isError ? Icons.error_outline : Icons.check_circle_outline);
+    if (isError) {
+      backgroundColor = AppColors.error;
+      iconData = customIcon ?? Icons.error_outline;
+    } else if (isInfo) {
+      // Warna Biru (Info) atau gunakan warna token AppColors Anda jika ada
+      backgroundColor = Colors.blue.shade600;
+      iconData =
+          customIcon ??
+          Icons.hourglass_top_outlined; // Ikon jam pasir untuk pending
+    } else {
+      backgroundColor = AppColors.success;
+      iconData = customIcon ?? Icons.check_circle_outline;
+    }
 
     overlayEntry = OverlayEntry(
       builder: (context) {
