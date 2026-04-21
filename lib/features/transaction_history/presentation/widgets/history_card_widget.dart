@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_ui_extension.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../data/models/history_item_model.dart';
 
 class HistoryCardWidget extends StatelessWidget {
@@ -109,7 +110,7 @@ class HistoryCardWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  item.formattedNominal, // 🚀 Langsung Panggil
+                  CurrencyFormatter.toIdr(item.formattedNominal),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

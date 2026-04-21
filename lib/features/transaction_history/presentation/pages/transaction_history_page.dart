@@ -207,9 +207,9 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
   // 🚀 MAGIC LAYER DIMULAI DI SINI
   Widget _buildScrollContent(TransactionHistoryState state) {
-    if (state is TransactionHistoryError)
+    if (state is TransactionHistoryError) {
       return Center(child: Text(state.message));
-
+    }
     if (state is TransactionHistoryLoaded) {
       final data = state.filteredTransactions;
 
@@ -299,7 +299,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -341,7 +341,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
+                        color: Colors.black.withValues(alpha: 0.15),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),

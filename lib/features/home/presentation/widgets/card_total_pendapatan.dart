@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/utils/currency_formatter.dart';
 
 class CardTotalPendapatan extends StatelessWidget {
   final String totalPendapatan;
@@ -37,7 +38,7 @@ class CardTotalPendapatan extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Rp$totalPendapatan",
+                CurrencyFormatter.toIdr(totalPendapatan),
                 style: AppTypography.heading2.copyWith(
                   color: AppColors.primary,
                 ),

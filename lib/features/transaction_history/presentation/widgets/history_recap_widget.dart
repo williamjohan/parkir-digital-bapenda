@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 
+import '../../../../core/utils/currency_formatter.dart';
 import 'history_item_widget.dart';
 
 class HistoryRecapWidget extends StatelessWidget {
@@ -54,7 +55,7 @@ class HistoryRecapWidget extends StatelessWidget {
                 HistoryRecapItem(
                   title: "Total",
                   subTitle: "Pendapatan",
-                  value: "Rp$totalPendapatan",
+                  value: CurrencyFormatter.toIdr(totalPendapatan),
                 ),
             ],
           ),

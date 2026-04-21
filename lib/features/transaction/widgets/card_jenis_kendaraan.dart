@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../core/design_system/components/pb_primary_button.dart';
+import '../../../core/utils/currency_formatter.dart';
 import '../../home/data/models/tarif_model.dart';
 
 // 🚀 [ENHANCE]: Menjadi StatelessWidget (Dumb Widget)
@@ -96,8 +97,8 @@ class CardJenisKendaraan extends StatelessWidget {
 
               TextField(
                 controller: TextEditingController(
-                  text: displayTarif,
-                ), // 🚀 Dikontrol sepenuhnya dari atas
+                  text: CurrencyFormatter.toIdr(displayTarif),
+                ),
                 style: AppTypography.bodyRegular.copyWith(
                   color: isFree ? Colors.green : AppColors.textPrimary,
                   fontWeight: FontWeight.bold,

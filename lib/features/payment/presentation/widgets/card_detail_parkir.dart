@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
 
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -65,7 +66,7 @@ class CardDetailParkirWidget extends StatelessWidget {
                 ),
               ),
               Text(
-                "Rp${nominal.toString()}",
+                CurrencyFormatter.toIdr(nominal),
                 style: TextStyle(color: AppColors.primaryDark),
               ),
             ],
