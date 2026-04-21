@@ -11,6 +11,9 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        // 🚀 TAMBAHAN 1: Mengaktifkan Desugaring untuk mendukung library modern
+        isCoreLibraryDesugaringEnabled = true 
+        
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -31,7 +34,7 @@ android {
     }
 
     buildTypes {
-            release {
+        release {
             signingConfig = signingConfigs.getByName("debug")
 
             isMinifyEnabled = true
@@ -46,6 +49,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation("com.google.mlkit:text-recognition:16.0.0")
 }
 
