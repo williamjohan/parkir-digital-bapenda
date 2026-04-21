@@ -16,6 +16,12 @@ class ReceiptFormatter {
     final generator = Generator(PaperSize.mm58, capabilityProfile);
     List<int> bytes = [];
 
+    // 🔥 PERUBAHAN 1: Reset printer untuk hilangkan default spacing atas
+    bytes += generator.reset();
+
+    // 🔥 PERUBAHAN 2: Set line spacing minimum (biar lebih rapat)
+    bytes += [27, 51, 0];
+
     // ==========================================
     // 🚀 [PERBAIKAN CLEAN CODE]: Persiapan Variabel Data
     // ==========================================
@@ -92,6 +98,9 @@ class ReceiptFormatter {
     // QRSize.size6 cukup ideal untuk kertas 58mm
     bytes += generator.qrcode(qrUrl, size: QRSize.size5);
 
+    // 🔥 PERUBAHAN 4: Kontrol jarak setelah QR (cukup 1 line)
+    // bytes += generator.feed(1);
+
     // --- 9. ID TRANSAKSI ---
     bytes += generator.text('');
 
@@ -105,8 +114,10 @@ class ReceiptFormatter {
       styles: const PosStyles(align: PosAlign.center),
     );
 
-    // Jarak aman untuk disobek dari printer
-    bytes += generator.feed(4);
+    bytes += generator.text('');
+    bytes += generator.text('');
+    // 🔥 PERUBAHAN 5: Kontrol jarak bawah + cut;
+    // bytes += generator.cut();
 
     return bytes;
   }

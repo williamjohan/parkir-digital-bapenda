@@ -34,28 +34,9 @@ class CardTotalPendapatan extends StatelessWidget {
           ),
           SizedBox(height: 8),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                CurrencyFormatter.toIdr(totalPendapatan),
-                style: AppTypography.heading2.copyWith(
-                  color: AppColors.primary,
-                ),
-              ),
-              Row(
-                children: [
-                  Icon(Icons.trending_up, color: AppColors.success),
-                  SizedBox(width: 8),
-                  Text(
-                    "10% dari kemarin",
-                    style: AppTypography.bodyRegular.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          Text(
+            CurrencyFormatter.toIdr(totalPendapatan),
+            style: AppTypography.heading2.copyWith(color: AppColors.primary),
           ),
         ],
       ),

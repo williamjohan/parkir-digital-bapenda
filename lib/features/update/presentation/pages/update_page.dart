@@ -18,48 +18,54 @@ class UpdatePage extends StatelessWidget {
           locator<CheckUpdateCubit>()
             ..checkNow(), // 🚀 Otomatis tembak API saat halaman dibuka
       child: Scaffold(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text(
-            "Pembaruan Aplikasi",
-            style: AppTypography.heading5,
+          title: Center(
+            child: const Text(
+              "Pembaruan Aplikasi",
+              style: AppTypography.heading5,
+            ),
           ),
           backgroundColor: Colors.white,
           elevation: 0,
           foregroundColor: Colors.black,
         ),
-        body: BlocBuilder<CheckUpdateCubit, CheckUpdateState>(
-          builder: (context, state) {
-            if (state is CheckUpdateLoading) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(color: AppColors.primary),
-                    SizedBox(height: 16),
-                    Text(
-                      "Mengecek versi terbaru...",
-                      style: AppTypography.bodyRegular,
-                    ),
-                  ],
-                ),
-              );
-            }
+        body: SafeArea(
+          bottom: true,
+          top: false,
+          child: BlocBuilder<CheckUpdateCubit, CheckUpdateState>(
+            builder: (context, state) {
+              if (state is CheckUpdateLoading) {
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: AppColors.primary),
+                      SizedBox(height: 16),
+                      Text(
+                        "Mengecek versi terbaru...",
+                        style: AppTypography.bodyRegular,
+                      ),
+                    ],
+                  ),
+                );
+              }
 
-            if (state is CheckUpdateUpToDate) {
-              return _buildUpToDate();
-            }
+              if (state is CheckUpdateUpToDate) {
+                return _buildUpToDate();
+              }
 
-            if (state is CheckUpdateAvailable) {
-              return _buildUpdateAvailable(context, state);
-            }
+              if (state is CheckUpdateAvailable) {
+                return _buildUpdateAvailable(context, state);
+              }
 
-            if (state is CheckUpdateError) {
-              return _buildError(context, state.message);
-            }
+              if (state is CheckUpdateError) {
+                return _buildError(context, state.message);
+              }
 
-            return const SizedBox.shrink();
-          },
+              return const SizedBox.shrink();
+            },
+          ),
         ),
       ),
     );
