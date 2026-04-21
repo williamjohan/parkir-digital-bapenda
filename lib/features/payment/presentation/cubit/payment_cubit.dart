@@ -140,6 +140,8 @@ class PaymentCubit extends Cubit<PaymentState> {
       longitude: _pendingArgs!.longitude,
     );
 
+    if (isClosed) return;
+
     result.fold(
       (failure) {
         emit(PaymentError("Gagal menyimpan transaksi: ${failure.message}"));

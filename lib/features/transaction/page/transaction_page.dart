@@ -119,15 +119,16 @@ class _TransactionPageState extends State<TransactionPage> {
             longitude: state.longitude ?? '0',
           );
 
-          // 2. Lempar ke PaymentPage (Untuk Semua Transaksi: Bayar & Gratis)
-          // PaymentPage akan mem-bypass QRIS secara otomatis jika nominal == 0
+          // 2. Lempar ke PaymentPage
           context.push(AppRoutes.payment, extra: args).then((result) {
-            // 3. Jika kembali dengan status sukses (karcis tercetak)
-            if (context.mounted && result == true) {
-              // Reset UI Form
-              context.read<TransactionCubit>().resetForm();
-              _nopolController.clear();
+            if (!context.mounted) return;
 
+            // Ini akan membersihkan input Nopol dan mengembalikan status ke 'ready'
+            context.read<TransactionCubit>().resetForm();
+            _nopolController.clear();
+
+            // 3. Jika sukses (karcis tercetak / result == true)
+            if (result == true) {
               // Tutup halaman Transaksi dan kembalikan sinyal sukses ke Home
               context.pop(true);
             }
