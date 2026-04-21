@@ -55,7 +55,7 @@ class PaymentDialogHelpers {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Lottie.asset(
-                  AppAssetLottie.paymentSuccess,
+                  AppAssetLottie.paymentSuccessOrange,
                   width: 200,
                   height: 200,
                   repeat: false,
