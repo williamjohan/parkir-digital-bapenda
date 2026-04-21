@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../usecases/check_update_usecase.dart';
+import '../../domain/usecases/check_update_usecase.dart';
 import 'check_update_state.dart';
 
 @injectable

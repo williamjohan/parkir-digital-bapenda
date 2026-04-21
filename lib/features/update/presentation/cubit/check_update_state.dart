@@ -1,4 +1,4 @@
-import '../../entities/update_entity.dart';
+import '../../domain/entities/update_entity.dart';
 
 abstract class CheckUpdateState {}
 
