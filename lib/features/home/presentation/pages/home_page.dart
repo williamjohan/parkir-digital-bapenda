@@ -127,66 +127,86 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   if (state.status != HomeStatus.loading) ...[
-                                    if (!state.isFree)
-                                      CardTotalPendapatan(
-                                        totalPendapatan: state.totalPendapatan
-                                            .toString(),
-                                      ),
-                                    SizedBox(height: 16),
-                                    Container(
-                                      padding: EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                              0.08,
-                                            ),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: IntrinsicHeight(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
+                                    RefreshIndicator(
+                                      onRefresh: _loadData,
+                                      child: SingleChildScrollView(
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        child: Column(
                                           children: [
-                                            Column(
-                                              children: [
-                                                ItemKendaraanWidget(
-                                                  icon: Icons.two_wheeler,
-                                                  judul: "Roda 2",
-                                                  jumlah: state.motorCount
-                                                      .toString(),
+                                            if (!state.isFree)
+                                              CardTotalPendapatan(
+                                                totalPendapatan: state
+                                                    .totalPendapatan
+                                                    .toString(),
+                                              ),
+                                            SizedBox(height: 16),
+                                            Container(
+                                              padding: EdgeInsets.all(16),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.08),
+                                                    blurRadius: 10,
+                                                    offset: const Offset(0, 4),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: IntrinsicHeight(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        ItemKendaraanWidget(
+                                                          icon:
+                                                              Icons.two_wheeler,
+                                                          judul: "Roda 2",
+                                                          jumlah: state
+                                                              .motorCount
+                                                              .toString(),
+                                                        ),
+                                                        SizedBox(height: 8),
+                                                        ItemKendaraanWidget(
+                                                          icon: Icons
+                                                              .directions_car,
+                                                          judul: "Roda 4",
+                                                          jumlah: state
+                                                              .mobilCount
+                                                              .toString(),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: ItemKendaraanWidget(
+                                                        isLeftIcon: false,
+                                                        isSolid: true,
+                                                        icon: Icons.people,
+                                                        judul:
+                                                            "Semua Kendaraan",
+                                                        jumlah:
+                                                            "${state.mobilCount + state.motorCount}",
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                SizedBox(height: 8),
-                                                ItemKendaraanWidget(
-                                                  icon: Icons.directions_car,
-                                                  judul: "Roda 4",
-                                                  jumlah: state.mobilCount
-                                                      .toString(),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(width: 8),
-                                            Expanded(
-                                              child: ItemKendaraanWidget(
-                                                isLeftIcon: false,
-                                                isSolid: true,
-                                                icon: Icons.people,
-                                                judul: "Semua Kendaraan",
-                                                jumlah:
-                                                    "${state.mobilCount + state.motorCount}",
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                     ),
+
                                     Expanded(
                                       child: LastActivityWidget(
                                         transactions: state.recentTransactions,

@@ -29,35 +29,19 @@ class HomeDrawer extends StatelessWidget {
               right: 24,
             ),
             decoration: const BoxDecoration(color: AppColors.primary),
-            child: FutureBuilder<Map<String, dynamic>?>(
-              future: locator<ISecureStorageManager>().getJukirProfile(),
-              builder: (context, snapshot) {
-                // Tampilkan loading kecil jika brankas sedang dibuka
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  );
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "PARKIR DIGITAL",
-                      style: AppTypography.heading1.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Version 1.0.2",
-                      style: AppTypography.caption.copyWith(
-                        color: Colors.white70,
-                      ),
-                    ),
-                  ],
-                );
-              },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "PARKIR DIGITAL",
+                  style: AppTypography.heading1.copyWith(color: Colors.white),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Version 1.0.2",
+                  style: AppTypography.caption.copyWith(color: Colors.white70),
+                ),
+              ],
             ),
           ),
 
