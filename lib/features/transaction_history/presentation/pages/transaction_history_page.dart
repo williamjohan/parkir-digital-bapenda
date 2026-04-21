@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/hidtory_recap_widget.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
@@ -13,6 +12,7 @@ import '../../data/models/history_item_model.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
+import '../widgets/recap_header_delegate.dart';
 
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
@@ -29,6 +29,9 @@ class TransactionHistoryPage extends StatefulWidget {
 }
 
 class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isCollapsed = false;
+
   late DateTime _startDate;
   late DateTime _endDate;
 
@@ -50,6 +53,14 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     );
 
     context.read<TransactionHistoryCubit>().fetchHistory(_startDate, _endDate);
+
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 100 && !_isCollapsed) {
+        setState(() => _isCollapsed = true);
+      } else if (_scrollController.offset <= 100 && _isCollapsed) {
+        setState(() => _isCollapsed = false);
+      }
+    });
   }
 
   // 🚀 [REFACTOR CLEAN CODE]: Cukup Panggil Pintu Masuk 2 dari Dialog Engine Anda!
@@ -94,7 +105,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               ),
               body: Column(
                 children: [
-                  // --- HEADER TANGGAL (Selalu Tampil) ---
+                  // 🔹 FILTER TANGGAL (FIXED)
                   RangeFilterWidget(
                     onApply:
                         ({
@@ -117,8 +128,13 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                           );
                         },
                   ),
-                  // --- AREA KONTEN BAWAH ---
-                  Expanded(child: _buildContent(context, state)),
+
+                  // 🔹 FILTER KATEGORI (FIXED)
+                  if (state is TransactionHistoryLoaded)
+                    _buildFilterSection(state),
+
+                  // 🔹 SCROLL AREA
+                  Expanded(child: _buildScrollContent(state)),
                 ],
               ),
             ),
@@ -128,117 +144,122 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     );
   }
 
-  Widget _buildContent(BuildContext context, TransactionHistoryState state) {
-    if (state is TransactionHistoryError) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Text(
-            state.message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.grey),
+  Widget _buildFilterSection(TransactionHistoryLoaded state) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          color: Colors.white,
+          padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildFilterChip(
+                  context,
+                  'SEMUA',
+                  state.selectedKategori,
+                  'Semua',
+                ),
+                const SizedBox(width: 8),
+                _buildFilterChip(
+                  context,
+                  'MOBIL',
+                  state.selectedKategori,
+                  'Mobil',
+                ),
+                const SizedBox(width: 8),
+                _buildFilterChip(
+                  context,
+                  'MOTOR',
+                  state.selectedKategori,
+                  'Motor',
+                ),
+              ],
+            ),
           ),
         ),
-      );
-    } else if (state is TransactionHistoryLoaded) {
-      final data = state.filteredTransactions;
+        Divider(color: AppColors.textHint),
+      ],
+    );
+  }
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Filter Kategori (Motor/Mobil/Semua)
-          Column(
-            children: [
-              Container(
-                width: double.infinity,
-                color: Colors.white,
-                padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildFilterChip(
-                        context,
-                        'SEMUA',
-                        state.selectedKategori,
-                        'Semua',
-                      ),
-                      const SizedBox(width: 8),
-                      _buildFilterChip(
-                        context,
-                        'MOBIL',
-                        state.selectedKategori,
-                        'Mobil',
-                      ),
-                      const SizedBox(width: 8),
-                      _buildFilterChip(
-                        context,
-                        'MOTOR',
-                        state.selectedKategori,
-                        'Motor',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Divider(color: AppColors.textHint),
-            ],
-          ),
-          SizedBox(height: 8),
-          HistoryRecapWidget(
-            roda2: state.roda2.toString(),
-            roda4: state.roda4.toString(),
-            totalPendapatan: state.totalPendapatan.toString(),
-            isFree: widget.isFree,
-          ),
-
-          // List Data atau Empty State
-          Expanded(
-            child: data.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.receipt_long,
-                          size: 80,
-                          color: AppColors.textHint,
-                        ),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'Tidak ada transaksi untuk filter ini.',
-                          style: TextStyle(color: AppColors.textHint),
-                        ),
-                      ],
-                    ),
-                  )
-                : RefreshIndicator(
-                    onRefresh: () => context
-                        .read<TransactionHistoryCubit>()
-                        .fetchHistory(_startDate, _endDate),
-                    child: ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(top: 8, bottom: 80),
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        return HistoryCardWidget(
-                          item: data[index],
-                          onPreviewTap: () => _showPreviewKarcis(
-                            context,
-                            data[index],
-                            state.jukirProfile,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+          Icon(Icons.receipt_long, size: 80, color: AppColors.textHint),
+          const SizedBox(height: 16),
+          const Text(
+            'Tidak ada transaksi untuk filter ini.',
+            style: TextStyle(color: AppColors.textHint),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildScrollContent(TransactionHistoryState state) {
+    if (state is TransactionHistoryError) {
+      return Center(child: Text(state.message));
+    }
+
+    if (state is TransactionHistoryLoaded) {
+      final data = state.filteredTransactions;
+
+      return RefreshIndicator(
+        onRefresh: () => context.read<TransactionHistoryCubit>().fetchHistory(
+          _startDate,
+          _endDate,
+        ),
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            // 🔥 RECAP COLLAPSIBLE (ONLY THIS)
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: RecapHeaderDelegate(
+                minHeight: 70,
+                maxHeight: 150, // 🔥 agak lebih tinggi biar gak overflow
+                state: state,
+                isFree: widget.isFree,
+                onTapExpand: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+            ),
+
+            // 🔹 LIST / EMPTY
+            data.isEmpty
+                ? SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _buildEmptyState(),
+                  )
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      return HistoryCardWidget(
+                        item: data[index],
+                        onPreviewTap: () => _showPreviewKarcis(
+                          context,
+                          data[index],
+                          state.jukirProfile,
+                        ),
+                      );
+                    }, childCount: data.length),
+                  ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 80)),
+          ],
+        ),
       );
     }
 
-    // Jika state sedang Loading atau Initial, render area kosong
-    // karena layar SUDAH DITUTUPI oleh LoadingOverlay dari luar.
     return const SizedBox();
   }
 

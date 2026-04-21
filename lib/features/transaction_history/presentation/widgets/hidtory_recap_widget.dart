@@ -62,29 +62,5 @@ class HistoryRecapWidget extends StatelessWidget {
         ],
       ),
     );
-    // return Padding(
-    //   padding: EdgeInsetsGeometry.symmetric(horizontal: 8),
-    //   child: Row(
-    //     children: [
-    //       HistoryRecapItem(
-    //         title: "Roda 2",
-    //         value: roda2,
-    //         subTitle: "Transaksi",
-    //       ),
-    //       SizedBox(width: 8),
-    //       HistoryRecapItem(
-    //         title: "Roda 4",
-    //         value: roda4,
-    //         subTitle: "Transaksi",
-    //       ),
-    //       SizedBox(width: 8),
-    //       HistoryRecapItem(
-    //         title: "Total",
-    //         value: "Rp$totalPendapatan",
-    //         subTitle: "Pendapatan",
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }
