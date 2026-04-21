@@ -110,7 +110,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   PbStatusSnackbar.show(
                     context,
                     message: state.message,
-                    isError: false,
+                    isInfo: true,
                   );
                 } else if (state is PaymentSyncing) {
                   _isSyncDialogOpen = true;
