@@ -1,7 +1,11 @@
 name: parkir_digital_bapenda
 description: "Untuk Melakukan Pembayaran Parkir Secara Digital Di Kota Surabaya"
 publish_to: 'none' 
-version: 1.0.4+1
+
+# 🚀 VERSI PRODUKSI AWAL (Initial Release)
+# versionName: 1.0.0 (Yang dilihat User)
+# buildNumber: 1     (Yang dibaca sistem OTA)
+version: 1.0.0+1
 
 environment:
   sdk: ^3.9.2 # Pastikan versi SDK ini sesuai dengan instalasi lokalmu
@@ -10,61 +14,78 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  flutter_dotenv: ^6.0.0
-  dio: ^5.9.2
+
+  # --- State Management & Clean Architecture Core ---
   flutter_bloc: ^9.1.1
+  get_it: ^7.7.0
+  injectable: ^2.4.1
+  dartz: ^0.10.1
   equatable: ^2.0.8
+  go_router: ^13.2.0
+
+  # --- Networking & API ---
+  dio: ^5.9.2
   dio_smart_retry: ^6.0.0
   chucker_flutter: ^1.9.1
-  logger: ^2.4.0
+  signalr_netcore: ^1.3.7
+
+  # --- Local Storage & Database ---
   shared_preferences: ^2.2.2
-  go_router: ^13.2.0
-  json_annotation: ^4.11.0
-  flutter_image_compress: ^2.4.0  
-  path_provider: ^2.1.2          
-  intl: ^0.20.2
-  pretty_qr_code: ^3.6.0
-  crypto: ^3.0.7
-  pointycastle: ^4.0.0
-  saver_gallery: ^4.1.1
-  device_info_plus: ^12.4.0
+  flutter_secure_storage: ^10.0.0
+  sqflite: ^2.4.2
+
+  # --- Hardware, Permissions & System ---
+  camera: 0.10.5+9
+  geolocator: ^13.0.1
+  permission_handler: ^12.0.1
+  app_settings: ^5.1.1
   blue_thermal_printer: ^1.2.3 
   esc_pos_utils_plus: ^2.0.3
-  app_settings: ^5.1.1
-  fl_chart: ^1.2.0
+  device_info_plus: ^12.4.0
   connectivity_plus: ^7.1.1
-  signalr_netcore: ^1.3.7
-  lottie: ^3.1.0
-  shimmer_animation: ^2.2.2+1
+  # flutter_bluetooth_serial: ^0.4.0 # (Legacy/Unused)
 
-  # --- Clean Architecture Utilities ---
-  get_it: ^7.7.0 # Untuk Dependency Injection (Locator)
-  dartz: ^0.10.1 # Untuk Functional Programming (Either<Failure, Success>)
-  injectable: ^2.4.1 # Untuk Code Generation DI (Optional, jika menggunakan anotasi)
-  
-  # --- Core Features: Hardware & ML ---
-  camera: 0.10.5+9
-  google_mlkit_text_recognition: ^0.14.0 # Engine On-Device OCR Google
-  permission_handler: ^12.0.1 # Manajemen pop-up izin akses kamera
-  flutter_secure_storage: ^10.0.0
-  jwt_decoder: ^2.0.1
-  sqflite: ^2.4.2
-  path: ^1.9.1
-  uuid: ^4.5.3
-  geolocator: ^13.0.1
+  # --- OTA Update System ---
   ota_update: ^7.1.0
   package_info_plus: ^9.0.1
-  # flutter_bluetooth_serial: ^0.4.0
+
+  # --- Machine Learning (OCR) ---
+  google_mlkit_text_recognition: ^0.14.0
+
+  # --- UI, Animations & Images ---
+  lottie: ^3.1.0
+  shimmer_animation: ^2.2.2+1
+  fl_chart: ^1.2.0
+  pretty_qr_code: ^3.6.0
+  flutter_image_compress: ^2.4.0  
+  saver_gallery: ^4.1.1
+
+  # --- Utilities & Helpers ---
+  flutter_dotenv: ^6.0.0
+  logger: ^2.4.0
+  json_annotation: ^4.11.0
+  path_provider: ^2.1.2          
+  path: ^1.9.1
+  intl: ^0.20.2
+  uuid: ^4.5.3
+  jwt_decoder: ^2.0.1
+  crypto: ^3.0.7
+  pointycastle: ^4.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  
+  # --- Code Generators ---
   build_runner: ^2.4.9
   injectable_generator: ^2.6.1
   json_serializable: ^6.7.1
+  
+  # --- App Icons & Naming ---
   flutter_launcher_icons: ^0.13.1
 
+# --- CONFIGURATION ---
 flutter_launcher_icons:
   android: true
   ios: true
@@ -72,8 +93,6 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/iconlogo/LogoDigitalParking.png"
   adaptive_icon_background: "#00000000"
 
-flutter_app_name:
-  name: "Parkir Digital Surabaya"
 
 flutter:
   uses-material-design: true
