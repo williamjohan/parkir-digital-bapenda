@@ -32,6 +32,7 @@ class UpdateRepositoryImpl implements IUpdateRepository {
             buildNumber: serverBuildNumber,
             changelog: data['changelog'] ?? '-',
             downloadUrl: data['url'] ?? '',
+            isForceUpdate: data['isForceUpdate'] ?? false,
           ),
         );
       } else {
