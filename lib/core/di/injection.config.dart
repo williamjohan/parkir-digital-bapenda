@@ -112,6 +112,16 @@ import '../../features/transaction_history/domain/usecases/get_transaction_histo
     as _i732;
 import '../../features/transaction_history/presentation/cubit/transaction_history_cubit.dart'
     as _i753;
+import '../../features/update/data/datasources/update_remote_datasource.dart'
+    as _i1051;
+import '../../features/update/data/repositories/update_repository_impl.dart'
+    as _i121;
+import '../../features/update/domain/repositories/i_update_repository.dart'
+    as _i280;
+import '../../features/update/domain/usecases/check_update_usecase.dart'
+    as _i506;
+import '../../features/update/presentation/cubit/check_update_cubit.dart'
+    as _i1020;
 import '../../features/vehicle_capture/data/datasources/ocr_local_data_source.dart'
     as _i437;
 import '../../features/vehicle_capture/data/repositories/ocr_repository_impl.dart'
@@ -200,6 +210,9 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i1051.IUpdateRemoteDataSource>(
+    () => _i1051.UpdateRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -236,6 +249,9 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i280.IUpdateRepository>(
+    () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
+  );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
       gh<_i107.IAuthRemoteDataSource>(),
@@ -256,6 +272,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i48.LogoutUseCase>(
     () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i506.CheckUpdateUseCase>(
+    () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
   );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
@@ -319,6 +338,9 @@ _i174.GetIt init(
       gh<_i461.IParkingTransactionRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
+  );
+  gh.factory<_i1020.CheckUpdateCubit>(
+    () => _i1020.CheckUpdateCubit(gh<_i506.CheckUpdateUseCase>()),
   );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(
