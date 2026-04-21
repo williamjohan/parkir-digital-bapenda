@@ -78,7 +78,7 @@ class _TimePickerFieldState extends State<TimePickerField> {
           style: AppTypography.bodySemiBold.copyWith(
             color: widget.enabled
                 ? Colors.white
-                : Colors.white.withOpacity(0.5),
+                : Colors.white.withValues(alpha: 0.5),
           ),
           controller: _controller,
           readOnly: true,
@@ -91,7 +91,7 @@ class _TimePickerFieldState extends State<TimePickerField> {
               size: 18,
               color: widget.enabled
                   ? Colors.white
-                  : Colors.white.withOpacity(0.5),
+                  : Colors.white.withValues(alpha: 0.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 12,
@@ -102,7 +102,7 @@ class _TimePickerFieldState extends State<TimePickerField> {
               borderSide: BorderSide(
                 color: widget.enabled
                     ? Colors.white
-                    : Colors.white.withOpacity(0.5),
+                    : Colors.white.withValues(alpha: 0.5),
               ),
             ),
             enabledBorder: OutlineInputBorder(

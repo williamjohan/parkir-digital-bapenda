@@ -12,7 +12,7 @@ import '../../data/models/history_item_model.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
-import '../widgets/recap_header_delegate.dart';
+import '../widgets/history_recap_widget.dart'; // 🚀 IMPORT WIDGET ASLI
 
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
@@ -30,7 +30,10 @@ class TransactionHistoryPage extends StatefulWidget {
 
 class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   final ScrollController _scrollController = ScrollController();
-  bool _isCollapsed = false;
+
+  // 🚀 STATE UNTUK ANIMASI OVERLAY
+  bool _isScrolledPastRecap = false;
+  bool _showOverlayRecap = false;
 
   late DateTime _startDate;
   late DateTime _endDate;
@@ -42,7 +45,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     final targetDate = widget.initialDate ?? DateTime.now();
 
     _startDate = DateTime(targetDate.year, targetDate.month, targetDate.day);
-
     _endDate = DateTime(
       targetDate.year,
       targetDate.month,
@@ -54,16 +56,21 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
     context.read<TransactionHistoryCubit>().fetchHistory(_startDate, _endDate);
 
+    // 🚀 SCROLL LISTENER BARU YANG LEBIH CERDAS
     _scrollController.addListener(() {
-      if (_scrollController.offset > 100 && !_isCollapsed) {
-        setState(() => _isCollapsed = true);
-      } else if (_scrollController.offset <= 100 && _isCollapsed) {
-        setState(() => _isCollapsed = false);
+      // Angka 180 adalah perkiraan tinggi HistoryRecapWidget
+      if (_scrollController.offset > 180 && !_isScrolledPastRecap) {
+        setState(() => _isScrolledPastRecap = true);
+      } else if (_scrollController.offset <= 180 && _isScrolledPastRecap) {
+        setState(() {
+          _isScrolledPastRecap = false;
+          _showOverlayRecap =
+              false; // Otomatis tutup overlay jika user manual scroll ke paling atas
+        });
       }
     });
   }
 
-  // 🚀 [REFACTOR CLEAN CODE]: Cukup Panggil Pintu Masuk 2 dari Dialog Engine Anda!
   void _showPreviewKarcis(
     BuildContext context,
     HistoryItemModel item,
@@ -105,7 +112,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               ),
               body: Column(
                 children: [
-                  // 🔹 FILTER TANGGAL (FIXED)
+                  // 🔹 FILTER TANGGAL (TETAP STATIS DI ATAS)
                   RangeFilterWidget(
                     onApply:
                         ({
@@ -116,12 +123,10 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         }) {
                           final start = DateTime.parse("$startDate $startTime");
                           final end = DateTime.parse("$endDate $endTime");
-
                           setState(() {
                             _startDate = start;
                             _endDate = end;
                           });
-
                           context.read<TransactionHistoryCubit>().fetchHistory(
                             start,
                             end,
@@ -129,11 +134,11 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         },
                   ),
 
-                  // 🔹 FILTER KATEGORI (FIXED)
+                  // 🔹 FILTER KATEGORI (TETAP STATIS DI ATAS)
                   if (state is TransactionHistoryLoaded)
                     _buildFilterSection(state),
 
-                  // 🔹 SCROLL AREA
+                  // 🔹 SCROLL AREA DENGAN MAGIC STACK OVERLAY
                   Expanded(child: _buildScrollContent(state)),
                 ],
               ),
@@ -200,66 +205,174 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     );
   }
 
+  // 🚀 MAGIC LAYER DIMULAI DI SINI
   Widget _buildScrollContent(TransactionHistoryState state) {
-    if (state is TransactionHistoryError) {
+    if (state is TransactionHistoryError)
       return Center(child: Text(state.message));
-    }
 
     if (state is TransactionHistoryLoaded) {
       final data = state.filteredTransactions;
 
-      return RefreshIndicator(
-        onRefresh: () => context.read<TransactionHistoryCubit>().fetchHistory(
-          _startDate,
-          _endDate,
-        ),
-        child: CustomScrollView(
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            // 🔥 RECAP COLLAPSIBLE (ONLY THIS)
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: RecapHeaderDelegate(
-                minHeight: 70,
-                maxHeight: 150, // 🔥 agak lebih tinggi biar gak overflow
-                state: state,
-                isFree: widget.isFree,
-                onTapExpand: () {
-                  _scrollController.animateTo(
-                    0,
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                  );
-                },
+      return Stack(
+        children: [
+          // ==========================================
+          // LAYER 1: BASE SCROLL VIEW (BACKGROUND)
+          // ==========================================
+          RefreshIndicator(
+            onRefresh: () => context
+                .read<TransactionHistoryCubit>()
+                .fetchHistory(_startDate, _endDate),
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                // 🚀 REKAP NORMAL: Akan ter-scroll ke atas secara alami
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 16, bottom: 8),
+                    child: HistoryRecapWidget(
+                      roda2: state.roda2.toString(),
+                      roda4: state.roda4.toString(),
+                      totalPendapatan: state.totalPendapatan.toString(),
+                      isFree: widget.isFree,
+                    ),
+                  ),
+                ),
+
+                // 🔹 LIST TRANSAKSI
+                data.isEmpty
+                    ? SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: _buildEmptyState(),
+                      )
+                    : SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          return HistoryCardWidget(
+                            item: data[index],
+                            onPreviewTap: () => _showPreviewKarcis(
+                              context,
+                              data[index],
+                              state.jukirProfile,
+                            ),
+                          );
+                        }, childCount: data.length),
+                      ),
+                const SliverToBoxAdapter(child: SizedBox(height: 80)),
+              ],
+            ),
+          ),
+
+          // ==========================================
+          // LAYER 2: THE FLOATING RECAP OVERLAY (SLIDE DOWN)
+          // ==========================================
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeOutBack, // Animasi memantul elegan
+            top: _showOverlayRecap
+                ? 16
+                : -300, // Sembunyikan jauh ke atas jika false
+            left: 0,
+            right: 0,
+            child: GestureDetector(
+              onVerticalDragEnd: (details) {
+                // Bisa di-swipe ke atas untuk menutup
+                if (details.primaryVelocity! < 0) {
+                  setState(() => _showOverlayRecap = false);
+                }
+              },
+              child: Column(
+                children: [
+                  HistoryRecapWidget(
+                    roda2: state.roda2.toString(),
+                    roda4: state.roda4.toString(),
+                    totalPendapatan: state.totalPendapatan.toString(),
+                    isFree: widget.isFree,
+                  ),
+                  // Tombol Panah Atas (Tutup)
+                  GestureDetector(
+                    onTap: () => setState(() => _showOverlayRecap = false),
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 4),
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.keyboard_arrow_up,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
+          ),
 
-            // 🔹 LIST / EMPTY
-            data.isEmpty
-                ? SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: _buildEmptyState(),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      return HistoryCardWidget(
-                        item: data[index],
-                        onPreviewTap: () => _showPreviewKarcis(
-                          context,
-                          data[index],
-                          state.jukirProfile,
-                        ),
-                      );
-                    }, childCount: data.length),
+          // ==========================================
+          // LAYER 3: HANDLE TOMBOL PANAH BAWAH
+          // ==========================================
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            // Muncul HANYA jika sudah discroll melewati rekap DAN overlay sedang ditutup
+            top: (_isScrolledPastRecap && !_showOverlayRecap) ? 0 : -50,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: () => setState(() => _showOverlayRecap = true),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 6,
                   ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 80)),
-          ],
-        ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(16),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Lihat Rekap",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.blue,
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       );
     }
-
     return const SizedBox();
   }
 

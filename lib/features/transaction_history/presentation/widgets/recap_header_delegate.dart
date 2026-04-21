@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../cubit/transaction_history_state.dart';
-import 'hidtory_recap_widget.dart';
+import 'history_recap_widget.dart';
 
 class RecapHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double minHeight;
