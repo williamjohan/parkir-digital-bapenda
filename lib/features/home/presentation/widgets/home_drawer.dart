@@ -38,8 +38,9 @@ class HomeDrawer extends StatelessWidget {
                   style: AppTypography.heading1.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 4),
+                // 💡 PRO-TIP: Ke depannya tulisan ini bisa dibuat dinamis menggunakan package_info_plus
                 Text(
-                  "Version 1.0.2",
+                  "Version 1.0.0",
                   style: AppTypography.caption.copyWith(color: Colors.white70),
                 ),
               ],
@@ -91,6 +92,21 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context); // Tutup drawer
                     context.push(AppRoutes.printerSetting);
+                  },
+                ),
+                // 🚀 TAMBAHAN BARU: MENU CEK UPDATE
+                ListTile(
+                  leading: const Icon(
+                    Icons.system_update_alt_rounded,
+                    color: AppColors.textPrimary,
+                  ),
+                  title: const Text(
+                    'Cek Pembaruan',
+                    style: AppTypography.bodyRegular,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context); // Tutup drawer
+                    context.push(AppRoutes.update); // Arahkan ke rute update
                   },
                 ),
               ],

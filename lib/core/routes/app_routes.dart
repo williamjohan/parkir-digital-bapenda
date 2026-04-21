@@ -11,4 +11,5 @@ class AppRoutes {
   static const String history = '/history';
   static const String printerSetting = '/printer-settings';
   static const String transaction = '/transaction';
+  static const String update = '/update';
 }

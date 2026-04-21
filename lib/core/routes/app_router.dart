@@ -17,6 +17,7 @@ import '../../features/printer/presentation/cubit/printer_cubit.dart';
 import '../../features/printer/presentation/screen/printer_settings_page.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/update/presentation/pages/update_page.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
 import '../../features/vehicle_capture/presentation/pages/capture_page.dart';
 import '../di/injection.dart';
@@ -122,7 +123,6 @@ class AppRouter {
           },
         ),
 
-        // 🚀 [PERBAIKAN 3]: Menyuntikkan Cubit ke Halaman Transaction
         GoRoute(
           path: AppRoutes.transaction,
           builder: (context, state) {
@@ -143,6 +143,10 @@ class AppRouter {
             create: (_) => locator<PrinterCubit>(),
             child: const PrinterSettingsPage(),
           ),
+        ),
+        GoRoute(
+          path: AppRoutes.update,
+          builder: (context, state) => const UpdatePage(),
         ),
       ],
     );
