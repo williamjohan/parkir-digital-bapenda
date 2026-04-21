@@ -16,8 +16,13 @@ import '../widgets/history_card_widget.dart';
 
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
+  final bool isFree;
 
-  const TransactionHistoryPage({super.key, this.initialDate});
+  const TransactionHistoryPage({
+    super.key,
+    this.initialDate,
+    required this.isFree,
+  });
 
   @override
   State<TransactionHistoryPage> createState() => _TransactionHistoryPageState();
@@ -184,6 +189,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             roda2: state.roda2.toString(),
             roda4: state.roda4.toString(),
             totalPendapatan: state.totalPendapatan.toString(),
+            isFree: widget.isFree,
           ),
 
           // List Data atau Empty State

@@ -5,13 +5,14 @@ import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
-  const HomeDrawer({super.key});
+  final bool isFree;
+
+  const HomeDrawer({super.key, required this.isFree});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class HomeDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    context.push(AppRoutes.history);
+                    context.push(AppRoutes.history, extra: {'isFree': isFree});
                   },
                 ),
                 ListTile(

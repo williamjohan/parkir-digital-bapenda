@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
               bottom: true,
               child: Scaffold(
                 backgroundColor: AppColors.background,
-                drawer: const HomeDrawer(),
+                drawer: HomeDrawer(isFree: state.isFree),
                 body: Stack(
                   children: [
                     // 1. BACKGROUND GRADIENT

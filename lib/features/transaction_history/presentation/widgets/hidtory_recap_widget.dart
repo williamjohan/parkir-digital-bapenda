@@ -7,12 +7,14 @@ class HistoryRecapWidget extends StatelessWidget {
   final String roda2;
   final String roda4;
   final String totalPendapatan;
+  final bool isFree;
 
   const HistoryRecapWidget({
     super.key,
     required this.roda2,
     required this.roda4,
     required this.totalPendapatan,
+    this.isFree = true,
   });
 
   @override
@@ -48,11 +50,12 @@ class HistoryRecapWidget extends StatelessWidget {
                 subTitle: "Transaksi",
                 value: roda4,
               ),
-              HistoryRecapItem(
-                title: "Total",
-                subTitle: "Pendapatan",
-                value: "Rp$totalPendapatan",
-              ),
+              if (!isFree)
+                HistoryRecapItem(
+                  title: "Total",
+                  subTitle: "Pendapatan",
+                  value: "Rp$totalPendapatan",
+                ),
             ],
           ),
           Row(),

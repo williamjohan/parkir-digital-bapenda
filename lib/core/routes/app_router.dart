@@ -105,10 +105,19 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.history,
           builder: (context, state) {
-            final initialDate = state.extra as DateTime?;
+            final extra = state.extra as Map<String, dynamic>?;
+
+            final initialDate = extra?['initialDate'] as DateTime?;
+            final isFree = extra?['isFree'] as bool? ?? false;
+            // final initialDate = state.extra as DateTime?;
+            // final isFree = false;
+
             return BlocProvider(
               create: (_) => locator<TransactionHistoryCubit>(),
-              child: TransactionHistoryPage(initialDate: initialDate),
+              child: TransactionHistoryPage(
+                initialDate: initialDate,
+                isFree: isFree,
+              ),
             );
           },
         ),
