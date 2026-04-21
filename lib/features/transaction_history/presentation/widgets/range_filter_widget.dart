@@ -36,6 +36,12 @@ class _RangeFilterWidgetState extends State<RangeFilterWidget> {
         "${time.minute.toString().padLeft(2, '0')}:00";
   }
 
+  bool get _isMultipleDays {
+    if (_range == null) return false;
+
+    return _range!.start != _range!.end;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -52,7 +58,9 @@ class _RangeFilterWidgetState extends State<RangeFilterWidget> {
           DateRangeField(
             title: "Pilih Tanggal",
             onChanged: (range) {
-              _range = range;
+              setState(() {
+                _range = range;
+              });
             },
           ),
 
@@ -65,6 +73,7 @@ class _RangeFilterWidgetState extends State<RangeFilterWidget> {
                 child: TimePickerField(
                   title: "Jam Mulai",
                   initialTime: _startTime,
+                  enabled: !_isMultipleDays,
                   onChanged: (time) {
                     if (time != null) {
                       _startTime = time;
@@ -78,6 +87,7 @@ class _RangeFilterWidgetState extends State<RangeFilterWidget> {
                 child: TimePickerField(
                   title: "Jam Selesai",
                   initialTime: _endTime,
+                  enabled: !_isMultipleDays,
                   onChanged: (time) {
                     if (time != null) {
                       _endTime = time;

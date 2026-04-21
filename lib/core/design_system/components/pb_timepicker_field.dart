@@ -6,12 +6,14 @@ class TimePickerField extends StatefulWidget {
   final String title;
   final TimeOfDay? initialTime;
   final Function(TimeOfDay?) onChanged;
+  final bool enabled;
 
   const TimePickerField({
     super.key,
     required this.title,
     required this.onChanged,
     this.initialTime,
+    this.enabled = true,
   });
 
   @override
@@ -72,17 +74,24 @@ class _TimePickerFieldState extends State<TimePickerField> {
         ),
         const SizedBox(height: 6),
         TextField(
-          style: AppTypography.bodySemiBold.copyWith(color: Colors.white),
+          enabled: widget.enabled,
+          style: AppTypography.bodySemiBold.copyWith(
+            color: widget.enabled
+                ? Colors.white
+                : Colors.white.withOpacity(0.5),
+          ),
           controller: _controller,
           readOnly: true,
-          onTap: _pickTime,
+          onTap: widget.enabled ? _pickTime : null,
           decoration: InputDecoration(
             hintText: 'Pilih waktu',
             hintStyle: AppTypography.bodySemiBold.copyWith(color: Colors.white),
-            suffixIcon: const Icon(
+            suffixIcon: Icon(
               Icons.access_time,
               size: 18,
-              color: Colors.white,
+              color: widget.enabled
+                  ? Colors.white
+                  : Colors.white.withOpacity(0.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 12,
@@ -90,7 +99,11 @@ class _TimePickerFieldState extends State<TimePickerField> {
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.white),
+              borderSide: BorderSide(
+                color: widget.enabled
+                    ? Colors.white
+                    : Colors.white.withOpacity(0.5),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),

@@ -24,7 +24,7 @@ class HomeDrawer extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.only(
               top: 60,
-              bottom: 24,
+              bottom: 52,
               left: 24,
               right: 24,
             ),
