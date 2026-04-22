@@ -70,7 +70,7 @@ class ParkingTransactionRepositoryImpl
 
         await _localDataSource.updateSyncStatus(
           idTransaksiLokal: transaction.idTransaksiLokal,
-          isSync: 1, // 1 berarti sukses terkirim ke API
+          isSync: 1,
         );
       } catch (remoteError) {
         AppLogger.error(

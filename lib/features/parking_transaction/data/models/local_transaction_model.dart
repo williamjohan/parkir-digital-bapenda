@@ -19,7 +19,7 @@ class LocalTransactionModel {
   @JsonKey(name: 'metode_pembayaran')
   final String metodePembayaran;
 
-  @JsonKey(name: 'no_kartu_kue') // 🚀 KEMBALIKAN INI
+  @JsonKey(name: 'no_kartu_kue')
   final String? noKartuKue;
 
   @JsonKey(name: 'plat_nomor')

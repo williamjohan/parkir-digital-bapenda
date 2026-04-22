@@ -95,11 +95,10 @@ class ParkingTransactionLocalDataSourceImpl
     required int isSync,
   }) async {
     try {
-      // 🚀 [PERBAIKAN RANJAU 1]: Gunakan DatabaseHelper.instance.database
       final db = await DatabaseHelper.instance.database;
 
       await db.update(
-        'transactions', // Pastikan nama tabel ini sesuai dengan yang ada di DatabaseHelper Anda
+        'transactions',
         {'is_sync': isSync},
         where: 'id_transaksi_lokal = ?',
         whereArgs: [idTransaksiLokal],

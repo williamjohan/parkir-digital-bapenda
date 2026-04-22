@@ -43,7 +43,6 @@ class ParkingTransactionRemoteDataSourceImpl
         ? rawPetugasId
         : int.tryParse(rawPetugasId?.toString() ?? '0') ?? 0;
 
-    // --- 3.5. PERBAIKAN FORMAT TANGGAL BAPENDA ---
     String safeDate = transaction.waktuTransaksi;
     try {
       final parsedDate = DateTime.parse(transaction.waktuTransaksi);
@@ -51,7 +50,7 @@ class ParkingTransactionRemoteDataSourceImpl
     } catch (_) {}
 
     // ==========================================
-    // 🚀 4. GENERATE / AMBIL DEVICE ID DARI UTILS
+    //  4. GENERATE / AMBIL DEVICE ID DARI UTILS
     // ==========================================
     final String secureDeviceId = await DeviceIdUtils.getSecureDeviceId(
       _secureStorage,
