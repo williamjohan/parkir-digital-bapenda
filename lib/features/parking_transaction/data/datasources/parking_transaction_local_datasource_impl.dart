@@ -14,13 +14,12 @@ class ParkingTransactionLocalDataSourceImpl
   ParkingTransactionLocalDataSourceImpl(this._imageService);
 
   @override
-  @override
   Future<LocalTransactionModel> saveNewTransaction({
     String? platNomor,
     required String jenisTarif,
     required int nominal,
     required String metodePembayaran,
-    String? noKartuKue, // 🚀 Masuk ke parameter
+    String? noKartuKue,
     String? rawImagePath,
     required bool isFree,
     required int modePlat,

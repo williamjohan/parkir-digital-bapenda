@@ -21,6 +21,7 @@ class SaveParkingTransactionUseCase {
     String? rawImagePath,
     String? latitude,
     String? longitude,
+    String? noKartueKue,
   }) async {
     try {
       return await repository.saveNewTransaction(
@@ -32,6 +33,7 @@ class SaveParkingTransactionUseCase {
         rawImagePath: rawImagePath,
         latitude: latitude ?? '0',
         longitude: longitude ?? '0',
+        noKartuKue: noKartueKue,
       );
     } catch (e) {
       final cleanMessage = e.toString().replaceAll('Exception: ', '');

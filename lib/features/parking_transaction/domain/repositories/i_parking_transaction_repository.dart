@@ -10,7 +10,7 @@ abstract class IParkingTransactionRepository {
     required String jenisTarif,
     required int nominal,
     required String metodePembayaran,
-    String? noKartuKue, // 🚀 TAMBAHKAN INI
+    String? noKartuKue,
     required int modePlat,
     String? rawImagePath,
     String? latitude,

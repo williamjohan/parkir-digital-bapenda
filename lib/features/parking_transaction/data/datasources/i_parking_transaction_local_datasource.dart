@@ -6,7 +6,7 @@ abstract class IParkingTransactionLocalDataSource {
     required String jenisTarif,
     required int nominal,
     required String metodePembayaran,
-    String? noKartuKue, // 🚀 TAMBAHKAN INI
+    String? noKartuKue,
     String? rawImagePath,
     required bool isFree,
     required int modePlat,

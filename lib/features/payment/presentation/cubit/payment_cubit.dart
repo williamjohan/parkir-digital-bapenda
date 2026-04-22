@@ -20,9 +20,8 @@ class PaymentCubit extends Cubit<PaymentState> {
   final SaveParkingTransactionUseCase _saveTransactionUseCase;
 
   StreamSubscription<PaymentStatus>? _statusSubscription;
-
-  // 🚀 CUKUP SATU VARIABEL INI: Menahan argumen dari UI sebelum disimpan ke DB
   PaymentPageArgs? _pendingArgs;
+  String? _activeKodeQris;
 
   PaymentCubit(
     this._generateQrisUseCase,
@@ -34,10 +33,9 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   /// 1. Request QRIS ke API Bapenda (Transaksi Berbayar)
   Future<void> initiateQrisPayment(PaymentPageArgs args) async {
-    _pendingArgs = args; // 🚀 FIX: Simpan args ke memori
+    _pendingArgs = args;
     emit(PaymentLoading());
 
-    // Generate dengan nominal dari args
     final result = await _generateQrisUseCase.execute(
       amount: args.nominal.toDouble(),
     );
@@ -45,15 +43,15 @@ class PaymentCubit extends Cubit<PaymentState> {
     if (isClosed) return;
 
     result.fold((failure) => emit(PaymentError(failure.message)), (qris) {
-      final bytes = base64Decode(qris.qrisBase64); // ✅ decode di sini
+      final bytes = base64Decode(qris.qrisBase64);
 
-      emit(PaymentQrisReady(qris, bytes)); // kirim ke UI
+      _activeKodeQris = qris.kodeQris;
+      emit(PaymentQrisReady(qris, bytes));
 
       _startListeningToSignalR(qris.kodeQris);
     });
   }
 
-  /// 🚀 NEW: Flow Langsung untuk Parkir Gratis (Rp 0)
   Future<void> processFreePayment(PaymentPageArgs args) async {
     _pendingArgs = args; // 🚀 FIX: Simpan args
 
@@ -125,7 +123,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         emit(
           PaymentSyncing(),
         ); // 🚀 1. Ubah UI menjadi Loading "Memproses Transaksi..."
-        await _finalizeTransaction(); // 🚀 2. Mulai eksekusi Insert ke API & SQLite
+        await _finalizeTransaction();
         break;
 
       case PaymentStatus.timeout:
@@ -144,7 +142,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     }
   }
 
-  /// 🚀 5. FUNGSI FINALISASI TRANSAKSI (API & SQLite)
+  ///  5. FUNGSI FINALISASI TRANSAKSI (API & SQLite)
   Future<void> _finalizeTransaction() async {
     if (_pendingArgs == null) {
       emit(const PaymentError("Data argumen transaksi hilang."));
@@ -158,7 +156,6 @@ class PaymentCubit extends Cubit<PaymentState> {
     // Tentukan metode pembayaran: Jika Rp0 berarti Cash(Gratis), jika bayar berarti QRIS
     final metodeBayar = _pendingArgs!.nominal == 0 ? 'CASH' : 'QRIS';
 
-    // 🚀 LANGSUNG PANGGIL USECASE MILIK PARKING TRANSACTION!
     // GPS, Profil Jukir, dan IsFree akan otomatis ter-handle di dalam Repository!
     final result = await _saveTransactionUseCase.execute(
       platNomor: _pendingArgs!.platNomor,
@@ -169,6 +166,7 @@ class PaymentCubit extends Cubit<PaymentState> {
       rawImagePath: null,
       latitude: _pendingArgs!.latitude,
       longitude: _pendingArgs!.longitude,
+      noKartueKue: _activeKodeQris,
     );
 
     if (isClosed) return;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
 import 'pb_primary_button.dart';
 import '../tokens/app_colors.dart';
 import 'pb_qr_generator_widget.dart';
@@ -50,7 +51,7 @@ class PbPreviewTicketWidget extends StatelessWidget {
 
   String get _formattedTarif {
     if (tarifParkir == 0 || isFree) return "Gratis";
-    return "Rp$tarifParkir";
+    return CurrencyFormatter.toIdr(tarifParkir);
   }
 
   @override

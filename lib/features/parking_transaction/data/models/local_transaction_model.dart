@@ -78,7 +78,7 @@ extension LocalTransactionMapper on LocalTransactionModel {
       id: 0,
       orderId: idTransaksiLokal,
       jenisTarif: kategoriKendaraan,
-      sof: nominal == 0 ? 'FREE' : 'CASH',
+      sof: nominal == 0 ? 'FREE' : metodePembayaran.toUpperCase(),
       platNumber: platNomor,
       tglTrx: waktuTransaksi,
       kredit: nominal,
