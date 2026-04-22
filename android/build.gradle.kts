@@ -16,7 +16,6 @@ subprojects {
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
 
-// 🚀 --- 1. SCRIPT PENAMBAL NAMESPACE HARUS DI SINI (SEBELUM EVALUASI) --- 🚀
 subprojects {
     afterEvaluate {
         if (plugins.hasPlugin("com.android.library")) {
@@ -24,12 +23,20 @@ subprojects {
                 if (namespace == null) {
                     namespace = group.toString()
                 }
+                
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_11
+                    targetCompatibility = JavaVersion.VERSION_11
+                }
             }
+        }
+        
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+            kotlinOptions.jvmTarget = "11"
         }
     }
 }
 
-// 🚀 --- 2. PEMICU EVALUASI (HARUS DI BAWAH PENAMBAL) --- 🚀
 subprojects {
     project.evaluationDependsOn(":app")
 }
