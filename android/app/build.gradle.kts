@@ -14,8 +14,8 @@ android {
         // 🚀 TAMBAHAN 1: Mengaktifkan Desugaring untuk mendukung library modern
         isCoreLibraryDesugaringEnabled = true 
         
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
