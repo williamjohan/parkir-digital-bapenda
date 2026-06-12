@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -44,13 +45,12 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
 
-        // 🚀 1. TOMBOL BAWAH DIPINDAHKAN KE SINI AGAR AMAN DARI SCROLL
+        //  1. TOMBOL BAWAH DIPINDAHKAN KE SINI AGAR AMAN DARI SCROLL
         bottomNavigationBar: Container(
           color: AppColors.background, // Samakan dengan background
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisSize: MainAxisSize
-                .min, // 🚀 Wajib agar tidak memakan tinggi layar penuh
+            mainAxisSize: MainAxisSize.min,
             children: [
               // === TOMBOL LOGOUT ===
               SizedBox(
@@ -95,17 +95,31 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 12),
               // === VERSION APP ===
-              const Center(
-                child: Text(
-                  'Version 1.0.2',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+              Center(
+                child: FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snapshot) {
+                    // Nilai sementara saat sedang mengambil data dari Native
+                    String versionText = 'Version ...';
+
+                    if (snapshot.hasData) {
+                      // Mengambil versi langsung dari pubspec.yaml
+                      versionText = 'Version ${snapshot.data!.version}';
+                    }
+
+                    return Text(
+                      versionText,
+                      // const digeser ke dalam Text Style
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    );
+                  },
                 ),
               ),
             ],
           ),
         ),
 
-        // 🚀 2. KONTEN UTAMA
+        //  2. KONTEN UTAMA
         body: BlocBuilder<ProfileCubit, ProfileState>(
           bloc: _profileCubit,
           builder: (context, state) {
@@ -175,12 +189,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            'ID: ${user.idUser}',
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+                          //TODO : perbaiki ini next
+                          // Text(
+                          //   'ID: ${user.idUser}',
+                          //   style: AppTypography.bodySmall.copyWith(
+                          //     color: AppColors.textSecondary,
+                          //   ),
+                          // ),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -222,8 +237,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
 
-                      // === CARD LOKASI & GATE === (Di-hidden sementara)
-                      // const SizedBox(height: 16),
+                      // // === CARD LOKASI & GATE === (Di-hidden sementara)
+                      // // const SizedBox(height: 16),
                       // Card(
                       //   color: AppColors.surface,
                       //   elevation: 0,

@@ -1,6 +1,7 @@
 // lib/features/home/presentation/widgets/home_drawer.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/constants/feature_flag.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -39,10 +40,27 @@ class HomeDrawer extends StatelessWidget {
                   style: AppTypography.heading1.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 4),
-                // 💡 PRO-TIP: Ke depannya tulisan ini bisa dibuat dinamis menggunakan package_info_plus
-                Text(
-                  "Version 1.0.0",
-                  style: AppTypography.caption.copyWith(color: Colors.white70),
+                FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snapshot) {
+                    // Beri nilai default saat Future masih berstatus 'loading'
+                    String versionText = "Version ...";
+
+                    if (snapshot.hasData) {
+                      // Mengambil atribut "version" (misal: 1.0.0) dari pubspec.yaml
+                      versionText = "Version ${snapshot.data!.version}";
+
+                      // 💡 Opsional: Jika Anda juga ingin memunculkan Build Number (misal 1.0.0+2)
+                      // versionText = "Version ${snapshot.data!.version}+${snapshot.data!.buildNumber}";
+                    }
+
+                    return Text(
+                      versionText,
+                      style: AppTypography.caption.copyWith(
+                        color: Colors.white70,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
