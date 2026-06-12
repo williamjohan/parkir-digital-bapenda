@@ -3,6 +3,8 @@ import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.
 
 import '../../../../core/design_system/tokens/app_colors.dart';
 
+// lib/features/transaction_history/presentation/widgets/history_item_widget.dart
+
 class HistoryRecapItem extends StatelessWidget {
   final String title;
   final String subTitle;
@@ -17,21 +19,31 @@ class HistoryRecapItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: AppTypography.caption.copyWith(color: AppColors.textPrimary),
+    // ❌ HAPUS Expanded di sini! Langsung return Column / Container
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          style: AppTypography.bodySmall.copyWith(
+            color: AppColors.textSecondary,
           ),
-          Text(
+        ),
+        Text(
+          subTitle,
+          style: AppTypography.caption.copyWith(color: AppColors.textHint),
+        ),
+        const SizedBox(height: 4),
+        // Ingat FittedBox yang kita bahas sebelumnya agar teks tidak overflow
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
             value,
             style: AppTypography.heading4.copyWith(color: AppColors.primary),
           ),
-          Text(subTitle, style: AppTypography.caption),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

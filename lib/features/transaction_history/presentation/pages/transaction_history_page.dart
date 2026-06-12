@@ -31,12 +31,53 @@ class TransactionHistoryPage extends StatefulWidget {
 class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   final ScrollController _scrollController = ScrollController();
 
-  // 🚀 STATE UNTUK ANIMASI OVERLAY
   bool _isScrolledPastRecap = false;
   bool _showOverlayRecap = false;
 
   late DateTime _startDate;
   late DateTime _endDate;
+
+  String _getDynamicRecapTitle() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final start = DateTime(_startDate.year, _startDate.month, _startDate.day);
+    final end = DateTime(_endDate.year, _endDate.month, _endDate.day);
+
+    if (start == today && end == today) {
+      return "REKAP HARI INI";
+    }
+
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mei",
+      "Jun",
+      "Jul",
+      "Ags",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Des",
+    ];
+
+    if (start == end) {
+      // Jika pilih 1 hari yang bukan hari ini
+      return "REKAP ${start.day} ${months[start.month - 1]} ${start.year}";
+    }
+
+    if (start.month == end.month && start.year == end.year) {
+      // Jika rentang di bulan dan tahun yang sama (Contoh: 1 - 12 Jun 2026)
+      return "REKAP ${start.day} - ${end.day} ${months[end.month - 1]} ${end.year}";
+    } else if (start.year == end.year) {
+      // Jika beda bulan tapi tahun sama (Contoh: 28 Mei - 2 Jun 2026)
+      return "REKAP ${start.day} ${months[start.month - 1]} - ${end.day} ${months[end.month - 1]} ${end.year}";
+    } else {
+      // Jika melintas ganti tahun
+      return "REKAP ${start.day} ${months[start.month - 1]} ${start.year} - ${end.day} ${months[end.month - 1]} ${end.year}";
+    }
+  }
 
   @override
   void initState() {
@@ -231,6 +272,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 8),
                     child: HistoryRecapWidget(
+                      title: _getDynamicRecapTitle(),
                       roda2: state.roda2.toString(),
                       roda4: state.roda4.toString(),
                       totalPendapatan: state.totalPendapatan.toString(),
@@ -283,6 +325,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               child: Column(
                 children: [
                   HistoryRecapWidget(
+                    title: _getDynamicRecapTitle(),
                     roda2: state.roda2.toString(),
                     roda4: state.roda4.toString(),
                     totalPendapatan: state.totalPendapatan.toString(),

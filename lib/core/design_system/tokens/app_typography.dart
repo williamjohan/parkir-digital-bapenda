@@ -82,8 +82,8 @@ abstract class AppTypography {
   // Digunakan untuk caption, error message kecil, atau hint text
   static const TextStyle caption = TextStyle(
     fontSize: 12.0,
-    fontWeight: FontWeight.w400,
-    color: Colors.grey,
+    fontWeight: FontWeight.w500,
+    color: Color.fromARGB(255, 116, 115, 115),
     letterSpacing: 0.4,
   );
 

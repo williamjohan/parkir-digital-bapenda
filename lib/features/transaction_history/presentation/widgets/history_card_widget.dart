@@ -58,7 +58,7 @@ class HistoryCardWidget extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    item.badgeText, // 🚀 Langsung Panggil
+                    item.badgeText,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -72,6 +72,7 @@ class HistoryCardWidget extends StatelessWidget {
 
             // --- BODY: Kendaraan, Plat, dan Nominal ---
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
@@ -79,38 +80,36 @@ class HistoryCardWidget extends StatelessWidget {
                     color: Colors.grey.shade100,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    item.vehicleIcon,
-                    color: Colors.black87,
-                  ), // 🚀 Langsung Panggil
+                  child: Icon(item.vehicleIcon, color: Colors.black87),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.titleText, // 🚀 Langsung Panggil
+                        item.titleText,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item.subtitleText, // 🚀 Langsung Panggil
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      // const SizedBox(height: 4),
+                      // Text(
+                      //   item.subtitleText,
+                      //   style: const TextStyle(
+                      //     fontSize: 13,
+                      //     color: Colors.grey,
+                      //     fontWeight: FontWeight.w500,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
                 Text(
-                  CurrencyFormatter.toIdr(item.formattedNominal),
+                  CurrencyFormatter.toIdr(item.kredit),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -119,55 +118,55 @@ class HistoryCardWidget extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            const Divider(color: Colors.black12),
-            const SizedBox(height: 4),
+
+            // const Divider(color: Colors.black12),
+            // const SizedBox(height: 4),
 
             // --- FOOTER: Info Jukir & Tombol Preview Karcis ---
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Petugas: ${item.namaPetugasBersih} (Shift ${item.shift})',
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            // Expanded(
+            //   child: Text(
+            //     'Petugas: ${item.namaPetugasBersih} (Shift ${item.shift})',
+            //     style: const TextStyle(fontSize: 11, color: Colors.grey),
+            //     maxLines: 1,
+            //     overflow: TextOverflow.ellipsis,
+            //   ),
+            // ),
 
-                // TOMBOL PREVIEW KARCIS
-                InkWell(
-                  onTap: onPreviewTap,
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.receipt_long, size: 16, color: Colors.blue),
-                        SizedBox(width: 6),
-                        Text(
-                          'Lihat Karcis',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // TOMBOL PREVIEW KARCIS
+            // InkWell(
+            //   onTap: onPreviewTap,
+            //   borderRadius: BorderRadius.circular(8),
+            //   child: Container(
+            //     padding: const EdgeInsets.symmetric(
+            //       horizontal: 12,
+            //       vertical: 6,
+            //     ),
+            //     decoration: BoxDecoration(
+            //       color: Colors.blue.shade50,
+            //       borderRadius: BorderRadius.circular(8),
+            //     ),
+            //     child: const Row(
+            //       mainAxisSize: MainAxisSize.min,
+            //       children: [
+            //         Icon(Icons.receipt_long, size: 16, color: Colors.blue),
+            //         SizedBox(width: 6),
+            //         Text(
+            //           'Lihat Karcis',
+            //           style: TextStyle(
+            //             fontSize: 12,
+            //             fontWeight: FontWeight.bold,
+            //             color: Colors.blue,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // ],
+            // ),
           ],
         ),
       ),

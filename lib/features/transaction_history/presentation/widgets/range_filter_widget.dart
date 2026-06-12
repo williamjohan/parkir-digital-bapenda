@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/design_system/components/pb_datepicker_field.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
+import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/pb_timepicker_field.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 
@@ -58,9 +59,23 @@ class _RangeFilterWidgetState extends State<RangeFilterWidget> {
           DateRangeField(
             title: "Pilih Tanggal",
             onChanged: (range) {
-              setState(() {
-                _range = range;
-              });
+              if (range != null) {
+                //  VALIDASI 30 HARI
+                final difference = range.end.difference(range.start).inDays;
+
+                if (difference > 31) {
+                  PbStatusSnackbar.show(
+                    context,
+                    message: "Maksimal rentang waktu pencarian adalah 30 hari.",
+                    isError: true,
+                  );
+                  return; // Batalkan perubahan state!
+                }
+
+                setState(() {
+                  _range = range;
+                });
+              }
             },
           ),
 
