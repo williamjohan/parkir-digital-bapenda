@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../shared/loading/app_loading_widget.dart';
+import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 import '../cubit/profile_cubit.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -40,6 +43,69 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () => context.pop(),
           ),
         ),
+
+        // 🚀 1. TOMBOL BAWAH DIPINDAHKAN KE SINI AGAR AMAN DARI SCROLL
+        bottomNavigationBar: Container(
+          color: AppColors.background, // Samakan dengan background
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize
+                .min, // 🚀 Wajib agar tidak memakan tinggi layar penuh
+            children: [
+              // === TOMBOL LOGOUT ===
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    final safeNavigator = Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    );
+                    final safeContext = safeNavigator.context;
+
+                    PbShowDialog.show(
+                      safeContext,
+                      showBtnKeluar: true,
+                      title: 'Konfirmasi Logout',
+                      description:
+                          'Apakah Anda yakin ingin keluar dari aplikasi?',
+                      onConfirm: () async {
+                        showDialog(
+                          context: safeContext,
+                          barrierDismissible: false,
+                          builder: (BuildContext dialogContext) {
+                            return const Center(
+                              child: AppLoadingWidget(size: 150),
+                            );
+                          },
+                        );
+                        await Future.delayed(const Duration(milliseconds: 800));
+                        await locator<AppAuthCubit>().forceLogout();
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Logout'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                    side: const BorderSide(color: AppColors.error),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // === VERSION APP ===
+              const Center(
+                child: Text(
+                  'Version 1.0.2',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // 🚀 2. KONTEN UTAMA
         body: BlocBuilder<ProfileCubit, ProfileState>(
           bloc: _profileCubit,
           builder: (context, state) {
@@ -117,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       // === CARD IDENTITAS ===
                       Card(
                         color: AppColors.surface,
@@ -155,122 +221,92 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
 
-                      // === CARD LOKASI & GATE ===
-                      Card(
-                        color: AppColors.surface,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: const BorderSide(
-                            color: AppColors.border,
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Lokasi & Gate',
-                                style: AppTypography.heading3,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Lokasi',
-                                value: user.namaLokasi,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Kode Gate',
-                                value: user.kodeGate,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Nama Gate',
-                                value: user.namaGate,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
+                      // === CARD LOKASI & GATE === (Di-hidden sementara)
+                      // const SizedBox(height: 16),
+                      // Card(
+                      //   color: AppColors.surface,
+                      //   elevation: 0,
+                      //   shape: RoundedRectangleBorder(
+                      //     borderRadius: BorderRadius.circular(12),
+                      //     side: const BorderSide(
+                      //       color: AppColors.border,
+                      //       width: 1,
+                      //     ),
+                      //   ),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(16),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Text(
+                      //           'Lokasi & Gate',
+                      //           style: AppTypography.heading3,
+                      //         ),
+                      //         const SizedBox(height: 12),
+                      //         _buildInfoRow(
+                      //           label: 'Lokasi',
+                      //           value: user.namaLokasi,
+                      //         ),
+                      //         const SizedBox(height: 12),
+                      //         _buildInfoRow(
+                      //           label: 'Kode Gate',
+                      //           value: user.kodeGate,
+                      //         ),
+                      //         const SizedBox(height: 12),
+                      //         _buildInfoRow(
+                      //           label: 'Nama Gate',
+                      //           value: user.namaGate,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // const SizedBox(height: 20),
 
-                      // === CARD PERANGKAT & SHIFT ===
-                      Card(
-                        color: AppColors.surface,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: const BorderSide(
-                            color: AppColors.border,
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Perangkat & Shift',
-                                style: AppTypography.heading3,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'ID Perangkat',
-                                value: user.idDevice,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Shift',
-                                value: user.shift.isEmpty
-                                    ? '-'
-                                    : 'Shift ${user.shift}',
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Pungut Tarif',
-                                value: user.pungutTarif == 1
-                                    ? 'Gratis'
-                                    : 'Berbayar',
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // === TOMBOL REFRESH ===
-                      // === TOMBOL LOGOUT ===
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            // _profileCubit.logout(); // pastikan ada fungsi logout di cubit
-                          },
-                          icon: const Icon(Icons.logout),
-                          label: const Text('Logout'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.error,
-                            side: BorderSide(color: AppColors.error),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // === VERSION APP ===
-                      Center(
-                        child: Text(
-                          'Version 1.0.2',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+                      // // === CARD PERANGKAT & SHIFT ===
+                      // Card(
+                      //   color: AppColors.surface,
+                      //   elevation: 0,
+                      //   shape: RoundedRectangleBorder(
+                      //     borderRadius: BorderRadius.circular(12),
+                      //     side: const BorderSide(
+                      //       color: AppColors.border,
+                      //       width: 1,
+                      //     ),
+                      //   ),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(16),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Text(
+                      //           'Perangkat & Shift',
+                      //           style: AppTypography.heading3,
+                      //         ),
+                      //         const SizedBox(height: 12),
+                      //         _buildInfoRow(
+                      //           label: 'ID Perangkat',
+                      //           value: user.idDevice,
+                      //         ),
+                      //         const SizedBox(height: 12),
+                      //         _buildInfoRow(
+                      //           label: 'Shift',
+                      //           value: user.shift.isEmpty
+                      //               ? '-'
+                      //               : 'Shift ${user.shift}',
+                      //         ),
+                      //         const SizedBox(height: 12),
+                      //         _buildInfoRow(
+                      //           label: 'Pungut Tarif',
+                      //           value: user.pungutTarif == 1
+                      //               ? 'Gratis'
+                      //               : 'Berbayar',
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
