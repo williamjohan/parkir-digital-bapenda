@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/item_kendaraan_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/last_activity_widget.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import '../../../../core/constants/app_asset_constant.dart';
+import '../../../../core/constants/feature_flag.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
-
-// 🚀 IMPORT UNTUK FITUR UPDATE
 import '../../../update/presentation/cubit/check_update_cubit.dart';
 import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
-
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
 import '../widgets/home_header_widget.dart';
@@ -54,9 +53,10 @@ class _HomePageState extends State<HomePage> {
   Future<void> _checkSecureStorageProfile() async {
     final secureStorage = locator<ISecureStorageManager>();
     final profile = await secureStorage.getJukirProfile();
+    final rawName = profile?['namaUser'] as String? ?? '';
 
     setState(() {
-      namaJukir = profile?['namaUser'];
+      namaJukir = rawName.shortName;
       nop = profile?['nop'];
       namaLokasi = profile?['namaObjekPajak'];
     });
@@ -258,23 +258,25 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
 
-                  floatingActionButton: FloatingActionButton(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white, // semua isi jadi putih
-                    shape: const CircleBorder(),
-                    onPressed: () async {
-                      final result = await context.push(
-                        AppRoutes.transaction,
-                        extra: state.isFree,
-                      );
+                  floatingActionButton: FeatureFlags.enableCreateOrderFeature
+                      ? FloatingActionButton(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white, // semua isi jadi putih
+                          shape: const CircleBorder(),
+                          onPressed: () async {
+                            final result = await context.push(
+                              AppRoutes.transaction,
+                              extra: state.isFree,
+                            );
 
-                      // kalau transaksi sukses
-                      if (result == true) {
-                        _loadData(); // reload data home
-                      }
-                    },
-                    child: const Icon(Icons.add),
-                  ),
+                            // kalau transaksi sukses
+                            if (result == true) {
+                              _loadData(); // reload data home
+                            }
+                          },
+                          child: const Icon(Icons.add),
+                        )
+                      : null,
                 ),
               ),
             );

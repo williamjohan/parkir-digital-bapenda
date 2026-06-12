@@ -25,6 +25,8 @@ class HomeHeaderWidget extends StatelessWidget {
             Text(
               "Hallo, $namaJukir !",
               style: AppTypography.heading1.copyWith(color: Colors.white),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               "NOP : $nop",

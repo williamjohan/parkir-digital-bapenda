@@ -1,6 +1,7 @@
 // lib/features/home/presentation/widgets/home_drawer.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/core/constants/feature_flag.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -80,21 +81,22 @@ class HomeDrawer extends StatelessWidget {
                     context.push(AppRoutes.profile);
                   },
                 ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.print,
-                    color: AppColors.textPrimary,
+                if (FeatureFlags.enablePrinterFeature)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.print,
+                      color: AppColors.textPrimary,
+                    ),
+                    title: const Text(
+                      'Printer Settings',
+                      style: AppTypography.bodyRegular,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context); // Tutup drawer
+                      // context.push(AppRoutes.printerSetting);
+                      context.goNamed(AppRoutes.printerSetting);
+                    },
                   ),
-                  title: const Text(
-                    'Printer Settings',
-                    style: AppTypography.bodyRegular,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context); // Tutup drawer
-                    context.push(AppRoutes.printerSetting);
-                  },
-                ),
-                // 🚀 TAMBAHAN BARU: MENU CEK UPDATE
                 ListTile(
                   leading: const Icon(
                     Icons.system_update_alt_rounded,
@@ -106,7 +108,7 @@ class HomeDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context); // Tutup drawer
-                    context.push(AppRoutes.update); // Arahkan ke rute update
+                    context.goNamed(AppRoutes.update); // Arahkan ke rute update
                   },
                 ),
               ],
