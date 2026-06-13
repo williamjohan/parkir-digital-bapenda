@@ -1,4 +1,4 @@
-package com.example.simulasiparkirdigital // Sesuaikan dengan package Anda
+package id.go.surabaya.tsparkbapenda
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -9,11 +9,13 @@ class MainActivity: FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        
-        // Ini adalah penerima telepon dari AppLifecycleUtils (Flutter)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            CHANNEL
+        ).setMethodCallHandler { call, result ->
+
             if (call.method == "sendToBackground") {
-                // Yang mengeksekusi minimize tetaplah Native Android
                 moveTaskToBack(true)
                 result.success(null)
             } else {
