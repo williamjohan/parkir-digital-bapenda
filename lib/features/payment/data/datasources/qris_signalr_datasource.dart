@@ -32,7 +32,6 @@ class QrisSignalRDatasource {
       await _connection!.start();
       AppLogger.debug('✅ [SignalR] Connected! State: ${_connection!.state}');
 
-      // 🚀 SATU KALI TEMBAKAN SAJA: Join group & Bangunkan BE
       await _joinGroup(kodeQris);
     } catch (e) {
       AppLogger.error('🚨 [SignalR] Gagal connect: $e');
@@ -40,7 +39,6 @@ class QrisSignalRDatasource {
     }
   }
 
-  /// Invoke QrisStatus
   Future<void> _joinGroup(String kodeQris) async {
     try {
       if (_connection?.state == HubConnectionState.Connected) {
@@ -61,13 +59,10 @@ class QrisSignalRDatasource {
 
     _connection?.on("QRIS_PENDING", (arguments) {
       AppLogger.debug('⏳ [SignalR] QRIS_PENDING — args: $arguments');
-      // Tidak perlu diteruskan ke Cubit agar layar tidak kedip
     });
 
     _connection?.on("QRIS_TIMEOUT", (arguments) {
       AppLogger.debug('⏰ [SignalR] QRIS_TIMEOUT — args: $arguments');
-      // 🚀 KEMBALIKAN FUNGSI INI: Karena BE sudah valid 3 menit,
-      // Jika BE bilang Timeout, berarti memang sudah waktunya!
       _statusController?.add("TIMEOUT");
     });
 

@@ -88,10 +88,16 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/iconlogo/LogoDigitalParking.png"
-  adaptive_icon_foreground: "assets/iconlogo/LogoDigitalParking.png"
-  adaptive_icon_background: "#00000000"
+  image_path: "assets/iconlogo/LogoTS_Park.png"
+  adaptive_icon_foreground: "assets/iconlogo/LogoTS_Park.png"
 
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/iconlogo/ScreensaverTS_Park.png
+
+  android_12:
+    image: assets/iconlogo/ScreensaverTS_Park.png
+    color: "#FFFFFF"
 
 flutter:
   uses-material-design: true
