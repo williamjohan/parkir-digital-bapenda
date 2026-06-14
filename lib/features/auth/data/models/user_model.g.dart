@@ -15,6 +15,9 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       : _toString(json['namaObjekPajak']),
   alamat: json['alamat'] == null ? '' : _toString(json['alamat']),
   pungutTarif: json['pungutTarif'] == null ? 0 : _toInt(json['pungutTarif']),
+  pungutTarifDescription: json['pungutTarifDescription'] == null
+      ? ''
+      : _toString(json['pungutTarifDescription']),
   lokasiId: json['lokasiId'] == null ? 0 : _toInt(json['lokasiId']),
   namaLokasi: json['namaLokasi'] == null ? '' : _toString(json['namaLokasi']),
   kodeGate: json['kodeGate'] == null ? '' : _toString(json['kodeGate']),
@@ -30,6 +33,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'namaObjekPajak': instance.namaObjekPajak,
   'alamat': instance.alamat,
   'pungutTarif': instance.pungutTarif,
+  'pungutTarifDescription': instance.pungutTarifDescription,
   'lokasiId': instance.lokasiId,
   'namaLokasi': instance.namaLokasi,
   'kodeGate': instance.kodeGate,

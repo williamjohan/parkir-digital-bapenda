@@ -262,8 +262,7 @@ class _HomePageState extends State<HomePage> {
                                                     state.recentTransactions,
                                               ),
 
-                                              // 🚀 BANTALAN KEAMANAN: Agar item terbawah tidak tertimpa tombol Floating Action Button (FAB)
-                                              const SizedBox(height: 100),
+                                              const SizedBox(height: 50),
                                             ],
                                           ),
                                         ),
@@ -279,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                   floatingActionButton: FeatureFlags.enableCreateOrderFeature
                       ? FloatingActionButton(
                           backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white, // semua isi jadi putih
+                          foregroundColor: Colors.white,
                           shape: const CircleBorder(),
                           onPressed: () async {
                             final result = await context.push(
