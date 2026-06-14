@@ -13,4 +13,7 @@ abstract class IAuthRepository {
 
   /// Mengecek apakah sesi Jukir masih aktif di HP ini
   Future<bool> checkAuthStatus();
+
+  // cek uuid
+  Future<bool> checkDeviceUuid();
 }

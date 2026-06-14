@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: Colors.white,
       body: BlocConsumer<InitCubit, InitState>(
         listener: (context, state) {
           // Listener khusus untuk aksi satu kali (navigasi, snackbar)
@@ -55,17 +55,18 @@ class _SplashPageState extends State<SplashPage> {
                       mainAxisSize:
                           MainAxisSize.min, // Kolom hanya setinggi kontennya
                       children: [
-                        const Icon(
-                          Icons.local_parking,
-                          size: 100,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(height: 16),
+                        // Image.asset(
+                        //   "assets/iconlogo/ScreensaverTS_Park.png",
+                        //   width: 200,
+                        //   height: 200,
+                        //   fit: BoxFit.contain,
+                        // ),
+                        // const SizedBox(height: 16),
                         Text(
                           'Parkir Digital\nBapenda',
                           textAlign: TextAlign.center,
                           style: AppTypography.heading1.copyWith(
-                            color: Colors.white,
+                            color: AppColors.primary,
                           ),
                         ),
                       ],
@@ -88,7 +89,7 @@ class _SplashPageState extends State<SplashPage> {
                         children: [
                           if (state is InitLoading || state is InitInitial) ...[
                             const CircularProgressIndicator(
-                              color: Colors.white,
+                              color: AppColors.primary,
                             ),
                             const SizedBox(height: 16),
                             Text(

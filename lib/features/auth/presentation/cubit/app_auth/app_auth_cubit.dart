@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../../core/storage/secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
 import '../../../domain/usecases/check_auth_status_usecase.dart';
+import '../../../domain/usecases/check_device_uuid_usecase.dart';
 import '../../../domain/usecases/logout_usecase.dart';
 import '../../../../profile/domain/usecases/get_profile_usecase.dart'; // [TAMBAHAN]: Import UseCase Profile
 import 'app_auth_state.dart';
@@ -15,66 +16,93 @@ class AppAuthCubit extends Cubit<AppAuthState> {
   final CheckAuthStatusUseCase _checkAuthStatus;
   final LogoutUseCase _logout;
   final GetProfileUseCase _getProfile; // [TAMBAHAN]: Injeksi UseCase Profile
-
-  AppAuthCubit(this._checkAuthStatus, this._logout, this._getProfile)
+  final CheckDeviceUuidUseCase _checkDeviceUuid;
+  
+  AppAuthCubit(this._checkAuthStatus, this._logout, this._getProfile, this._checkDeviceUuid)
     : super(AppAuthInitial());
 
   /// Dipanggil saat Splash Screen muncul ATAU setelah Login sukses
   Future<void> checkStatus({bool isFromSplash = false}) async {
-    AppLogger.debug(">>> [AppAuthCubit] Mengecek status token...");
+    AppLogger.debug(">>> [AppAuthCubit] Mengecek status autentikasi...");
 
     if (isFromSplash) {
       await Future.delayed(const Duration(seconds: 1));
     }
 
     try {
-      // 1. Cek validitas token di Brankas
+      // =====================================================
+      // 1. CEK TOKEN
+      // =====================================================
       final hasValidToken = await _checkAuthStatus();
+
       AppLogger.debug(">>> [AppAuthCubit] Hasil cek token: $hasValidToken");
 
-      if (hasValidToken) {
-        // 2. [SILENT FETCH]: Jika token ada, tarik profil terbaru secara diam-diam!
-        AppLogger.debug(
-          ">>> [AppAuthCubit] Token valid, menyinkronkan profil dari server...",
-        );
-        final profileResult = await _getProfile();
-
-        profileResult.fold(
-          (failure) async {
-            // Tambahkan async
-            AppLogger.error(
-              ">>> [AppAuthCubit] Gagal sinkronisasi profil: ${failure.message}",
-            );
-
-            final locator = GetIt.instance; // Pastikan Anda import get_it
-            final localProfile = await locator<ISecureStorageManager>()
-                .getJukirProfile();
-
-            if (localProfile != null) {
-              // Boleh masuk pakai Offline Tolerance (Data Kemarin)
-              emit(AppAuthenticated());
-            } else {
-              // Dilarang keras masuk! Brankas kosong dan API gagal.
-              // Biasanya terjadi pada Fresh Login yang sinyalnya jelek.
-              emit(AppUnauthenticated());
-            }
-          },
-          (userModel) {
-            AppLogger.debug(
-              ">>> [AppAuthCubit] Profil sukses disinkronkan: ${userModel.namaUser}",
-            );
-            emit(AppAuthenticated());
-          },
-        );
-      } else {
+      if (!hasValidToken) {
         emit(AppUnauthenticated());
+        return;
       }
-    } catch (e) {
-      AppLogger.error(">>> [AppAuthCubit] ERROR SISTEM: $e");
+
+      // =====================================================
+      // 2. CEK UUID PERANGKAT
+      // =====================================================
+      AppLogger.debug(">>> [AppAuthCubit] Memverifikasi UUID perangkat...");
+
+      final isDeviceValid = await _checkDeviceUuid();
+
+      AppLogger.debug(">>> [AppAuthCubit] Hasil cek UUID: $isDeviceValid");
+
+      if (!isDeviceValid) {
+        AppLogger.error(
+          ">>> [AppAuthCubit] UUID perangkat tidak cocok dengan server. Logout paksa.",
+        );
+
+        await _logout();
+
+        emit(AppUnauthenticated());
+        return;
+      }
+
+      // =====================================================
+      // 3. SINKRONISASI PROFIL
+      // =====================================================
+      AppLogger.debug(">>> [AppAuthCubit] UUID valid, sinkronisasi profil...");
+
+      final profileResult = await _getProfile();
+
+      await profileResult.fold(
+        (failure) async {
+          AppLogger.error(
+            ">>> [AppAuthCubit] Gagal sinkronisasi profil: ${failure.message}",
+          );
+
+          final localProfile = await GetIt.instance<ISecureStorageManager>()
+              .getJukirProfile();
+
+          if (localProfile != null) {
+            AppLogger.debug(">>> [AppAuthCubit] Menggunakan profil lokal.");
+
+            emit(AppAuthenticated());
+          } else {
+            AppLogger.error(">>> [AppAuthCubit] Profil lokal tidak ditemukan.");
+
+            emit(AppUnauthenticated());
+          }
+        },
+        (userModel) async {
+          AppLogger.debug(
+            ">>> [AppAuthCubit] Profil berhasil disinkronkan: ${userModel.namaUser}",
+          );
+
+          emit(AppAuthenticated());
+        },
+      );
+    } catch (e, stackTrace) {
+      AppLogger.error(">>> [AppAuthCubit] ERROR checkStatus", e, stackTrace);
+
       emit(AppUnauthenticated());
     }
   }
-
+  
   /// Dipanggil jika token basi, atau Jukir klik tombol Logout
   Future<void> forceLogout() async {
     await _logout(); // Bersihkan brankas (Token & Profil)

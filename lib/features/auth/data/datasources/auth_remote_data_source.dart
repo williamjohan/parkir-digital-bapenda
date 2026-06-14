@@ -1,30 +1,45 @@
 // lib/features/auth/data/datasources/auth_remote_data_source.dart
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
+import 'package:uuid/uuid.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
+import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../../../../core/utils/device_id_utils.dart';
 import '../models/auth_response_model.dart';
 
 abstract class IAuthRemoteDataSource {
   Future<AuthResponseModel> login(String username, String password);
+   // BARU
+  Future<bool> checkDeviceUuid();
 }
 
 @LazySingleton(as: IAuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
   final Dio _dio;
+  final ISecureStorageManager _secureStorage;
 
-  AuthRemoteDataSourceImpl(this._dio);
+  AuthRemoteDataSourceImpl(this._dio, this._secureStorage);
 
   @override
   Future<AuthResponseModel> login(String username, String password) async {
     try {
+      final deviceId = await DeviceIdUtils.getSecureDeviceId(_secureStorage);
+
       final response = await _dio.post(
         ApiEndpoints.login,
-        data: {'username': username, 'password': password},
+        data: {
+          'username': username,
+          'password': password,
+          "uuidPerangkat": deviceId,
+        },
       );
+      
+      debugPrint("deviceId : $deviceId");
 
       final responseData = response.data;
 
@@ -73,5 +88,17 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
         message: 'Terjadi kesalahan internal aplikasi.',
       );
     }
+  }
+
+  @override
+  Future<bool> checkDeviceUuid() async {
+    final deviceId = await DeviceIdUtils.getSecureDeviceId(_secureStorage);
+
+    final response = await _dio.post(
+      '/api/mobile/parking/check-device-uuid',
+      data: {'uuidPerangkat': deviceId},
+    );
+
+    return response.data['data']['isUuidPerangkat'] == true;
   }
 }

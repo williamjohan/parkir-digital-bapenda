@@ -1,6 +1,6 @@
 name: parkir_digital_bapenda
 description: "Untuk Melakukan Pembayaran Parkir Secara Digital Di Kota Surabaya"
-publish_to: 'none' 
+publish_to: "none"
 
 # versionName: 1.0.0 (Yang dilihat User)
 # buildNumber: 1     (Yang dibaca sistem OTA)
@@ -38,7 +38,7 @@ dependencies:
   geolocator: ^13.0.1
   permission_handler: ^12.0.1
   app_settings: ^5.1.1
-  blue_thermal_printer: ^1.2.3 
+  blue_thermal_printer: ^1.2.3
   esc_pos_utils_plus: ^2.0.3
   device_info_plus: ^12.4.0
   connectivity_plus: ^7.1.1
@@ -56,14 +56,14 @@ dependencies:
   shimmer_animation: ^2.2.2+1
   fl_chart: ^1.2.0
   pretty_qr_code: ^3.6.0
-  flutter_image_compress: ^2.4.0  
+  flutter_image_compress: ^2.4.0
   saver_gallery: ^4.1.1
 
   # --- Utilities & Helpers ---
   flutter_dotenv: ^6.0.0
   logger: ^2.4.0
   json_annotation: ^4.11.0
-  path_provider: ^2.1.2          
+  path_provider: ^2.1.2
   path: ^1.9.1
   intl: ^0.20.2
   uuid: ^4.5.3
@@ -75,12 +75,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  
+
   # --- Code Generators ---
   build_runner: ^2.4.9
   injectable_generator: ^2.6.1
   json_serializable: ^6.7.1
-  
+
   # --- App Icons & Naming ---
   flutter_launcher_icons: ^0.13.1
 
@@ -102,22 +102,23 @@ flutter_native_splash:
 flutter:
   uses-material-design: true
   fonts:
-  - family: Poppins
-    fonts:
-      - asset: assets/fonts/Poppins-Regular.ttf
-        weight: 400
-      - asset: assets/fonts/Poppins-Medium.ttf
-        weight: 500
-      - asset: assets/fonts/Poppins-SemiBold.ttf
-        weight: 600
-      - asset: assets/fonts/Poppins-Bold.ttf
-        weight: 700
-      - asset: assets/fonts/Poppins-Italic.ttf
-        style: italic
-      - asset: assets/fonts/Poppins-ExtraBold.ttf
-        weight: 800
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-ExtraBold.ttf
+          weight: 800
 
   assets:
-      - .env
-      - assets/images/
-      - assets/lottie/
+    - .env
+    - assets/images/
+    - assets/lottie/
+    - assets/iconlogo/

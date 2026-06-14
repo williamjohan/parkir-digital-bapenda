@@ -22,6 +22,8 @@ import '../../features/auth/domain/repositories/i_auth_repository.dart'
     as _i589;
 import '../../features/auth/domain/usecases/check_auth_status_usecase.dart'
     as _i52;
+import '../../features/auth/domain/usecases/check_device_uuid_usecase.dart'
+    as _i127;
 import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
 import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
@@ -199,6 +201,12 @@ _i174.GetIt init(
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
   );
+  gh.lazySingleton<_i107.IAuthRemoteDataSource>(
+    () => _i107.AuthRemoteDataSourceImpl(
+      gh<_i361.Dio>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
   gh.lazySingleton<_i59.ITarifRemoteDataSource>(
     () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -216,9 +224,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i1051.IUpdateRemoteDataSource>(
     () => _i1051.UpdateRemoteDataSourceImpl(gh<_i361.Dio>()),
-  );
-  gh.lazySingleton<_i107.IAuthRemoteDataSource>(
-    () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i502.ITransactionHistoryRepository>(
     () => _i19.TransactionHistoryRepositoryImpl(
@@ -276,6 +281,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
     () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),
   );
+  gh.lazySingleton<_i127.CheckDeviceUuidUseCase>(
+    () => _i127.CheckDeviceUuidUseCase(gh<_i589.IAuthRepository>()),
+  );
   gh.lazySingleton<_i188.LoginUseCase>(
     () => _i188.LoginUseCase(gh<_i589.IAuthRepository>()),
   );
@@ -307,16 +315,6 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i808.AppAuthCubit>(
-    () => _i808.AppAuthCubit(
-      gh<_i52.CheckAuthStatusUseCase>(),
-      gh<_i48.LogoutUseCase>(),
-      gh<_i965.GetProfileUseCase>(),
-    ),
-  );
-  gh.factory<_i264.LoginCubit>(
-    () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
-  );
   gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
     () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
   );
@@ -346,6 +344,14 @@ _i174.GetIt init(
       gh<_i92.IParkingTransactionLocalDataSource>(),
       gh<_i461.IParkingTransactionRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i808.AppAuthCubit>(
+    () => _i808.AppAuthCubit(
+      gh<_i52.CheckAuthStatusUseCase>(),
+      gh<_i48.LogoutUseCase>(),
+      gh<_i965.GetProfileUseCase>(),
+      gh<_i127.CheckDeviceUuidUseCase>(),
     ),
   );
   gh.factory<_i1020.CheckUpdateCubit>(
@@ -387,6 +393,9 @@ _i174.GetIt init(
       gh<_i461.IParkingTransactionRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
+  );
+  gh.factory<_i264.LoginCubit>(
+    () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(

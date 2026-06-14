@@ -54,4 +54,13 @@ class AuthRepositoryImpl implements IAuthRepository {
   Future<bool> checkAuthStatus() async {
     return await _secureStorage.hasValidToken();
   }
+
+  @override
+  Future<bool> checkDeviceUuid() async {
+    try {
+      return await _remoteDataSource.checkDeviceUuid();
+    } catch (_) {
+      return false;
+    }
+  }
 }
