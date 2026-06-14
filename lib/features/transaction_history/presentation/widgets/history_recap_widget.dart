@@ -84,7 +84,7 @@ class HistoryRecapWidget extends StatelessWidget {
                   child: _buildFinancialColumn(
                     label: "Bersih",
                     value: CurrencyFormatter.toIdr(totalBersih),
-                    valueColor: AppColors.success ?? Colors.green.shade700,
+                    valueColor: AppColors.success,
                   ),
                 ),
               ],

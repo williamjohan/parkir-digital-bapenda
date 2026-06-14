@@ -273,8 +273,9 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                     padding: const EdgeInsets.only(top: 16, bottom: 8),
                     // Masukkan ke dalam parameter child
                     child: (() {
+                      //TODO disini juga perlu adjustment
                       // Pastikan double
-                      final int persentase = 10;
+                      // final int persentase = 10;
 
                       // 2. Return Widget-nya
                       return HistoryRecapWidget(
@@ -283,7 +284,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         roda4: state.roda4.toString(),
 
                         totalPendapatan: state.totalPendapatan.toString(),
-                        persentasePajak: persentase.toString(),
+                        persentasePajak: state.persentasePajak.toString(),
                         nominalPajak: state.totalPajak.toString(),
                         totalBersih: state.totalBersih.toString(),
 
@@ -337,7 +338,9 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               child: Column(
                 children: [
                   (() {
-                    final int persentase = 10;
+                    //TODO untuk persentase pajak nya perlu adjustment
+                    //dari endpoint sendiri.
+                    // final int persentase = 10;
 
                     return HistoryRecapWidget(
                       title: _getDynamicRecapTitle(),
@@ -345,7 +348,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                       roda4: state.roda4.toString(),
 
                       totalPendapatan: state.totalPendapatan.toString(),
-                      persentasePajak: persentase.toString(),
+                      persentasePajak: state.persentasePajak.toString(),
                       nominalPajak: state.totalPajak.toString(),
                       totalBersih: state.totalBersih.toString(),
 

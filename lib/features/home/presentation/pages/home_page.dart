@@ -142,50 +142,53 @@ class _HomePageState extends State<HomePage> {
                             ),
                             Expanded(
                               child: Container(
-                                margin: EdgeInsets.only(top: 25),
-                                padding: EdgeInsets.all(16),
+                                margin: const EdgeInsets.only(top: 25),
                                 width: double.infinity,
-                                decoration: BoxDecoration(
+                                clipBehavior: Clip.antiAlias,
+                                decoration: const BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(40),
                                     topRight: Radius.circular(40),
                                   ),
                                 ),
-                                child: Column(
-                                  children: [
-                                    if (state.status != HomeStatus.loading) ...[
-                                      RefreshIndicator(
+                                // 🚀 KUNCI PERBAIKAN: RefreshIndicator jadi parent utama di area putih
+                                child: state.status == HomeStatus.loading
+                                    ? const SizedBox() // Aman, karena ada LoadingOverlay di root
+                                    : RefreshIndicator(
                                         onRefresh: _loadData,
                                         child: SingleChildScrollView(
                                           physics:
                                               const AlwaysScrollableScrollPhysics(),
+                                          // 🚀 Padding dipindah ke dalam ScrollView agar batas atas-bawah scroll terasa luas
+                                          padding: const EdgeInsets.all(16),
                                           child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
                                             children: [
+                                              // === 1. KARTU TOTAL PENDAPATAN ===
                                               if (!state.isFree)
-                                                (() {
-                                                  // TODO: REMOVE LATER KALKULASI DUMMY SEMENTARA
-                                                  // Catatan Auditor: UI (Widget) seharusnya "Dumb" (Bebas Logika).
-                                                  // Nanti kalkulasi ini WAJIB dipindahkan ke Data Layer (Model/Mapper)
-                                                  // setelah API Bapenda siap.
+                                                CardTotalPendapatan(
+                                                  totalKotor: state
+                                                      .totalPendapatan
+                                                      .toString(),
+                                                  persentasePajak:
+                                                      "10", // Dummy statis sesuai kesepakatan
+                                                  nominalPajak: state.totalPajak
+                                                      .toInt()
+                                                      .toString(), // Data Real API
+                                                  totalBersih: state.totalBersih
+                                                      .toInt()
+                                                      .toString(), // Data Real API
+                                                ),
 
-                                                  return CardTotalPendapatan(
-                                                    totalKotor: state
-                                                        .totalPendapatan
-                                                        .toString(),
-                                                    persentasePajak: "10",
-                                                    nominalPajak: state
-                                                        .totalPajak
-                                                        .toString(),
-                                                    totalBersih: state
-                                                        .totalBersih
-                                                        .toString(),
-                                                  );
-                                                })(),
+                                              const SizedBox(height: 16),
 
-                                              SizedBox(height: 16),
+                                              // === 2. KARTU REKAP KENDARAAN ===
                                               Container(
-                                                padding: EdgeInsets.all(16),
+                                                padding: const EdgeInsets.all(
+                                                  16,
+                                                ),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
@@ -223,7 +226,9 @@ class _HomePageState extends State<HomePage> {
                                                                 .motorCount
                                                                 .toString(),
                                                           ),
-                                                          SizedBox(height: 8),
+                                                          const SizedBox(
+                                                            height: 8,
+                                                          ),
                                                           ItemKendaraanWidget(
                                                             icon: Icons
                                                                 .directions_car,
@@ -234,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                         ],
                                                       ),
-                                                      SizedBox(width: 8),
+                                                      const SizedBox(width: 8),
                                                       Expanded(
                                                         child: ItemKendaraanWidget(
                                                           isLeftIcon: false,
@@ -250,19 +255,19 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
+
+                                              // === 3. KARTU TRANSAKSI TERBARU (Kini ada di DALAM gerbong Scroll!) ===
+                                              LastActivityWidget(
+                                                transactions:
+                                                    state.recentTransactions,
+                                              ),
+
+                                              // 🚀 BANTALAN KEAMANAN: Agar item terbawah tidak tertimpa tombol Floating Action Button (FAB)
+                                              const SizedBox(height: 100),
                                             ],
                                           ),
                                         ),
                                       ),
-                                      Expanded(
-                                        child: LastActivityWidget(
-                                          transactions:
-                                              state.recentTransactions,
-                                        ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
                               ),
                             ),
                           ],

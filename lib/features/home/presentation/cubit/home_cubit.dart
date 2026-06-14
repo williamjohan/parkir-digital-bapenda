@@ -76,8 +76,8 @@ class HomeCubit extends Cubit<HomeState> {
               motorCount: summary.jumlahMotorHariIni,
               mobilCount: summary.jumlahMobilHariIni,
               totalPendapatan: summary.totalNominalHariIni,
-              totalPajak: summary.totalNominalBersihUntukWajibPajak,
-              totalBersih: summary.totalNominalBersihUntukBapenda,
+              totalPajak: summary.totalNominalBersihUntukBapenda,
+              totalBersih: summary.totalNominalBersihUntukWajibPajak,
               isFree: isFreeStatus,
             ),
           );
