@@ -39,6 +39,9 @@ abstract class ISecureStorageManager {
     String? namaGate,
     String? shift,
   });
+  Future<void> saveQrisImagePaths(String jsonString);
+  Future<String?> getQrisImagePaths();
+  Future<void> clearQrisImagePaths();
 }
 
 @LazySingleton(as: ISecureStorageManager)
@@ -53,6 +56,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyDeviceId = 'DEVICE_ID';
   static const String _keyPrinterMacAddress = 'PRINTER_MAC_ADDRESS';
   static const String _keyDeviceLocation = 'DEVICE_LOCATION';
+  static const String _keyQrisImagePaths = 'QRIS_IMAGE_PATHS';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -215,5 +219,20 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     };
     final jsonString = jsonEncode(profileData);
     await _storage.write(key: _keyJukirProfile, value: jsonString);
+  }
+
+  @override
+  Future<void> saveQrisImagePaths(String jsonString) async {
+    await _storage.write(key: _keyQrisImagePaths, value: jsonString);
+  }
+
+  @override
+  Future<String?> getQrisImagePaths() async {
+    return await _storage.read(key: _keyQrisImagePaths);
+  }
+
+  @override
+  Future<void> clearQrisImagePaths() async {
+    await _storage.delete(key: _keyQrisImagePaths);
   }
 }
