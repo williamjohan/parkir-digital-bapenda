@@ -11,7 +11,7 @@ class ApiEndpoints {
   static const String profile = '/api/mobile/parking/profile';
   static const String changePassword = '/api/mobile/parking/change-password';
 
-  // 🚀 [BARU] Endpoint khusus Modul Dashboard & Master Data
+  // Endpoint khusus Modul Dashboard & Master Data
   static const String tarif = '/api/mobile/parking/tarif';
   static const String dashboardSummary =
       '/api/mobile/parking/dashboard-summary';

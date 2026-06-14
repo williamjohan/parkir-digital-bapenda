@@ -25,6 +25,11 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final int totalTransaksi;
   final int totalPendapatan;
 
+  // 🚀 [BARU] 3 FIELD FINANSIAL DINAMIS
+  final double totalPajak;
+  final double totalBersih;
+  final int persentasePajak;
+
   const TransactionHistoryLoaded({
     required this.allTransactions,
     required this.filteredTransactions,
@@ -37,6 +42,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     required this.roda4,
     required this.totalTransaksi,
     required this.totalPendapatan,
+    // 🚀 WAJIB DIISI
+    required this.totalPajak,
+    required this.totalBersih,
+    required this.persentasePajak,
   });
 
   TransactionHistoryLoaded copyWith({
@@ -51,6 +60,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     int? roda4,
     int? totalTransaksi,
     int? totalPendapatan,
+    // 🚀 WAJIB DIISI
+    double? totalPajak,
+    double? totalBersih,
+    int? persentasePajak,
   }) {
     return TransactionHistoryLoaded(
       allTransactions: allTransactions ?? this.allTransactions,
@@ -60,11 +73,14 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       selectedKategori: selectedKategori ?? this.selectedKategori,
       selectedMode: selectedMode ?? this.selectedMode,
       jukirProfile: jukirProfile ?? this.jukirProfile,
-
       roda2: roda2 ?? this.roda2,
       roda4: roda4 ?? this.roda4,
       totalTransaksi: totalTransaksi ?? this.totalTransaksi,
       totalPendapatan: totalPendapatan ?? this.totalPendapatan,
+      // 🚀 MAPPING BARU
+      totalPajak: totalPajak ?? this.totalPajak,
+      totalBersih: totalBersih ?? this.totalBersih,
+      persentasePajak: persentasePajak ?? this.persentasePajak,
     );
   }
 
@@ -81,6 +97,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     roda4,
     totalTransaksi,
     totalPendapatan,
+    // 🚀 REGISTRASI PROPS AGAR UI ME-REBUILD
+    totalPajak,
+    totalBersih,
+    persentasePajak,
   ];
 }
 

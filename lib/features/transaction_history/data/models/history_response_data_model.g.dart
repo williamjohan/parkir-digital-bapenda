@@ -12,6 +12,8 @@ HistoryResponseData _$HistoryResponseDataFromJson(Map<String, dynamic> json) =>
       roda4: (json['roda4'] as num?)?.toInt() ?? 0,
       jumlahTransaksi: (json['jumlahTransaksi'] as num?)?.toInt() ?? 0,
       totalPendapatan: (json['totalPendapatan'] as num?)?.toInt() ?? 0,
+      totalPendapatanWajibPajak: _toDouble(json['totalPendapatanWajibPajak']),
+      totalPendapatanBapenda: _toDouble(json['totalPendapatanBapenda']),
       detail:
           (json['detail'] as List<dynamic>?)
               ?.map((e) => HistoryItemModel.fromJson(e as Map<String, dynamic>))
@@ -26,5 +28,7 @@ Map<String, dynamic> _$HistoryResponseDataToJson(
   'roda4': instance.roda4,
   'jumlahTransaksi': instance.jumlahTransaksi,
   'totalPendapatan': instance.totalPendapatan,
+  'totalPendapatanWajibPajak': instance.totalPendapatanWajibPajak,
+  'totalPendapatanBapenda': instance.totalPendapatanBapenda,
   'detail': instance.detail,
 };

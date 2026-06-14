@@ -108,6 +108,10 @@ import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
 import '../../features/transaction/cubit/transaction_cubit.dart' as _i629;
 import '../../features/transaction_history/data/datasources/transaction_history_remote_datasource.dart'
     as _i896;
+import '../../features/transaction_history/data/repositories/transaction_history_repository_impl.dart'
+    as _i19;
+import '../../features/transaction_history/domain/repositories/i_transaction_history_repository.dart'
+    as _i502;
 import '../../features/transaction_history/domain/usecases/get_transaction_history_usecase.dart'
     as _i732;
 import '../../features/transaction_history/presentation/cubit/transaction_history_cubit.dart'
@@ -216,6 +220,12 @@ _i174.GetIt init(
   gh.lazySingleton<_i107.IAuthRemoteDataSource>(
     () => _i107.AuthRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i502.ITransactionHistoryRepository>(
+    () => _i19.TransactionHistoryRepositoryImpl(
+      gh<_i896.ITransactionHistoryRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
   gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
     () => _i247.PaymentRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -245,8 +255,7 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
     () => _i732.GetTransactionHistoryUseCase(
-      gh<_i896.ITransactionHistoryRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
+      gh<_i502.ITransactionHistoryRepository>(),
     ),
   );
   gh.lazySingleton<_i280.IUpdateRepository>(

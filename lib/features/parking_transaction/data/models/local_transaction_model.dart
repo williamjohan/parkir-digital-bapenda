@@ -85,6 +85,7 @@ extension LocalTransactionMapper on LocalTransactionModel {
       namaPetugas: profile['namaUser'] ?? 'Petugas',
       modePlat: modePlat,
       shift: profile['shift']?.toString() ?? '1',
+      tarifPajak: 0,
     );
   }
 }

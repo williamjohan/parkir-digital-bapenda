@@ -20,8 +20,7 @@ class PbTicketPrintDialog {
     required String noKendaraan,
     required int tarifParkir,
     required String shift,
-    bool isPrinterReady =
-        true, // 🚀 PARAMETER BARU (Default True agar tidak merusak page lain)
+    bool isPrinterReady = true,
     VoidCallback? onClosed,
   }) {
     final mappedTransaction = HistoryItemModel(
@@ -35,6 +34,7 @@ class PbTicketPrintDialog {
       namaPetugas: profile['namaUser'] ?? 'Petugas',
       modePlat: isQuickMode ? 0 : 1,
       shift: shift,
+      tarifPajak: 0,
     );
 
     _showCoreDialog(
@@ -75,7 +75,7 @@ class PbTicketPrintDialog {
           ? ''
           : historyTx.platNumber.toUpperCase(),
       tarifParkir: historyTx.kredit,
-      isPrinterReady: isPrinterReady, // 🚀 Teruskan ke Core
+      isPrinterReady: isPrinterReady,
       onClosed: onClosed,
     );
   }

@@ -34,6 +34,9 @@ class HistoryItemModel {
   @JsonKey(name: 'shift', defaultValue: '-')
   final String shift;
 
+  @JsonKey(name: 'tarifPajak', defaultValue: 0)
+  final int tarifPajak;
+
   HistoryItemModel({
     required this.id,
     required this.orderId,
@@ -45,6 +48,7 @@ class HistoryItemModel {
     required this.namaPetugas,
     required this.modePlat,
     required this.shift,
+    required this.tarifPajak,
   });
 
   factory HistoryItemModel.fromJson(Map<String, dynamic> json) =>
@@ -64,6 +68,7 @@ class HistoryItemModel {
       namaPetugas: map['nama_jukir']?.toString() ?? '',
       modePlat: (map['mode_plat'] as num?)?.toInt() ?? 0,
       shift: map['shift']?.toString() ?? '1',
+      tarifPajak: (map['tarif_pajak'] as num?)?.toInt() ?? 0,
     );
   }
 }

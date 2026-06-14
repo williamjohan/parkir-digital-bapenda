@@ -189,7 +189,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
-                          //TODO : perbaiki ini next
+                          //TODO : perbaiki ini next (panggil NIK)
+
                           // Text(
                           //   'ID: ${user.idUser}',
                           //   style: AppTypography.bodySmall.copyWith(

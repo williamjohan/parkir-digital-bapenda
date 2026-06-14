@@ -18,7 +18,7 @@ class HomeCubit extends Cubit<HomeState> {
     this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
     this._getWeeklyChartUseCase,
-    this._secureStorage, // 🚀 [BARU]
+    this._secureStorage,
   ) : super(const HomeState());
 
   Future<void> requestCameraAccess(String vehicleType) async {
@@ -65,7 +65,7 @@ class HomeCubit extends Cubit<HomeState> {
     final summaryResult = await _getHybridDashboardSummaryUseCase.execute();
     summaryResult.fold(
       (failure) {
-        // 🚀 Walaupun data summary gagal, kita TETEAP harus simpan isFree ke State!
+        //  Walaupun data summary gagal, kita TETEAP harus simpan isFree ke State!
         if (!isClosed) emit(state.copyWith(isFree: isFreeStatus));
       },
       (summary) {

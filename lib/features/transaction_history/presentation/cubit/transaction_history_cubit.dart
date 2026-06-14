@@ -19,7 +19,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     if (difference > 30) {
       if (!isClosed) {
         emit(
-          TransactionHistoryError(
+          const TransactionHistoryError(
             'Rentang waktu maksimal pencarian adalah 30 hari.',
           ),
         );
@@ -31,11 +31,8 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
     final profile = await _secureStorage.getJukirProfile() ?? {};
 
-    // 🚀 [PERBAIKAN 1]: Hapus hard-timeout 10 detik.
-    // Biarkan Dio yang handle timeout agar fallback SQLite di UseCase bisa bekerja!
     final result = await _useCase.execute(startDate: start, endDate: end);
 
-    // 🚀 [PERBAIKAN 2]: Cegah Fatal Crash jika Jukir menekan tombol "Back" saat loading!
     if (isClosed) return;
 
     result.fold(
@@ -49,10 +46,19 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           selectedKategori: 'SEMUA',
           selectedMode: -1,
           jukirProfile: profile,
+
+          // Data Rekap Asli (Semua Transaksi)
           roda2: data.roda2,
           roda4: data.roda4,
           totalTransaksi: data.jumlahTransaksi,
           totalPendapatan: data.totalPendapatan,
+
+          //  INJEKSI DATA FINANSIAL KE STATE
+          totalPajak: data.totalPendapatanBapenda,
+          totalBersih: data.totalPendapatanWajibPajak,
+          persentasePajak: data.detail.isNotEmpty
+              ? data.detail.first.tarifPajak
+              : 0,
         ),
       ),
     );
@@ -67,6 +73,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     final newKategori = kategori ?? currentState.selectedKategori;
     final newMode = mode ?? currentState.selectedMode;
 
+    // 1. Eksekusi Filter
     final filteredData = currentState.allTransactions.where((trx) {
       bool passKategori = true;
       if (newKategori != 'SEMUA') {
@@ -82,13 +89,39 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       return passKategori && passMode;
     }).toList();
 
-    // 🚀 Tambahkan isClosed guard juga untuk amannya
+    //  2. REKALKULASI REKAPITULASI (Dinamic Recap)
+    // Agar angka di Header mengikuti hasil filter yang ada di layar
+    int filterRoda2 = 0;
+    int filterRoda4 = 0;
+    int filterKotor = 0;
+    double filterPajak = 0;
+    double filterBersih = 0;
+
+    for (final trx in filteredData) {
+      if (trx.jenisTarif == 'MOTOR') filterRoda2++;
+      if (trx.jenisTarif == 'MOBIL') filterRoda4++;
+
+      filterKotor += trx.kredit;
+
+      final double hitungPajak = (trx.kredit * trx.tarifPajak) / 100;
+      filterPajak += hitungPajak;
+      filterBersih += (trx.kredit - hitungPajak);
+    }
+
     if (!isClosed) {
       emit(
         currentState.copyWith(
           filteredTransactions: filteredData,
           selectedKategori: newKategori,
           selectedMode: newMode,
+
+          // 🚀 TIMPA DATA REKAP DENGAN HASIL FILTER
+          roda2: filterRoda2,
+          roda4: filterRoda4,
+          totalTransaksi: filteredData.length,
+          totalPendapatan: filterKotor,
+          totalPajak: filterPajak,
+          totalBersih: filterBersih,
         ),
       );
     }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-
 import '../../../../core/design_system/tokens/app_colors.dart';
 
 // lib/features/transaction_history/presentation/widgets/history_item_widget.dart
@@ -19,7 +18,6 @@ class HistoryRecapItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ❌ HAPUS Expanded di sini! Langsung return Column / Container
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -34,13 +32,15 @@ class HistoryRecapItem extends StatelessWidget {
           style: AppTypography.caption.copyWith(color: AppColors.textHint),
         ),
         const SizedBox(height: 4),
-        // Ingat FittedBox yang kita bahas sebelumnya agar teks tidak overflow
         FittedBox(
           fit: BoxFit.scaleDown,
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           child: Text(
             value,
-            style: AppTypography.heading4.copyWith(color: AppColors.primary),
+            style: AppTypography.heading4.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],

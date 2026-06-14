@@ -271,13 +271,25 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 8),
-                    child: HistoryRecapWidget(
-                      title: _getDynamicRecapTitle(),
-                      roda2: state.roda2.toString(),
-                      roda4: state.roda4.toString(),
-                      totalPendapatan: state.totalPendapatan.toString(),
-                      isFree: widget.isFree,
-                    ),
+                    // Masukkan ke dalam parameter child
+                    child: (() {
+                      // Pastikan double
+                      final int persentase = 10;
+
+                      // 2. Return Widget-nya
+                      return HistoryRecapWidget(
+                        title: _getDynamicRecapTitle(),
+                        roda2: state.roda2.toString(),
+                        roda4: state.roda4.toString(),
+
+                        totalPendapatan: state.totalPendapatan.toString(),
+                        persentasePajak: persentase.toString(),
+                        nominalPajak: state.totalPajak.toString(),
+                        totalBersih: state.totalBersih.toString(),
+
+                        isFree: widget.isFree,
+                      );
+                    })(),
                   ),
                 ),
 
@@ -324,13 +336,22 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               },
               child: Column(
                 children: [
-                  HistoryRecapWidget(
-                    title: _getDynamicRecapTitle(),
-                    roda2: state.roda2.toString(),
-                    roda4: state.roda4.toString(),
-                    totalPendapatan: state.totalPendapatan.toString(),
-                    isFree: widget.isFree,
-                  ),
+                  (() {
+                    final int persentase = 10;
+
+                    return HistoryRecapWidget(
+                      title: _getDynamicRecapTitle(),
+                      roda2: state.roda2.toString(),
+                      roda4: state.roda4.toString(),
+
+                      totalPendapatan: state.totalPendapatan.toString(),
+                      persentasePajak: persentase.toString(),
+                      nominalPajak: state.totalPajak.toString(),
+                      totalBersih: state.totalBersih.toString(),
+
+                      isFree: widget.isFree,
+                    );
+                  })(),
                   // Tombol Panah Atas (Tutup)
                   GestureDetector(
                     onTap: () => setState(() => _showOverlayRecap = false),
