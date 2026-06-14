@@ -3,5 +3,5 @@ class FeatureFlags {
 
   static const bool enablePaymentFeature = true;
   static const bool enablePrinterFeature = false;
-  static const bool enableCreateOrderFeature = false;
+  static const bool enableCreateOrderFeature = true;
 }

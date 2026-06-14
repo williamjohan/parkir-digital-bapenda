@@ -20,7 +20,6 @@ int _toInt(dynamic value) {
 
 @JsonSerializable()
 class UserModel {
-  // Gunakan fromJson untuk mengalihkan proses parsing ke fungsi tameng kita
   @JsonKey(name: 'idUser', fromJson: _toString)
   final String idUser;
 
@@ -38,6 +37,10 @@ class UserModel {
 
   @JsonKey(name: 'pungutTarif', fromJson: _toInt)
   final int pungutTarif;
+
+  // 🚀 [BARU] Teks Emas dari Backend
+  @JsonKey(name: 'pungutTarifDescription', fromJson: _toString)
+  final String pungutTarifDescription;
 
   @JsonKey(name: 'lokasiId', fromJson: _toInt)
   final int lokasiId;
@@ -64,6 +67,7 @@ class UserModel {
     this.namaObjekPajak = '',
     this.alamat = '',
     this.pungutTarif = 0,
+    this.pungutTarifDescription = '',
     this.lokasiId = 0,
     this.namaLokasi = '',
     this.kodeGate = '',

@@ -22,10 +22,11 @@ class ProfileRepositoryImpl implements IProfileRepository {
       final userModel = await _remoteDataSource.getProfile();
 
       await _secureStorage.saveJukirProfile(
-        idUserStorage: userModel.idUser,
+        idUserStorage: userModel.idUser.toString(),
         namaUserStorage: userModel.namaUser,
         nopStorage: userModel.nop,
         pungutTarif: userModel.pungutTarif,
+        pungutTarifDescription: userModel.pungutTarifDescription,
         namaObjekPajak: userModel.namaObjekPajak,
         idDevice: userModel.idDevice,
         lokasiId: userModel.lokasiId,
@@ -35,7 +36,6 @@ class ProfileRepositoryImpl implements IProfileRepository {
         shift: userModel.shift,
         alamat: userModel.alamat,
       );
-
       return Right(userModel);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
