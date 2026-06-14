@@ -86,8 +86,6 @@ import '../../features/payment/domain/repositories/i_payment_repository.dart'
     as _i1004;
 import '../../features/payment/domain/usecases/check_payment_status_usecase.dart'
     as _i191;
-import '../../features/payment/domain/usecases/generate_qris_usecase.dart'
-    as _i831;
 import '../../features/payment/domain/usecases/stop_monitoring_payment_usecase.dart'
     as _i907;
 import '../../features/payment/domain/usecases/watch_payment_status_usecase.dart'
@@ -345,9 +343,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i191.CheckPaymentStatusUseCase>(
     () => _i191.CheckPaymentStatusUseCase(gh<_i1004.IPaymentRepository>()),
-  );
-  gh.lazySingleton<_i831.GenerateQrisUseCase>(
-    () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
   );
   gh.lazySingleton<_i907.StopMonitoringPaymentUseCase>(
     () => _i907.StopMonitoringPaymentUseCase(gh<_i1004.IPaymentRepository>()),
