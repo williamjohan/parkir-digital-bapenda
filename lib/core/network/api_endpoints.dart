@@ -20,4 +20,6 @@ class ApiEndpoints {
       '/api/mobile/parking/laporan-pendapatan';
   static const String generateQris = '/api/mobile/parking/generate-qris';
   static const String callBack = '/api/mobile/parking/callback-qris';
+
+  static const String cekUuid = '/api/mobile/parking/check-device-uuid';
 }

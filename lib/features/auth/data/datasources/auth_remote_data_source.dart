@@ -95,7 +95,7 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
     final deviceId = await DeviceIdUtils.getSecureDeviceId(_secureStorage);
 
     final response = await _dio.post(
-      '/api/mobile/parking/check-device-uuid',
+      ApiEndpoints.cekUuid,
       data: {'uuidPerangkat': deviceId},
     );
 
