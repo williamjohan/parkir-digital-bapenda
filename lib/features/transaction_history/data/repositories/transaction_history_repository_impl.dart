@@ -95,21 +95,6 @@ class TransactionHistoryRepositoryImpl
       if (!isToday) {
         return Right(apiResult);
       }
-
-      // =========================
-      // 4. Merge Local + API
-      // =========================
-      final mergedMap = <String, HistoryItemModel>{};
-      for (final item in apiResult.detail) {
-        mergedMap[item.orderId] = item;
-      }
-      for (final item in localTransactions) {
-        mergedMap[item.orderId] = item;
-      }
-
-      final mergedList = mergedMap.values.toList()
-        ..sort((a, b) => b.tglTrx.compareTo(a.tglTrx));
-
       // =========================
       // 5. Recalculate summary
       // =========================
@@ -120,7 +105,7 @@ class TransactionHistoryRepositoryImpl
       double totalPajak = 0;
       double totalBersih = 0;
 
-      for (final item in mergedList) {
+      for (final item in apiResult.detail) {
         if (item.jenisTarif == 'MOTOR') roda2++;
         if (item.jenisTarif == 'MOBIL') roda4++;
 
@@ -140,11 +125,11 @@ class TransactionHistoryRepositoryImpl
         HistoryResponseData(
           roda2: roda2,
           roda4: roda4,
-          jumlahTransaksi: mergedList.length,
+          jumlahTransaksi: apiResult.detail.length,
           totalPendapatan: totalPendapatanKotor,
           totalPendapatanWajibPajak: totalBersih,
           totalPendapatanBapenda: totalPajak,
-          detail: mergedList,
+          detail: apiResult.detail,
         ),
       );
     } catch (e) {

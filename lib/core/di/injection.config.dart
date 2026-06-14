@@ -45,8 +45,6 @@ import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase
     as _i421;
 import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
     as _i77;
-import '../../features/home/domain/usecases/get_weekly_chart_usecase.dart'
-    as _i33;
 import '../../features/home/domain/usecases/sync_tarif_usecase.dart' as _i770;
 import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
@@ -342,9 +340,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
     () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
   );
-  gh.lazySingleton<_i33.GetWeeklyChartUseCase>(
-    () => _i33.GetWeeklyChartUseCase(gh<_i274.IHomeRepository>()),
-  );
   gh.lazySingleton<_i770.SyncTarifUseCase>(
     () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
   );
@@ -394,7 +389,6 @@ _i174.GetIt init(
     () => _i9.HomeCubit(
       gh<_i421.GetHybridDashboardSummaryUseCase>(),
       gh<_i77.GetRecentTransactionsUseCase>(),
-      gh<_i33.GetWeeklyChartUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
       gh<_i383.SyncQrisUseCase>(),
     ),

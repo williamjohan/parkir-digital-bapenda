@@ -9,7 +9,6 @@ import '../../domain/repositories/i_home_repository.dart';
 import '../datasources/i_summary_remote_datasource.dart';
 import '../datasources/i_tarif_remote_datasource.dart';
 import '../models/dashboard_summary_model.dart';
-import '../models/tarif_model.dart';
 import '../models/weekly_chart_item_model.dart';
 
 @LazySingleton(as: IHomeRepository)
