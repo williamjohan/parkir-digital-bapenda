@@ -12,14 +12,14 @@ import 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
-  final GetWeeklyChartUseCase _getWeeklyChartUseCase;
+  // final GetWeeklyChartUseCase _getWeeklyChartUseCase;
   final ISecureStorageManager _secureStorage;
   final SyncQrisUseCase _syncQrisUseCase;
 
   HomeCubit(
     this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
-    this._getWeeklyChartUseCase,
+    // this._getWeeklyChartUseCase,
     this._secureStorage,
     this._syncQrisUseCase, // 🚀 [BARU] Daftarkan di konstruktor
   ) : super(const HomeState());
@@ -107,12 +107,12 @@ class HomeCubit extends Cubit<HomeState> {
     });
 
     // 4. TUGAS KETIGA: Ambil Data Grafik Mingguan (Option A / API)
-    final chartResult = await _getWeeklyChartUseCase.execute();
-    chartResult.fold((failure) => null, (chartData) {
-      if (!isClosed) {
-        emit(state.copyWith(weeklyChartData: chartData));
-      }
-    });
+    // final chartResult = await _getWeeklyChartUseCase.execute();
+    // chartResult.fold((failure) => null, (chartData) {
+    //   if (!isClosed) {
+    //     emit(state.copyWith(weeklyChartData: chartData));
+    //   }
+    // });
 
     if (!isClosed) {
       emit(state.copyWith(status: HomeStatus.success));

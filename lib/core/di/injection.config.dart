@@ -45,8 +45,6 @@ import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase
     as _i421;
 import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
     as _i77;
-import '../../features/home/domain/usecases/get_weekly_chart_usecase.dart'
-    as _i33;
 import '../../features/home/domain/usecases/sync_tarif_usecase.dart' as _i770;
 import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
@@ -88,8 +86,6 @@ import '../../features/payment/domain/repositories/i_payment_repository.dart'
     as _i1004;
 import '../../features/payment/domain/usecases/check_payment_status_usecase.dart'
     as _i191;
-import '../../features/payment/domain/usecases/generate_qris_usecase.dart'
-    as _i831;
 import '../../features/payment/domain/usecases/stop_monitoring_payment_usecase.dart'
     as _i907;
 import '../../features/payment/domain/usecases/watch_payment_status_usecase.dart'
@@ -342,17 +338,11 @@ _i174.GetIt init(
   gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
     () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
   );
-  gh.lazySingleton<_i33.GetWeeklyChartUseCase>(
-    () => _i33.GetWeeklyChartUseCase(gh<_i274.IHomeRepository>()),
-  );
   gh.lazySingleton<_i770.SyncTarifUseCase>(
     () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
   );
   gh.lazySingleton<_i191.CheckPaymentStatusUseCase>(
     () => _i191.CheckPaymentStatusUseCase(gh<_i1004.IPaymentRepository>()),
-  );
-  gh.lazySingleton<_i831.GenerateQrisUseCase>(
-    () => _i831.GenerateQrisUseCase(gh<_i1004.IPaymentRepository>()),
   );
   gh.lazySingleton<_i907.StopMonitoringPaymentUseCase>(
     () => _i907.StopMonitoringPaymentUseCase(gh<_i1004.IPaymentRepository>()),
@@ -394,7 +384,6 @@ _i174.GetIt init(
     () => _i9.HomeCubit(
       gh<_i421.GetHybridDashboardSummaryUseCase>(),
       gh<_i77.GetRecentTransactionsUseCase>(),
-      gh<_i33.GetWeeklyChartUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
       gh<_i383.SyncQrisUseCase>(),
     ),

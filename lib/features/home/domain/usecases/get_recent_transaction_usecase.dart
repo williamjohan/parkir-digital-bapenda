@@ -52,27 +52,7 @@ class GetRecentTransactionsUseCase {
         limit: limit,
       );
 
-      final apiTransactions = apiResult.detail; // ✅ FIX
-
-      // 4. Merge: lokal + API, dedup by orderId
-      // Lokal diutamakan karena lebih fresh (baru diinput)
-      final mergedMap = <String, HistoryItemModel>{};
-
-      // Masukkan API dulu sebagai base
-      for (final item in apiTransactions) {
-        mergedMap[item.orderId] = item;
-      }
-
-      // Timpa dengan lokal jika orderId sama (lokal lebih fresh)
-      for (final item in localTransactions) {
-        mergedMap[item.orderId] = item;
-      }
-
-      // 5. Urutkan terbaru, ambil sesuai limit
-      final merged = mergedMap.values.toList()
-        ..sort((a, b) => b.tglTrx.compareTo(a.tglTrx));
-
-      return Right(merged.take(limit).toList());
+      return Right(apiResult.detail.take(limit).toList());
     } catch (e) {
       // Kalau API gagal (offline), fallback ke lokal saja
       try {

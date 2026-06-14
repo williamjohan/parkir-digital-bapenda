@@ -15,17 +15,17 @@ class PaymentRepositoryImpl implements IPaymentRepository {
 
   PaymentRepositoryImpl(this._remoteDataSource, this._signalRDataSource);
 
-  @override
-  Future<Either<Failure, QrisEntity>> generateQris({
-    required double amount,
-  }) async {
-    try {
-      final result = await _remoteDataSource.generateQris(amount: amount);
-      return Right(QrisModel.fromJson(result).toEntity());
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
-  }
+  // @override
+  // Future<Either<Failure, QrisEntity>> generateQris({
+  //   required double amount,
+  // }) async {
+  //   try {
+  //     final result = await _remoteDataSource.generateQris(amount: amount);
+  //     return Right(QrisModel.fromJson(result).toEntity());
+  //   } catch (e) {
+  //     return Left(ServerFailure(e.toString()));
+  //   }
+  // }
 
   @override
   Future<Either<Failure, PaymentStatus>> checkStatusManual(
