@@ -2,12 +2,14 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/transaction/presentation/widgets/tarif_empty_widget.dart';
 import '../../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../../core/routes/app_routes.dart';
+import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../payment/presentation/pages/payment_page.dart';
 import '../cubit/transaction_cubit.dart';
 import '../cubit/transaction_state.dart';
@@ -23,10 +25,14 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
+  late Future<Map<String, dynamic>?> _profileFuture;
+
   @override
   void initState() {
     super.initState();
     context.read<TransactionCubit>().init(widget.isFree);
+
+    _profileFuture = GetIt.I<ISecureStorageManager>().getJukirProfile();
   }
 
   void _navigateToPayment(TransactionState state) {
@@ -101,13 +107,34 @@ class _TransactionPageState extends State<TransactionPage> {
                                       const SizedBox(height: 8),
 
                                       // 🚀 Pilih jenis kendaraan
-                                      CardJenisKendaraan(
-                                        tarifList: state.tarifList,
-                                        selectedTarif: state.selectedTarif,
-                                        isFree: widget.isFree,
-                                        onSelected: (tarif) => context
-                                            .read<TransactionCubit>()
-                                            .selectTarif(tarif),
+                                      // CardJenisKendaraan(
+                                      //   op: "Tes",
+                                      //   alamat: "Tes",
+                                      //   tarifList: state.tarifList,
+                                      //   selectedTarif: state.selectedTarif,
+                                      //   isFree: widget.isFree,
+                                      //   onSelected: (tarif) => context
+                                      //       .read<TransactionCubit>()
+                                      //       .selectTarif(tarif),
+                                      // ),
+                                      FutureBuilder<Map<String, dynamic>?>(
+                                        future: _profileFuture,
+                                        builder: (context, snapshot) {
+                                          final profile = snapshot.data;
+
+                                          return CardJenisKendaraan(
+                                            op:
+                                                profile?['namaObjekPajak'] ??
+                                                '',
+                                            alamat: profile?['alamat'] ?? '',
+                                            tarifList: state.tarifList,
+                                            selectedTarif: state.selectedTarif,
+                                            isFree: widget.isFree,
+                                            onSelected: (tarif) => context
+                                                .read<TransactionCubit>()
+                                                .selectTarif(tarif),
+                                          );
+                                        },
                                       ),
 
                                       const SizedBox(height: 16),

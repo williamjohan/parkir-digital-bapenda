@@ -8,6 +8,8 @@ class CardJenisKendaraan extends StatelessWidget {
   final TarifModel? selectedTarif;
   final bool isFree;
   final Function(TarifModel) onSelected;
+  final String op;
+  final String alamat;
 
   const CardJenisKendaraan({
     super.key,
@@ -15,6 +17,8 @@ class CardJenisKendaraan extends StatelessWidget {
     required this.selectedTarif,
     required this.isFree,
     required this.onSelected,
+    required this.op,
+    required this.alamat,
   });
 
   // Icon kendaraan berdasarkan label
@@ -31,116 +35,176 @@ class CardJenisKendaraan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Header ──────────────────────────────────────────────────────
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.05),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(9),
-              ),
-              border: Border(bottom: BorderSide(color: AppColors.border)),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.commute_outlined,
-                  size: 16,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.primary),
+                ),
+                child: Icon(
+                  Icons.location_on,
                   color: AppColors.primary,
+                  size: 40,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  'JENIS KENDARAAN',
-                  style: AppTypography.caption.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '*',
-                  style: TextStyle(
-                    color: AppColors.error,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // ── Grid Pilihan ─────────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: tarifList.isEmpty
-                ? _EmptyVehicleState()
-                : GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: tarifList.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 2.2,
-                        ),
-                    itemBuilder: (context, index) {
-                      final tarif = tarifList[index];
-                      final isSelected = selectedTarif?.id == tarif.id;
-
-                      return _VehicleChip(
-                        tarif: tarif,
-                        isSelected: isSelected,
-                        icon: _iconFor(tarif.jenisTarif),
-                        onTap: () => onSelected(tarif),
-                      );
-                    },
-                  ),
-          ),
-
-          // ── Selected Indicator ───────────────────────────────────────────
-          if (selectedTarif != null) ...[
-            Divider(height: 1, color: AppColors.border),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
+              ),
+              SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.check_circle_rounded,
-                    size: 16,
-                    color: Colors.green,
-                  ),
-                  const SizedBox(width: 8),
                   Text(
-                    'Dipilih: ',
-                    style: AppTypography.caption.copyWith(
-                      color: AppColors.textSecondary,
+                    op,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.heading3.copyWith(
+                      color: AppColors.primary,
                     ),
                   ),
                   Text(
-                    selectedTarif!.jenisTarif,
-                    style: AppTypography.caption.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w700,
+                    alamat,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ],
-      ),
+            ],
+          ),
+        ),
+        SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Header ──────────────────────────────────────────────────────
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.05),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(9),
+                  ),
+                  border: Border(bottom: BorderSide(color: AppColors.border)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.commute_outlined,
+                      size: 16,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'JENIS KENDARAAN',
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '*',
+                      style: TextStyle(
+                        color: AppColors.error,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Grid Pilihan ─────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: tarifList.isEmpty
+                    ? _EmptyVehicleState()
+                    : GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: tarifList.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 0.9,
+                            ),
+                        itemBuilder: (context, index) {
+                          final tarif = tarifList[index];
+                          final isSelected = selectedTarif?.id == tarif.id;
+
+                          return _VehicleChip(
+                            tarif: tarif,
+                            isSelected: isSelected,
+                            icon: _iconFor(tarif.jenisTarif),
+                            onTap: () => onSelected(tarif),
+                          );
+                        },
+                      ),
+              ),
+
+              // ── Selected Indicator ───────────────────────────────────────────
+              if (selectedTarif != null) ...[
+                Divider(height: 1, color: AppColors.border),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        size: 16,
+                        color: Colors.green,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Dipilih: ',
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        selectedTarif!.jenisTarif,
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -168,35 +232,49 @@ class _VehicleChip extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.white,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.25),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : [],
+          // boxShadow: isSelected
+          //     ? [
+          //         BoxShadow(
+          //           color: AppColors.primary.withValues(alpha: 0.25),
+          //           blurRadius: 8,
+          //           offset: const Offset(0, 3),
+          //         ),
+          //       ]
+          //     : [],
         ),
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: isSelected ? Colors.white : AppColors.textSecondary,
+            CircleAvatar(
+              backgroundColor: isSelected
+                  ? AppColors.primary
+                  : AppColors.primary.withOpacity(0.2),
+              radius: 40,
+              child: Icon(
+                icon,
+                size: 22,
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              tarif.jenisTarif,
+              style: AppTypography.heading4.copyWith(
+                color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              ),
             ),
             const SizedBox(width: 8),
             Text(
-              tarif.jenisTarif,
-              style: AppTypography.bodyRegular.copyWith(
-                color: isSelected ? Colors.white : AppColors.textPrimary,
+              tarif.jenisTarif == "Mobil" ? "Roda 4" : "Roda 2",
+              style: AppTypography.bodySmall.copyWith(
+                color: isSelected ? AppColors.primary : AppColors.textPrimary,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),
             ),

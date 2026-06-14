@@ -98,16 +98,16 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
               ),
 
               // LUPA PASSWORD
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: TextButton(
-              //     onPressed: () {},
-              //     child: const Text(
-              //       "Lupa Kata Sandi?",
-              //       style: TextStyle(color: AppColors.primary),
-              //     ),
-              //   ),
-              // ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    "Lupa Kata Sandi?",
+                    style: TextStyle(color: AppColors.primary),
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
 
               // TOMBOL MASUK
