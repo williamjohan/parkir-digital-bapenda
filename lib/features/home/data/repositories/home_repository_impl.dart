@@ -27,13 +27,13 @@ class HomeRepositoryImpl implements IHomeRepository {
   @override
   Future<Either<Failure, void>> syncTarif() async {
     try {
-      // 🚀 PINTU MASUK: Ambil dari API
+      //  PINTU MASUK: Ambil dari API
       final tarifList = await _tarifRemoteDS.getTarif();
 
       // Konversi List Model ke JSON String
       final jsonString = jsonEncode(tarifList.map((e) => e.toJson()).toList());
 
-      // 🚀 SIMPAN KE BRANKAS: Menjamin data masuk ke SecureStorage
+      //  SIMPAN KE BRANKAS: Menjamin data masuk ke SecureStorage
       await _secureStorage.saveMasterTarif(jsonString);
 
       return const Right(null);
@@ -55,11 +55,11 @@ class HomeRepositoryImpl implements IHomeRepository {
       anchor = await _summaryRemoteDS.getDashboardSummary();
 
       // Backup ke Brankas jika sewaktu-waktu offline
-      // 🚀 [DIPERBAIKI]: Gunakan fungsi SAVE dan kirimkan string JSON-nya
+      // Gunakan fungsi SAVE dan kirimkan string JSON-nya
       await _secureStorage.saveDashboardAnchor(jsonEncode(anchor.toJson()));
     } catch (e) {
-      // Jika Offline/Gagal Server, bongkar Brankas!
-      // 🚀 [DIPERBAIKI]: Gunakan fungsi GET untuk membaca brankas
+      // Jika Offline/Gagal Server, bongkar Brankas Preference.
+      // Gunakan fungsi GET untuk membaca brankas
       final savedAnchor = await _secureStorage.getDashboardAnchor();
 
       if (savedAnchor != null) {
@@ -70,6 +70,8 @@ class HomeRepositoryImpl implements IHomeRepository {
           jumlahMotorHariIni: 0,
           jumlahMobilHariIni: 0,
           totalNominalHariIni: 0,
+          totalNominalBersihUntukWajibPajak: 0,
+          totalNominalBersihUntukBapenda: 0,
         );
       }
     }
@@ -88,6 +90,9 @@ class HomeRepositoryImpl implements IHomeRepository {
         totalNominalHariIni:
             anchor.totalNominalHariIni +
             (pendingData['nominal']?.toDouble() ?? 0.0),
+        totalNominalBersihUntukWajibPajak:
+            anchor.totalNominalBersihUntukWajibPajak,
+        totalNominalBersihUntukBapenda: anchor.totalNominalBersihUntukBapenda,
       );
 
       return Right(hybridModel);
@@ -112,7 +117,7 @@ class HomeRepositoryImpl implements IHomeRepository {
   @override
   Future<Either<Failure, List<TarifModel>>> getLocalTarifs() async {
     try {
-      // 🚀 PINTU KELUAR: Ambil dari Brankas (Bukan API!)
+      // PINTU KELUAR: Ambil dari Brankas (Bukan API!)
       // Inilah yang menjamin Chucker tidak akan nembak API lagi saat buka TransactionPage
       final jsonString = await _secureStorage.getMasterTarif();
 

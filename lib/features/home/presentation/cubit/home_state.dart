@@ -12,6 +12,10 @@ class HomeState extends Equatable {
   final int motorCount;
   final int mobilCount;
   final double totalPendapatan;
+
+  final double totalPajak;
+  final double totalBersih;
+
   final int? selectedModePlat;
   final List<HistoryItemModel> recentTransactions;
   final List<WeeklyChartItemModel> weeklyChartData;
@@ -26,6 +30,10 @@ class HomeState extends Equatable {
     this.motorCount = 0,
     this.mobilCount = 0,
     this.totalPendapatan = 0.0,
+
+    this.totalPajak = 0.0,
+    this.totalBersih = 0.0,
+
     this.selectedModePlat,
     this.recentTransactions = const [],
     this.weeklyChartData = const [],
@@ -40,6 +48,10 @@ class HomeState extends Equatable {
     int? motorCount,
     int? mobilCount,
     double? totalPendapatan,
+
+    double? totalPajak,
+    double? totalBersih,
+
     int? selectedModePlat,
     List<HistoryItemModel>? recentTransactions,
     List<WeeklyChartItemModel>? weeklyChartData,
@@ -55,6 +67,10 @@ class HomeState extends Equatable {
       motorCount: motorCount ?? this.motorCount,
       mobilCount: mobilCount ?? this.mobilCount,
       totalPendapatan: totalPendapatan ?? this.totalPendapatan,
+
+      totalPajak: totalPajak ?? this.totalPajak,
+      totalBersih: totalBersih ?? this.totalBersih,
+
       selectedModePlat: selectedModePlat ?? this.selectedModePlat,
       recentTransactions: recentTransactions ?? this.recentTransactions,
       weeklyChartData: weeklyChartData ?? this.weeklyChartData,
@@ -62,6 +78,9 @@ class HomeState extends Equatable {
     );
   }
 
+  // CATATAN
+  // Bagian ini adalah nyawa dari Equatable. Jika field tidak dimasukkan ke sini,
+  // BlocBuilder di UI TIDAK AKAN PERNAH me-rebuild layarnya meski nilainya berubah!
   @override
   List<Object?> get props => [
     status,
@@ -71,6 +90,10 @@ class HomeState extends Equatable {
     mobilCount,
     motorCount,
     totalPendapatan,
+
+    totalPajak,
+    totalBersih,
+
     selectedModePlat,
     recentTransactions,
     weeklyChartData,

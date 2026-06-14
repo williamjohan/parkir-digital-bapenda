@@ -12,7 +12,7 @@ class HomeCubit extends Cubit<HomeState> {
   final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
   final GetWeeklyChartUseCase _getWeeklyChartUseCase;
-  final ISecureStorageManager _secureStorage; // 🚀 [BARU]
+  final ISecureStorageManager _secureStorage;
 
   HomeCubit(
     this._getHybridDashboardSummaryUseCase,
@@ -49,10 +49,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Mengambil data dashboard secara lengkap dan terstruktur
   Future<void> loadDashboardData() async {
-    // 🚀 1. SET LOADING
+    //  1. SET LOADING
     emit(state.copyWith(status: HomeStatus.loading));
 
-    // 0. 🚀 [BARU] BONGKAR BRANKAS: Ambil status isFree dari profil Jukir
+    // BONGKAR BRANKAS: Ambil status isFree dari profil Jukir
     final profile = await _secureStorage.getJukirProfile();
     bool isFreeStatus = false;
 
@@ -72,11 +72,13 @@ class HomeCubit extends Cubit<HomeState> {
         if (!isClosed) {
           emit(
             state.copyWith(
+              // Casting ke toInt() karena model menyimpannya sebagai double
               motorCount: summary.jumlahMotorHariIni,
               mobilCount: summary.jumlahMobilHariIni,
               totalPendapatan: summary.totalNominalHariIni,
-              isFree:
-                  isFreeStatus, // 🚀 [BARU] Lempar status Gratis/Tidak ke UI
+              totalPajak: summary.totalNominalBersihUntukWajibPajak,
+              totalBersih: summary.totalNominalBersihUntukBapenda,
+              isFree: isFreeStatus,
             ),
           );
         }

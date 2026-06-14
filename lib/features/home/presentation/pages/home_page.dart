@@ -65,10 +65,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // 🚀 Tembak API Cek Update di background saat Home terbuka
       create: (_) => locator<CheckUpdateCubit>()..checkNow(),
 
-      // 🚀 BUNGKUS DENGAN MULTI-BLOC LISTENER
       child: MultiBlocListener(
         listeners: [
           // 🔹 1. Listener untuk HomeCubit (Bawaan Anda)
@@ -165,11 +163,26 @@ class _HomePageState extends State<HomePage> {
                                           child: Column(
                                             children: [
                                               if (!state.isFree)
-                                                CardTotalPendapatan(
-                                                  totalPendapatan: state
-                                                      .totalPendapatan
-                                                      .toString(),
-                                                ),
+                                                (() {
+                                                  // TODO: REMOVE LATER KALKULASI DUMMY SEMENTARA
+                                                  // Catatan Auditor: UI (Widget) seharusnya "Dumb" (Bebas Logika).
+                                                  // Nanti kalkulasi ini WAJIB dipindahkan ke Data Layer (Model/Mapper)
+                                                  // setelah API Bapenda siap.
+
+                                                  return CardTotalPendapatan(
+                                                    totalKotor: state
+                                                        .totalPendapatan
+                                                        .toString(),
+                                                    persentasePajak: "10",
+                                                    nominalPajak: state
+                                                        .totalPajak
+                                                        .toString(),
+                                                    totalBersih: state
+                                                        .totalBersih
+                                                        .toString(),
+                                                  );
+                                                })(),
+
                                               SizedBox(height: 16),
                                               Container(
                                                 padding: EdgeInsets.all(16),
