@@ -55,12 +55,12 @@ class _SplashPageState extends State<SplashPage> {
                       mainAxisSize:
                           MainAxisSize.min, // Kolom hanya setinggi kontennya
                       children: [
-                        // Image.asset(
-                        //   "assets/iconlogo/ScreensaverTS_Park.png",
-                        //   width: 200,
-                        //   height: 200,
-                        //   fit: BoxFit.contain,
-                        // ),
+                        Image.asset(
+                          "assets/iconlogo/ScreensaverTS_Park.png",
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.contain,
+                        ),
                         // const SizedBox(height: 16),
                         Text(
                           'Parkir Digital\nBapenda',
