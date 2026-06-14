@@ -23,8 +23,9 @@ class CardJenisKendaraan extends StatelessWidget {
     if (j.contains('motor')) return Icons.two_wheeler_rounded;
     if (j.contains('mobil')) return Icons.directions_car_rounded;
     if (j.contains('bus')) return Icons.directions_bus_rounded;
-    if (j.contains('truk') || j.contains('truck'))
+    if (j.contains('truk') || j.contains('truck')) {
       return Icons.local_shipping_rounded;
+    }
     return Icons.commute_rounded;
   }
 
@@ -44,7 +45,7 @@ class CardJenisKendaraan extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.05),
+              color: AppColors.primary.withValues(alpha: 0.05),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(9),
               ),
@@ -176,7 +177,7 @@ class _VehicleChip extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.25),
+                    color: AppColors.primary.withValues(alpha: 0.25),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),

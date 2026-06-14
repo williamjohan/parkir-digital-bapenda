@@ -94,9 +94,9 @@ class _InfoBadge extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.06),
+        color: AppColors.primary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -144,7 +144,7 @@ class _QrisCard extends StatelessWidget {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -176,7 +176,7 @@ class _QrisCard extends StatelessWidget {
                 Text(
                   'Gunakan aplikasi mobile banking / dompet digital',
                   style: AppTypography.caption.copyWith(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 10,
                   ),
                 ),
@@ -309,7 +309,7 @@ class _InstruksiPembayaran extends StatelessWidget {
                     height: 20,
                     margin: const EdgeInsets.only(right: 8, top: 1),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Center(

@@ -14,6 +14,6 @@ abstract class IHomeRepository {
   /// Mengambil data grafik mingguan
   Future<Either<Failure, List<WeeklyChartItemModel>>> getWeeklyChart();
 
-  /// Mengambil tarif kendaraan
-  Future<Either<Failure, List<TarifModel>>> getLocalTarifs();
+  // /// Mengambil tarif kendaraan
+  // Future<Either<Failure, List<TarifModel>>> getLocalTarifs();
 }
