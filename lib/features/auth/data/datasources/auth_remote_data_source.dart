@@ -1,9 +1,7 @@
 // lib/features/auth/data/datasources/auth_remote_data_source.dart
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
@@ -14,7 +12,7 @@ import '../models/auth_response_model.dart';
 
 abstract class IAuthRemoteDataSource {
   Future<AuthResponseModel> login(String username, String password);
-   // BARU
+  // BARU
   Future<bool> checkDeviceUuid();
 }
 
@@ -38,7 +36,7 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
           "uuidPerangkat": deviceId,
         },
       );
-      
+
       debugPrint("deviceId : $deviceId");
 
       final responseData = response.data;

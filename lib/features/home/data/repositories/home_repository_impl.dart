@@ -114,25 +114,25 @@ class HomeRepositoryImpl implements IHomeRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, List<TarifModel>>> getLocalTarifs() async {
-    try {
-      // PINTU KELUAR: Ambil dari Brankas (Bukan API!)
-      // Inilah yang menjamin Chucker tidak akan nembak API lagi saat buka TransactionPage
-      final jsonString = await _secureStorage.getMasterTarif();
+  // @override
+  // Future<Either<Failure, List<TarifModel>>> getLocalTarifs() async {
+  //   try {
+  //     // PINTU KELUAR: Ambil dari Brankas (Bukan API!)
+  //     // Inilah yang menjamin Chucker tidak akan nembak API lagi saat buka TransactionPage
+  //     final jsonString = await _secureStorage.getMasterTarif();
 
-      if (jsonString == null || jsonString.isEmpty) {
-        return const Left(CacheFailure('Data tarif belum tersedia.'));
-      }
+  //     if (jsonString == null || jsonString.isEmpty) {
+  //       return const Left(CacheFailure('Data tarif belum tersedia.'));
+  //     }
 
-      final List<dynamic> jsonList = jsonDecode(jsonString);
-      final localData = jsonList
-          .map((json) => TarifModel.fromJson(json))
-          .toList();
+  //     final List<dynamic> jsonList = jsonDecode(jsonString);
+  //     final localData = jsonList
+  //         .map((json) => TarifModel.fromJson(json))
+  //         .toList();
 
-      return Right(localData);
-    } catch (e) {
-      return const Left(CacheFailure('Gagal membaca data dari brankas.'));
-    }
-  }
+  //     return Right(localData);
+  //   } catch (e) {
+  //     return const Left(CacheFailure('Gagal membaca data dari brankas.'));
+  //   }
+  // }
 }

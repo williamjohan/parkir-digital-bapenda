@@ -1,80 +1,63 @@
-// lib/features/transaction/cubit/transaction_state.dart
-
 import 'package:equatable/equatable.dart';
-import '../../home/data/models/tarif_model.dart';
+import '../../../home/data/models/tarif_model.dart';
 
 enum TransactionStatus {
   ready,
   loading,
-  submitting,
   success,
+  // Status di bawah tidak lagi dipakai di flow QRIS Rompi.
+  // Dipertahankan agar tidak break kode lain yang mungkin masih referensi enum ini.
+  // ignore: unused_field
+  submitting,
+  // ignore: unused_field
   failure,
+  // ignore: unused_field
   locationDisabled,
+  // ignore: unused_field
   locationPermissionDenied,
 }
 
 class TransactionState extends Equatable {
   final TransactionStatus status;
   final List<TarifModel> tarifList;
-  final String nopol;
   final TarifModel? selectedTarif;
-  final String? metodePembayaran;
   final bool isFree;
   final String? errorMessage;
-  final String? imagePath;
-  final String? latitude;
-  final String? longitude;
+
+  // Map<jenisKendaraanId, localImagePath> — disimpan dari hasil getLocalQris
+  final Map<String, String> qrisMap;
 
   const TransactionState({
     this.status = TransactionStatus.ready,
     this.tarifList = const [],
-    this.nopol = '',
     this.selectedTarif,
-    this.metodePembayaran,
     this.isFree = false,
     this.errorMessage,
-    this.imagePath,
-    this.latitude,
-    this.longitude,
+    this.qrisMap = const {},
   });
 
-  bool get isValid {
-    if (isFree) return selectedTarif != null;
-    return selectedTarif != null && metodePembayaran != null;
-  }
+  bool get isValid => selectedTarif != null;
 
   bool get isTarifEmpty => tarifList.isEmpty;
 
   TransactionState copyWith({
     TransactionStatus? status,
     List<TarifModel>? tarifList,
-    String? nopol,
     TarifModel? selectedTarif,
     bool clearSelectedTarif = false,
-    String? metodePembayaran,
-    bool clearMetodePembayaran = false,
     bool? isFree,
     String? errorMessage,
-    String? imagePath,
-    bool clearImagePath = false,
-    String? latitude,
-    String? longitude,
+    Map<String, String>? qrisMap,
   }) {
     return TransactionState(
       status: status ?? this.status,
       tarifList: tarifList ?? this.tarifList,
-      nopol: nopol ?? this.nopol,
       selectedTarif: clearSelectedTarif
           ? null
           : (selectedTarif ?? this.selectedTarif),
-      metodePembayaran: clearMetodePembayaran
-          ? null
-          : (metodePembayaran ?? this.metodePembayaran),
       isFree: isFree ?? this.isFree,
       errorMessage: errorMessage ?? this.errorMessage,
-      imagePath: clearImagePath ? null : (imagePath ?? this.imagePath),
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
+      qrisMap: qrisMap ?? this.qrisMap,
     );
   }
 
@@ -82,13 +65,9 @@ class TransactionState extends Equatable {
   List<Object?> get props => [
     status,
     tarifList,
-    nopol,
     selectedTarif,
-    metodePembayaran,
     isFree,
     errorMessage,
-    imagePath,
-    latitude,
-    longitude,
+    qrisMap,
   ];
 }

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/utils/permission_utils.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../transaction/domain/usecases/sync_qris_usecase.dart';
 import '../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
 import '../../domain/usecases/get_recent_transaction_usecase.dart';
 import '../../domain/usecases/get_weekly_chart_usecase.dart';
@@ -13,12 +14,14 @@ class HomeCubit extends Cubit<HomeState> {
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
   final GetWeeklyChartUseCase _getWeeklyChartUseCase;
   final ISecureStorageManager _secureStorage;
+  final SyncQrisUseCase _syncQrisUseCase;
 
   HomeCubit(
     this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
     this._getWeeklyChartUseCase,
     this._secureStorage,
+    this._syncQrisUseCase, // 🚀 [BARU] Daftarkan di konstruktor
   ) : super(const HomeState());
 
   Future<void> requestCameraAccess(String vehicleType) async {
@@ -51,6 +54,16 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> loadDashboardData() async {
     //  1. SET LOADING
     emit(state.copyWith(status: HomeStatus.loading));
+
+    // ==========================================
+    // 🚀 TUGAS 0: BACKGROUND PRE-FETCHING QRIS
+    // ==========================================
+    // Kita jalankan proses sinkronisasi API -> Base64 -> File Local -> Brankas.
+    // Sengaja kita await agar file fisik benar-benar selesai ditulis ke dalam HP
+    // sebelum Jukir sempat menekan tombol tambah transaksi (+).
+    // Kita tidak perlu menggunakan result.fold() karena error handling
+    // (Zero-State Offline) akan ditangani penuh oleh TransactionCubit nantinya.
+    await _syncQrisUseCase.execute();
 
     // BONGKAR BRANKAS: Ambil status isFree dari profil Jukir
     final profile = await _secureStorage.getJukirProfile();

@@ -43,8 +43,6 @@ import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
 import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart'
     as _i421;
-import '../../features/home/domain/usecases/get_hybrid_tarif_usecase.dart'
-    as _i1057;
 import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
     as _i77;
 import '../../features/home/domain/usecases/get_weekly_chart_usecase.dart'
@@ -107,7 +105,18 @@ import '../../features/profile/domain/repositories/i_profile_repository.dart'
 import '../../features/profile/domain/usecases/get_profile_usecase.dart'
     as _i965;
 import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
-import '../../features/transaction/cubit/transaction_cubit.dart' as _i629;
+import '../../features/transaction/data/datasources/qris_remote_data_source.dart'
+    as _i502;
+import '../../features/transaction/data/repositories/qris_repository_impl.dart'
+    as _i718;
+import '../../features/transaction/domain/repositories/i_qris_repository.dart'
+    as _i215;
+import '../../features/transaction/domain/usecases/get_local_qris_usecase.dart'
+    as _i212;
+import '../../features/transaction/domain/usecases/sync_qris_usecase.dart'
+    as _i383;
+import '../../features/transaction/presentation/cubit/transaction_cubit.dart'
+    as _i616;
 import '../../features/transaction_history/data/datasources/transaction_history_remote_datasource.dart'
     as _i896;
 import '../../features/transaction_history/data/repositories/transaction_history_repository_impl.dart'
@@ -216,6 +225,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i896.ITransactionHistoryRemoteDataSource>(
     () => _i896.TransactionHistoryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i502.IQrisRemoteDataSource>(
+    () => _i502.QrisRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.factory<_i377.PrinterCubit>(
     () => _i377.PrinterCubit(
       gh<_i1003.IPrinterService>(),
@@ -293,6 +305,12 @@ _i174.GetIt init(
   gh.lazySingleton<_i506.CheckUpdateUseCase>(
     () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
   );
+  gh.lazySingleton<_i215.IQrisRepository>(
+    () => _i718.QrisRepositoryImpl(
+      gh<_i502.IQrisRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
   );
@@ -315,11 +333,14 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i212.GetLocalQrisUseCase>(
+    () => _i212.GetLocalQrisUseCase(gh<_i215.IQrisRepository>()),
+  );
+  gh.lazySingleton<_i383.SyncQrisUseCase>(
+    () => _i383.SyncQrisUseCase(gh<_i215.IQrisRepository>()),
+  );
   gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
     () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
-  );
-  gh.lazySingleton<_i1057.GetHybridTarifUseCase>(
-    () => _i1057.GetHybridTarifUseCase(gh<_i274.IHomeRepository>()),
   );
   gh.lazySingleton<_i33.GetWeeklyChartUseCase>(
     () => _i33.GetWeeklyChartUseCase(gh<_i274.IHomeRepository>()),
@@ -363,11 +384,11 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.factory<_i629.TransactionCubit>(
-    () => _i629.TransactionCubit(
-      gh<_i1057.GetHybridTarifUseCase>(),
-      gh<_i988.IAppLocationService>(),
-    ),
+  gh.factory<_i513.PaymentCubit>(
+    () => _i513.PaymentCubit(gh<_i212.GetLocalQrisUseCase>()),
+  );
+  gh.factory<_i616.TransactionCubit>(
+    () => _i616.TransactionCubit(gh<_i212.GetLocalQrisUseCase>()),
   );
   gh.factory<_i9.HomeCubit>(
     () => _i9.HomeCubit(
@@ -375,6 +396,7 @@ _i174.GetIt init(
       gh<_i77.GetRecentTransactionsUseCase>(),
       gh<_i33.GetWeeklyChartUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
+      gh<_i383.SyncQrisUseCase>(),
     ),
   );
   gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
@@ -396,15 +418,6 @@ _i174.GetIt init(
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
-  );
-  gh.factory<_i513.PaymentCubit>(
-    () => _i513.PaymentCubit(
-      gh<_i831.GenerateQrisUseCase>(),
-      gh<_i232.WatchPaymentStatusUseCase>(),
-      gh<_i191.CheckPaymentStatusUseCase>(),
-      gh<_i907.StopMonitoringPaymentUseCase>(),
-      gh<_i512.SaveParkingTransactionUseCase>(),
-    ),
   );
   gh.factory<_i877.ParkingTransactionCubit>(
     () => _i877.ParkingTransactionCubit(

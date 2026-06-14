@@ -1,8 +1,8 @@
 // lib/features/transaction/widgets/card_nopol_widget.dart
 
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/tokens/app_colors.dart';
-import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../../core/design_system/tokens/app_typography.dart';
 
 class CardNopolWidget extends StatelessWidget {
   final TextEditingController controller;

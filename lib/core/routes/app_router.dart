@@ -1,8 +1,8 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/transaction/page/transaction_page.dart';
-import '../../features/transaction/cubit/transaction_cubit.dart'; // Sesuaikan path jika namanya berbeda
+import '../../features/transaction/presentation/page/transaction_page.dart';
+import '../../features/transaction/presentation/cubit/transaction_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/pages/transaction_history_page.dart';
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
@@ -12,6 +12,7 @@ import '../../features/home/presentation/cubit/home_cubit.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
+import '../../features/payment/presentation/cubit/payment_cubit.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
 import '../../features/printer/presentation/cubit/printer_cubit.dart';
 import '../../features/printer/presentation/screen/printer_settings_page.dart';
@@ -30,9 +31,7 @@ class AppRouter {
   static GoRouter? _router;
 
   static GoRouter getRouter(AppAuthCubit appAuthCubit) {
-    if (_router != null) {
-      return _router!;
-    }
+    if (_router != null) return _router!;
 
     _router = GoRouter(
       initialLocation: AppRoutes.splash,
@@ -76,26 +75,28 @@ class AppRouter {
             child: const HomePage(),
           ),
         ),
-
-        // 🚀 [PERBAIKAN 1]: Rute Kamera Super Bersih! Tidak bawa parameter apa-apa.
         GoRoute(
           path: AppRoutes.capture,
-          builder: (context, state) {
-            return BlocProvider(
-              create: (_) => locator<VehicleCaptureCubit>(),
-              child: const CapturePage(), // Tanpa parameter
-            );
-          },
+          builder: (context, state) => BlocProvider(
+            create: (_) => locator<VehicleCaptureCubit>(),
+            child: const CapturePage(),
+          ),
         ),
 
-        // 🚀 [PERBAIKAN 2]: Rute QuickPark DIMUSNAHKAN! (Dihapus dari sini)
+        // 🚀 BlocProvider di sini = cubit di-create saat route push,
+        // di-dispose otomatis saat route di-pop. PaymentPage tidak perlu
+        // locator atau BlocProvider di dalam dirinya sendiri.
         GoRoute(
           path: AppRoutes.payment,
           builder: (context, state) {
             final args = state.extra as PaymentPageArgs;
-            return PaymentPage(args: args);
+            return BlocProvider(
+              create: (_) => locator<PaymentCubit>(),
+              child: PaymentPage(args: args),
+            );
           },
         ),
+
         GoRoute(
           path: AppRoutes.profile,
           builder: (context, state) => BlocProvider(
@@ -107,12 +108,8 @@ class AppRouter {
           path: AppRoutes.history,
           builder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
-
             final initialDate = extra?['initialDate'] as DateTime?;
             final isFree = extra?['isFree'] as bool? ?? false;
-            // final initialDate = state.extra as DateTime?;
-            // final isFree = false;
-
             return BlocProvider(
               create: (_) => locator<TransactionHistoryCubit>(),
               child: TransactionHistoryPage(
@@ -122,21 +119,16 @@ class AppRouter {
             );
           },
         ),
-
         GoRoute(
           path: AppRoutes.transaction,
           builder: (context, state) {
-            // 🚀 [PERBAIKAN]: Tangkap data yang dikirim dari layar sebelumnya
-            // Jika tidak ada data yang dikirim, default-nya adalah false (Aman)
             final isFree = state.extra as bool? ?? false;
-
             return BlocProvider(
               create: (_) => locator<TransactionCubit>(),
               child: TransactionPage(isFree: isFree),
             );
           },
         ),
-
         GoRoute(
           path: AppRoutes.printerSetting,
           builder: (context, state) => BlocProvider(
