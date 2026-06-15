@@ -9,7 +9,6 @@ import '../../domain/repositories/i_home_repository.dart';
 import '../datasources/i_summary_remote_datasource.dart';
 import '../datasources/i_tarif_remote_datasource.dart';
 import '../models/dashboard_summary_model.dart';
-import '../models/weekly_chart_item_model.dart';
 
 @LazySingleton(as: IHomeRepository)
 class HomeRepositoryImpl implements IHomeRepository {
@@ -101,17 +100,17 @@ class HomeRepositoryImpl implements IHomeRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, List<WeeklyChartItemModel>>> getWeeklyChart() async {
-    try {
-      final chartData = await _summaryRemoteDS.getWeeklyChart();
-      return Right(chartData);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } catch (e) {
-      return Left(ServerFailure('Gagal memuat grafik: ${e.toString()}'));
-    }
-  }
+  // @override
+  // Future<Either<Failure, List<WeeklyChartItemModel>>> getWeeklyChart() async {
+  //   try {
+  //     final chartData = await _summaryRemoteDS.getWeeklyChart();
+  //     return Right(chartData);
+  //   } on ServerException catch (e) {
+  //     return Left(ServerFailure(e.message));
+  //   } catch (e) {
+  //     return Left(ServerFailure('Gagal memuat grafik: ${e.toString()}'));
+  //   }
+  // }
 
   // @override
   // Future<Either<Failure, List<TarifModel>>> getLocalTarifs() async {

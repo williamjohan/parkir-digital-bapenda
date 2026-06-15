@@ -51,7 +51,7 @@ class CardJenisKendaraan extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.2),
+                  color: AppColors.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: AppColors.primary),
                 ),
@@ -254,7 +254,7 @@ class _VehicleChip extends StatelessWidget {
             CircleAvatar(
               backgroundColor: isSelected
                   ? AppColors.primary
-                  : AppColors.primary.withOpacity(0.2),
+                  : AppColors.primary.withValues(alpha: 0.2),
               radius: 40,
               child: Icon(
                 icon,

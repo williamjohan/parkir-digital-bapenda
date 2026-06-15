@@ -6,7 +6,6 @@ import '../repositories/i_transaction_history_repository.dart';
 
 @lazySingleton
 class GetTransactionHistoryUseCase {
-  // 🚀 Hanya bergantung pada interface Repository
   final ITransactionHistoryRepository _repository;
 
   GetTransactionHistoryUseCase(this._repository);

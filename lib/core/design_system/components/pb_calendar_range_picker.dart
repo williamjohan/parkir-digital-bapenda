@@ -123,7 +123,6 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                // [ENHANCE]: Sembunyikan atau matikan tombol next jika sudah berada di bulan ini
                 IconButton(
                   icon: Icon(
                     Icons.chevron_right,
@@ -164,7 +163,9 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
-                childAspectRatio: 1.2,
+                // 🚀 [PERBAIKAN 1]: Mengubah dari 1.2 menjadi 1.0 (Persegi)
+                // Ini membuat kotak tanggal lebih tinggi dan area sentuh vertikalnya jauh lebih besar.
+                childAspectRatio: 1.0,
               ),
               itemCount: daysInMonth + firstDayOffset,
               itemBuilder: (context, index) {
@@ -176,7 +177,6 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
                   index - firstDayOffset + 1,
                 );
 
-                // [ENHANCE]: Deteksi apakah tanggal ini berada di masa depan
                 final bool isFuture = date.isAfter(_today);
 
                 bool isSelectedStart =
@@ -205,14 +205,16 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
                   );
                 }
 
-                // [ENHANCE]: Timpa warna teks menjadi abu-abu jika di masa depan
                 if (isFuture) {
                   textColor = Colors.grey.shade300;
-                  decoration = null; // Masa depan tidak boleh di-highlight
+                  decoration = null;
                 }
 
                 return GestureDetector(
-                  // [ENHANCE]: Matikan onTap jika masa depan
+                  // 🚀 [PERBAIKAN 2]: THE MAGIC WAND!
+                  // Ini memaksa seluruh kotak (meskipun transparan) untuk menerima klik.
+                  // Jukir tidak perlu lagi meng-klik tepat di atas font angkanya.
+                  behavior: HitTestBehavior.opaque,
                   onTap: isFuture ? null : () => _handleDayTap(date),
                   child: Container(
                     decoration: decoration,
@@ -220,6 +222,7 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
                       child: Text(
                         '${date.day}',
                         style: TextStyle(
+                          fontSize: 12,
                           color: textColor,
                           fontWeight: (isSelectedStart || isSelectedEnd)
                               ? FontWeight.bold

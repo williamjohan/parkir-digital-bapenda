@@ -3,9 +3,6 @@ import 'package:intl/intl.dart';
 import '../tokens/app_typography.dart';
 import 'pb_calendar_range_picker.dart';
 
-// IMPORT punyamu sendiri
-// import 'pb_calendar_range_picker.dart';
-
 class DateRangeField extends StatefulWidget {
   final String title;
   final DateTimeRange? initialRange;
@@ -35,10 +32,8 @@ class _DateRangeFieldState extends State<DateRangeField> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    // ✅ default ke hari ini
     _selectedRange =
         widget.initialRange ?? DateTimeRange(start: today, end: today);
-
     _controller = TextEditingController(text: _formatRange(_selectedRange!));
   }
 
@@ -77,36 +72,50 @@ class _DateRangeFieldState extends State<DateRangeField> {
           style: AppTypography.caption.copyWith(color: Colors.white),
         ),
         const SizedBox(height: 6),
-        TextField(
-          controller: _controller,
-          readOnly: true,
-          onTap: _openPicker,
-          style: AppTypography.bodySemiBold.copyWith(color: Colors.white),
-          decoration: InputDecoration(
-            hintText: 'Pilih rentang tanggal',
-            hintStyle: AppTypography.bodySemiBold.copyWith(color: Colors.white),
-            suffixIcon: const Icon(
-              Icons.calendar_today,
-              size: 18,
-              color: Colors.white,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 12,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white),
-            ),
-
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white, width: 1.5),
-            ),
-
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white),
+        // 🚀 AREA SENTUH LEBAR: InkWell + AbsorbPointer
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: _openPicker,
+            child: AbsorbPointer(
+              child: TextField(
+                controller: _controller,
+                readOnly: true,
+                style: AppTypography.bodySemiBold.copyWith(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Pilih rentang tanggal',
+                  hintStyle: AppTypography.bodySemiBold.copyWith(
+                    color: Colors.white,
+                  ),
+                  // 🚀 PERBAIKAN: Ikon diperbesar ke 24
+                  suffixIcon: const Icon(
+                    Icons.calendar_today,
+                    size: 24,
+                    color: Colors.white,
+                  ),
+                  // 🚀 PERBAIKAN: Padding 16 untuk touch area yang lega
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 16,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 2.0,
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                ),
+              ),
             ),
           ),
         ),

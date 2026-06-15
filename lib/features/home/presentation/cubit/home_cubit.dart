@@ -5,7 +5,6 @@ import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../transaction/domain/usecases/sync_qris_usecase.dart';
 import '../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
 import '../../domain/usecases/get_recent_transaction_usecase.dart';
-import '../../domain/usecases/get_weekly_chart_usecase.dart';
 import 'home_state.dart';
 
 @injectable

@@ -3,9 +3,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
 import '../datasources/payment_remote_datasource.dart';
 import '../datasources/qris_signalr_datasource.dart';
-import '../models/qris_model.dart';
 import '../../domain/entities/payment_status.dart';
-import '../../domain/entities/qris_entity.dart';
 import '../../domain/repositories/i_payment_repository.dart';
 
 @LazySingleton(as: IPaymentRepository)
