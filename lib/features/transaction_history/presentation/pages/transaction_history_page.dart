@@ -267,7 +267,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                // 🚀 REKAP NORMAL: Akan ter-scroll ke atas secara alami
+                //  REKAP NORMAL: Akan ter-scroll ke atas secara alami
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 8),
@@ -317,6 +317,25 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             ),
           ),
 
+          IgnorePointer(
+            ignoring: !_showOverlayRecap,
+            child: GestureDetector(
+              onTap: () {
+                // Jika user klik di area gelap (di luar recap), tutup recap-nya
+                setState(() => _showOverlayRecap = false);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 350),
+                color: _showOverlayRecap
+                    ? Colors.black.withValues(
+                        alpha: 0.6,
+                      ) // Gelap transparan saat aktif
+                    : Colors.transparent, // Tembus pandang saat tidak aktif
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+          ),
           // ==========================================
           // LAYER 2: THE FLOATING RECAP OVERLAY (SLIDE DOWN)
           // ==========================================
