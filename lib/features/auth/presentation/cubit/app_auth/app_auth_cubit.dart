@@ -15,11 +15,15 @@ import 'app_auth_state.dart';
 class AppAuthCubit extends Cubit<AppAuthState> {
   final CheckAuthStatusUseCase _checkAuthStatus;
   final LogoutUseCase _logout;
-  final GetProfileUseCase _getProfile; // [TAMBAHAN]: Injeksi UseCase Profile
+  final GetProfileUseCase _getProfile;
   final CheckDeviceUuidUseCase _checkDeviceUuid;
-  
-  AppAuthCubit(this._checkAuthStatus, this._logout, this._getProfile, this._checkDeviceUuid)
-    : super(AppAuthInitial());
+
+  AppAuthCubit(
+    this._checkAuthStatus,
+    this._logout,
+    this._getProfile,
+    this._checkDeviceUuid,
+  ) : super(AppAuthInitial());
 
   /// Dipanggil saat Splash Screen muncul ATAU setelah Login sukses
   Future<void> checkStatus({bool isFromSplash = false}) async {
@@ -55,6 +59,10 @@ class AppAuthCubit extends Cubit<AppAuthState> {
         AppLogger.error(
           ">>> [AppAuthCubit] UUID perangkat tidak cocok dengan server. Logout paksa.",
         );
+
+        final storage = GetIt.instance<ISecureStorageManager>();
+        await storage.saveLogoutReason('DEVICE_MISMATCH');
+        await storage.clearPasswordOnly();
 
         await _logout();
 
@@ -102,7 +110,7 @@ class AppAuthCubit extends Cubit<AppAuthState> {
       emit(AppUnauthenticated());
     }
   }
-  
+
   /// Dipanggil jika token basi, atau Jukir klik tombol Logout
   Future<void> forceLogout() async {
     await _logout(); // Bersihkan brankas (Token & Profil)

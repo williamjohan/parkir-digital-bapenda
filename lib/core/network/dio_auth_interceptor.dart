@@ -60,6 +60,7 @@ class DioAuthInterceptor extends Interceptor {
           return handler.resolve(retryResponse);
         }
       } catch (e) {
+        await _storage.saveLogoutReason('SESSION_EXPIRED');
         await _storage.clearAllTokens();
         return super.onError(err, handler);
       }

@@ -42,6 +42,11 @@ abstract class ISecureStorageManager {
   Future<void> saveQrisImagePaths(String jsonString);
   Future<String?> getQrisImagePaths();
   Future<void> clearQrisImagePaths();
+  Future<void> saveCredentials(String username, String password);
+  Future<Map<String, String>?> getCredentials();
+  Future<void> clearPasswordOnly();
+  Future<void> saveLogoutReason(String reason);
+  Future<String?> getAndClearLogoutReason();
 }
 
 @LazySingleton(as: ISecureStorageManager)
@@ -57,6 +62,9 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyPrinterMacAddress = 'PRINTER_MAC_ADDRESS';
   static const String _keyDeviceLocation = 'DEVICE_LOCATION';
   static const String _keyQrisImagePaths = 'QRIS_IMAGE_PATHS';
+  static const String _keyUsername = 'SAVED_USERNAME';
+  static const String _keyPassword = 'SAVED_PASSWORD';
+  static const String _keyLogoutReason = 'LOGOUT_REASON';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -234,5 +242,47 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<void> clearQrisImagePaths() async {
     await _storage.delete(key: _keyQrisImagePaths);
+  }
+
+  @override
+  Future<void> saveCredentials(String username, String password) async {
+    await _storage.write(key: _keyUsername, value: username);
+    await _storage.write(key: _keyPassword, value: password);
+  }
+
+  @override
+  Future<Map<String, String>?> getCredentials() async {
+    final username = await _storage.read(key: _keyUsername);
+    final password = await _storage.read(key: _keyPassword);
+
+    if (username != null) {
+      return {
+        'username': username,
+        'password':
+            password ?? '', // Jika password dihapus, kembalikan string kosong
+      };
+    }
+    return null;
+  }
+
+  @override
+  Future<void> clearPasswordOnly() async {
+    // HANYA hapus password, username dibiarkan lengket
+    await _storage.delete(key: _keyPassword);
+  }
+
+  @override
+  Future<void> saveLogoutReason(String reason) async {
+    await _storage.write(key: _keyLogoutReason, value: reason);
+  }
+
+  @override
+  Future<String?> getAndClearLogoutReason() async {
+    final reason = await _storage.read(key: _keyLogoutReason);
+    if (reason != null) {
+      // Langsung hapus setelah dibaca agar modal tidak muncul terus-menerus
+      await _storage.delete(key: _keyLogoutReason);
+    }
+    return reason;
   }
 }

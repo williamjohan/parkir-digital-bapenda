@@ -3,7 +3,7 @@ import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart
 
 class LoginFormSheetWidget extends StatefulWidget {
   final VoidCallback onClose;
-  final VoidCallback onLogin;
+  final void Function(bool isRememberMe) onLogin;
   final TextEditingController usernameController;
   final TextEditingController passwordController;
 
@@ -22,6 +22,7 @@ class LoginFormSheetWidget extends StatefulWidget {
 class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
   // STATE BARU: Untuk mengatur visibility password
   bool _isPasswordVisible = false;
+  bool _rememberMe = true;
 
   @override
   Widget build(BuildContext context) {
@@ -98,15 +99,40 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
               ),
 
               // LUPA PASSWORD
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    "Lupa Kata Sandi?",
-                    style: TextStyle(color: AppColors.primary),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Checkbox(
+                          value: _rememberMe,
+                          activeColor: AppColors.primary,
+                          onChanged: (value) {
+                            setState(() {
+                              _rememberMe = value ?? true;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        "Ingat Saya",
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    ],
                   ),
-                ),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      "Lupa Kata Sandi?",
+                      style: TextStyle(color: AppColors.primary),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
 
@@ -115,7 +141,7 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: widget.onLogin,
+                  onPressed: () => widget.onLogin(_rememberMe),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,

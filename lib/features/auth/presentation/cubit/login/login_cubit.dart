@@ -2,6 +2,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../../core/di/injection.dart';
+import '../../../../../core/storage/secure_storage_manager.dart';
 import '../../../domain/usecases/login_usecase.dart';
 import '../app_auth/app_auth_cubit.dart'; // [TAMBAHAN] Import AppAuthCubit
 import 'login_state.dart';
@@ -9,11 +11,15 @@ import 'login_state.dart';
 @injectable
 class LoginCubit extends Cubit<LoginState> {
   final LoginUseCase _loginUseCase;
-  final AppAuthCubit _appAuthCubit; // [TAMBAHAN] Injeksi Sang Jenderal
+  final AppAuthCubit _appAuthCubit;
 
   LoginCubit(this._loginUseCase, this._appAuthCubit) : super(LoginInitial());
 
-  Future<void> loginSubmited(String username, String password) async {
+  Future<void> loginSubmited(
+    String username,
+    String password,
+    bool rememberMe,
+  ) async {
     emit(LoginLoading());
 
     // 1. Eksekusi API Login
@@ -25,11 +31,13 @@ class LoginCubit extends Cubit<LoginState> {
         emit(LoginFailure(failure.message));
       },
       (_) async {
-        // [MASTER SYNC]: Jangan biarkan UI pindah halaman dulu!
-        // Paksa AppAuthCubit untuk menarik Profil terbaru saat ini juga!
+        if (rememberMe) {
+          await locator<ISecureStorageManager>().saveCredentials(
+            username,
+            password,
+          );
+        }
         await _appAuthCubit.checkStatus(isFromSplash: false);
-
-        // Setelah brankas terisi dengan Profil baru, baru kita izinkan sukses!
         emit(LoginSuccess());
       },
     );
