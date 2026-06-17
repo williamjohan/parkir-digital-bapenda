@@ -48,7 +48,7 @@ class UpdatePage extends StatelessWidget {
               }
 
               if (state is CheckUpdateUpToDate) {
-                return _buildUpToDate(context);
+                return _buildUpToDate(context, state);
               }
 
               if (state is CheckUpdateAvailable) {
@@ -68,35 +68,59 @@ class UpdatePage extends StatelessWidget {
   }
 
   // TAMPILAN JIKA APLIKASI SUDAH TERBARU
-  Widget _buildUpToDate(BuildContext context) {
-    return Center(
+  Widget _buildUpToDate(BuildContext context, CheckUpdateUpToDate state) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Icon(
             Icons.verified_user_rounded,
-            size: 100,
+            size: 80,
             color: Colors.green.shade400,
           ),
-          const SizedBox(height: 24),
-          const Text("Sistem Mutakhir!", style: AppTypography.heading3),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           const Text(
-            "Aplikasi Bapenda Anda sudah dalam versi terbaru.",
+            "Sistem Mutakhir!",
+            style: AppTypography.heading3,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            // 🚀 Mengambil versionName dari state
+            "Aplikasi Bapenda Anda sudah menggunakan versi terbaru (${state.versionName}).",
             style: AppTypography.bodyRegular,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
-          TextButton.icon(
-            onPressed: () => context.read<CheckUpdateCubit>().checkNow(),
-            icon: const Icon(Icons.refresh, color: AppColors.primary),
-            label: const Text(
-              "Cek Ulang",
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
+
+          // 🚀 KARTU CHANGELOG VERSI SAAT INI
+          const Text("Catatan Rilis Saat Ini:", style: AppTypography.heading5),
+          const SizedBox(height: 8),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Text(
+                  // 🚀 Mengambil changelog dari state
+                  state.changelog,
+                  style: AppTypography.bodyRegular.copyWith(height: 1.6),
+                ),
               ),
             ),
+          ),
+          const SizedBox(height: 24),
+
+          PbPrimaryButton(
+            text: "Cek Ulang Pembaruan",
+            onPressed: () => context.read<CheckUpdateCubit>().checkNow(),
           ),
         ],
       ),

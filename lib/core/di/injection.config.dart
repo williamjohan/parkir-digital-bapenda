@@ -274,6 +274,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i280.IUpdateRepository>(
     () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
   );
+  gh.factory<_i506.CheckUpdateUseCase>(
+    () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
+  );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
       gh<_i107.IAuthRemoteDataSource>(),
@@ -286,6 +289,9 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.factory<_i1020.CheckUpdateCubit>(
+    () => _i1020.CheckUpdateCubit(gh<_i506.CheckUpdateUseCase>()),
+  );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
     () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),
   );
@@ -297,9 +303,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i48.LogoutUseCase>(
     () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
-  );
-  gh.lazySingleton<_i506.CheckUpdateUseCase>(
-    () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
   );
   gh.lazySingleton<_i215.IQrisRepository>(
     () => _i718.QrisRepositoryImpl(
@@ -364,9 +367,6 @@ _i174.GetIt init(
       gh<_i965.GetProfileUseCase>(),
       gh<_i127.CheckDeviceUuidUseCase>(),
     ),
-  );
-  gh.factory<_i1020.CheckUpdateCubit>(
-    () => _i1020.CheckUpdateCubit(gh<_i506.CheckUpdateUseCase>()),
   );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(
