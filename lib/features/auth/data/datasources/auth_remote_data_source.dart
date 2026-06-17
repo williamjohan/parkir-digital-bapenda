@@ -47,6 +47,10 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
         final mappedJson = {
           'accessToken': beData['accessToken']?.toString() ?? '',
           'refreshToken': beData['refreshToken']?.toString() ?? '',
+          'nop': beData['nop']?.toString() ?? '',
+          'uuidStatic': beData['uuidStatic']?.toString() ?? '',
+          'isJukir': beData['isJukir'] ?? false,
+          'nopList': beData['nopList'] ?? [],
           'user': {
             'idUser': beData['idJukir'] ?? 0,
             'namaUser': beData['namaUser'] ?? '',
@@ -91,6 +95,8 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
   @override
   Future<bool> checkDeviceUuid() async {
     final deviceId = await DeviceIdUtils.getSecureDeviceId(_secureStorage);
+
+    AppLogger.debug("device id : $deviceId");
 
     final response = await _dio.post(
       ApiEndpoints.cekUuid,

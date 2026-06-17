@@ -1,10 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/utils/permission_utils.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
-import '../../../transaction/domain/usecases/sync_qris_usecase.dart';
-import '../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
-import '../../domain/usecases/get_recent_transaction_usecase.dart';
+import '../../../../../core/storage/database_helper_2.dart';
+import '../../../../../core/utils/permission_utils.dart';
+import '../../../../../core/storage/secure_storage_manager.dart';
+import '../../../../transaction/domain/usecases/sync_qris_usecase.dart';
+import '../../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
+import '../../../domain/usecases/get_recent_transaction_usecase.dart';
 import 'home_state.dart';
 
 @injectable
@@ -14,6 +15,7 @@ class HomeCubit extends Cubit<HomeState> {
   // final GetWeeklyChartUseCase _getWeeklyChartUseCase;
   final ISecureStorageManager _secureStorage;
   final SyncQrisUseCase _syncQrisUseCase;
+  final DatabaseHelper2 _databaseHelper;
 
   HomeCubit(
     this._getHybridDashboardSummaryUseCase,
@@ -21,6 +23,7 @@ class HomeCubit extends Cubit<HomeState> {
     // this._getWeeklyChartUseCase,
     this._secureStorage,
     this._syncQrisUseCase, // 🚀 [BARU] Daftarkan di konstruktor
+    this._databaseHelper,
   ) : super(const HomeState());
 
   Future<void> requestCameraAccess(String vehicleType) async {
@@ -53,6 +56,8 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> loadDashboardData() async {
     //  1. SET LOADING
     emit(state.copyWith(status: HomeStatus.loading));
+
+    await _loadProfileInfo();
 
     // ==========================================
     // 🚀 TUGAS 0: BACKGROUND PRE-FETCHING QRIS
@@ -115,6 +120,42 @@ class HomeCubit extends Cubit<HomeState> {
 
     if (!isClosed) {
       emit(state.copyWith(status: HomeStatus.success));
+    }
+  }
+
+  Future<void> _loadProfileInfo() async {
+    final isJukir = await _secureStorage.getIsJukir();
+    final profile = await _secureStorage.getJukirProfile();
+
+    print('IS JUKIR = $isJukir');
+    print('PROFILE = $profile');
+
+    if (isJukir) {
+      emit(
+        state.copyWith(
+          isJukir: true,
+          namaJukir: profile?['namaUser'] ?? '',
+          nop: profile?['nop'] ?? '',
+          namaLokasi: profile?['namaObjekPajak'] ?? '',
+        ),
+      );
+
+      return;
+    } else {
+      final nopList = await _databaseHelper.getNopList();
+
+      if (nopList.isNotEmpty) {
+        final firstNop = nopList.first;
+
+        emit(
+          state.copyWith(
+            isJukir: false,
+            namaJukir: profile?['namaUser'] ?? '',
+            nop: firstNop['nop']?.toString() ?? '',
+            namaLokasi: firstNop['alamat_op']?.toString() ?? '',
+          ),
+        );
+      }
     }
   }
 }

@@ -46,7 +46,9 @@ import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase
 import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
     as _i77;
 import '../../features/home/domain/usecases/sync_tarif_usecase.dart' as _i770;
-import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
+import '../../features/home/presentation/cubit/home/home_cubit.dart' as _i273;
+import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart'
+    as _i655;
 import '../../features/init/data/repositories/device_check_repository_impl.dart'
     as _i834;
 import '../../features/init/domain/repositories/i_device_check_repository.dart'
@@ -151,6 +153,7 @@ import '../services/location/app_location_services_impl.dart' as _i35;
 import '../services/location/i_app_location_service.dart' as _i988;
 import '../services/printer/bluetooth_printer_service_impl.dart' as _i291;
 import '../services/printer/i_printer_service.dart' as _i1003;
+import '../storage/database_helper_2.dart' as _i654;
 import '../storage/secure_storage_manager.dart' as _i1042;
 import 'register_module.dart' as _i291;
 
@@ -163,8 +166,12 @@ _i174.GetIt init(
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
   gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
+  gh.lazySingleton<_i654.DatabaseHelper2>(() => _i654.DatabaseHelper2());
   gh.lazySingleton<_i57.QrisSignalRDatasource>(
     () => _i57.QrisSignalRDatasource(),
+  );
+  gh.factory<_i655.SearchOpCubit>(
+    () => _i655.SearchOpCubit(gh<_i654.DatabaseHelper2>()),
   );
   gh.lazySingleton<_i515.IDeviceCheckRepository>(
     () => _i834.DeviceCheckRepositoryImpl(),
@@ -278,12 +285,21 @@ _i174.GetIt init(
     () => _i153.AuthRepositoryImpl(
       gh<_i107.IAuthRemoteDataSource>(),
       gh<_i1042.ISecureStorageManager>(),
+      gh<_i654.DatabaseHelper2>(),
     ),
   );
   gh.lazySingleton<_i461.IParkingTransactionRemoteDataSource>(
     () => _i798.ParkingTransactionRemoteDataSourceImpl(
       gh<_i361.Dio>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(
+      gh<_i59.ITarifRemoteDataSource>(),
+      gh<_i64.ISummaryRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+      gh<_i654.DatabaseHelper2>(),
     ),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
@@ -309,13 +325,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
-  );
-  gh.lazySingleton<_i274.IHomeRepository>(
-    () => _i76.HomeRepositoryImpl(
-      gh<_i59.ITarifRemoteDataSource>(),
-      gh<_i64.ISummaryRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
   );
   gh.lazySingleton<_i1004.IPaymentRepository>(
     () => _i265.PaymentRepositoryImpl(
@@ -374,19 +383,20 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.factory<_i273.HomeCubit>(
+    () => _i273.HomeCubit(
+      gh<_i421.GetHybridDashboardSummaryUseCase>(),
+      gh<_i77.GetRecentTransactionsUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
+      gh<_i383.SyncQrisUseCase>(),
+      gh<_i654.DatabaseHelper2>(),
+    ),
+  );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(gh<_i212.GetLocalQrisUseCase>()),
   );
   gh.factory<_i616.TransactionCubit>(
     () => _i616.TransactionCubit(gh<_i212.GetLocalQrisUseCase>()),
-  );
-  gh.factory<_i9.HomeCubit>(
-    () => _i9.HomeCubit(
-      gh<_i421.GetHybridDashboardSummaryUseCase>(),
-      gh<_i77.GetRecentTransactionsUseCase>(),
-      gh<_i1042.ISecureStorageManager>(),
-      gh<_i383.SyncQrisUseCase>(),
-    ),
   );
   gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
     () => _i512.SaveParkingTransactionUseCase(

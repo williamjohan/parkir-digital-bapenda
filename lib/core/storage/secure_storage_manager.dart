@@ -19,6 +19,7 @@ abstract class ISecureStorageManager {
   Future<void> clearDashboardAnchor();
   Future<void> saveDeviceId(String deviceId);
   Future<String?> getDeviceId();
+  Future<void> clearDeviceId();
   Future<void> savePrinterMacAddress(String macAdress);
   Future<String?> getPrinterMacAddress();
   Future<void> clearPrinterMacAddress();
@@ -47,6 +48,11 @@ abstract class ISecureStorageManager {
   Future<void> clearPasswordOnly();
   Future<void> saveLogoutReason(String reason);
   Future<String?> getAndClearLogoutReason();
+  Future<void> saveIsJukir(bool value);
+  Future<bool> getIsJukir();
+
+  Future<void> saveUuidStatic(String value);
+  Future<String?> getUuidStatic();
 }
 
 @LazySingleton(as: ISecureStorageManager)
@@ -65,6 +71,8 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyUsername = 'SAVED_USERNAME';
   static const String _keyPassword = 'SAVED_PASSWORD';
   static const String _keyLogoutReason = 'LOGOUT_REASON';
+  static const String _keyIsJukir = 'IS_JUKIR';
+  static const String _keyUuidStatic = 'UUID_STATIC';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -153,6 +161,11 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<String?> getDeviceId() async {
     return await _storage.read(key: _keyDeviceId);
+  }
+
+  @override
+  Future<void> clearDeviceId() async {
+    await _storage.delete(key: _keyDeviceId);
   }
 
   @override
@@ -284,5 +297,26 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
       await _storage.delete(key: _keyLogoutReason);
     }
     return reason;
+  }
+
+  @override
+  Future<void> saveIsJukir(bool value) async {
+    await _storage.write(key: _keyIsJukir, value: value.toString());
+  }
+
+  @override
+  Future<bool> getIsJukir() async {
+    final value = await _storage.read(key: _keyIsJukir);
+    return value == 'true';
+  }
+
+  @override
+  Future<void> saveUuidStatic(String value) async {
+    await _storage.write(key: _keyUuidStatic, value: value);
+  }
+
+  @override
+  Future<String?> getUuidStatic() async {
+    return await _storage.read(key: _keyUuidStatic);
   }
 }

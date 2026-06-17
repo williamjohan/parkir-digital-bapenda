@@ -15,9 +15,14 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   SummaryRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<DashboardSummaryModel> getDashboardSummary() async {
+  Future<DashboardSummaryModel> getDashboardSummary({
+    required String nop,
+  }) async {
     try {
-      final response = await _dio.get(ApiEndpoints.dashboardSummary);
+      final response = await _dio.get(
+        ApiEndpoints.dashboardSummary,
+        queryParameters: {'nop': nop},
+      );
 
       if (response.data['isSuccess'] == true) {
         return DashboardSummaryModel.fromJson(response.data['data']);
@@ -42,9 +47,14 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   }
 
   @override
-  Future<List<WeeklyChartItemModel>> getWeeklyChart() async {
+  Future<List<WeeklyChartItemModel>> getWeeklyChart({
+    required String nop,
+  }) async {
     try {
-      final response = await _dio.get(ApiEndpoints.weeklyChart);
+      final response = await _dio.get(
+        ApiEndpoints.weeklyChart,
+        queryParameters: {'nop': nop},
+      );
 
       if (response.data['isSuccess'] == true) {
         final List<dynamic> dataList = response.data['data'];

@@ -12,4 +12,6 @@ class AppRoutes {
   static const String printerSetting = '/printer-settings';
   static const String transaction = '/transaction';
   static const String update = '/update';
+
+  static const String searchObjekPajak = '/op';
 }

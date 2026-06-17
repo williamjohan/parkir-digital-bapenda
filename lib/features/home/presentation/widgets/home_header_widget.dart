@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
   final String nop;
   final String? namaLokasi;
+  final bool? isJukir;
+  final VoidCallback? onPressed;
 
   const HomeHeaderWidget({
     super.key,
     required this.namaJukir,
     required this.nop,
     this.namaLokasi,
+    required this.isJukir,
+    required this.onPressed,
   });
 
   @override
@@ -19,25 +24,44 @@ class HomeHeaderWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Hallo, $namaJukir !",
-              style: AppTypography.heading1.copyWith(color: Colors.white),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              "NOP : $nop",
-              style: AppTypography.bodyRegular.copyWith(color: Colors.white),
-            ),
-            Text(
-              namaLokasi ?? '',
-              style: AppTypography.bodySemiBold.copyWith(color: Colors.white),
-            ),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Hallo, $namaJukir !",
+                style: AppTypography.heading1.copyWith(color: Colors.white),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (isJukir == true) ...[
+                Text(
+                  "NOP : $nop",
+                  style: AppTypography.bodyRegular.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  namaLokasi ?? '',
+                  style: AppTypography.bodySemiBold.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+              if (isJukir == false) ...[
+                SizedBox(height: 8),
+                PbPrimaryButton(
+                  text: "Cari objek pajak...",
+                  variant: PbButtonVariant.outlinedSecondaryLight,
+                  size: PbButtonSize.small,
+                  iconRight: Icons.search,
+                  onPressed: onPressed,
+                ),
+              ],
+            ],
+          ),
         ),
+        SizedBox(width: 16),
 
         // tombol menu
         Builder(

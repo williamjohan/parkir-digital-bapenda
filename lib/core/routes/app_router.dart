@@ -1,6 +1,7 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
 import '../../features/transaction/presentation/page/transaction_page.dart';
 import '../../features/transaction/presentation/cubit/transaction_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
@@ -8,7 +9,7 @@ import 'package:parkir_digital_bapenda/features/transaction_history/presentation
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 import '../../features/auth/presentation/cubit/app_auth/app_auth_state.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
-import '../../features/home/presentation/cubit/home_cubit.dart';
+import '../../features/home/presentation/cubit/home/home_cubit.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/init/presentation/cubit/init_cubit.dart';
 import '../../features/init/presentation/pages/splash_page.dart';
@@ -76,6 +77,14 @@ class AppRouter {
           builder: (context, state) => BlocProvider(
             create: (_) => locator<HomeCubit>(),
             child: const HomePage(),
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.searchObjekPajak,
+          name: AppRoutes.searchObjekPajak,
+          builder: (context, state) => BlocProvider(
+            create: (_) => locator<HomeCubit>(),
+            child: const SearchOpPage(),
           ),
         ),
         GoRoute(

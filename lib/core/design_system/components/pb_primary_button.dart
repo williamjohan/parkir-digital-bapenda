@@ -40,7 +40,6 @@ class PbPrimaryButton extends StatelessWidget {
     late Color textColor;
     late Color borderColor;
 
-    // 🎨 Variant styling
     switch (variant) {
       case PbButtonVariant.primary:
         backgroundColor = AppColors.primary;
@@ -73,7 +72,6 @@ class PbPrimaryButton extends StatelessWidget {
         break;
     }
 
-    // 📏 Size config
     final double height = size == PbButtonSize.small ? 40 : 52;
     final double fontSize = size == PbButtonSize.small ? 12 : 14;
     final double iconSize = size == PbButtonSize.small ? 16 : 20;
@@ -84,6 +82,7 @@ class PbPrimaryButton extends StatelessWidget {
         variant == PbButtonVariant.outlinedSecondaryDark;
 
     final bool isTextEmpty = text.trim().isEmpty;
+    final bool useSpaceBetween = iconRight != null;
 
     return SizedBox(
       width: double.infinity,
@@ -95,7 +94,7 @@ class PbPrimaryButton extends StatelessWidget {
           disabledBackgroundColor: isOutlined
               ? Colors.transparent
               : AppColors.textHint,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(color: borderColor, width: isOutlined ? 1.5 : 0),
@@ -120,9 +119,12 @@ class PbPrimaryButton extends StatelessWidget {
                     : const SizedBox(),
               )
             : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: useSpaceBetween
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.center,
                 children: [
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       if (iconLeft != null) ...[
                         Icon(iconLeft, color: textColor, size: iconSize),
@@ -138,10 +140,9 @@ class PbPrimaryButton extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (iconRight != null) ...[
-                    SizedBox(width: 8),
+
+                  if (iconRight != null)
                     Icon(iconRight, color: textColor, size: iconSize),
-                  ],
                 ],
               ),
       ),

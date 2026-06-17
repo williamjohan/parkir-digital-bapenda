@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/database_helper.dart';
+import '../../../../core/storage/database_helper_2.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/repositories/i_home_repository.dart';
 import '../datasources/i_summary_remote_datasource.dart';
@@ -15,11 +16,13 @@ class HomeRepositoryImpl implements IHomeRepository {
   final ITarifRemoteDataSource _tarifRemoteDS;
   final ISummaryRemoteDataSource _summaryRemoteDS;
   final ISecureStorageManager _secureStorage;
+  final DatabaseHelper2 _databaseHelper;
 
   HomeRepositoryImpl(
     this._tarifRemoteDS,
     this._summaryRemoteDS,
     this._secureStorage,
+    this._databaseHelper,
   );
 
   @override
@@ -49,8 +52,23 @@ class HomeRepositoryImpl implements IHomeRepository {
 
     // --- FASE 1: Ambil JANGKAR (Server atau Cache) ---
     try {
+      String nop = '';
+
+      final isJukir = await _secureStorage.getIsJukir();
+
+      if (isJukir) {
+        final profile = await _secureStorage.getJukirProfile();
+
+        nop = profile?['nop']?.toString() ?? '';
+      } else {
+        final nopList = await _databaseHelper.getNopList();
+
+        if (nopList.isNotEmpty) {
+          nop = nopList.first['nop']?.toString() ?? '';
+        }
+      }
       // Tembak Server
-      anchor = await _summaryRemoteDS.getDashboardSummary();
+      anchor = await _summaryRemoteDS.getDashboardSummary(nop: nop);
 
       // Backup ke Brankas jika sewaktu-waktu offline
       // Gunakan fungsi SAVE dan kirimkan string JSON-nya

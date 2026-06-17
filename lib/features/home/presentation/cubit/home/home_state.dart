@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import '../../../../core/utils/permission_utils.dart';
-import '../../../transaction_history/data/models/history_item_model.dart';
-import '../../data/models/weekly_chart_item_model.dart';
+import '../../../../../core/utils/permission_utils.dart';
+import '../../../../transaction_history/data/models/history_item_model.dart';
+import '../../../data/models/weekly_chart_item_model.dart';
 
 enum HomeStatus { initial, loading, success, failure }
 
@@ -22,6 +22,11 @@ class HomeState extends Equatable {
   final bool isFree;
   final HomeStatus status;
 
+  final String nop;
+  final String namaLokasi;
+  final String namaJukir;
+  final bool isJukir;
+
   const HomeState({
     this.status = HomeStatus.initial,
     this.permissionActionStatus,
@@ -38,6 +43,11 @@ class HomeState extends Equatable {
     this.recentTransactions = const [],
     this.weeklyChartData = const [],
     this.isFree = false,
+
+    this.nop = "",
+    this.namaLokasi = "",
+    this.namaJukir = "",
+    this.isJukir = false,
   });
 
   HomeState copyWith({
@@ -56,6 +66,10 @@ class HomeState extends Equatable {
     List<HistoryItemModel>? recentTransactions,
     List<WeeklyChartItemModel>? weeklyChartData,
     bool? isFree,
+    String? nop,
+    String? namaLokasi,
+    String? namaJukir,
+    bool? isJukir,
   }) {
     return HomeState(
       status: status ?? this.status,
@@ -75,6 +89,10 @@ class HomeState extends Equatable {
       recentTransactions: recentTransactions ?? this.recentTransactions,
       weeklyChartData: weeklyChartData ?? this.weeklyChartData,
       isFree: isFree ?? this.isFree,
+      nop: nop ?? this.nop,
+      namaLokasi: namaLokasi ?? this.namaLokasi,
+      namaJukir: namaJukir ?? this.namaJukir,
+      isJukir: isJukir ?? this.isJukir,
     );
   }
 
@@ -98,5 +116,10 @@ class HomeState extends Equatable {
     recentTransactions,
     weeklyChartData,
     isFree,
+
+    nop,
+    namaLokasi,
+    namaJukir,
+    isJukir,
   ];
 }

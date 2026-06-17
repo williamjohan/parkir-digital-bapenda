@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_objek_pajak_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/item_kendaraan_widget.dart';
@@ -16,8 +17,8 @@ import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../update/presentation/cubit/check_update_cubit.dart';
 import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
-import '../cubit/home_cubit.dart';
-import '../cubit/home_state.dart';
+import '../cubit/home/home_cubit.dart';
+import '../cubit/home/home_state.dart';
 import '../widgets/home_header_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -31,15 +32,10 @@ class _HomePageState extends State<HomePage> {
   // Track apakah ini pertama kali load
   bool _isFirstLoad = true;
 
-  String? namaJukir;
-  String? nop;
-  String? namaLokasi;
-
   @override
   void initState() {
     super.initState();
     _loadData();
-    _checkSecureStorageProfile();
   }
 
   // Method untuk load data
@@ -48,18 +44,6 @@ class _HomePageState extends State<HomePage> {
     if (_isFirstLoad) {
       _isFirstLoad = false;
     }
-  }
-
-  Future<void> _checkSecureStorageProfile() async {
-    final secureStorage = locator<ISecureStorageManager>();
-    final profile = await secureStorage.getJukirProfile();
-    final rawName = profile?['namaUser'] as String? ?? '';
-
-    setState(() {
-      namaJukir = rawName.shortName;
-      nop = profile?['nop'];
-      namaLokasi = profile?['namaObjekPajak'];
-    });
   }
 
   @override
@@ -135,9 +119,11 @@ class _HomePageState extends State<HomePage> {
                                 top: 32,
                               ),
                               child: HomeHeaderWidget(
-                                namaJukir: namaJukir ?? '-',
-                                nop: nop ?? '-',
-                                namaLokasi: namaLokasi,
+                                isJukir: state.isJukir,
+                                namaJukir: state.namaJukir,
+                                nop: state.nop,
+                                namaLokasi: state.namaLokasi,
+                                onPressed: () {},
                               ),
                             ),
                             Expanded(
@@ -166,6 +152,11 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
+                                              CardObjekPajakWidget(
+                                                nop: state.nop,
+                                                namaLokasi: state.namaLokasi,
+                                              ),
+                                              SizedBox(height: 16),
                                               // === 1. KARTU TOTAL PENDAPATAN ===
                                               if (!state.isFree)
                                                 CardTotalPendapatan(

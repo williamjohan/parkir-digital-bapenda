@@ -7,7 +7,7 @@ import 'package:parkir_digital_bapenda/features/home/presentation/widgets/dashbo
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
-import '../cubit/home_cubit.dart';
+import '../cubit/home/home_cubit.dart';
 
 class DashboardWidget extends StatelessWidget {
   // <--- Public Class
