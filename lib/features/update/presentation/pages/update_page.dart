@@ -25,7 +25,6 @@ class UpdatePage extends StatelessWidget {
           backgroundColor: Colors.white,
           elevation: 0,
           foregroundColor: Colors.black,
-          // 🚀 KITA BUANG LEADING CUSTOM. Flutter otomatis memunculkan panah Back!
         ),
         body: SafeArea(
           bottom: true,
