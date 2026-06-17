@@ -16,11 +16,36 @@ class UpdateRemoteDataSourceImpl implements IUpdateRemoteDataSource {
   @override
   Future<Map<String, dynamic>> fetchUpdateJson() async {
     final jsonUrl = dotenv.env['UPDATE_JSON_URL'] ?? '';
-    final response = await _dio.get(jsonUrl);
+
+    final response = await _dio.get(
+      jsonUrl,
+      options: Options(
+        headers: {
+          "Cache-Control": "no-cache",
+          "Pragma": "no-cache",
+          "Expires": "0",
+        },
+      ),
+    );
+
+    // 🚀 TAMBAHAN: Cek jika response kosong
+    if (response.data == null || response.data.toString().isEmpty) {
+      throw Exception("Server mengembalikan data kosong.");
+    }
 
     if (response.data is String) {
-      return jsonDecode(response.data);
+      final String cleanJson = (response.data as String).replaceAll(
+        RegExp(r'[\r\n\t]+'),
+        '',
+      );
+      return jsonDecode(cleanJson);
     }
-    return response.data;
+
+    // Pastikan data adalah Map sebelum dikembalikan
+    if (response.data is Map<String, dynamic>) {
+      return response.data;
+    }
+
+    throw Exception("Format data tidak dikenal.");
   }
 }
