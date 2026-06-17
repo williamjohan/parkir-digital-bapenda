@@ -59,6 +59,7 @@ class AppRouter {
       routes: [
         GoRoute(
           path: AppRoutes.splash,
+          name: AppRoutes.splash,
           builder: (context, state) => BlocProvider(
             create: (_) => locator<InitCubit>(),
             child: const SplashPage(),
@@ -66,10 +67,12 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.login,
+          name: AppRoutes.login,
           builder: (context, state) => const LoginScreen(),
         ),
         GoRoute(
           path: AppRoutes.home,
+          name: AppRoutes.home,
           builder: (context, state) => BlocProvider(
             create: (_) => locator<HomeCubit>(),
             child: const HomePage(),
@@ -77,17 +80,16 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.capture,
+          name: AppRoutes.capture,
           builder: (context, state) => BlocProvider(
             create: (_) => locator<VehicleCaptureCubit>(),
             child: const CapturePage(),
           ),
         ),
 
-        // 🚀 BlocProvider di sini = cubit di-create saat route push,
-        // di-dispose otomatis saat route di-pop. PaymentPage tidak perlu
-        // locator atau BlocProvider di dalam dirinya sendiri.
         GoRoute(
           path: AppRoutes.payment,
+          name: AppRoutes.payment,
           builder: (context, state) {
             final args = state.extra as PaymentPageArgs;
             return BlocProvider(
@@ -99,6 +101,7 @@ class AppRouter {
 
         GoRoute(
           path: AppRoutes.profile,
+          name: AppRoutes.profile,
           builder: (context, state) => BlocProvider(
             create: (_) => locator<ProfileCubit>(),
             child: const ProfilePage(),
@@ -106,6 +109,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.history,
+          name: AppRoutes.history,
           builder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
             final initialDate = extra?['initialDate'] as DateTime?;
@@ -121,6 +125,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.transaction,
+          name: AppRoutes.transaction,
           builder: (context, state) {
             final isFree = state.extra as bool? ?? false;
             return BlocProvider(
@@ -131,6 +136,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.printerSetting,
+          name: AppRoutes.printerSetting,
           builder: (context, state) => BlocProvider(
             create: (_) => locator<PrinterCubit>(),
             child: const PrinterSettingsPage(),
@@ -138,6 +144,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.update,
+          name: AppRoutes.update,
           builder: (context, state) => const UpdatePage(),
         ),
       ],

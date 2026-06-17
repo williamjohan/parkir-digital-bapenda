@@ -15,7 +15,7 @@ class UpdateRemoteDataSourceImpl implements IUpdateRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> fetchUpdateJson() async {
-    final jsonUrl = dotenv.env['UPDATE_JSON_TESTING_URL'] ?? '';
+    final jsonUrl = dotenv.env['UPDATE_JSON_URL'] ?? '';
     final response = await _dio.get(jsonUrl);
 
     if (response.data is String) {

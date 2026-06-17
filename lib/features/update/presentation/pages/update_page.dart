@@ -14,21 +14,18 @@ class UpdatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          locator<CheckUpdateCubit>()
-            ..checkNow(), // 🚀 Otomatis tembak API saat halaman dibuka
+      create: (_) => locator<CheckUpdateCubit>()..checkNow(),
       child: Scaffold(
-        // backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Center(
-            child: const Text(
-              "Pembaruan Aplikasi",
-              style: AppTypography.heading5,
-            ),
+          title: const Text(
+            "Pembaruan Aplikasi",
+            style: AppTypography.heading5,
           ),
+          centerTitle: true,
           backgroundColor: Colors.white,
           elevation: 0,
           foregroundColor: Colors.black,
+          // 🚀 KITA BUANG LEADING CUSTOM. Flutter otomatis memunculkan panah Back!
         ),
         body: SafeArea(
           bottom: true,
@@ -52,7 +49,7 @@ class UpdatePage extends StatelessWidget {
               }
 
               if (state is CheckUpdateUpToDate) {
-                return _buildUpToDate();
+                return _buildUpToDate(context);
               }
 
               if (state is CheckUpdateAvailable) {
@@ -71,8 +68,8 @@ class UpdatePage extends StatelessWidget {
     );
   }
 
-  // 🚀 TAMPILAN JIKA APLIKASI SUDAH TERBARU
-  Widget _buildUpToDate() {
+  // TAMPILAN JIKA APLIKASI SUDAH TERBARU
+  Widget _buildUpToDate(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -88,13 +85,25 @@ class UpdatePage extends StatelessWidget {
           const Text(
             "Aplikasi Bapenda Anda sudah dalam versi terbaru.",
             style: AppTypography.bodyRegular,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          TextButton.icon(
+            onPressed: () => context.read<CheckUpdateCubit>().checkNow(),
+            icon: const Icon(Icons.refresh, color: AppColors.primary),
+            label: const Text(
+              "Cek Ulang",
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  // 🚀 TAMPILAN JIKA ADA UPDATE (CHANGELOG)
   Widget _buildUpdateAvailable(
     BuildContext context,
     CheckUpdateAvailable state,
@@ -104,7 +113,7 @@ class UpdatePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(
+          const Icon(
             Icons.system_update_tv_rounded,
             size: 80,
             color: AppColors.primary,
@@ -139,7 +148,6 @@ class UpdatePage extends StatelessWidget {
           PbPrimaryButton(
             text: "Unduh & Install",
             onPressed: () {
-              // 🚀 TRIGGER MODAL DOWNLOAD
               UpdateProgressDialog.show(
                 context,
                 state.update.downloadUrl,

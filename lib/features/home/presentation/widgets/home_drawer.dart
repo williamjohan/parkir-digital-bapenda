@@ -126,7 +126,9 @@ class HomeDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context); // Tutup drawer
-                    context.goNamed(AppRoutes.update); // Arahkan ke rute update
+                    context.pushNamed(
+                      AppRoutes.update,
+                    ); // Arahkan ke rute update
                   },
                 ),
               ],
