@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+
 import '../../../../../core/storage/database_helper_2.dart';
-import '../../../../../core/utils/permission_utils.dart';
 import '../../../../../core/storage/secure_storage_manager.dart';
+import '../../../../../core/utils/permission_utils.dart';
 import '../../../../transaction/domain/usecases/sync_qris_usecase.dart';
 import '../../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
 import '../../../domain/usecases/get_recent_transaction_usecase.dart';
@@ -12,7 +13,6 @@ import 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
-  // final GetWeeklyChartUseCase _getWeeklyChartUseCase;
   final ISecureStorageManager _secureStorage;
   final SyncQrisUseCase _syncQrisUseCase;
   final DatabaseHelper2 _databaseHelper;
@@ -20,14 +20,32 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit(
     this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
-    // this._getWeeklyChartUseCase,
     this._secureStorage,
-    this._syncQrisUseCase, // 🚀 [BARU] Daftarkan di konstruktor
+    this._syncQrisUseCase,
     this._databaseHelper,
   ) : super(const HomeState());
 
+  // ==========================================================
+  // INITIALIZE
+  // ==========================================================
+
+  Future<void> initialize() async {
+    emit(state.copyWith(status: HomeStatus.loading));
+
+    await _loadProfileInfo();
+
+    await _syncQrisUseCase.execute();
+
+    await loadDashboardData();
+  }
+
+  // ==========================================================
+  // CAMERA
+  // ==========================================================
+
   Future<void> requestCameraAccess(String vehicleType) async {
     final result = await PermissionUtils.requestCameraPermission();
+
     if (isClosed) return;
 
     result.fold(
@@ -52,44 +70,39 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  /// Mengambil data dashboard secara lengkap dan terstruktur
+  // ==========================================================
+  // DASHBOARD
+  // ==========================================================
+
   Future<void> loadDashboardData() async {
-    //  1. SET LOADING
     emit(state.copyWith(status: HomeStatus.loading));
 
-    await _loadProfileInfo();
-
-    // ==========================================
-    // 🚀 TUGAS 0: BACKGROUND PRE-FETCHING QRIS
-    // ==========================================
-    // Kita jalankan proses sinkronisasi API -> Base64 -> File Local -> Brankas.
-    // Sengaja kita await agar file fisik benar-benar selesai ditulis ke dalam HP
-    // sebelum Jukir sempat menekan tombol tambah transaksi (+).
-    // Kita tidak perlu menggunakan result.fold() karena error handling
-    // (Zero-State Offline) akan ditangani penuh oleh TransactionCubit nantinya.
-    await _syncQrisUseCase.execute();
-
-    // BONGKAR BRANKAS: Ambil status isFree dari profil Jukir
     final profile = await _secureStorage.getJukirProfile();
+
     bool isFreeStatus = false;
 
     if (profile != null) {
       final dynamic rawPungutTarif = profile['pungutTarif'];
-      isFreeStatus = (rawPungutTarif == 1 || rawPungutTarif == '1');
+
+      isFreeStatus = rawPungutTarif == 1 || rawPungutTarif == '1';
     }
 
-    // 2. TUGAS UTAMA: Ambil Dashboard Summary (Hybrid Logic di dalam UseCase)
-    final summaryResult = await _getHybridDashboardSummaryUseCase.execute();
+    final summaryResult = await _getHybridDashboardSummaryUseCase.execute(
+      nop: state.nop,
+    );
+
     summaryResult.fold(
       (failure) {
-        //  Walaupun data summary gagal, kita TETEAP harus simpan isFree ke State!
-        if (!isClosed) emit(state.copyWith(isFree: isFreeStatus));
+        if (!isClosed) {
+          emit(
+            state.copyWith(isFree: isFreeStatus, status: HomeStatus.failure),
+          );
+        }
       },
       (summary) {
         if (!isClosed) {
           emit(
             state.copyWith(
-              // Casting ke toInt() karena model menyimpannya sebagai double
               motorCount: summary.jumlahMotorHariIni,
               mobilCount: summary.jumlahMobilHariIni,
               totalPendapatan: summary.totalNominalHariIni,
@@ -102,26 +115,22 @@ class HomeCubit extends Cubit<HomeState> {
       },
     );
 
-    // 3. TUGAS KEDUA: Ambil 5 Transaksi Terakhir (Smart Proxy Logic di dalam UseCase)
     final recentResult = await _getRecentTransactionsUseCase.execute(limit: 5);
-    recentResult.fold((failure) => null, (transactions) {
+
+    recentResult.fold((_) {}, (transactions) {
       if (!isClosed) {
         emit(state.copyWith(recentTransactions: transactions));
       }
     });
 
-    // 4. TUGAS KETIGA: Ambil Data Grafik Mingguan (Option A / API)
-    // final chartResult = await _getWeeklyChartUseCase.execute();
-    // chartResult.fold((failure) => null, (chartData) {
-    //   if (!isClosed) {
-    //     emit(state.copyWith(weeklyChartData: chartData));
-    //   }
-    // });
-
     if (!isClosed) {
       emit(state.copyWith(status: HomeStatus.success));
     }
   }
+
+  // ==========================================================
+  // PROFILE
+  // ==========================================================
 
   Future<void> _loadProfileInfo() async {
     final isJukir = await _secureStorage.getIsJukir();
@@ -137,26 +146,49 @@ class HomeCubit extends Cubit<HomeState> {
           namaJukir: profile?['namaUser'] ?? '',
           nop: profile?['nop'] ?? '',
           namaOp: profile?['namaObjekPajak'] ?? '',
+          namaLokasi: profile?['alamat'] ?? '',
         ),
       );
 
       return;
-    } else {
-      final nopList = await _databaseHelper.getNopList();
-
-      if (nopList.isNotEmpty) {
-        final firstNop = nopList.first;
-
-        emit(
-          state.copyWith(
-            isJukir: false,
-            namaJukir: profile?['namaUser'] ?? '',
-            nop: firstNop['nop']?.toString() ?? '',
-            namaLokasi: firstNop['alamat_op']?.toString() ?? '',
-            namaOp: firstNop['nama_op']?.toString() ?? '',
-          ),
-        );
-      }
     }
+
+    final nopList = await _databaseHelper.getNopList();
+
+    if (nopList.isEmpty) {
+      emit(
+        state.copyWith(isJukir: false, namaJukir: profile?['namaUser'] ?? ''),
+      );
+
+      return;
+    }
+
+    final firstNop = nopList.first;
+
+    emit(
+      state.copyWith(
+        isJukir: false,
+        namaJukir: profile?['namaUser'] ?? '',
+        nop: firstNop['nop']?.toString() ?? '',
+        namaOp: firstNop['nama_op']?.toString() ?? '',
+        namaLokasi: firstNop['alamat_op']?.toString() ?? '',
+      ),
+    );
+  }
+
+  // ==========================================================
+  // CHANGE OBJEK PAJAK
+  // ==========================================================
+
+  Future<void> changeObjekPajak(Map<String, dynamic> item) async {
+    emit(
+      state.copyWith(
+        nop: item['nop']?.toString() ?? '',
+        namaOp: item['nama_op']?.toString() ?? '',
+        namaLokasi: item['alamat_op']?.toString() ?? '',
+      ),
+    );
+
+    await loadDashboardData();
   }
 }

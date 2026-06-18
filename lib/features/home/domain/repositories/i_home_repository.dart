@@ -7,7 +7,9 @@ abstract class IHomeRepository {
   Future<Either<Failure, void>> syncTarif();
 
   /// Mengambil data dashboard dengan logika HYBRID (Jangkar Server + Delta Pending SQLite)
-  Future<Either<Failure, DashboardSummaryModel>> getHybridDashboardSummary();
+  Future<Either<Failure, DashboardSummaryModel>> getHybridDashboardSummary({
+    required String nop,
+  });
 
   /// Mengambil data grafik mingguan
   // Future<Either<Failure, List<WeeklyChartItemModel>>> getWeeklyChart();

@@ -46,27 +46,28 @@ class HomeRepositoryImpl implements IHomeRepository {
   }
 
   @override
-  Future<Either<Failure, DashboardSummaryModel>>
-  getHybridDashboardSummary() async {
+  Future<Either<Failure, DashboardSummaryModel>> getHybridDashboardSummary({
+    required String nop,
+  }) async {
     DashboardSummaryModel anchor;
 
     // --- FASE 1: Ambil JANGKAR (Server atau Cache) ---
     try {
-      String nop = '';
+      // String nop = '';
 
-      final isJukir = await _secureStorage.getIsJukir();
+      // final isJukir = await _secureStorage.getIsJukir();
 
-      if (isJukir) {
-        final profile = await _secureStorage.getJukirProfile();
+      // if (isJukir) {
+      //   final profile = await _secureStorage.getJukirProfile();
 
-        nop = profile?['nop']?.toString() ?? '';
-      } else {
-        final nopList = await _databaseHelper.getNopList();
+      //   nop = profile?['nop']?.toString() ?? '';
+      // } else {
+      //   final nopList = await _databaseHelper.getNopList();
 
-        if (nopList.isNotEmpty) {
-          nop = nopList.first['nop']?.toString() ?? '';
-        }
-      }
+      //   if (nopList.isNotEmpty) {
+      //     nop = nopList.first['nop']?.toString() ?? '';
+      //   }
+      // }
       // Tembak Server
       anchor = await _summaryRemoteDS.getDashboardSummary(nop: nop);
 

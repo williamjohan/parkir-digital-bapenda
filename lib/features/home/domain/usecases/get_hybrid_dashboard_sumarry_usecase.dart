@@ -10,7 +10,9 @@ class GetHybridDashboardSummaryUseCase {
 
   GetHybridDashboardSummaryUseCase(this.repository);
 
-  Future<Either<Failure, DashboardSummaryModel>> execute() {
-    return repository.getHybridDashboardSummary();
+  Future<Either<Failure, DashboardSummaryModel>> execute({
+    required String nop,
+  }) {
+    return repository.getHybridDashboardSummary(nop: nop);
   }
 }

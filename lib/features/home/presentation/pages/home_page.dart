@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_objek_pajak_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
@@ -13,7 +12,6 @@ import '../../../../core/constants/feature_flag.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../update/presentation/cubit/check_update_cubit.dart';
 import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
@@ -40,7 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   // Method untuk load data
   Future<void> _loadData() async {
-    await context.read<HomeCubit>().loadDashboardData();
+    await context.read<HomeCubit>().initialize();
     if (_isFirstLoad) {
       _isFirstLoad = false;
     }
@@ -157,11 +155,24 @@ class _HomePageState extends State<HomePage> {
                                                   nop: state.nop,
                                                   namaObjekPajak: state.namaOp,
                                                   alamat: state.namaLokasi,
-                                                  onPressedGantiObjek: () {
-                                                    context.pushNamed(
-                                                      AppRoutes
-                                                          .searchObjekPajak,
-                                                    );
+                                                  onPressedGantiObjek: () async {
+                                                    final result = await context
+                                                        .pushNamed(
+                                                          AppRoutes
+                                                              .searchObjekPajak,
+                                                        );
+
+                                                    if (result != null) {
+                                                      await context
+                                                          .read<HomeCubit>()
+                                                          .changeObjekPajak(
+                                                            result
+                                                                as Map<
+                                                                  String,
+                                                                  dynamic
+                                                                >,
+                                                          );
+                                                    }
                                                   },
                                                   onPressedLihatDetail: () {},
                                                 ),
