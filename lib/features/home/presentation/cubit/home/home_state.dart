@@ -1,130 +1,33 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../../../core/enums/app_enums.dart';
 import '../../../../../core/utils/permission_utils.dart';
 import '../../../../transaction_history/data/models/history_item_model.dart';
 import '../../../data/models/weekly_chart_item_model.dart';
 
+part 'home_state.freezed.dart';
+
 enum HomeStatus { initial, loading, success, failure }
 
-class HomeState extends Equatable {
-  final CameraPermissionStatus? permissionActionStatus;
-  final String? selectedVehicleForCapture;
-  final int? actionTimestamp;
-  final int motorCount;
-  final int mobilCount;
-  final double totalPendapatan;
-
-  final double totalPajak;
-  final double totalBersih;
-
-  final int? selectedModePlat;
-  final List<HistoryItemModel> recentTransactions;
-  final List<WeeklyChartItemModel> weeklyChartData;
-  final bool isFree;
-  final HomeStatus status;
-
-  final String nop;
-  final String namaLokasi;
-  final String namaJukir;
-  final String namaOp;
-  final bool isJukir;
-
-  const HomeState({
-    this.status = HomeStatus.initial,
-    this.permissionActionStatus,
-    this.selectedVehicleForCapture,
-    this.actionTimestamp,
-    this.motorCount = 0,
-    this.mobilCount = 0,
-    this.totalPendapatan = 0.0,
-
-    this.totalPajak = 0.0,
-    this.totalBersih = 0.0,
-
-    this.selectedModePlat,
-    this.recentTransactions = const [],
-    this.weeklyChartData = const [],
-    this.isFree = false,
-
-    this.nop = "",
-    this.namaLokasi = "",
-    this.namaJukir = "",
-    this.namaOp = "",
-    this.isJukir = false,
-  });
-
-  HomeState copyWith({
-    HomeStatus? status,
+@freezed
+class HomeState with _$HomeState {
+  const factory HomeState({
+    @Default(HomeStatus.initial) HomeStatus status,
     CameraPermissionStatus? permissionActionStatus,
     String? selectedVehicleForCapture,
     int? actionTimestamp,
-    int? motorCount,
-    int? mobilCount,
-    double? totalPendapatan,
-
-    double? totalPajak,
-    double? totalBersih,
-
+    @Default(0) int motorCount,
+    @Default(0) int mobilCount,
+    @Default(0.0) double totalPendapatan,
+    @Default(0.0) double totalPajak,
+    @Default(0.0) double totalBersih,
     int? selectedModePlat,
-    List<HistoryItemModel>? recentTransactions,
-    List<WeeklyChartItemModel>? weeklyChartData,
-    bool? isFree,
-    String? nop,
-    String? namaLokasi,
-    String? namaJukir,
-    String? namaOp,
-    bool? isJukir,
-  }) {
-    return HomeState(
-      status: status ?? this.status,
-      permissionActionStatus:
-          permissionActionStatus ?? this.permissionActionStatus,
-      selectedVehicleForCapture:
-          selectedVehicleForCapture ?? this.selectedVehicleForCapture,
-      actionTimestamp: actionTimestamp ?? this.actionTimestamp,
-      motorCount: motorCount ?? this.motorCount,
-      mobilCount: mobilCount ?? this.mobilCount,
-      totalPendapatan: totalPendapatan ?? this.totalPendapatan,
-
-      totalPajak: totalPajak ?? this.totalPajak,
-      totalBersih: totalBersih ?? this.totalBersih,
-
-      selectedModePlat: selectedModePlat ?? this.selectedModePlat,
-      recentTransactions: recentTransactions ?? this.recentTransactions,
-      weeklyChartData: weeklyChartData ?? this.weeklyChartData,
-      isFree: isFree ?? this.isFree,
-      nop: nop ?? this.nop,
-      namaLokasi: namaLokasi ?? this.namaLokasi,
-      namaJukir: namaJukir ?? this.namaJukir,
-      namaOp: namaOp ?? this.namaOp,
-      isJukir: isJukir ?? this.isJukir,
-    );
-  }
-
-  // CATATAN
-  // Bagian ini adalah nyawa dari Equatable. Jika field tidak dimasukkan ke sini,
-  // BlocBuilder di UI TIDAK AKAN PERNAH me-rebuild layarnya meski nilainya berubah!
-  @override
-  List<Object?> get props => [
-    status,
-    permissionActionStatus,
-    selectedVehicleForCapture,
-    actionTimestamp,
-    mobilCount,
-    motorCount,
-    totalPendapatan,
-
-    totalPajak,
-    totalBersih,
-
-    selectedModePlat,
-    recentTransactions,
-    weeklyChartData,
-    isFree,
-
-    nop,
-    namaLokasi,
-    namaJukir,
-    namaOp,
-    isJukir,
-  ];
+    @Default([]) List<HistoryItemModel> recentTransactions,
+    @Default([]) List<WeeklyChartItemModel> weeklyChartData,
+    @Default(false) bool isFree,
+    @Default("") String nop,
+    @Default("") String namaLokasi,
+    @Default("") String namaJukir,
+    @Default("") String namaOp,
+    @Default(RoleLoginDigitalParkir.tidakDiketahui) RoleLoginDigitalParkir role,
+  }) = _HomeState;
 }
