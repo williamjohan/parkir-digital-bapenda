@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-
+import '../../../../../core/enums/app_enums.dart';
 import '../../../../../core/storage/database_helper_2.dart';
 import '../../../../../core/storage/secure_storage_manager.dart';
 import '../../../../../core/utils/permission_utils.dart';
@@ -133,49 +133,49 @@ class HomeCubit extends Cubit<HomeState> {
   // ==========================================================
 
   Future<void> _loadProfileInfo() async {
-    final isJukir = await _secureStorage.getIsJukir();
+    //  1. AMBIL ROLE DARI SECURE STORAGE
+    final roleId = await _secureStorage.getRoleId() ?? 0;
+    final userRole = RoleLoginDigitalParkir.fromInt(roleId);
+
+    //  2. SIMPAN ROLE KE STATE AGAR UI BISA BACA
+    emit(state.copyWith(role: userRole));
+
     final profile = await _secureStorage.getJukirProfile();
+    final namaUser = profile?['namaUser']?.toString() ?? 'User';
 
-    print('IS JUKIR = $isJukir');
-    print('PROFILE = $profile');
-
-    if (isJukir) {
+    // 3. LOGIKA JUKIR (Single NOP)
+    if (userRole == RoleLoginDigitalParkir.jukir) {
       emit(
         state.copyWith(
-          isJukir: true,
-          namaJukir: profile?['namaUser'] ?? '',
-          nop: profile?['nop'] ?? '',
-          namaOp: profile?['namaObjekPajak'] ?? '',
-          namaLokasi: profile?['alamat'] ?? '',
+          namaJukir: namaUser,
+          nop: profile?['nop']?.toString() ?? '',
+          namaOp: profile?['namaObjekPajak']?.toString() ?? '',
+          namaLokasi: profile?['alamat']?.toString() ?? '',
         ),
       );
-
       return;
     }
 
+    //  4. LOGIKA BAPENDA / WP (Multiple NOP)
     final nopList = await _databaseHelper.getNopList();
 
     if (nopList.isEmpty) {
-      emit(
-        state.copyWith(isJukir: false, namaJukir: profile?['namaUser'] ?? ''),
-      );
-
+      emit(state.copyWith(namaJukir: namaUser)); // NOP Kosong
       return;
     }
 
+    // Ambil NOP pertama sebagai default
     final firstNop = nopList.first;
 
     emit(
       state.copyWith(
-        isJukir: false,
-        namaJukir: profile?['namaUser'] ?? '',
+        namaJukir: namaUser,
         nop: firstNop['nop']?.toString() ?? '',
         namaOp: firstNop['nama_op']?.toString() ?? '',
         namaLokasi: firstNop['alamat_op']?.toString() ?? '',
       ),
     );
   }
-
   // ==========================================================
   // CHANGE OBJEK PAJAK
   // ==========================================================
