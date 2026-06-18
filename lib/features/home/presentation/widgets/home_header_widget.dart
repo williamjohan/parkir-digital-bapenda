@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/enums/app_enums.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
   final String nop;
   final String? namaObjekPajak;
-  final bool? isJukir;
+  final RoleLoginDigitalParkir role;
   final VoidCallback? onPressed;
 
   const HomeHeaderWidget({
@@ -14,7 +15,7 @@ class HomeHeaderWidget extends StatelessWidget {
     required this.namaJukir,
     required this.nop,
     this.namaObjekPajak,
-    required this.isJukir,
+    required this.role,
     required this.onPressed,
   });
 
@@ -28,7 +29,7 @@ class HomeHeaderWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (isJukir == false) ...[
+              if (role != RoleLoginDigitalParkir.jukir) ...[
                 Text(
                   "TAX PARK",
                   style: AppTypography.bodySemiBold.copyWith(
@@ -46,7 +47,7 @@ class HomeHeaderWidget extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              if (isJukir == true) ...[
+              if (role == RoleLoginDigitalParkir.jukir) ...[
                 Text(
                   "NOP : $nop",
                   style: AppTypography.bodyRegular.copyWith(

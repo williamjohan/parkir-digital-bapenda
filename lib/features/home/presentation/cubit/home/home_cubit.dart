@@ -139,7 +139,7 @@ class HomeCubit extends Cubit<HomeState> {
 
     //  2. SIMPAN ROLE KE STATE AGAR UI BISA BACA
     emit(state.copyWith(role: userRole));
-
+   
     final profile = await _secureStorage.getJukirProfile();
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
 

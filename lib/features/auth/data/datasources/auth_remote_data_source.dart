@@ -49,7 +49,7 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
           'refreshToken': beData['refreshToken']?.toString() ?? '',
           'nop': beData['nop']?.toString() ?? '',
           'uuidStatic': beData['uuidStatic']?.toString() ?? '',
-          'isJukir': beData['isJukir'] ?? false,
+          'roleLoginId': beData['roleLoginId'] ?? 0,
           'nopList': beData['nopList'] ?? [],
           'user': {
             'idUser': beData['idJukir'] ?? 0,

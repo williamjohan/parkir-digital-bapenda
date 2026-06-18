@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_objek_pajak_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
@@ -143,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                                 top: 32,
                               ),
                               child: HomeHeaderWidget(
-                                isJukir: state.isJukir,
+                                role: state.role,
                                 namaJukir: state.namaJukir,
                                 nop: state.nop,
                                 namaObjekPajak: state.namaOp,
@@ -176,13 +177,9 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              CardTotalOpWidget(
-                                                totalObjekPajak: 500,
-                                                totalOpDigitalisasi: 300,
-                                                totalOpNonDigitalisasi: 200,
-                                              ),
-                                              SizedBox(height: 16),
-                                              if (state.isJukir == false) ...[
+                                              if (state.role ==
+                                                  RoleLoginDigitalParkir
+                                                      .wp) ...[
                                                 CardObjekPajakWidget(
                                                   nop: state.nop,
                                                   namaObjekPajak: state.namaOp,
@@ -225,9 +222,13 @@ class _HomePageState extends State<HomePage> {
                                                       .toInt()
                                                       .toString(), // Data Real API
                                                 ),
-
                                               const SizedBox(height: 16),
-
+                                              CardTotalOpWidget(
+                                                totalObjekPajak: 500,
+                                                totalOpDigitalisasi: 300,
+                                                totalOpNonDigitalisasi: 200,
+                                              ),
+                                              SizedBox(height: 16),
                                               // === 2. KARTU REKAP KENDARAAN ===
                                               Container(
                                                 padding: const EdgeInsets.all(
@@ -301,15 +302,25 @@ class _HomePageState extends State<HomePage> {
                                               ),
 
                                               // === 3. KARTU TRANSAKSI TERBARU (Kini ada di DALAM gerbong Scroll!) ===
-                                              if (state.isJukir)
+                                              if (state.role ==
+                                                      RoleLoginDigitalParkir
+                                                          .jukir ||
+                                                  state.role ==
+                                                      RoleLoginDigitalParkir
+                                                          .wp) ...[
                                                 LastActivityWidget(
                                                   transactions:
                                                       state.recentTransactions,
                                                 ),
-                                              SizedBox(height: 16),
-                                              CardRekapJenisPembayaranWidget(
-                                                data: dummyData,
-                                              ),
+                                                SizedBox(height: 16),
+                                              ],
+
+                                              if (state.role ==
+                                                  RoleLoginDigitalParkir
+                                                      .bapenda)
+                                                CardRekapJenisPembayaranWidget(
+                                                  data: dummyData,
+                                                ),
 
                                               const SizedBox(height: 50),
                                             ],
