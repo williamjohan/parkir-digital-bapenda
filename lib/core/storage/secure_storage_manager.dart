@@ -50,9 +50,11 @@ abstract class ISecureStorageManager {
   Future<String?> getAndClearLogoutReason();
   Future<void> saveIsJukir(bool value);
   Future<bool> getIsJukir();
-
   Future<void> saveUuidStatic(String value);
   Future<String?> getUuidStatic();
+  Future<void> saveRoleId(int roleId);
+  Future<int?> getRoleId();
+  Future<void> clearRoleId();
 }
 
 @LazySingleton(as: ISecureStorageManager)
@@ -73,6 +75,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyLogoutReason = 'LOGOUT_REASON';
   static const String _keyIsJukir = 'IS_JUKIR';
   static const String _keyUuidStatic = 'UUID_STATIC';
+  static const String _keyRoleId = 'ROLE_LOGIN_ID';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -100,6 +103,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     await _storage.delete(key: _keyRefreshToken);
     await clearJukirProfile();
     await clearMasterTarif();
+    await clearRoleId();
     await clearDashboardAnchor();
   }
 
@@ -318,5 +322,24 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<String?> getUuidStatic() async {
     return await _storage.read(key: _keyUuidStatic);
+  }
+
+  @override
+  Future<void> saveRoleId(int roleId) async {
+    await _storage.write(key: _keyRoleId, value: roleId.toString());
+  }
+
+  @override
+  Future<int?> getRoleId() async {
+    final value = await _storage.read(key: _keyRoleId);
+    if (value != null) {
+      return int.tryParse(value);
+    }
+    return null;
+  }
+
+  @override
+  Future<void> clearRoleId() async {
+    await _storage.delete(key: _keyRoleId);
   }
 }

@@ -6,8 +6,11 @@ import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/database_helper_2.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
+import '../mappers/auth_mapper.dart';
+import '../models/auth_response_model.dart';
 
 @LazySingleton(as: IAuthRepository)
 class AuthRepositoryImpl implements IAuthRepository {
@@ -25,41 +28,36 @@ class AuthRepositoryImpl implements IAuthRepository {
   Future<Either<Failure, Unit>> login(String username, String password) async {
     try {
       await _secureStorage.clearAllTokens();
+      await _databaseHelper.clearNopList();
 
       final response = await _remoteDataSource.login(username, password);
 
       if (response.accessToken.isNotEmpty) {
-        // TOKEN
+        // 1. SIMPAN TOKEN
         await _secureStorage.saveAccessToken(response.accessToken);
-
         if (response.refreshToken.isNotEmpty) {
           await _secureStorage.saveRefreshToken(response.refreshToken);
         }
 
-        // IS JUKIR
-        await _secureStorage.saveIsJukir(response.isJukir);
+        // 2. SIMPAN ROLE (Pengganti isJukir)
+        await _secureStorage.saveRoleId(response.roleLoginId);
 
-        // UUID STATIC
+        // 3. SIMPAN UUID STATIC
         await _secureStorage.saveUuidStatic(response.uuidStatic);
 
-        // JIKA NON JUKIR → TIMPA DEVICE ID
-        if (!response.isJukir && response.uuidStatic.isNotEmpty) {
+        // 4. JIKA NON-JUKIR → TIMPA DEVICE ID
+        // Asumsi: Role Jukir adalah 3 (Atur sesuai Enum Master Role Anda)
+        if (response.roleLoginId != 3 && response.uuidStatic.isNotEmpty) {
           await _secureStorage.saveDeviceId(response.uuidStatic);
         }
 
-        // NOP LIST
+        // 5. FIRE-AND-FORGET: Simpan NOP ke SQLite secara Paralel!
+        // Jika list kosong (bukan Jukir), fungsi ini tidak akan tereksekusi.
         if (response.nopList.isNotEmpty) {
-          await _databaseHelper.saveNopList(
-            response.nopList.map((e) {
-              return {
-                'nop': e.nop.trim(),
-                'nama_op': e.namaOp,
-                'alamat_op': e.alamatOp,
-              };
-            }).toList(),
-          );
+          _simpanNopSecaraParalel(response.nopList);
         }
 
+        // Proses login langsung Return Unit tanpa menunggu insert ratusan SQLite!
         return const Right(unit);
       }
 
@@ -73,12 +71,35 @@ class AuthRepositoryImpl implements IAuthRepository {
     }
   }
 
+  void _simpanNopSecaraParalel(List<NopModel> nopList) {
+    // 1. Panggil Mapper untuk membersihkan format DTO ke Map SQLite
+    final sqliteData = AuthMapper.toSqliteList(nopList);
+
+    // 2. Eksekusi tanpa "await"
+    _databaseHelper
+        .saveNopList(sqliteData)
+        .then((_) {
+          AppLogger.info(
+            ">>> AUDIT DATABASE: Berhasil insert ${nopList.length} NOP di background!",
+          );
+        })
+        .catchError((e, stackTrace) {
+          // Selalu tangkap stackTrace di logger untuk mempermudah debugging
+          AppLogger.error(
+            ">>> AUDIT DATABASE ERROR: Gagal insert NOP: $e",
+            e,
+            stackTrace,
+          );
+        });
+  }
+
   @override
   Future<Either<Failure, Unit>> logout() async {
     try {
       await _secureStorage.clearAllTokens();
       await _secureStorage.clearDeviceId();
       await _databaseHelper.clearNopList();
+
       return const Right(unit);
     } catch (e) {
       return const Left(ServerFailure('Gagal melakukan logout lokal.'));
