@@ -31,13 +31,6 @@ class ItemKendaraanWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSolid ? AppColors.primary : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withOpacity(0.08),
-        //     blurRadius: 10,
-        //     offset: const Offset(0, 4),
-        //   ),
-        // ],
         border: Border.all(color: isSolid ? Colors.white : AppColors.border),
       ),
       child: Row(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_objek_pajak_widget.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/item_kendaraan_widget.dart';
@@ -17,6 +18,7 @@ import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
 import '../cubit/home/home_cubit.dart';
 import '../cubit/home/home_state.dart';
+import '../widgets/card_rekap_jenis_pembayaran_widget.dart';
 import '../widgets/home_header_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,6 +31,30 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Track apakah ini pertama kali load
   bool _isFirstLoad = true;
+
+  final dummyData = [
+    const RekapJenisPembayaran(
+      jenisPembayaran: 'Tunai',
+      totalMotor: 100000,
+      jumlahMotor: 50,
+      totalMobil: 200000,
+      jumlahMobil: 20,
+    ),
+    const RekapJenisPembayaran(
+      jenisPembayaran: 'QRIS',
+      totalMotor: 300000,
+      jumlahMotor: 80,
+      totalMobil: 400000,
+      jumlahMobil: 40,
+    ),
+    const RekapJenisPembayaran(
+      jenisPembayaran: 'E-Money',
+      totalMotor: 150000,
+      jumlahMotor: 30,
+      totalMobil: 250000,
+      jumlahMobil: 15,
+    ),
+  ];
 
   @override
   void initState() {
@@ -150,6 +176,12 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
+                                              CardTotalOpWidget(
+                                                totalObjekPajak: 500,
+                                                totalOpDigitalisasi: 300,
+                                                totalOpNonDigitalisasi: 200,
+                                              ),
+                                              SizedBox(height: 16),
                                               if (state.isJukir == false) ...[
                                                 CardObjekPajakWidget(
                                                   nop: state.nop,
@@ -274,6 +306,10 @@ class _HomePageState extends State<HomePage> {
                                                   transactions:
                                                       state.recentTransactions,
                                                 ),
+                                              SizedBox(height: 16),
+                                              CardRekapJenisPembayaranWidget(
+                                                data: dummyData,
+                                              ),
 
                                               const SizedBox(height: 50),
                                             ],
