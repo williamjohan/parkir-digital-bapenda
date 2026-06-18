@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                                 isJukir: state.isJukir,
                                 namaJukir: state.namaJukir,
                                 nop: state.nop,
-                                namaLokasi: state.namaLokasi,
+                                namaObjekPajak: state.namaOp,
                                 onPressed: () {},
                               ),
                             ),
@@ -152,11 +152,21 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              CardObjekPajakWidget(
-                                                nop: state.nop,
-                                                namaLokasi: state.namaLokasi,
-                                              ),
-                                              SizedBox(height: 16),
+                                              if (state.isJukir == false) ...[
+                                                CardObjekPajakWidget(
+                                                  nop: state.nop,
+                                                  namaObjekPajak: state.namaOp,
+                                                  alamat: state.namaLokasi,
+                                                  onPressedGantiObjek: () {
+                                                    context.pushNamed(
+                                                      AppRoutes
+                                                          .searchObjekPajak,
+                                                    );
+                                                  },
+                                                  onPressedLihatDetail: () {},
+                                                ),
+                                                SizedBox(height: 16),
+                                              ],
                                               // === 1. KARTU TOTAL PENDAPATAN ===
                                               if (!state.isFree)
                                                 CardTotalPendapatan(
@@ -248,10 +258,11 @@ class _HomePageState extends State<HomePage> {
                                               ),
 
                                               // === 3. KARTU TRANSAKSI TERBARU (Kini ada di DALAM gerbong Scroll!) ===
-                                              LastActivityWidget(
-                                                transactions:
-                                                    state.recentTransactions,
-                                              ),
+                                              if (state.isJukir)
+                                                LastActivityWidget(
+                                                  transactions:
+                                                      state.recentTransactions,
+                                                ),
 
                                               const SizedBox(height: 50),
                                             ],

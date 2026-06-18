@@ -5,7 +5,7 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
   final String nop;
-  final String? namaLokasi;
+  final String? namaObjekPajak;
   final bool? isJukir;
   final VoidCallback? onPressed;
 
@@ -13,7 +13,7 @@ class HomeHeaderWidget extends StatelessWidget {
     super.key,
     required this.namaJukir,
     required this.nop,
-    this.namaLokasi,
+    this.namaObjekPajak,
     required this.isJukir,
     required this.onPressed,
   });
@@ -28,6 +28,18 @@ class HomeHeaderWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (isJukir == false) ...[
+                Text(
+                  "TAX PARK",
+                  style: AppTypography.bodySemiBold.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  "BAPENDA KOTA SURABAYA",
+                  style: AppTypography.caption.copyWith(color: Colors.white),
+                ),
+              ],
               Text(
                 "Hallo, $namaJukir !",
                 style: AppTypography.heading1.copyWith(color: Colors.white),
@@ -42,22 +54,22 @@ class HomeHeaderWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  namaLokasi ?? '',
+                  namaObjekPajak ?? '',
                   style: AppTypography.bodySemiBold.copyWith(
                     color: Colors.white,
                   ),
                 ),
               ],
-              if (isJukir == false) ...[
-                SizedBox(height: 8),
-                PbPrimaryButton(
-                  text: "Cari objek pajak...",
-                  variant: PbButtonVariant.outlinedSecondaryLight,
-                  size: PbButtonSize.small,
-                  iconRight: Icons.search,
-                  onPressed: onPressed,
-                ),
-              ],
+              // if (isJukir == false) ...[
+              //   SizedBox(height: 8),
+              //   PbPrimaryButton(
+              //     text: "Cari objek pajak...",
+              //     variant: PbButtonVariant.outlinedSecondaryLight,
+              //     size: PbButtonSize.small,
+              //     iconRight: Icons.search,
+              //     onPressed: onPressed,
+              //   ),
+              // ],
             ],
           ),
         ),

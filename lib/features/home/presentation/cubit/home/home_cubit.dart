@@ -136,7 +136,7 @@ class HomeCubit extends Cubit<HomeState> {
           isJukir: true,
           namaJukir: profile?['namaUser'] ?? '',
           nop: profile?['nop'] ?? '',
-          namaLokasi: profile?['namaObjekPajak'] ?? '',
+          namaOp: profile?['namaObjekPajak'] ?? '',
         ),
       );
 
@@ -153,6 +153,7 @@ class HomeCubit extends Cubit<HomeState> {
             namaJukir: profile?['namaUser'] ?? '',
             nop: firstNop['nop']?.toString() ?? '',
             namaLokasi: firstNop['alamat_op']?.toString() ?? '',
+            namaOp: firstNop['nama_op']?.toString() ?? '',
           ),
         );
       }

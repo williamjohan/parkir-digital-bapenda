@@ -25,6 +25,7 @@ class HomeState extends Equatable {
   final String nop;
   final String namaLokasi;
   final String namaJukir;
+  final String namaOp;
   final bool isJukir;
 
   const HomeState({
@@ -47,6 +48,7 @@ class HomeState extends Equatable {
     this.nop = "",
     this.namaLokasi = "",
     this.namaJukir = "",
+    this.namaOp = "",
     this.isJukir = false,
   });
 
@@ -69,6 +71,7 @@ class HomeState extends Equatable {
     String? nop,
     String? namaLokasi,
     String? namaJukir,
+    String? namaOp,
     bool? isJukir,
   }) {
     return HomeState(
@@ -92,6 +95,7 @@ class HomeState extends Equatable {
       nop: nop ?? this.nop,
       namaLokasi: namaLokasi ?? this.namaLokasi,
       namaJukir: namaJukir ?? this.namaJukir,
+      namaOp: namaOp ?? this.namaOp,
       isJukir: isJukir ?? this.isJukir,
     );
   }
@@ -120,6 +124,7 @@ class HomeState extends Equatable {
     nop,
     namaLokasi,
     namaJukir,
+    namaOp,
     isJukir,
   ];
 }

@@ -2,6 +2,7 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
+import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
 import '../../features/transaction/presentation/page/transaction_page.dart';
 import '../../features/transaction/presentation/cubit/transaction_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
@@ -83,7 +84,7 @@ class AppRouter {
           path: AppRoutes.searchObjekPajak,
           name: AppRoutes.searchObjekPajak,
           builder: (context, state) => BlocProvider(
-            create: (_) => locator<HomeCubit>(),
+            create: (_) => locator<SearchOpCubit>(),
             child: const SearchOpPage(),
           ),
         ),

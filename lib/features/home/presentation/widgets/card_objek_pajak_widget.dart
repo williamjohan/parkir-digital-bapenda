@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
 class CardObjekPajakWidget extends StatelessWidget {
   final String nop;
-  final String? namaLokasi;
+  final String? namaObjekPajak;
+  final String? alamat;
+  final VoidCallback? onPressedGantiObjek;
+  final VoidCallback? onPressedLihatDetail;
 
   const CardObjekPajakWidget({
     super.key,
     required this.nop,
-    required this.namaLokasi,
+    required this.namaObjekPajak,
+    required this.alamat,
+    required this.onPressedGantiObjek,
+    required this.onPressedLihatDetail,
   });
 
   @override
@@ -29,26 +36,56 @@ class CardObjekPajakWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.store, size: 28, color: Colors.white),
+          Row(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.store, size: 32, color: Colors.white),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(namaObjekPajak ?? '', style: AppTypography.heading4),
+                    Text("NOP  $nop", style: AppTypography.bodyRegular),
+                    Text(alamat ?? '-', style: AppTypography.caption),
+                  ],
+                ),
+              ),
+            ],
           ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(namaLokasi ?? '', style: AppTypography.bodySemiBold),
-                Text("NOP : $nop", style: AppTypography.bodyRegular),
-              ],
-            ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: PbPrimaryButton(
+                  text: "Ganti Objek",
+                  size: PbButtonSize.small,
+                  iconLeft: Icons.swap_horiz,
+                  variant: PbButtonVariant.outlinedPrimary,
+                  onPressed: onPressedGantiObjek,
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: PbPrimaryButton(
+                  text: "Lihat Detail",
+                  size: PbButtonSize.small,
+                  iconLeft: Icons.info_outline,
+                  variant: PbButtonVariant.primary,
+                  onPressed: onPressedLihatDetail,
+                ),
+              ),
+            ],
           ),
         ],
       ),
