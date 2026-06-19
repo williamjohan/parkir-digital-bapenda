@@ -1,8 +1,10 @@
 // lib/features/home/presentation/widgets/home_drawer.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/constants/feature_flag.dart';
+import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -10,11 +12,13 @@ import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
+import '../cubit/home/home_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isFree;
+  final RoleLoginDigitalParkir role;
 
-  const HomeDrawer({super.key, required this.isFree});
+  const HomeDrawer({super.key, required this.isFree, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +84,19 @@ class HomeDrawer extends StatelessWidget {
                     'History Transaksi',
                     style: AppTypography.bodyRegular,
                   ),
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
-                    context.push(AppRoutes.history, extra: {'isFree': isFree});
+
+                    final result = await context.pushNamed(
+                      AppRoutes.searchObjekPajak,
+                      extra: role,
+                    );
+
+                    if (result != null) {
+                      await context.read<HomeCubit>().changeObjekPajak(
+                        result as Map<String, dynamic>,
+                      );
+                    }
                   },
                 ),
                 ListTile(

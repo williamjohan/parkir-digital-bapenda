@@ -53,7 +53,8 @@ class DatabaseHelper2 {
         'nop': item['nop'],
         'nama_op': item['nama_op'],
         'alamat_op': item['alamat_op'],
-        'is_digital': (item['isDigital'] ?? false) ? 1 : 0,
+        // 'is_digital': (item['isDigital'] ?? false) ? 1 : 0, >>> salah
+        'is_digital': (item['is_digital'] ?? false) ? 1 : 0,
       }, conflictAlgorithm: ConflictAlgorithm.replace);
     }
 
@@ -65,22 +66,6 @@ class DatabaseHelper2 {
     final db = await database;
 
     return await db.query(tableNopList, orderBy: 'nama_op ASC');
-  }
-
-  /// Ambil 1 NOP
-  Future<Map<String, dynamic>?> getNopByNop(String nop) async {
-    final db = await database;
-
-    final result = await db.query(
-      tableNopList,
-      where: 'nop = ?',
-      whereArgs: [nop],
-      limit: 1,
-    );
-
-    if (result.isEmpty) return null;
-
-    return result.first;
   }
 
   /// Ambil NOP berdasarkan status digital
@@ -102,17 +87,6 @@ class DatabaseHelper2 {
     final db = await database;
 
     await db.delete(tableNopList);
-  }
-
-  /// Insert/update satu NOP
-  Future<void> saveNop(String nop, String namaOp, String alamatOp) async {
-    final db = await database;
-
-    await db.insert(tableNopList, {
-      'nop': nop,
-      'nama_op': namaOp,
-      'alamat_op': alamatOp,
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   /// Tutup database

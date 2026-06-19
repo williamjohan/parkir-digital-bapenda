@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                 bottom: true,
                 child: Scaffold(
                   backgroundColor: AppColors.background,
-                  drawer: HomeDrawer(isFree: state.isFree),
+                  drawer: HomeDrawer(isFree: state.isFree, role: state.role,),
                   body: Stack(
                     children: [
                       // 1. BACKGROUND GRADIENT
@@ -242,8 +242,10 @@ class _HomePageState extends State<HomePage> {
                                                   child: CardTotalOpWidget(
                                                     totalObjekPajak:
                                                         state.totalOp,
-                                                    totalOpDigitalisasi: 300,
-                                                    totalOpNonDigitalisasi: 200,
+                                                    totalOpDigitalisasi:
+                                                        state.totalOpDigital,
+                                                    totalOpNonDigitalisasi:
+                                                        state.totalOpNonDigital,
                                                     lihatSemuaOnPressed: () async {
                                                       final result = await context
                                                           .pushNamed(
