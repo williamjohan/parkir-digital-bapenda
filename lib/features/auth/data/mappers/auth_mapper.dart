@@ -13,6 +13,7 @@ class AuthMapper {
             'nop': e.nop.trim(),
             'nama_op': e.namaOp,
             'alamat_op': e.alamatOp,
+            'is_digital': e.isDigital,
           },
         )
         .toList();

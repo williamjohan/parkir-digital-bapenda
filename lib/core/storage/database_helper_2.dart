@@ -34,7 +34,8 @@ class DatabaseHelper2 {
       CREATE TABLE $tableNopList (
         nop TEXT PRIMARY KEY,
         nama_op TEXT NOT NULL,
-        alamat_op TEXT NOT NULL
+        alamat_op TEXT NOT NULL,
+        is_digital INTEGER NOT NULL DEFAULT 0
       )
     ''');
   }
@@ -52,6 +53,7 @@ class DatabaseHelper2 {
         'nop': item['nop'],
         'nama_op': item['nama_op'],
         'alamat_op': item['alamat_op'],
+        'is_digital': (item['isDigital'] ?? false) ? 1 : 0,
       }, conflictAlgorithm: ConflictAlgorithm.replace);
     }
 
@@ -79,6 +81,20 @@ class DatabaseHelper2 {
     if (result.isEmpty) return null;
 
     return result.first;
+  }
+
+  /// Ambil NOP berdasarkan status digital
+  Future<List<Map<String, dynamic>>> getNopListByIsDigital(
+    bool isDigital,
+  ) async {
+    final db = await database;
+
+    return await db.query(
+      tableNopList,
+      where: 'is_digital = ?',
+      whereArgs: [isDigital ? 1 : 0],
+      orderBy: 'nama_op ASC',
+    );
   }
 
   /// Hapus semua data NOP

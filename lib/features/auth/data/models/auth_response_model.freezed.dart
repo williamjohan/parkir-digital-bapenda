@@ -313,6 +313,7 @@ mixin _$NopModel {
   String get nop => throw _privateConstructorUsedError;
   String get namaOp => throw _privateConstructorUsedError;
   String get alamatOp => throw _privateConstructorUsedError;
+  bool get isDigital => throw _privateConstructorUsedError;
 
   /// Serializes this NopModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -329,7 +330,7 @@ abstract class $NopModelCopyWith<$Res> {
   factory $NopModelCopyWith(NopModel value, $Res Function(NopModel) then) =
       _$NopModelCopyWithImpl<$Res, NopModel>;
   @useResult
-  $Res call({String nop, String namaOp, String alamatOp});
+  $Res call({String nop, String namaOp, String alamatOp, bool isDigital});
 }
 
 /// @nodoc
@@ -350,6 +351,7 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
     Object? nop = null,
     Object? namaOp = null,
     Object? alamatOp = null,
+    Object? isDigital = null,
   }) {
     return _then(
       _value.copyWith(
@@ -365,6 +367,10 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
                 ? _value.alamatOp
                 : alamatOp // ignore: cast_nullable_to_non_nullable
                       as String,
+            isDigital: null == isDigital
+                ? _value.isDigital
+                : isDigital // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -380,7 +386,7 @@ abstract class _$$NopModelImplCopyWith<$Res>
   ) = __$$NopModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String nop, String namaOp, String alamatOp});
+  $Res call({String nop, String namaOp, String alamatOp, bool isDigital});
 }
 
 /// @nodoc
@@ -400,6 +406,7 @@ class __$$NopModelImplCopyWithImpl<$Res>
     Object? nop = null,
     Object? namaOp = null,
     Object? alamatOp = null,
+    Object? isDigital = null,
   }) {
     return _then(
       _$NopModelImpl(
@@ -415,6 +422,10 @@ class __$$NopModelImplCopyWithImpl<$Res>
             ? _value.alamatOp
             : alamatOp // ignore: cast_nullable_to_non_nullable
                   as String,
+        isDigital: null == isDigital
+            ? _value.isDigital
+            : isDigital // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -423,7 +434,12 @@ class __$$NopModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$NopModelImpl implements _NopModel {
-  const _$NopModelImpl({this.nop = '', this.namaOp = '', this.alamatOp = ''});
+  const _$NopModelImpl({
+    this.nop = '',
+    this.namaOp = '',
+    this.alamatOp = '',
+    this.isDigital = false,
+  });
 
   factory _$NopModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$NopModelImplFromJson(json);
@@ -437,10 +453,13 @@ class _$NopModelImpl implements _NopModel {
   @override
   @JsonKey()
   final String alamatOp;
+  @override
+  @JsonKey()
+  final bool isDigital;
 
   @override
   String toString() {
-    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp)';
+    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital)';
   }
 
   @override
@@ -451,12 +470,15 @@ class _$NopModelImpl implements _NopModel {
             (identical(other.nop, nop) || other.nop == nop) &&
             (identical(other.namaOp, namaOp) || other.namaOp == namaOp) &&
             (identical(other.alamatOp, alamatOp) ||
-                other.alamatOp == alamatOp));
+                other.alamatOp == alamatOp) &&
+            (identical(other.isDigital, isDigital) ||
+                other.isDigital == isDigital));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, nop, namaOp, alamatOp);
+  int get hashCode =>
+      Object.hash(runtimeType, nop, namaOp, alamatOp, isDigital);
 
   /// Create a copy of NopModel
   /// with the given fields replaced by the non-null parameter values.
@@ -477,6 +499,7 @@ abstract class _NopModel implements NopModel {
     final String nop,
     final String namaOp,
     final String alamatOp,
+    final bool isDigital,
   }) = _$NopModelImpl;
 
   factory _NopModel.fromJson(Map<String, dynamic> json) =
@@ -488,6 +511,8 @@ abstract class _NopModel implements NopModel {
   String get namaOp;
   @override
   String get alamatOp;
+  @override
+  bool get isDigital;
 
   /// Create a copy of NopModel
   /// with the given fields replaced by the non-null parameter values.

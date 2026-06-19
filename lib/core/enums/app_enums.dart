@@ -58,3 +58,5 @@ enum RoleLoginDigitalParkir {
     );
   }
 }
+
+enum SearchOpType { digital, nonDigital }

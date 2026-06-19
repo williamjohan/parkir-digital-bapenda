@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_text_field.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
+
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
@@ -18,14 +19,38 @@ class SearchOpPage extends StatefulWidget {
   State<SearchOpPage> createState() => _SearchOpPageState();
 }
 
-class _SearchOpPageState extends State<SearchOpPage> {
+class _SearchOpPageState extends State<SearchOpPage>
+    with SingleTickerProviderStateMixin {
   final TextEditingController searchController = TextEditingController();
+
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
 
-    context.read<SearchOpCubit>().getNopList();
+    _tabController = TabController(length: 2, vsync: this);
+
+    context.read<SearchOpCubit>().getNopList(type: SearchOpType.digital);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) return;
+
+      context.read<SearchOpCubit>().changeTab(
+        _tabController.index == 0
+            ? SearchOpType.digital
+            : SearchOpType.nonDigital,
+      );
+
+      searchController.clear();
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,9 +65,8 @@ class _SearchOpPageState extends State<SearchOpPage> {
         foregroundColor: Colors.black,
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PbTextField(
               controller: searchController,
@@ -51,6 +75,33 @@ class _SearchOpPageState extends State<SearchOpPage> {
                 context.read<SearchOpCubit>().searchNop(value);
               },
             ),
+
+            const SizedBox(height: 12),
+
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.black87,
+                indicator: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                tabs: const [
+                  Tab(text: 'Digitalisasi'),
+                  Tab(text: 'Non-Digital'),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
             Expanded(
               child: BlocBuilder<SearchOpCubit, SearchOpState>(
                 builder: (context, state) {
@@ -62,12 +113,17 @@ class _SearchOpPageState extends State<SearchOpPage> {
                     return const Center(child: Text('Data tidak ditemukan'));
                   }
 
-                  return ListView.builder(
+                  return ListView.separated(
                     itemCount: state.filteredNopList.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final item = state.filteredNopList[index];
 
                       return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 4,
+                        ),
                         title: Text(
                           item['nama_op'] ?? '-',
                           style: AppTypography.bodySemiBold.copyWith(
@@ -78,10 +134,16 @@ class _SearchOpPageState extends State<SearchOpPage> {
                           item['nop'] ?? '-',
                           style: AppTypography.caption,
                         ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Colors.grey.shade400,
+                        ),
                         onTap: () {
                           if (widget.role == RoleLoginDigitalParkir.wp) {
                             Navigator.pop<Map<String, dynamic>>(context, item);
+                            return;
                           }
+
                           if (widget.role == RoleLoginDigitalParkir.bapenda) {
                             context.pushNamed(
                               AppRoutes.history,
