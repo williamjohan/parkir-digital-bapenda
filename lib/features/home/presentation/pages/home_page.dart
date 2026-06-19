@@ -204,18 +204,26 @@ class _HomePageState extends State<HomePage> {
                                                       .bapenda,
                                                 ],
                                                 currentRole: state.role,
-                                                child: CardTotalPendapatan(
-                                                  totalKotor: state
-                                                      .totalPendapatan
-                                                      .toString(),
-                                                  persentasePajak:
-                                                      "10", // Dummy statis sesuai kesepakatan
-                                                  nominalPajak: state.totalPajak
-                                                      .toInt()
-                                                      .toString(), // Data Real API
-                                                  totalBersih: state.totalBersih
-                                                      .toInt()
-                                                      .toString(), // Data Real API
+                                                child: Padding(
+                                                  padding:
+                                                      EdgeInsetsGeometry.only(
+                                                        bottom: 16,
+                                                      ),
+                                                  child: CardTotalPendapatan(
+                                                    totalKotor: state
+                                                        .totalPendapatan
+                                                        .toString(),
+                                                    persentasePajak:
+                                                        "10", // Dummy statis sesuai kesepakatan
+                                                    nominalPajak: state
+                                                        .totalPajak
+                                                        .toInt()
+                                                        .toString(), // Data Real API
+                                                    totalBersih: state
+                                                        .totalBersih
+                                                        .toInt()
+                                                        .toString(), // Data Real API
+                                                  ),
                                                 ),
                                               ),
 
@@ -226,31 +234,37 @@ class _HomePageState extends State<HomePage> {
                                                       .bapenda,
                                                 ],
                                                 currentRole: state.role,
-                                                child: CardTotalOpWidget(
-                                                  totalObjekPajak:
-                                                      state.totalOp,
-                                                  totalOpDigitalisasi: 300,
-                                                  totalOpNonDigitalisasi: 200,
-                                                  lihatSemuaOnPressed: () async {
-                                                    final result = await context
-                                                        .pushNamed(
-                                                          AppRoutes
-                                                              .searchObjekPajak,
-                                                          extra: state.role,
-                                                        );
-
-                                                    if (result != null) {
-                                                      await context
-                                                          .read<HomeCubit>()
-                                                          .changeObjekPajak(
-                                                            result
-                                                                as Map<
-                                                                  String,
-                                                                  dynamic
-                                                                >,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 16,
+                                                      ),
+                                                  child: CardTotalOpWidget(
+                                                    totalObjekPajak:
+                                                        state.totalOp,
+                                                    totalOpDigitalisasi: 300,
+                                                    totalOpNonDigitalisasi: 200,
+                                                    lihatSemuaOnPressed: () async {
+                                                      final result = await context
+                                                          .pushNamed(
+                                                            AppRoutes
+                                                                .searchObjekPajak,
+                                                            extra: state.role,
                                                           );
-                                                    }
-                                                  },
+
+                                                      if (result != null) {
+                                                        await context
+                                                            .read<HomeCubit>()
+                                                            .changeObjekPajak(
+                                                              result
+                                                                  as Map<
+                                                                    String,
+                                                                    dynamic
+                                                                  >,
+                                                            );
+                                                      }
+                                                    },
+                                                  ),
                                                 ),
                                               ),
 
@@ -263,9 +277,18 @@ class _HomePageState extends State<HomePage> {
                                                   RoleLoginDigitalParkir.wp,
                                                 ],
                                                 currentRole: state.role,
-                                                child: CardRekapKendaraanWidget(
-                                                  motorCount: state.motorCount,
-                                                  mobilCount: state.mobilCount,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 16,
+                                                      ),
+                                                  child:
+                                                      CardRekapKendaraanWidget(
+                                                        motorCount:
+                                                            state.motorCount,
+                                                        mobilCount:
+                                                            state.mobilCount,
+                                                      ),
                                                 ),
                                               ),
 
@@ -301,8 +324,6 @@ class _HomePageState extends State<HomePage> {
                                                           .sofParkirResults,
                                                     ),
                                               ),
-
-                                              const SizedBox(height: 50),
                                             ],
                                           ),
                                         ),
