@@ -87,15 +87,22 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () async {
                     Navigator.pop(context);
 
-                    final result = await context.pushNamed(
-                      AppRoutes.searchObjekPajak,
-                      extra: role,
-                    );
-
-                    if (result != null) {
-                      await context.read<HomeCubit>().changeObjekPajak(
-                        result as Map<String, dynamic>,
+                    if (role == RoleLoginDigitalParkir.jukir) {
+                      context.pushNamed(
+                        AppRoutes.history,
+                        extra: {'isFree': true},
                       );
+                    } else {
+                      final result = await context.pushNamed(
+                        AppRoutes.searchObjekPajak,
+                        extra: role,
+                      );
+
+                      if (result != null) {
+                        await context.read<HomeCubit>().changeObjekPajak(
+                          result as Map<String, dynamic>,
+                        );
+                      }
                     }
                   },
                 ),
