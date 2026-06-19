@@ -19,26 +19,12 @@ class TransactionHistoryRepositoryImpl
   Future<Either<Failure, HistoryResponseData>> getHistory({
     required DateTime startDate,
     required DateTime endDate,
+    required String nop,
   }) async {
     try {
-      // 1. Ambil profil
-      final profile = await _secureStorage.getJukirProfile();
-      if (profile == null) {
-        return const Left(CacheFailure('Sesi habis'));
-      }
-
-      final String nop = profile['nop']?.toString() ?? '';
-      final String shift = profile['shift']?.toString() ?? '1';
-      final dynamic rawPetugasId = profile['idUser'];
-      final int petugasId = (rawPetugasId is int)
-          ? rawPetugasId
-          : int.tryParse(rawPetugasId?.toString() ?? '0') ?? 0;
-
       // 2. Hit API (Remote) - Tanpa limit (biarkan Backend yang handle semua data)
       final apiResult = await _remoteDataSource.getHistory(
         nop: nop,
-        petugasId: petugasId,
-        shift: shift,
         startDate: startDate,
         endDate: endDate,
         limit: null,

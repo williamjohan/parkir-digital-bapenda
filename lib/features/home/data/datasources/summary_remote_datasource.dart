@@ -28,7 +28,7 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   }) async {
     try {
       final response = await _dio.get(
-        ApiEndpoints.dashboardSummary,
+        ApiEndpoints.dashboardSummaryDev,
         queryParameters: {'nop': nop},
       );
 
@@ -57,7 +57,7 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   @override
   Future<DashboardSummaryNonJukirModel> getDashboardSummaryNonJukir() async {
     try {
-      final response = await _dio.get(ApiEndpoints.dashboardSummaryNonJukir);
+      final response = await _dio.get(ApiEndpoints.dashboardSummaryNonJukirDev);
 
       if (response.data['isSuccess'] == true) {
         return DashboardSummaryNonJukirModel.fromJson(response.data['data']);
@@ -87,7 +87,7 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   }) async {
     try {
       final response = await _dio.get(
-        ApiEndpoints.weeklyChart,
+        ApiEndpoints.weeklyChartDev,
         queryParameters: {'nop': nop},
       );
 

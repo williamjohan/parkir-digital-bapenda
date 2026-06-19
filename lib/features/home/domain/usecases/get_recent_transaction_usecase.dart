@@ -35,8 +35,8 @@ class GetRecentTransactionsUseCase {
       // 1. Ambil data MURNI dari API
       final HistoryResponseData apiResult = await _remoteDataSource.getHistory(
         nop: nop,
-        petugasId: petugasId,
-        shift: shift,
+        // petugasId: petugasId,
+        // shift: shift,
         startDate: startDate,
         endDate: endDate,
         limit: limit,

@@ -17,11 +17,13 @@ import '../widgets/history_recap_widget.dart'; // 🚀 IMPORT WIDGET ASLI
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
   final bool isFree;
+  final String? nop;
 
   const TransactionHistoryPage({
     super.key,
     this.initialDate,
     required this.isFree,
+    this.nop,
   });
 
   @override
@@ -95,7 +97,11 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       59,
     );
 
-    context.read<TransactionHistoryCubit>().fetchHistory(_startDate, _endDate);
+    context.read<TransactionHistoryCubit>().fetchHistory(
+      _startDate,
+      _endDate,
+      widget.nop ?? '',
+    );
 
     // 🚀 SCROLL LISTENER BARU YANG LEBIH CERDAS
     _scrollController.addListener(() {
@@ -171,6 +177,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                           context.read<TransactionHistoryCubit>().fetchHistory(
                             start,
                             end,
+                            widget.nop ?? '',
                           );
                         },
                   ),
@@ -262,7 +269,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
           RefreshIndicator(
             onRefresh: () => context
                 .read<TransactionHistoryCubit>()
-                .fetchHistory(_startDate, _endDate),
+                .fetchHistory(_startDate, _endDate, widget.nop ?? ''),
             child: CustomScrollView(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
@@ -302,14 +309,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                       )
                     : SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
-                          return HistoryCardWidget(
-                            item: data[index],
-                            onPreviewTap: () => _showPreviewKarcis(
-                              context,
-                              data[index],
-                              state.jukirProfile,
-                            ),
-                          );
+                          return HistoryCardWidget(item: data[index]);
                         }, childCount: data.length),
                       ),
                 const SliverToBoxAdapter(child: SizedBox(height: 80)),

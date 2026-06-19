@@ -9,8 +9,6 @@ import '../models/history_response_data_model.dart';
 abstract class ITransactionHistoryRemoteDataSource {
   Future<HistoryResponseData> getHistory({
     required String nop,
-    required int petugasId,
-    required String shift,
     required DateTime startDate,
     required DateTime endDate,
     int? limit,
@@ -27,8 +25,6 @@ class TransactionHistoryRemoteDataSourceImpl
   @override
   Future<HistoryResponseData> getHistory({
     required String nop,
-    required int petugasId,
-    required String shift,
     required DateTime startDate,
     required DateTime endDate,
     int? limit,
@@ -41,8 +37,8 @@ class TransactionHistoryRemoteDataSourceImpl
 
     final formData = FormData.fromMap({
       'nop': nop,
-      'petugasId': petugasId.toString(),
-      'shift': shift,
+      // 'petugasId': petugasId.toString(),
+      // 'shift': shift,
       'tglAwal': startIso,
       'tglAkhir': endIso,
       'limit': limit?.toString() ?? '',
@@ -62,7 +58,7 @@ class TransactionHistoryRemoteDataSourceImpl
 
     try {
       final response = await _dio.post(
-        ApiEndpoints.laporanPendapatan,
+        ApiEndpoints.laporanPendapatanDev,
         data: formData,
       );
 

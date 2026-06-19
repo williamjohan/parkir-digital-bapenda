@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_text_field.dart';
+import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../cubit/search_op/search_op_cubit.dart';
 import '../cubit/search_op/search_op_state.dart';
 
 class SearchOpPage extends StatefulWidget {
-  const SearchOpPage({super.key});
+  final RoleLoginDigitalParkir role;
+
+  const SearchOpPage({super.key, required this.role});
 
   @override
   State<SearchOpPage> createState() => _SearchOpPageState();
@@ -74,7 +79,15 @@ class _SearchOpPageState extends State<SearchOpPage> {
                           style: AppTypography.caption,
                         ),
                         onTap: () {
-                          Navigator.pop<Map<String, dynamic>>(context, item);
+                          if (widget.role == RoleLoginDigitalParkir.wp) {
+                            Navigator.pop<Map<String, dynamic>>(context, item);
+                          }
+                          if (widget.role == RoleLoginDigitalParkir.bapenda) {
+                            context.pushNamed(
+                              AppRoutes.history,
+                              extra: {'isFree': true, 'nop': item['nop']},
+                            );
+                          }
                         },
                       );
                     },

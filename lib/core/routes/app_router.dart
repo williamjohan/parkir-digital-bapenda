@@ -24,6 +24,7 @@ import '../../features/update/presentation/pages/update_page.dart';
 import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
 import '../../features/vehicle_capture/presentation/pages/capture_page.dart';
 import '../di/injection.dart';
+import '../enums/app_enums.dart';
 import 'app_routes.dart';
 import 'go_router_refresh_stream.dart';
 
@@ -83,10 +84,14 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.searchObjekPajak,
           name: AppRoutes.searchObjekPajak,
-          builder: (context, state) => BlocProvider(
-            create: (_) => locator<SearchOpCubit>(),
-            child: const SearchOpPage(),
-          ),
+          builder: (context, state) {
+            final role = state.extra as RoleLoginDigitalParkir;
+
+            return BlocProvider(
+              create: (_) => locator<SearchOpCubit>(),
+              child: SearchOpPage(role: role),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.capture,
@@ -124,11 +129,14 @@ class AppRouter {
             final extra = state.extra as Map<String, dynamic>?;
             final initialDate = extra?['initialDate'] as DateTime?;
             final isFree = extra?['isFree'] as bool? ?? false;
+            final nop = extra?['nop'] as String?;
+
             return BlocProvider(
               create: (_) => locator<TransactionHistoryCubit>(),
               child: TransactionHistoryPage(
                 initialDate: initialDate,
                 isFree: isFree,
+                nop: nop,
               ),
             );
           },

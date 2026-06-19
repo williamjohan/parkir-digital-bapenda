@@ -6,5 +6,6 @@ abstract class ITransactionHistoryRepository {
   Future<Either<Failure, HistoryResponseData>> getHistory({
     required DateTime startDate,
     required DateTime endDate,
+    required String nop,
   });
 }

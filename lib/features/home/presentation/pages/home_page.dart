@@ -165,6 +165,7 @@ class _HomePageState extends State<HomePage> {
                                                         .pushNamed(
                                                           AppRoutes
                                                               .searchObjekPajak,
+                                                          extra: state.role,
                                                         );
 
                                                     if (result != null) {
@@ -206,6 +207,7 @@ class _HomePageState extends State<HomePage> {
                                                 lihatSemuaOnPressed: () {
                                                   context.pushNamed(
                                                     AppRoutes.searchObjekPajak,
+                                                    extra: state.role,
                                                   );
                                                 },
                                               ),

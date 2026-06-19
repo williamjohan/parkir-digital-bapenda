@@ -19,7 +19,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final DateTime endDate;
   final String selectedKategori;
   final int selectedMode;
-  final Map<String, dynamic> jukirProfile;
+  // final Map<String, dynamic> jukirProfile;
   final int roda2;
   final int roda4;
   final int totalTransaksi;
@@ -37,7 +37,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     required this.endDate,
     this.selectedKategori = 'SEMUA',
     this.selectedMode = -1,
-    required this.jukirProfile,
+    // required this.jukirProfile,
     required this.roda2,
     required this.roda4,
     required this.totalTransaksi,
@@ -55,7 +55,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     DateTime? endDate,
     String? selectedKategori,
     int? selectedMode,
-    Map<String, dynamic>? jukirProfile,
+    // Map<String, dynamic>? jukirProfile,
     int? roda2,
     int? roda4,
     int? totalTransaksi,
@@ -72,7 +72,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       endDate: endDate ?? this.endDate,
       selectedKategori: selectedKategori ?? this.selectedKategori,
       selectedMode: selectedMode ?? this.selectedMode,
-      jukirProfile: jukirProfile ?? this.jukirProfile,
+      // jukirProfile: jukirProfile ?? this.jukirProfile,
       roda2: roda2 ?? this.roda2,
       roda4: roda4 ?? this.roda4,
       totalTransaksi: totalTransaksi ?? this.totalTransaksi,
@@ -92,7 +92,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     endDate,
     selectedKategori,
     selectedMode,
-    jukirProfile,
+    // jukirProfile,
     roda2,
     roda4,
     totalTransaksi,

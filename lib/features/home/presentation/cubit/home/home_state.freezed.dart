@@ -37,12 +37,9 @@ mixin _$HomeState {
   String get namaLokasi => throw _privateConstructorUsedError;
   String get namaJukir => throw _privateConstructorUsedError;
   String get namaOp => throw _privateConstructorUsedError;
-<<<<<<< Updated upstream
   int get totalOp => throw _privateConstructorUsedError;
   List<SofParkirResultEntity> get sofParkirResults =>
       throw _privateConstructorUsedError;
-=======
->>>>>>> Stashed changes
   RoleLoginDigitalParkir get role => throw _privateConstructorUsedError;
 
   /// Create a copy of HomeState
@@ -113,11 +110,8 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? namaLokasi = null,
     Object? namaJukir = null,
     Object? namaOp = null,
-<<<<<<< Updated upstream
     Object? totalOp = null,
     Object? sofParkirResults = null,
-=======
->>>>>>> Stashed changes
     Object? role = null,
   }) {
     return _then(
@@ -190,7 +184,6 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.namaOp
                 : namaOp // ignore: cast_nullable_to_non_nullable
                       as String,
-<<<<<<< Updated upstream
             totalOp: null == totalOp
                 ? _value.totalOp
                 : totalOp // ignore: cast_nullable_to_non_nullable
@@ -199,8 +192,6 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.sofParkirResults
                 : sofParkirResults // ignore: cast_nullable_to_non_nullable
                       as List<SofParkirResultEntity>,
-=======
->>>>>>> Stashed changes
             role: null == role
                 ? _value.role
                 : role // ignore: cast_nullable_to_non_nullable
@@ -275,11 +266,8 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? namaLokasi = null,
     Object? namaJukir = null,
     Object? namaOp = null,
-<<<<<<< Updated upstream
     Object? totalOp = null,
     Object? sofParkirResults = null,
-=======
->>>>>>> Stashed changes
     Object? role = null,
   }) {
     return _then(
@@ -352,7 +340,6 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.namaOp
             : namaOp // ignore: cast_nullable_to_non_nullable
                   as String,
-<<<<<<< Updated upstream
         totalOp: null == totalOp
             ? _value.totalOp
             : totalOp // ignore: cast_nullable_to_non_nullable
@@ -361,8 +348,6 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value._sofParkirResults
             : sofParkirResults // ignore: cast_nullable_to_non_nullable
                   as List<SofParkirResultEntity>,
-=======
->>>>>>> Stashed changes
         role: null == role
             ? _value.role
             : role // ignore: cast_nullable_to_non_nullable
@@ -460,7 +445,6 @@ class _$HomeStateImpl implements _HomeState {
   @override
   @JsonKey()
   final String namaOp;
-<<<<<<< Updated upstream
   @override
   @JsonKey()
   final int totalOp;
@@ -474,8 +458,6 @@ class _$HomeStateImpl implements _HomeState {
     return EqualUnmodifiableListView(_sofParkirResults);
   }
 
-=======
->>>>>>> Stashed changes
   @override
   @JsonKey()
   final RoleLoginDigitalParkir role;
@@ -527,14 +509,11 @@ class _$HomeStateImpl implements _HomeState {
             (identical(other.namaJukir, namaJukir) ||
                 other.namaJukir == namaJukir) &&
             (identical(other.namaOp, namaOp) || other.namaOp == namaOp) &&
-<<<<<<< Updated upstream
             (identical(other.totalOp, totalOp) || other.totalOp == totalOp) &&
             const DeepCollectionEquality().equals(
               other._sofParkirResults,
               _sofParkirResults,
             ) &&
-=======
->>>>>>> Stashed changes
             (identical(other.role, role) || other.role == role));
   }
 
@@ -558,15 +537,10 @@ class _$HomeStateImpl implements _HomeState {
     namaLokasi,
     namaJukir,
     namaOp,
-<<<<<<< Updated upstream
     totalOp,
     const DeepCollectionEquality().hash(_sofParkirResults),
     role,
   ]);
-=======
-    role,
-  );
->>>>>>> Stashed changes
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -635,13 +609,10 @@ abstract class _HomeState implements HomeState {
   String get namaJukir;
   @override
   String get namaOp;
-<<<<<<< Updated upstream
   @override
   int get totalOp;
   @override
   List<SofParkirResultEntity> get sofParkirResults;
-=======
->>>>>>> Stashed changes
   @override
   RoleLoginDigitalParkir get role;
 

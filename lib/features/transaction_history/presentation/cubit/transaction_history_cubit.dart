@@ -14,7 +14,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     : super(TransactionHistoryInitial());
 
   /// [REMOTE FILTER]: Tembak API Bapenda berdasarkan rentang tanggal
-  Future<void> fetchHistory(DateTime start, DateTime end) async {
+  Future<void> fetchHistory(DateTime start, DateTime end, String nop) async {
     final difference = end.difference(start).inDays.abs();
     if (difference > 30) {
       if (!isClosed) {
@@ -29,9 +29,18 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
     emit(TransactionHistoryLoading());
 
-    final profile = await _secureStorage.getJukirProfile() ?? {};
+    String finalNop = nop;
 
-    final result = await _useCase.execute(startDate: start, endDate: end);
+    if (nop.trim().isEmpty) {
+      final profile = await _secureStorage.getJukirProfile() ?? {};
+      finalNop = profile['nop']?.toString() ?? '';
+    }
+
+    final result = await _useCase.execute(
+      startDate: start,
+      endDate: end,
+      nop: finalNop,
+    );
 
     if (isClosed) return;
 
@@ -45,7 +54,6 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           endDate: end,
           selectedKategori: 'SEMUA',
           selectedMode: -1,
-          jukirProfile: profile,
 
           // Data Rekap Asli (Semua Transaksi)
           roda2: data.roda2,

@@ -22,10 +22,10 @@ class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
   Future<UserModel> getProfile() async {
     try {
       AppLogger.info(
-        ">>> [Profile DS] Memulai request ke: ${ApiEndpoints.profile}",
+        ">>> [Profile DS] Memulai request ke: ${ApiEndpoints.profileDev}",
       );
 
-      final response = await _dio.get(ApiEndpoints.profile);
+      final response = await _dio.get(ApiEndpoints.profileDev);
       final responseData = response.data;
 
       AppLogger.info(">>> [Profile DS] Raw Response: $responseData");

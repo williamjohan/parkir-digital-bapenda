@@ -29,7 +29,7 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
       final deviceId = await DeviceIdUtils.getSecureDeviceId(_secureStorage);
 
       final response = await _dio.post(
-        ApiEndpoints.login,
+        ApiEndpoints.loginDev,
         data: {
           'username': username,
           'password': password,
@@ -99,7 +99,7 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
     AppLogger.debug("device id : $deviceId");
 
     final response = await _dio.post(
-      ApiEndpoints.cekUuid,
+      ApiEndpoints.cekUuidDev,
       data: {'uuidPerangkat': deviceId},
     );
 
