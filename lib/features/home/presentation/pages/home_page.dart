@@ -203,6 +203,11 @@ class _HomePageState extends State<HomePage> {
                                                 totalObjekPajak: state.totalOp,
                                                 totalOpDigitalisasi: 300,
                                                 totalOpNonDigitalisasi: 200,
+                                                lihatSemuaOnPressed: () {
+                                                  context.pushNamed(
+                                                    AppRoutes.searchObjekPajak,
+                                                  );
+                                                },
                                               ),
                                               SizedBox(height: 16),
                                               // === 2. KARTU REKAP KENDARAAN ===
