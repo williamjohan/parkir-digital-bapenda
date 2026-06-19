@@ -20,6 +20,12 @@ class DashboardSummaryNonJukirModel extends Equatable {
   final int totalOp;
 
   @JsonKey(defaultValue: 0)
+  final int totalOpDigital;
+
+  @JsonKey(defaultValue: 0)
+  final int totalOpNonDigital;
+
+  @JsonKey(defaultValue: 0)
   final int jumlahMotorHariIni;
 
   @JsonKey(defaultValue: 0)
@@ -39,6 +45,8 @@ class DashboardSummaryNonJukirModel extends Equatable {
 
   const DashboardSummaryNonJukirModel({
     required this.totalOp,
+    required this.totalOpDigital,
+    required this.totalOpNonDigital,
     required this.jumlahMotorHariIni,
     required this.jumlahMobilHariIni,
     required this.totalNominalHariIni,

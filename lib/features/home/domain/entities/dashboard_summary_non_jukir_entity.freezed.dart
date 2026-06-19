@@ -18,6 +18,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$DashboardSummaryNonJukirEntity {
   int get totalOp => throw _privateConstructorUsedError;
+  int get totalOpDigital => throw _privateConstructorUsedError;
+  int get totalOpNonDigital => throw _privateConstructorUsedError;
   int get jumlahMotorHariIni => throw _privateConstructorUsedError;
   int get jumlahMobilHariIni => throw _privateConstructorUsedError;
   double get totalNominalHariIni => throw _privateConstructorUsedError;
@@ -48,6 +50,8 @@ abstract class $DashboardSummaryNonJukirEntityCopyWith<$Res> {
   @useResult
   $Res call({
     int totalOp,
+    int totalOpDigital,
+    int totalOpNonDigital,
     int jumlahMotorHariIni,
     int jumlahMobilHariIni,
     double totalNominalHariIni,
@@ -76,6 +80,8 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
   @override
   $Res call({
     Object? totalOp = null,
+    Object? totalOpDigital = null,
+    Object? totalOpNonDigital = null,
     Object? jumlahMotorHariIni = null,
     Object? jumlahMobilHariIni = null,
     Object? totalNominalHariIni = null,
@@ -88,6 +94,14 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
             totalOp: null == totalOp
                 ? _value.totalOp
                 : totalOp // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalOpDigital: null == totalOpDigital
+                ? _value.totalOpDigital
+                : totalOpDigital // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalOpNonDigital: null == totalOpNonDigital
+                ? _value.totalOpNonDigital
+                : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
                       as int,
             jumlahMotorHariIni: null == jumlahMotorHariIni
                 ? _value.jumlahMotorHariIni
@@ -132,6 +146,8 @@ abstract class _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res>
   @useResult
   $Res call({
     int totalOp,
+    int totalOpDigital,
+    int totalOpNonDigital,
     int jumlahMotorHariIni,
     int jumlahMobilHariIni,
     double totalNominalHariIni,
@@ -160,6 +176,8 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? totalOp = null,
+    Object? totalOpDigital = null,
+    Object? totalOpNonDigital = null,
     Object? jumlahMotorHariIni = null,
     Object? jumlahMobilHariIni = null,
     Object? totalNominalHariIni = null,
@@ -172,6 +190,14 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
         totalOp: null == totalOp
             ? _value.totalOp
             : totalOp // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalOpDigital: null == totalOpDigital
+            ? _value.totalOpDigital
+            : totalOpDigital // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalOpNonDigital: null == totalOpNonDigital
+            ? _value.totalOpNonDigital
+            : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
                   as int,
         jumlahMotorHariIni: null == jumlahMotorHariIni
             ? _value.jumlahMotorHariIni
@@ -209,6 +235,8 @@ class _$DashboardSummaryNonJukirEntityImpl
     implements _DashboardSummaryNonJukirEntity {
   const _$DashboardSummaryNonJukirEntityImpl({
     required this.totalOp,
+    required this.totalOpDigital,
+    required this.totalOpNonDigital,
     required this.jumlahMotorHariIni,
     required this.jumlahMobilHariIni,
     required this.totalNominalHariIni,
@@ -219,6 +247,10 @@ class _$DashboardSummaryNonJukirEntityImpl
 
   @override
   final int totalOp;
+  @override
+  final int totalOpDigital;
+  @override
+  final int totalOpNonDigital;
   @override
   final int jumlahMotorHariIni;
   @override
@@ -240,7 +272,7 @@ class _$DashboardSummaryNonJukirEntityImpl
 
   @override
   String toString() {
-    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults)';
+    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults)';
   }
 
   @override
@@ -249,6 +281,10 @@ class _$DashboardSummaryNonJukirEntityImpl
         (other.runtimeType == runtimeType &&
             other is _$DashboardSummaryNonJukirEntityImpl &&
             (identical(other.totalOp, totalOp) || other.totalOp == totalOp) &&
+            (identical(other.totalOpDigital, totalOpDigital) ||
+                other.totalOpDigital == totalOpDigital) &&
+            (identical(other.totalOpNonDigital, totalOpNonDigital) ||
+                other.totalOpNonDigital == totalOpNonDigital) &&
             (identical(other.jumlahMotorHariIni, jumlahMotorHariIni) ||
                 other.jumlahMotorHariIni == jumlahMotorHariIni) &&
             (identical(other.jumlahMobilHariIni, jumlahMobilHariIni) ||
@@ -277,6 +313,8 @@ class _$DashboardSummaryNonJukirEntityImpl
   int get hashCode => Object.hash(
     runtimeType,
     totalOp,
+    totalOpDigital,
+    totalOpNonDigital,
     jumlahMotorHariIni,
     jumlahMobilHariIni,
     totalNominalHariIni,
@@ -303,6 +341,8 @@ abstract class _DashboardSummaryNonJukirEntity
     implements DashboardSummaryNonJukirEntity {
   const factory _DashboardSummaryNonJukirEntity({
     required final int totalOp,
+    required final int totalOpDigital,
+    required final int totalOpNonDigital,
     required final int jumlahMotorHariIni,
     required final int jumlahMobilHariIni,
     required final double totalNominalHariIni,
@@ -313,6 +353,10 @@ abstract class _DashboardSummaryNonJukirEntity
 
   @override
   int get totalOp;
+  @override
+  int get totalOpDigital;
+  @override
+  int get totalOpNonDigital;
   @override
   int get jumlahMotorHariIni;
   @override

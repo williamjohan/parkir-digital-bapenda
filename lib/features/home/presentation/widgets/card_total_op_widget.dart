@@ -173,6 +173,7 @@ class CardTotalOpWidget extends StatelessWidget {
             text: "Lihat Semua Objek Pajak",
             size: PbButtonSize.small,
             onPressed: lihatSemuaOnPressed,
+            variant: PbButtonVariant.outlinedPrimary,
           ),
         ],
       ),

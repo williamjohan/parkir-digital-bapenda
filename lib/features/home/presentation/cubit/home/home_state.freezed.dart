@@ -38,6 +38,8 @@ mixin _$HomeState {
   String get namaJukir => throw _privateConstructorUsedError;
   String get namaOp => throw _privateConstructorUsedError;
   int get totalOp => throw _privateConstructorUsedError;
+  int get totalOpDigital => throw _privateConstructorUsedError;
+  int get totalOpNonDigital => throw _privateConstructorUsedError;
   List<SofParkirResultEntity> get sofParkirResults =>
       throw _privateConstructorUsedError;
   RoleLoginDigitalParkir get role => throw _privateConstructorUsedError;
@@ -73,6 +75,8 @@ abstract class $HomeStateCopyWith<$Res> {
     String namaJukir,
     String namaOp,
     int totalOp,
+    int totalOpDigital,
+    int totalOpNonDigital,
     List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
   });
@@ -111,6 +115,8 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? namaJukir = null,
     Object? namaOp = null,
     Object? totalOp = null,
+    Object? totalOpDigital = null,
+    Object? totalOpNonDigital = null,
     Object? sofParkirResults = null,
     Object? role = null,
   }) {
@@ -188,6 +194,14 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.totalOp
                 : totalOp // ignore: cast_nullable_to_non_nullable
                       as int,
+            totalOpDigital: null == totalOpDigital
+                ? _value.totalOpDigital
+                : totalOpDigital // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalOpNonDigital: null == totalOpNonDigital
+                ? _value.totalOpNonDigital
+                : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
+                      as int,
             sofParkirResults: null == sofParkirResults
                 ? _value.sofParkirResults
                 : sofParkirResults // ignore: cast_nullable_to_non_nullable
@@ -230,6 +244,8 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     String namaJukir,
     String namaOp,
     int totalOp,
+    int totalOpDigital,
+    int totalOpNonDigital,
     List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
   });
@@ -267,6 +283,8 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? namaJukir = null,
     Object? namaOp = null,
     Object? totalOp = null,
+    Object? totalOpDigital = null,
+    Object? totalOpNonDigital = null,
     Object? sofParkirResults = null,
     Object? role = null,
   }) {
@@ -344,6 +362,14 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.totalOp
             : totalOp // ignore: cast_nullable_to_non_nullable
                   as int,
+        totalOpDigital: null == totalOpDigital
+            ? _value.totalOpDigital
+            : totalOpDigital // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalOpNonDigital: null == totalOpNonDigital
+            ? _value.totalOpNonDigital
+            : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
+                  as int,
         sofParkirResults: null == sofParkirResults
             ? _value._sofParkirResults
             : sofParkirResults // ignore: cast_nullable_to_non_nullable
@@ -379,6 +405,8 @@ class _$HomeStateImpl implements _HomeState {
     this.namaJukir = "",
     this.namaOp = "",
     this.totalOp = 0,
+    this.totalOpDigital = 0,
+    this.totalOpNonDigital = 0,
     final List<SofParkirResultEntity> sofParkirResults = const [],
     this.role = RoleLoginDigitalParkir.tidakDiketahui,
   }) : _recentTransactions = recentTransactions,
@@ -448,6 +476,12 @@ class _$HomeStateImpl implements _HomeState {
   @override
   @JsonKey()
   final int totalOp;
+  @override
+  @JsonKey()
+  final int totalOpDigital;
+  @override
+  @JsonKey()
+  final int totalOpNonDigital;
   final List<SofParkirResultEntity> _sofParkirResults;
   @override
   @JsonKey()
@@ -464,7 +498,7 @@ class _$HomeStateImpl implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, totalOp: $totalOp, sofParkirResults: $sofParkirResults, role: $role)';
+    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, sofParkirResults: $sofParkirResults, role: $role)';
   }
 
   @override
@@ -510,6 +544,10 @@ class _$HomeStateImpl implements _HomeState {
                 other.namaJukir == namaJukir) &&
             (identical(other.namaOp, namaOp) || other.namaOp == namaOp) &&
             (identical(other.totalOp, totalOp) || other.totalOp == totalOp) &&
+            (identical(other.totalOpDigital, totalOpDigital) ||
+                other.totalOpDigital == totalOpDigital) &&
+            (identical(other.totalOpNonDigital, totalOpNonDigital) ||
+                other.totalOpNonDigital == totalOpNonDigital) &&
             const DeepCollectionEquality().equals(
               other._sofParkirResults,
               _sofParkirResults,
@@ -538,6 +576,8 @@ class _$HomeStateImpl implements _HomeState {
     namaJukir,
     namaOp,
     totalOp,
+    totalOpDigital,
+    totalOpNonDigital,
     const DeepCollectionEquality().hash(_sofParkirResults),
     role,
   ]);
@@ -571,6 +611,8 @@ abstract class _HomeState implements HomeState {
     final String namaJukir,
     final String namaOp,
     final int totalOp,
+    final int totalOpDigital,
+    final int totalOpNonDigital,
     final List<SofParkirResultEntity> sofParkirResults,
     final RoleLoginDigitalParkir role,
   }) = _$HomeStateImpl;
@@ -611,6 +653,10 @@ abstract class _HomeState implements HomeState {
   String get namaOp;
   @override
   int get totalOp;
+  @override
+  int get totalOpDigital;
+  @override
+  int get totalOpNonDigital;
   @override
   List<SofParkirResultEntity> get sofParkirResults;
   @override

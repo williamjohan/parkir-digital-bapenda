@@ -10,6 +10,8 @@ DashboardSummaryNonJukirModel _$DashboardSummaryNonJukirModelFromJson(
   Map<String, dynamic> json,
 ) => DashboardSummaryNonJukirModel(
   totalOp: (json['totalOp'] as num?)?.toInt() ?? 0,
+  totalOpDigital: (json['totalOpDigital'] as num?)?.toInt() ?? 0,
+  totalOpNonDigital: (json['totalOpNonDigital'] as num?)?.toInt() ?? 0,
   jumlahMotorHariIni: (json['jumlahMotorHariIni'] as num?)?.toInt() ?? 0,
   jumlahMobilHariIni: (json['jumlahMobilHariIni'] as num?)?.toInt() ?? 0,
   totalNominalHariIni: _toDouble(json['totalNominalHariIni']),
@@ -30,6 +32,8 @@ Map<String, dynamic> _$DashboardSummaryNonJukirModelToJson(
   DashboardSummaryNonJukirModel instance,
 ) => <String, dynamic>{
   'totalOp': instance.totalOp,
+  'totalOpDigital': instance.totalOpDigital,
+  'totalOpNonDigital': instance.totalOpNonDigital,
   'jumlahMotorHariIni': instance.jumlahMotorHariIni,
   'jumlahMobilHariIni': instance.jumlahMobilHariIni,
   'totalNominalHariIni': instance.totalNominalHariIni,

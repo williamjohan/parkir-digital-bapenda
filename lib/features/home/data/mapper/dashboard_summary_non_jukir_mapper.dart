@@ -6,6 +6,8 @@ extension DashboardSummaryNonJukirMapper on DashboardSummaryNonJukirModel {
   DashboardSummaryNonJukirEntity toEntity() {
     return DashboardSummaryNonJukirEntity(
       totalOp: totalOp,
+      totalOpDigital: totalOpDigital,
+      totalOpNonDigital: totalOpNonDigital,
       jumlahMotorHariIni: jumlahMotorHariIni,
       jumlahMobilHariIni: jumlahMobilHariIni,
       totalNominalHariIni: totalNominalHariIni,

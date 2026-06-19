@@ -6,11 +6,11 @@ import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_o
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
-import 'package:parkir_digital_bapenda/features/home/presentation/widgets/item_kendaraan_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/last_activity_widget.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/constants/feature_flag.dart';
+import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
@@ -20,6 +20,7 @@ import '../../../update/presentation/widgets/force_update_dialog.dart';
 import '../cubit/home/home_cubit.dart';
 import '../cubit/home/home_state.dart';
 import '../widgets/card_rekap_jenis_pembayaran_widget.dart';
+import '../widgets/card_rekap_kendaraan_widget.dart';
 import '../widgets/home_header_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -139,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                                     topRight: Radius.circular(40),
                                   ),
                                 ),
-                                // 🚀 KUNCI PERBAIKAN: RefreshIndicator jadi parent utama di area putih
+
                                 child: state.status == HomeStatus.loading
                                     ? const SizedBox() // Aman, karena ada LoadingOverlay di root
                                     : RefreshIndicator(
@@ -147,20 +148,90 @@ class _HomePageState extends State<HomePage> {
                                         child: SingleChildScrollView(
                                           physics:
                                               const AlwaysScrollableScrollPhysics(),
-                                          // 🚀 Padding dipindah ke dalam ScrollView agar batas atas-bawah scroll terasa luas
+                                          //Padding dipindah ke dalam ScrollView agar batas atas-bawah scroll terasa luas
                                           padding: const EdgeInsets.all(16),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              if (state.role ==
+                                              // WIDGET OP YANG AKTIF
+                                              PbPermissionGate(
+                                                allowedRoles: const [
+                                                  RoleLoginDigitalParkir.wp,
+                                                ],
+                                                currentRole: state.role,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 16,
+                                                      ),
+                                                  child: CardObjekPajakWidget(
+                                                    nop: state.nop,
+                                                    namaObjekPajak:
+                                                        state.namaOp,
+                                                    alamat: state.namaLokasi,
+                                                    onPressedGantiObjek: () async {
+                                                      final result = await context
+                                                          .pushNamed(
+                                                            AppRoutes
+                                                                .searchObjekPajak,
+                                                            extra: state.role,
+                                                          );
+
+                                                      if (result != null) {
+                                                        await context
+                                                            .read<HomeCubit>()
+                                                            .changeObjekPajak(
+                                                              result
+                                                                  as Map<
+                                                                    String,
+                                                                    dynamic
+                                                                  >,
+                                                            );
+                                                      }
+                                                    },
+                                                    onPressedLihatDetail: () {},
+                                                  ),
+                                                ),
+                                              ),
+
+                                              // WIDGET KARTU TOTAL PENDAPATAN
+                                              PbPermissionGate(
+                                                allowedRoles: [
+                                                  RoleLoginDigitalParkir.jukir,
+                                                  RoleLoginDigitalParkir.wp,
                                                   RoleLoginDigitalParkir
-                                                      .wp) ...[
-                                                CardObjekPajakWidget(
-                                                  nop: state.nop,
-                                                  namaObjekPajak: state.namaOp,
-                                                  alamat: state.namaLokasi,
-                                                  onPressedGantiObjek: () async {
+                                                      .bapenda,
+                                                ],
+                                                currentRole: state.role,
+                                                child: CardTotalPendapatan(
+                                                  totalKotor: state
+                                                      .totalPendapatan
+                                                      .toString(),
+                                                  persentasePajak:
+                                                      "10", // Dummy statis sesuai kesepakatan
+                                                  nominalPajak: state.totalPajak
+                                                      .toInt()
+                                                      .toString(), // Data Real API
+                                                  totalBersih: state.totalBersih
+                                                      .toInt()
+                                                      .toString(), // Data Real API
+                                                ),
+                                              ),
+
+                                              // WIDGET CARD TOTAL OP
+                                              PbPermissionGate(
+                                                allowedRoles: [
+                                                  RoleLoginDigitalParkir
+                                                      .bapenda,
+                                                ],
+                                                currentRole: state.role,
+                                                child: CardTotalOpWidget(
+                                                  totalObjekPajak:
+                                                      state.totalOp,
+                                                  totalOpDigitalisasi: 300,
+                                                  totalOpNonDigitalisasi: 200,
+                                                  lihatSemuaOnPressed: () async {
                                                     final result = await context
                                                         .pushNamed(
                                                           AppRoutes
@@ -180,130 +251,56 @@ class _HomePageState extends State<HomePage> {
                                                           );
                                                     }
                                                   },
-                                                  onPressedLihatDetail: () {},
                                                 ),
-                                                SizedBox(height: 16),
-                                              ],
-                                              // === 1. KARTU TOTAL PENDAPATAN ===
-                                              if (!state.isFree)
-                                                CardTotalPendapatan(
-                                                  totalKotor: state
-                                                      .totalPendapatan
-                                                      .toString(),
-                                                  persentasePajak:
-                                                      "10", // Dummy statis sesuai kesepakatan
-                                                  nominalPajak: state.totalPajak
-                                                      .toInt()
-                                                      .toString(), // Data Real API
-                                                  totalBersih: state.totalBersih
-                                                      .toInt()
-                                                      .toString(), // Data Real API
-                                                ),
-                                              const SizedBox(height: 16),
-                                              CardTotalOpWidget(
-                                                totalObjekPajak: state.totalOp,
-                                                totalOpDigitalisasi: 300,
-                                                totalOpNonDigitalisasi: 200,
-                                                lihatSemuaOnPressed: () {
-                                                  context.pushNamed(
-                                                    AppRoutes.searchObjekPajak,
-                                                    extra: state.role,
-                                                  );
-                                                },
                                               ),
-                                              SizedBox(height: 16),
-                                              // === 2. KARTU REKAP KENDARAAN ===
-                                              Container(
-                                                padding: const EdgeInsets.all(
-                                                  16,
+
+                                              // WIDGET VOLUME JUMLAH KENDARAAN
+                                              PbPermissionGate(
+                                                allowedRoles: const [
+                                                  RoleLoginDigitalParkir.jukir,
+                                                  RoleLoginDigitalParkir
+                                                      .bapenda,
+                                                  RoleLoginDigitalParkir.wp,
+                                                ],
+                                                currentRole: state.role,
+                                                child: CardRekapKendaraanWidget(
+                                                  motorCount: state.motorCount,
+                                                  mobilCount: state.mobilCount,
                                                 ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.black
-                                                          .withValues(
-                                                            alpha: 0.08,
-                                                          ),
-                                                      blurRadius: 10,
-                                                      offset: const Offset(
-                                                        0,
-                                                        4,
+                                              ),
+
+                                              // WIDGET RECENT ACTIVITY
+                                              PbPermissionGate(
+                                                allowedRoles: const [
+                                                  RoleLoginDigitalParkir.jukir,
+                                                  RoleLoginDigitalParkir.wp,
+                                                ],
+                                                currentRole: state.role,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 16,
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: IntrinsicHeight(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .stretch,
-                                                    children: [
-                                                      Column(
-                                                        children: [
-                                                          ItemKendaraanWidget(
-                                                            icon: Icons
-                                                                .two_wheeler,
-                                                            judul: "Roda 2",
-                                                            jumlah: state
-                                                                .motorCount
-                                                                .toString(),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 8,
-                                                          ),
-                                                          ItemKendaraanWidget(
-                                                            icon: Icons
-                                                                .directions_car,
-                                                            judul: "Roda 4",
-                                                            jumlah: state
-                                                                .mobilCount
-                                                                .toString(),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                      Expanded(
-                                                        child: ItemKendaraanWidget(
-                                                          isLeftIcon: false,
-                                                          isSolid: true,
-                                                          icon: Icons.people,
-                                                          judul:
-                                                              "Semua Kendaraan",
-                                                          jumlah:
-                                                              "${state.mobilCount + state.motorCount}",
-                                                        ),
-                                                      ),
-                                                    ],
+                                                  child: LastActivityWidget(
+                                                    transactions: state
+                                                        .recentTransactions,
                                                   ),
                                                 ),
                                               ),
 
-                                              // === 3. KARTU TRANSAKSI TERBARU (Kini ada di DALAM gerbong Scroll!) ===
-                                              if (state.role ==
-                                                      RoleLoginDigitalParkir
-                                                          .jukir ||
-                                                  state.role ==
-                                                      RoleLoginDigitalParkir
-                                                          .wp) ...[
-                                                LastActivityWidget(
-                                                  transactions:
-                                                      state.recentTransactions,
-                                                ),
-                                                SizedBox(height: 16),
-                                              ],
-
-                                              if (state.role ==
+                                              // WIDGET REKAP JENIS PEMBAYARAN BAPENDA
+                                              PbPermissionGate(
+                                                allowedRoles: const [
                                                   RoleLoginDigitalParkir
-                                                      .bapenda)
-                                                CardRekapJenisPembayaranWidget(
-                                                  data: state.sofParkirResults,
-                                                ),
+                                                      .bapenda,
+                                                ],
+                                                currentRole: state.role,
+                                                child:
+                                                    CardRekapJenisPembayaranWidget(
+                                                      data: state
+                                                          .sofParkirResults,
+                                                    ),
+                                              ),
 
                                               const SizedBox(height: 50),
                                             ],
@@ -319,22 +316,29 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   floatingActionButton: FeatureFlags.enableCreateOrderFeature
-                      ? FloatingActionButton(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          shape: const CircleBorder(),
-                          onPressed: () async {
-                            final result = await context.push(
-                              AppRoutes.transaction,
-                              extra: state.isFree,
-                            );
+                      ? PbPermissionGate(
+                          allowedRoles: const [
+                            RoleLoginDigitalParkir.jukir,
+                            RoleLoginDigitalParkir.bapenda,
+                          ],
+                          currentRole: state.role,
+                          child: FloatingActionButton(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            shape: const CircleBorder(),
+                            onPressed: () async {
+                              final result = await context.push(
+                                AppRoutes.transaction,
+                                extra: state.isFree,
+                              );
 
-                            // kalau transaksi sukses
-                            if (result == true) {
-                              _loadData(); // reload data home
-                            }
-                          },
-                          child: const Icon(Icons.add),
+                              // kalau transaksi sukses
+                              if (result == true) {
+                                _loadData(); // reload data home
+                              }
+                            },
+                            child: const Icon(Icons.add),
+                          ),
                         )
                       : null,
                 ),

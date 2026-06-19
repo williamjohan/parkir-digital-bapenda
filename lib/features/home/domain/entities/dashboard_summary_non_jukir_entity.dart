@@ -6,6 +6,8 @@ part 'dashboard_summary_non_jukir_entity.freezed.dart';
 class DashboardSummaryNonJukirEntity with _$DashboardSummaryNonJukirEntity {
   const factory DashboardSummaryNonJukirEntity({
     required int totalOp,
+    required int totalOpDigital,
+    required int totalOpNonDigital,
     required int jumlahMotorHariIni,
     required int jumlahMobilHariIni,
     required double totalNominalHariIni,

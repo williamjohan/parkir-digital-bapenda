@@ -124,6 +124,8 @@ class HomeCubit extends Cubit<HomeState> {
               totalPajak: 0,
               totalBersih: 0,
               totalOp: 0,
+              totalOpDigital: 0,
+              totalOpNonDigital: 0,
               sofParkirResults: [],
             ),
           );
@@ -139,6 +141,8 @@ class HomeCubit extends Cubit<HomeState> {
               totalPajak: summary.totalNominalBersihUntukBapenda,
               totalBersih: summary.totalNominalBersihUntukWajibPajak,
               totalOp: summary.totalOp,
+              totalOpDigital: summary.totalOpDigital,
+              totalOpNonDigital: summary.totalOpNonDigital,
               sofParkirResults: summary.sofParkirResults,
             ),
           );

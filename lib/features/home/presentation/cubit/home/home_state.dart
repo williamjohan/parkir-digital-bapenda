@@ -31,6 +31,8 @@ class HomeState with _$HomeState {
     @Default("") String namaOp,
 
     @Default(0) int totalOp,
+    @Default(0) int totalOpDigital,
+    @Default(0) int totalOpNonDigital,
 
     @Default([]) List<SofParkirResultEntity> sofParkirResults,
     @Default(RoleLoginDigitalParkir.tidakDiketahui) RoleLoginDigitalParkir role,
