@@ -38,7 +38,6 @@ class UserModel {
   @JsonKey(name: 'pungutTarif', fromJson: _toInt)
   final int pungutTarif;
 
-  // 🚀 [BARU] Teks Emas dari Backend
   @JsonKey(name: 'pungutTarifDescription', fromJson: _toString)
   final String pungutTarifDescription;
 

@@ -21,29 +21,26 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(ProfileLoading());
 
     try {
-      // Coba ambil dari API jika forceRemote = true
       if (forceRemote) {
-        AppLogger.debug('>>> [ProfileCubit] Mengambil profil dari server...');
-        final result = await _getProfileUseCase();
-
-        result.fold(
-          (failure) async {
-            AppLogger.error(
-              '>>> [ProfileCubit] Gagal fetch dari API: ${failure.message}',
-            );
-            // Fallback ke local storage
-            await _loadFromLocal();
-          },
-          (user) {
-            AppLogger.debug(
-              '>>> [ProfileCubit] Profil dari API berhasil dimuat',
-            );
-            emit(ProfileLoaded(user));
-          },
+        AppLogger.debug(
+          '>>> [ProfileCubit] Mengambil profil dari server (Force Remote)...',
         );
+        await _fetchFromApi();
       } else {
-        // Ambil dari local storage
-        await _loadFromLocal();
+        // Cek Local Storage dulu
+        final jukirProfile = await _secureStorage.getJukirProfile();
+
+        if (jukirProfile != null) {
+          AppLogger.debug('>>> [ProfileCubit] Profil ditemukan di lokal!');
+          final userModel = UserModel.fromJson(jukirProfile);
+          emit(ProfileLoaded(userModel));
+        } else {
+          // Jika lokal kosong, jangan langsung error! Otomatis tembak API.
+          AppLogger.debug(
+            '>>> [ProfileCubit] Lokal kosong (Cache Miss), otomatis mengambil dari API...',
+          );
+          await _fetchFromApi();
+        }
       }
     } catch (e) {
       AppLogger.error('>>> [ProfileCubit] ERROR: $e');
@@ -51,23 +48,22 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  /// Load profile dari secure storage (local)
-  Future<void> _loadFromLocal() async {
-    try {
-      final jukirProfile = await _secureStorage.getJukirProfile();
+  /// Eksekusi pemanggilan API (Penyimpanan lokal sudah di-handle oleh Repository)
+  Future<void> _fetchFromApi() async {
+    final result = await _getProfileUseCase();
 
-      if (jukirProfile == null) {
-        emit(ProfileFailure('Data profil tidak ditemukan'));
-        return;
-      }
-
-      // Konversi Map ke UserModel
-      final userModel = UserModel.fromJson(jukirProfile);
-      emit(ProfileLoaded(userModel));
-    } catch (e) {
-      AppLogger.error('>>> [ProfileCubit] Error loading local profile: $e');
-      emit(ProfileFailure('Gagal memuat profil lokal: ${e.toString()}'));
-    }
+    result.fold(
+      (failure) {
+        AppLogger.error(
+          '>>> [ProfileCubit] Gagal fetch dari API: ${failure.message}',
+        );
+        emit(ProfileFailure(failure.message));
+      },
+      (user) {
+        AppLogger.debug('>>> [ProfileCubit] Profil dari API berhasil dimuat');
+        emit(ProfileLoaded(user));
+      },
+    );
   }
 
   /// Refresh profile dari server
