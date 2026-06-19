@@ -1,25 +1,9 @@
 import 'package:flutter/material.dart';
 
-class RekapJenisPembayaran {
-  final String jenisPembayaran;
-
-  final int totalMotor;
-  final int jumlahMotor;
-
-  final int totalMobil;
-  final int jumlahMobil;
-
-  const RekapJenisPembayaran({
-    required this.jenisPembayaran,
-    required this.totalMotor,
-    required this.jumlahMotor,
-    required this.totalMobil,
-    required this.jumlahMobil,
-  });
-}
+import '../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 
 class CardRekapJenisPembayaranWidget extends StatelessWidget {
-  final List<RekapJenisPembayaran> data;
+  final List<SofParkirResultEntity> data;
 
   const CardRekapJenisPembayaranWidget({super.key, required this.data});
 
@@ -54,7 +38,7 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: Text(
-                  item.jenisPembayaran,
+                  item.sof,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -65,7 +49,7 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: itemKendaraan(
-                  total: item.totalMotor,
+                  total: item.nominalMotor,
                   jmlMotor: item.jumlahMotor,
                 ),
               ),
@@ -75,7 +59,7 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: itemKendaraan(
-                  total: item.totalMobil,
+                  total: item.nominalMobil,
                   jmlMobil: item.jumlahMobil,
                 ),
               ),
@@ -87,7 +71,7 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
   }
 }
 
-Widget itemKendaraan({int? jmlMotor, int? jmlMobil, required int total}) {
+Widget itemKendaraan({int? jmlMotor, int? jmlMobil, required double total}) {
   final isMotor = jmlMotor != null;
 
   return Column(

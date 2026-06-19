@@ -15,6 +15,9 @@ class ApiEndpoints {
   static const String tarif = '/api/mobile/parking/tarif';
   static const String dashboardSummary =
       '/api/mobile/parking/dashboard-summary-dev';
+  static const String dashboardSummaryNonJukir =
+      '/api/mobile/parking/dashboard-summary-nonjukir-dev';
+
   static const String weeklyChart = '/api/mobile/parking/weekly-chart-dev';
   static const String laporanPendapatan =
       '/api/mobile/parking/laporan-pendapatan';

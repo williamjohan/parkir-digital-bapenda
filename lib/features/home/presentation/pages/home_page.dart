@@ -33,30 +33,6 @@ class _HomePageState extends State<HomePage> {
   // Track apakah ini pertama kali load
   bool _isFirstLoad = true;
 
-  final dummyData = [
-    const RekapJenisPembayaran(
-      jenisPembayaran: 'Tunai',
-      totalMotor: 100000,
-      jumlahMotor: 50,
-      totalMobil: 200000,
-      jumlahMobil: 20,
-    ),
-    const RekapJenisPembayaran(
-      jenisPembayaran: 'QRIS',
-      totalMotor: 300000,
-      jumlahMotor: 80,
-      totalMobil: 400000,
-      jumlahMobil: 40,
-    ),
-    const RekapJenisPembayaran(
-      jenisPembayaran: 'E-Money',
-      totalMotor: 150000,
-      jumlahMotor: 30,
-      totalMobil: 250000,
-      jumlahMobil: 15,
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -224,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               const SizedBox(height: 16),
                                               CardTotalOpWidget(
-                                                totalObjekPajak: 500,
+                                                totalObjekPajak: state.totalOp,
                                                 totalOpDigitalisasi: 300,
                                                 totalOpNonDigitalisasi: 200,
                                               ),
@@ -319,7 +295,7 @@ class _HomePageState extends State<HomePage> {
                                                   RoleLoginDigitalParkir
                                                       .bapenda)
                                                 CardRekapJenisPembayaranWidget(
-                                                  data: dummyData,
+                                                  data: state.sofParkirResults,
                                                 ),
 
                                               const SizedBox(height: 50),

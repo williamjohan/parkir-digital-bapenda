@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failure.dart';
 import '../../data/models/dashboard_summary_model.dart';
+import '../entities/dashboard_summary_non_jukir_entity.dart';
 
 abstract class IHomeRepository {
   /// Mengambil tarif dari API dan menyimpannya secara silent ke Secure Storage
@@ -11,9 +12,6 @@ abstract class IHomeRepository {
     required String nop,
   });
 
-  /// Mengambil data grafik mingguan
-  // Future<Either<Failure, List<WeeklyChartItemModel>>> getWeeklyChart();
-
-  // /// Mengambil tarif kendaraan
-  // Future<Either<Failure, List<TarifModel>>> getLocalTarifs();
+  Future<Either<Failure, DashboardSummaryNonJukirEntity>>
+  getDashboardSummaryNonJukir();
 }

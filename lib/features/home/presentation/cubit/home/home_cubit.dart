@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/home/domain/usecases/get_dashboard_summary_non_jukir_usecase.dart';
 import '../../../../../core/enums/app_enums.dart';
 import '../../../../../core/storage/database_helper_2.dart';
 import '../../../../../core/storage/secure_storage_manager.dart';
-import '../../../../../core/utils/permission_utils.dart';
-import '../../../../transaction/domain/usecases/sync_qris_usecase.dart';
+import '../../../../../core/utils/app_logger.dart';
 import '../../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
 import '../../../domain/usecases/get_recent_transaction_usecase.dart';
 import 'home_state.dart';
@@ -13,15 +13,15 @@ import 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
+  final GetDashboardSummaryNonJukirUseCase _getDashboardSummaryNonJukirUseCase;
   final ISecureStorageManager _secureStorage;
-  final SyncQrisUseCase _syncQrisUseCase;
   final DatabaseHelper2 _databaseHelper;
 
   HomeCubit(
     this._getHybridDashboardSummaryUseCase,
     this._getRecentTransactionsUseCase,
+    this._getDashboardSummaryNonJukirUseCase,
     this._secureStorage,
-    this._syncQrisUseCase,
     this._databaseHelper,
   ) : super(const HomeState());
 
@@ -34,40 +34,20 @@ class HomeCubit extends Cubit<HomeState> {
 
     await _loadProfileInfo();
 
-    await _syncQrisUseCase.execute();
-
-    await loadDashboardData();
+    if (state.role == RoleLoginDigitalParkir.jukir) {
+      await loadDashboardData();
+    } else {
+      await _ensureValidToken();
+      await _loadDashboardNonJukir();
+    }
   }
 
-  // ==========================================================
-  // CAMERA
-  // ==========================================================
-
-  Future<void> requestCameraAccess(String vehicleType) async {
-    final result = await PermissionUtils.requestCameraPermission();
-
-    if (isClosed) return;
-
-    result.fold(
-      (failure) {
-        emit(
-          state.copyWith(
-            permissionActionStatus: CameraPermissionStatus.error,
-            selectedVehicleForCapture: vehicleType,
-            actionTimestamp: DateTime.now().millisecondsSinceEpoch,
-          ),
-        );
-      },
-      (status) {
-        emit(
-          state.copyWith(
-            permissionActionStatus: status,
-            selectedVehicleForCapture: vehicleType,
-            actionTimestamp: DateTime.now().millisecondsSinceEpoch,
-          ),
-        );
-      },
-    );
+  Future<void> _ensureValidToken() async {
+    final token = await _secureStorage.getAccessToken();
+    if (token == null || token.isEmpty) {
+      AppLogger.warning('Token is null or empty, attempting refresh...');
+      // await _refreshTokenManually();
+    }
   }
 
   // ==========================================================
@@ -128,6 +108,50 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  // home_cubit.dart
+  Future<void> _loadDashboardNonJukir() async {
+    final result = await _getDashboardSummaryNonJukirUseCase.execute();
+
+    result.fold(
+      (failure) {
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              status: HomeStatus.failure,
+              motorCount: 0,
+              mobilCount: 0,
+              totalPendapatan: 0,
+              totalPajak: 0,
+              totalBersih: 0,
+              totalOp: 0,
+              sofParkirResults: [],
+            ),
+          );
+        }
+      },
+      (summary) {
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              motorCount: summary.jumlahMotorHariIni,
+              mobilCount: summary.jumlahMobilHariIni,
+              totalPendapatan: summary.totalNominalHariIni,
+              totalPajak: summary.totalNominalBersihUntukBapenda,
+              totalBersih: summary.totalNominalBersihUntukWajibPajak,
+              totalOp: summary.totalOp,
+              sofParkirResults: summary.sofParkirResults,
+            ),
+          );
+        }
+      },
+    );
+
+    // ✅ TAMBAHKAN INI - Set status ke success setelah selesai
+    if (!isClosed) {
+      emit(state.copyWith(status: HomeStatus.success));
+    }
+  }
+
   // ==========================================================
   // PROFILE
   // ==========================================================
@@ -139,7 +163,7 @@ class HomeCubit extends Cubit<HomeState> {
 
     //  2. SIMPAN ROLE KE STATE AGAR UI BISA BACA
     emit(state.copyWith(role: userRole));
-   
+
     final profile = await _secureStorage.getJukirProfile();
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
 

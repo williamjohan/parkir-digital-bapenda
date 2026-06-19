@@ -36,8 +36,10 @@ mixin _$HomeState {
   String get nop => throw _privateConstructorUsedError;
   String get namaLokasi => throw _privateConstructorUsedError;
   String get namaJukir => throw _privateConstructorUsedError;
-  String get namaOp =>
-      throw _privateConstructorUsedError; // 🚀 PENGGANTI isJukir: Single Source of Truth untuk Role
+  String get namaOp => throw _privateConstructorUsedError;
+  int get totalOp => throw _privateConstructorUsedError;
+  List<SofParkirResultEntity> get sofParkirResults =>
+      throw _privateConstructorUsedError;
   RoleLoginDigitalParkir get role => throw _privateConstructorUsedError;
 
   /// Create a copy of HomeState
@@ -70,6 +72,8 @@ abstract class $HomeStateCopyWith<$Res> {
     String namaLokasi,
     String namaJukir,
     String namaOp,
+    int totalOp,
+    List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
   });
 }
@@ -106,7 +110,9 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? namaLokasi = null,
     Object? namaJukir = null,
     Object? namaOp = null,
-    Object? role = freezed,
+    Object? totalOp = null,
+    Object? sofParkirResults = null,
+    Object? role = null,
   }) {
     return _then(
       _value.copyWith(
@@ -178,7 +184,15 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.namaOp
                 : namaOp // ignore: cast_nullable_to_non_nullable
                       as String,
-            role: freezed == role
+            totalOp: null == totalOp
+                ? _value.totalOp
+                : totalOp // ignore: cast_nullable_to_non_nullable
+                      as int,
+            sofParkirResults: null == sofParkirResults
+                ? _value.sofParkirResults
+                : sofParkirResults // ignore: cast_nullable_to_non_nullable
+                      as List<SofParkirResultEntity>,
+            role: null == role
                 ? _value.role
                 : role // ignore: cast_nullable_to_non_nullable
                       as RoleLoginDigitalParkir,
@@ -215,6 +229,8 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     String namaLokasi,
     String namaJukir,
     String namaOp,
+    int totalOp,
+    List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
   });
 }
@@ -250,7 +266,9 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? namaLokasi = null,
     Object? namaJukir = null,
     Object? namaOp = null,
-    Object? role = freezed,
+    Object? totalOp = null,
+    Object? sofParkirResults = null,
+    Object? role = null,
   }) {
     return _then(
       _$HomeStateImpl(
@@ -322,7 +340,15 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.namaOp
             : namaOp // ignore: cast_nullable_to_non_nullable
                   as String,
-        role: freezed == role
+        totalOp: null == totalOp
+            ? _value.totalOp
+            : totalOp // ignore: cast_nullable_to_non_nullable
+                  as int,
+        sofParkirResults: null == sofParkirResults
+            ? _value._sofParkirResults
+            : sofParkirResults // ignore: cast_nullable_to_non_nullable
+                  as List<SofParkirResultEntity>,
+        role: null == role
             ? _value.role
             : role // ignore: cast_nullable_to_non_nullable
                   as RoleLoginDigitalParkir,
@@ -352,9 +378,12 @@ class _$HomeStateImpl implements _HomeState {
     this.namaLokasi = "",
     this.namaJukir = "",
     this.namaOp = "",
+    this.totalOp = 0,
+    final List<SofParkirResultEntity> sofParkirResults = const [],
     this.role = RoleLoginDigitalParkir.tidakDiketahui,
   }) : _recentTransactions = recentTransactions,
-       _weeklyChartData = weeklyChartData;
+       _weeklyChartData = weeklyChartData,
+       _sofParkirResults = sofParkirResults;
 
   @override
   @JsonKey()
@@ -416,14 +445,26 @@ class _$HomeStateImpl implements _HomeState {
   @override
   @JsonKey()
   final String namaOp;
-  // 🚀 PENGGANTI isJukir: Single Source of Truth untuk Role
+  @override
+  @JsonKey()
+  final int totalOp;
+  final List<SofParkirResultEntity> _sofParkirResults;
+  @override
+  @JsonKey()
+  List<SofParkirResultEntity> get sofParkirResults {
+    if (_sofParkirResults is EqualUnmodifiableListView)
+      return _sofParkirResults;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_sofParkirResults);
+  }
+
   @override
   @JsonKey()
   final RoleLoginDigitalParkir role;
 
   @override
   String toString() {
-    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, role: $role)';
+    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, totalOp: $totalOp, sofParkirResults: $sofParkirResults, role: $role)';
   }
 
   @override
@@ -468,11 +509,16 @@ class _$HomeStateImpl implements _HomeState {
             (identical(other.namaJukir, namaJukir) ||
                 other.namaJukir == namaJukir) &&
             (identical(other.namaOp, namaOp) || other.namaOp == namaOp) &&
-            const DeepCollectionEquality().equals(other.role, role));
+            (identical(other.totalOp, totalOp) || other.totalOp == totalOp) &&
+            const DeepCollectionEquality().equals(
+              other._sofParkirResults,
+              _sofParkirResults,
+            ) &&
+            (identical(other.role, role) || other.role == role));
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     status,
     permissionActionStatus,
@@ -491,8 +537,10 @@ class _$HomeStateImpl implements _HomeState {
     namaLokasi,
     namaJukir,
     namaOp,
-    const DeepCollectionEquality().hash(role),
-  );
+    totalOp,
+    const DeepCollectionEquality().hash(_sofParkirResults),
+    role,
+  ]);
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -522,6 +570,8 @@ abstract class _HomeState implements HomeState {
     final String namaLokasi,
     final String namaJukir,
     final String namaOp,
+    final int totalOp,
+    final List<SofParkirResultEntity> sofParkirResults,
     final RoleLoginDigitalParkir role,
   }) = _$HomeStateImpl;
 
@@ -558,7 +608,11 @@ abstract class _HomeState implements HomeState {
   @override
   String get namaJukir;
   @override
-  String get namaOp; // 🚀 PENGGANTI isJukir: Single Source of Truth untuk Role
+  String get namaOp;
+  @override
+  int get totalOp;
+  @override
+  List<SofParkirResultEntity> get sofParkirResults;
   @override
   RoleLoginDigitalParkir get role;
 

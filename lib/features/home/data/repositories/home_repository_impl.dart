@@ -1,14 +1,16 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/home/data/datasources/summary_remote_datasource.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/database_helper.dart';
 import '../../../../core/storage/database_helper_2.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
+import '../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../domain/repositories/i_home_repository.dart';
-import '../datasources/i_summary_remote_datasource.dart';
 import '../datasources/i_tarif_remote_datasource.dart';
+import '../mapper/dashboard_summary_non_jukir_mapper.dart';
 import '../models/dashboard_summary_model.dart';
 
 @LazySingleton(as: IHomeRepository)
@@ -53,22 +55,6 @@ class HomeRepositoryImpl implements IHomeRepository {
 
     // --- FASE 1: Ambil JANGKAR (Server atau Cache) ---
     try {
-      // String nop = '';
-
-      // final isJukir = await _secureStorage.getIsJukir();
-
-      // if (isJukir) {
-      //   final profile = await _secureStorage.getJukirProfile();
-
-      //   nop = profile?['nop']?.toString() ?? '';
-      // } else {
-      //   final nopList = await _databaseHelper.getNopList();
-
-      //   if (nopList.isNotEmpty) {
-      //     nop = nopList.first['nop']?.toString() ?? '';
-      //   }
-      // }
-      // Tembak Server
       anchor = await _summaryRemoteDS.getDashboardSummary(nop: nop);
 
       // Backup ke Brankas jika sewaktu-waktu offline
@@ -119,37 +105,15 @@ class HomeRepositoryImpl implements IHomeRepository {
     }
   }
 
-  // @override
-  // Future<Either<Failure, List<WeeklyChartItemModel>>> getWeeklyChart() async {
-  //   try {
-  //     final chartData = await _summaryRemoteDS.getWeeklyChart();
-  //     return Right(chartData);
-  //   } on ServerException catch (e) {
-  //     return Left(ServerFailure(e.message));
-  //   } catch (e) {
-  //     return Left(ServerFailure('Gagal memuat grafik: ${e.toString()}'));
-  //   }
-  // }
+  @override
+  Future<Either<Failure, DashboardSummaryNonJukirEntity>>
+  getDashboardSummaryNonJukir() async {
+    try {
+      final model = await _summaryRemoteDS.getDashboardSummaryNonJukir();
 
-  // @override
-  // Future<Either<Failure, List<TarifModel>>> getLocalTarifs() async {
-  //   try {
-  //     // PINTU KELUAR: Ambil dari Brankas (Bukan API!)
-  //     // Inilah yang menjamin Chucker tidak akan nembak API lagi saat buka TransactionPage
-  //     final jsonString = await _secureStorage.getMasterTarif();
-
-  //     if (jsonString == null || jsonString.isEmpty) {
-  //       return const Left(CacheFailure('Data tarif belum tersedia.'));
-  //     }
-
-  //     final List<dynamic> jsonList = jsonDecode(jsonString);
-  //     final localData = jsonList
-  //         .map((json) => TarifModel.fromJson(json))
-  //         .toList();
-
-  //     return Right(localData);
-  //   } catch (e) {
-  //     return const Left(CacheFailure('Gagal membaca data dari brankas.'));
-  //   }
-  // }
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
 }
