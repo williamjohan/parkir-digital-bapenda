@@ -237,6 +237,42 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Helper widget untuk menampilkan info row
+  Widget _buildInfoRow({required String label, required String value}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTypography.bodySmall.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value.isEmpty ? '-' : value,
+          style: AppTypography.bodyRegular.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}
 
                       // // === CARD LOKASI & GATE === (Di-hidden sementara)
                       // // const SizedBox(height: 16),
@@ -323,39 +359,3 @@ class _ProfilePageState extends State<ProfilePage> {
                       //     ),
                       //   ),
                       // ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            return const SizedBox.shrink();
-          },
-        ),
-      ),
-    );
-  }
-
-  /// Helper widget untuk menampilkan info row
-  Widget _buildInfoRow({required String label, required String value}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppTypography.bodySmall.copyWith(
-            color: AppColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value.isEmpty ? '-' : value,
-          style: AppTypography.bodyRegular.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-}

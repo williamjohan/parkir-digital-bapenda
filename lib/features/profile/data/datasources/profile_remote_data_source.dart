@@ -14,42 +14,69 @@ abstract class IProfileRemoteDataSource {
 
 @LazySingleton(as: IProfileRemoteDataSource)
 class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
-  final Dio _dio; // Dio ini otomatis sudah membawa Token dari AuthInterceptor!
+  final Dio _dio;
 
   ProfileRemoteDataSourceImpl(this._dio);
 
   @override
   Future<UserModel> getProfile() async {
     try {
-      // 1. Tembak endpoint Profile (Pastikan Anda sudah menambahkan ApiEndpoints.profile)
-      final response = await _dio.get(ApiEndpoints.profile);
+      AppLogger.info(
+        ">>> [Profile DS] Memulai request ke: ${ApiEndpoints.profile}",
+      );
 
+      final response = await _dio.get(ApiEndpoints.profile);
       final responseData = response.data;
 
-      // 2. Cek Envelope Bapenda
+      AppLogger.info(">>> [Profile DS] Raw Response: $responseData");
+
       if (responseData['isSuccess'] == true) {
         final beData = responseData['data'];
 
-        // 3. MAGIC HAPPENS HERE: Langsung konversi! Tidak perlu manual mapping (Adapter)
-        // karena nama property di UserModel sudah sama persis dengan JSON BE.
-        return UserModel.fromJson(beData);
+        try {
+          // 🚀 PASANG CCTV PARSING: Jika mati di sini, berarti UserModel tidak cocok dengan JSON Bapenda!
+          AppLogger.info(
+            ">>> [Profile DS] Mencoba parsing JSON ke UserModel...",
+          );
+          final userModel = UserModel.fromJson(beData);
+          AppLogger.info(">>> [Profile DS] Parsing BERHASIL!");
+          return userModel;
+        } catch (parseError, stackTrace) {
+          AppLogger.error(
+            ">>> [Profile DS] FATAL ERROR: Gagal mapping JSON ke UserModel!",
+            parseError,
+            stackTrace,
+          );
+          throw ServerException(
+            statusCode: 500,
+            message:
+                'Struktur data profil dari server tidak sesuai format aplikasi.',
+          );
+        }
       } else {
+        AppLogger.error(">>> [Profile DS] Envelope isSuccess = false");
         throw ServerException(
           statusCode: response.statusCode ?? 500,
           message: responseData['message'] ?? 'Gagal memuat data profil.',
         );
       }
     } on DioException catch (e) {
+      // 🚀 CCTV NETWORK: Menangkap murni penolakan server (misal 401 atau 404)
+      AppLogger.error(
+        ">>> [Profile DS] DIO ERROR: ${e.response?.statusCode} - ${e.message}",
+        e,
+        null,
+      );
       throw DioErrorHandler.handle(e);
     } catch (e, stackTrace) {
       AppLogger.error(
-        'Internal Error di ProfileRemoteDataSource',
+        '>>> [Profile DS] Internal Error Tidak Terduga',
         e,
         stackTrace,
       );
       throw const ServerException(
         statusCode: 500,
-        message: 'Terjadi kesalahan internal saat memparsing profil.',
+        message: 'Terjadi kesalahan internal saat memproses profil.',
       );
     }
   }

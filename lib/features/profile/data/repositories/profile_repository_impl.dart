@@ -21,6 +21,7 @@ class ProfileRepositoryImpl implements IProfileRepository {
     try {
       final userModel = await _remoteDataSource.getProfile();
 
+      //setelah difetch dari endpoint di save ke secure storage.
       await _secureStorage.saveJukirProfile(
         idUserStorage: userModel.idUser.toString(),
         namaUserStorage: userModel.namaUser,
