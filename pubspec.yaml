@@ -90,7 +90,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/iconlogo/LogoTS_Park.png"
+  image_path: "assets/iconlogo/LOGO-TS-PARKIR-REV.png"
 
 flutter_native_splash:
   color: "#FFFFFF"

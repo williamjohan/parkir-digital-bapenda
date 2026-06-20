@@ -34,7 +34,7 @@ class CardTotalOpWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -55,7 +55,7 @@ class CardTotalOpWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "TOTAL OBJEK PAJAK",
+                          "TOTAL OBJEK PAJAK PARKIR",
                           style: AppTypography.bodySemiBold,
                         ),
                       ],
@@ -149,7 +149,7 @@ class CardTotalOpWidget extends StatelessWidget {
           _statusItem(
             icon: Icons.check,
             iconColor: AppColors.success,
-            bgColor: AppColors.success.withOpacity(0.12),
+            bgColor: AppColors.success.withValues(alpha: 0.12),
             title: "Digitalisasi",
             subtitle: "Sudah terhubung sistem",
             total: totalOpDigitalisasi,
@@ -161,7 +161,7 @@ class CardTotalOpWidget extends StatelessWidget {
           _statusItem(
             icon: Icons.close,
             iconColor: AppColors.error,
-            bgColor: AppColors.error.withOpacity(0.12),
+            bgColor: AppColors.error.withValues(alpha: 0.12),
             title: "Non-Digital",
             subtitle: "Belum terhubung sistem",
             total: totalOpNonDigitalisasi,

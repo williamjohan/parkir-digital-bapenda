@@ -61,8 +61,8 @@ class CardTotalPendapatan extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
 
+          Text("Hari ini", style: AppTypography.bodySemiBold),
           // === 2. HERO METRIC (KOTOR) ===
           Text(
             "Pendapatan Kotor",

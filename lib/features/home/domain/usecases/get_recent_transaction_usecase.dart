@@ -24,10 +24,6 @@ class GetRecentTransactionsUseCase {
       }
 
       final String nop = profile['nop']?.toString() ?? '';
-      final String shift = profile['shift']?.toString() ?? '1';
-      final int petugasId =
-          int.tryParse(profile['idUser']?.toString() ?? '0') ?? 0;
-
       final now = DateTime.now();
       final startDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
       final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
@@ -35,8 +31,6 @@ class GetRecentTransactionsUseCase {
       // 1. Ambil data MURNI dari API
       final HistoryResponseData apiResult = await _remoteDataSource.getHistory(
         nop: nop,
-        // petugasId: petugasId,
-        // shift: shift,
         startDate: startDate,
         endDate: endDate,
         limit: limit,

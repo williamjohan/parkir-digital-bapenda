@@ -20,14 +20,29 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "id.go.surabaya.tsparkbapenda"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    // 🚀 THE FACTORY ENGINE (FLAVORS) - KOTLIN DSL SYNTAX
+    flavorDimensions += "env"
+
+    productFlavors {
+        // 1. JALUR PRODUKSI (LIVE)
+        create("prod") {
+            dimension = "env"
+            resValue("string", "app_name", "TS Park Bapenda")
+        }
+        
+        // 2. JALUR DEMO (PRESENTASI PIMPINAN)
+        create("demo") {
+            dimension = "env"
+            applicationIdSuffix = ".demo"
+            resValue("string", "app_name", "TS Park Bapenda (DEMO)")
+        }
     }
 
     buildTypes {
