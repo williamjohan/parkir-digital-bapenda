@@ -33,8 +33,35 @@ class HomeState with _$HomeState {
     @Default(0) int totalOp,
     @Default(0) int totalOpDigital,
     @Default(0) int totalOpNonDigital,
-    @Default(0) int totalOpFree,
-    @Default(0) int totalOpNonFree,
+
+    @Default(
+      OpCategoryEntity(
+        total: 0,
+        totalBertarif: 0,
+        totalNonTarif: 0,
+        totalTidakDiketahui: 0,
+        persentaseBertarif: 0,
+        persentaseNonTarif: 0,
+        persentaseTidakDiketahui: 0,
+      ),
+    )
+    OpCategoryEntity digital,
+
+    @Default(
+      OpCategoryEntity(
+        total: 0,
+        totalBertarif: 0,
+        totalNonTarif: 0,
+        totalTidakDiketahui: 0,
+        persentaseBertarif: 0,
+        persentaseNonTarif: 0,
+        persentaseTidakDiketahui: 0,
+      ),
+    )
+    OpCategoryEntity nonDigital,
+
+    @Default(0) double persentaseDigital,
+    @Default(0) double persentaseNonDigital,
 
     @Default([]) List<SofParkirResultEntity> sofParkirResults,
     @Default(RoleLoginDigitalParkir.tidakDiketahui) RoleLoginDigitalParkir role,

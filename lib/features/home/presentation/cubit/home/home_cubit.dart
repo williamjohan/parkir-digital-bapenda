@@ -6,6 +6,7 @@ import '../../../../../core/storage/database_helper_2.dart';
 import '../../../../../core/storage/secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
 import '../../../../transaction/domain/usecases/sync_qris_usecase.dart';
+import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
 import '../../../domain/usecases/get_recent_transaction_usecase.dart';
 import 'home_state.dart';
@@ -130,8 +131,28 @@ class HomeCubit extends Cubit<HomeState> {
               totalOp: 0,
               totalOpDigital: 0,
               totalOpNonDigital: 0,
-              totalOpFree: 0,
-              totalOpNonFree: 0,
+              digital: const OpCategoryEntity(
+                total: 0,
+                totalBertarif: 0,
+                totalNonTarif: 0,
+                totalTidakDiketahui: 0,
+                persentaseBertarif: 0,
+                persentaseNonTarif: 0,
+                persentaseTidakDiketahui: 0,
+              ),
+
+              nonDigital: const OpCategoryEntity(
+                total: 0,
+                totalBertarif: 0,
+                totalNonTarif: 0,
+                totalTidakDiketahui: 0,
+                persentaseBertarif: 0,
+                persentaseNonTarif: 0,
+                persentaseTidakDiketahui: 0,
+              ),
+
+              persentaseDigital: 0,
+              persentaseNonDigital: 0,
               sofParkirResults: [],
             ),
           );
@@ -150,8 +171,11 @@ class HomeCubit extends Cubit<HomeState> {
               totalOp: summary.totalOp,
               totalOpDigital: summary.totalOpDigital,
               totalOpNonDigital: summary.totalOpNonDigital,
-              totalOpFree: summary.totalOpFree,
-              totalOpNonFree: summary.totalOpNonFree,
+              digital: summary.digital,
+              nonDigital: summary.nonDigital,
+
+              persentaseDigital: summary.persentaseDigital,
+              persentaseNonDigital: summary.persentaseNonDigital,
               sofParkirResults: summary.sofParkirResults,
             ),
           );

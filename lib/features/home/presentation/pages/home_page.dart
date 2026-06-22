@@ -243,13 +243,13 @@ class _HomePageState extends State<HomePage> {
                                                     totalObjekPajak:
                                                         state.totalOp,
                                                     totalOpDigitalisasi:
-                                                        state.totalOpDigital,
+                                                        state.digital.total,
                                                     totalOpNonDigitalisasi:
-                                                        state.totalOpNonDigital,
-                                                    totalOpFree:
-                                                        state.totalOpFree,
-                                                    totalOpNonFree:
-                                                        state.totalOpNonFree,
+                                                        state.nonDigital.total,
+                                                    // totalOpFree:
+                                                    //     state.totalOpFree,
+                                                    // totalOpNonFree:
+                                                    //     state.totalOpNonFree,
                                                     lihatSemuaOnPressed: () async {
                                                       final result = await context
                                                           .pushNamed(
@@ -299,32 +299,26 @@ class _HomePageState extends State<HomePage> {
                                                         },
                                                       );
                                                     },
-                                                    onTapFreePark: () {
-                                                      context.pushNamed(
-                                                        AppRoutes
-                                                            .searchObjekPajak,
-                                                        extra: {
-                                                          'role':
-                                                              RoleLoginDigitalParkir
-                                                                  .bapenda,
-                                                          'opType':
-                                                              SearchOpType.free,
-                                                        },
-                                                      );
-                                                    },
-                                                    onTapNonFreePark: () {
-                                                      context.pushNamed(
-                                                        AppRoutes
-                                                            .searchObjekPajak,
-                                                        extra: {
-                                                          'role':
-                                                              RoleLoginDigitalParkir
-                                                                  .bapenda,
-                                                          'opType':
-                                                              SearchOpType.paid,
-                                                        },
-                                                      );
-                                                    },
+                                                    totalOpFreeDigitalisasi:
+                                                        state
+                                                            .digital
+                                                            .totalNonTarif,
+                                                    totalOpNonFreeDigitalisasi:
+                                                        state
+                                                            .digital
+                                                            .totalBertarif,
+                                                    totalOpFreeNonDigitalisasi:
+                                                        state
+                                                            .nonDigital
+                                                            .totalNonTarif,
+                                                    totalOpNonFreeNonDigitalisasi:
+                                                        state
+                                                            .nonDigital
+                                                            .totalBertarif,
+                                                    digitalPercent:
+                                                        state.persentaseDigital,
+                                                    nonDigitalPercent: state
+                                                        .persentaseNonDigital,
                                                   ),
                                                 ),
                                               ),

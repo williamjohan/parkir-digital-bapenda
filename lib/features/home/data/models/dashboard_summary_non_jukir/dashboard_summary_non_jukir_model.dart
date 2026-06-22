@@ -20,6 +20,11 @@ class DashboardSummaryNonJukirModel with _$DashboardSummaryNonJukirModel {
     @Default(0.0) double totalNominalBersihUntukWajibPajak,
     @Default(0.0) double totalNominalBersihUntukBapenda,
     @Default([]) List<SofParkirResultModel> sofParkirResults,
+    @Default(OpCategoryModel()) OpCategoryModel digital,
+    @Default(OpCategoryModel()) OpCategoryModel nonDigital,
+
+    @Default(0.0) double persentaseDigital,
+    @Default(0.0) double persentaseNonDigital,
   }) = _DashboardSummaryNonJukirModel;
 
   factory DashboardSummaryNonJukirModel.fromJson(Map<String, dynamic> json) =>
@@ -42,4 +47,20 @@ class SofParkirResultModel with _$SofParkirResultModel {
 
   factory SofParkirResultModel.fromJson(Map<String, dynamic> json) =>
       _$SofParkirResultModelFromJson(json);
+}
+
+@freezed
+class OpCategoryModel with _$OpCategoryModel {
+  const factory OpCategoryModel({
+    @Default(0) int total,
+    @Default(0) int totalBertarif,
+    @Default(0) int totalNonTarif,
+    @Default(0) int totalTidakDiketahui,
+    @Default(0.0) double persentaseBertarif,
+    @Default(0.0) double persentaseNonTarif,
+    @Default(0.0) double persentaseTidakDiketahui,
+  }) = _OpCategoryModel;
+
+  factory OpCategoryModel.fromJson(Map<String, dynamic> json) =>
+      _$OpCategoryModelFromJson(json);
 }

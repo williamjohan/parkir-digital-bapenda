@@ -8,49 +8,34 @@ class CardTotalOpWidget extends StatelessWidget {
   final int totalObjekPajak;
   final int totalOpDigitalisasi;
   final int totalOpNonDigitalisasi;
-  final int totalOpFree;
-  final int totalOpNonFree;
+  final int totalOpFreeDigitalisasi;
+  final int totalOpNonFreeDigitalisasi;
+  final int totalOpFreeNonDigitalisasi;
+  final int totalOpNonFreeNonDigitalisasi;
   final VoidCallback? lihatSemuaOnPressed;
   final VoidCallback? onTapDigitalisasi;
   final VoidCallback? onTapNonDigital;
-  final VoidCallback? onTapFreePark;
-  final VoidCallback? onTapNonFreePark;
+  final double digitalPercent;
+  final double nonDigitalPercent;
 
   const CardTotalOpWidget({
     super.key,
     required this.totalObjekPajak,
     required this.totalOpDigitalisasi,
     required this.totalOpNonDigitalisasi,
-    required this.totalOpFree,
-    required this.totalOpNonFree,
+    required this.totalOpFreeDigitalisasi,
+    required this.totalOpNonFreeDigitalisasi,
+    required this.totalOpFreeNonDigitalisasi,
+    required this.totalOpNonFreeNonDigitalisasi,
     required this.lihatSemuaOnPressed,
     required this.onTapDigitalisasi,
     required this.onTapNonDigital,
-    required this.onTapFreePark,
-    required this.onTapNonFreePark,
+    required this.digitalPercent,
+    required this.nonDigitalPercent,
   });
 
   @override
   Widget build(BuildContext context) {
-    // 🚀 THE MATH FIX: Hitung total riil 3 elemen untuk pembagi persentase
-    final int realTotal = totalOpDigitalisasi + totalOpNonDigitalisasi;
-
-    final int realTotal2 = totalOpFree + totalOpNonFree;
-
-    // 🚀 THE SAFE PERCENTAGE: Cegah error pembagian dengan 0
-    final double digitalPercent = realTotal == 0
-        ? 0.0
-        : (totalOpDigitalisasi / realTotal) * 100;
-    final double nonDigitalPercent = realTotal == 0
-        ? 0.0
-        : (totalOpNonDigitalisasi / realTotal) * 100;
-    final double isFreePercent = realTotal2 == 0
-        ? 0.0
-        : (totalOpFree / realTotal2) * 100;
-    final double isNonFreePercent = realTotal2 == 0
-        ? 0.0
-        : (totalOpNonFree / realTotal2) * 100;
-
     return Container(
       padding: const EdgeInsets.all(24), // Diperbesar sedikit agar tidak sesak
       decoration: BoxDecoration(
@@ -132,9 +117,10 @@ class CardTotalOpWidget extends StatelessWidget {
             subtitle: "Sudah terhubung sistem",
             total: totalOpDigitalisasi,
             percentage: digitalPercent,
+            freeCount: totalOpFreeDigitalisasi,
+            paidCount: totalOpNonFreeDigitalisasi,
             onTap: onTapDigitalisasi,
           ),
-
           const SizedBox(height: 12),
 
           /// === LIST ITEM NON-DIGITAL ===
@@ -146,35 +132,9 @@ class CardTotalOpWidget extends StatelessWidget {
             subtitle: "Belum terhubung sistem",
             total: totalOpNonDigitalisasi,
             percentage: nonDigitalPercent,
+            freeCount: totalOpFreeNonDigitalisasi,
+            paidCount: totalOpNonFreeNonDigitalisasi,
             onTap: onTapNonDigital,
-          ),
-
-          const SizedBox(height: 12),
-
-          /// 🚀 === LIST ITEM PARKIR BEBAS (BARU) ===
-          _statusItem(
-            icon: Icons.local_parking_rounded,
-            iconColor: Colors.blue.shade700,
-            bgColor: Colors.blue.shade50,
-            title: "Parkir Bebas",
-            subtitle: "Tidak dipungut biaya",
-            total: totalOpFree,
-            percentage: isFreePercent,
-            onTap: onTapFreePark,
-          ),
-
-          const SizedBox(height: 12),
-
-          /// 🚀 === LIST ITEM PARKIR BERBAYAR (BARU) ===
-          _statusItem(
-            icon: Icons.payments_rounded,
-            iconColor: AppColors.primary,
-            bgColor: AppColors.primary.withOpacity(0.2),
-            title: "Parkir Berbayar",
-            subtitle: "Dipungut biaya",
-            total: totalOpNonFree,
-            percentage: isNonFreePercent,
-            onTap: onTapNonFreePark,
           ),
 
           const SizedBox(height: 24),
@@ -201,63 +161,140 @@ Widget _statusItem({
   required String subtitle,
   required int total,
   required double percentage,
+  required int freeCount,
+  required int paidCount,
   required VoidCallback? onTap,
 }) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.grey.shade100),
-        color: Colors.grey.shade50, // Latar belakang halus untuk pemisah visual
+        color: Colors.grey.shade50,
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: iconColor, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: AppTypography.bodySemiBold),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: AppTypography.caption.copyWith(
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
             children: [
-              Text(
-                NumberFormatter.format(total.toString()),
-                style: AppTypography.heading2,
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: iconColor, size: 24),
               ),
-              const SizedBox(height: 2),
-              Text(
-                "${percentage.toStringAsFixed(1)}%",
-                style: AppTypography.caption.copyWith(
-                  color: iconColor,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(width: 16),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: AppTypography.bodySemiBold),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: AppTypography.caption.copyWith(
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    NumberFormatter.format(total.toString()),
+                    style: AppTypography.heading2,
+                  ),
+                  Text(
+                    "${percentage.toStringAsFixed(1)}%",
+                    style: AppTypography.caption.copyWith(
+                      color: iconColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 14),
+
+          Row(
+            children: [
+              Expanded(
+                child: _miniInfoCard(
+                  icon: Icons.payments_rounded,
+                  title: "Berbayar",
+                  value: paidCount,
+                  color: Colors.orange,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _miniInfoCard(
+                  icon: Icons.money_off_rounded,
+                  title: "Gratis",
+                  value: freeCount,
+                  color: Colors.green,
                 ),
               ),
             ],
           ),
         ],
       ),
+    ),
+  );
+}
+
+Widget _miniInfoCard({
+  required IconData icon,
+  required String title,
+  required int value,
+  required Color color,
+}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: color.withValues(alpha: 0.15)),
+    ),
+    child: Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 16, color: color),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: AppTypography.caption.copyWith(
+                  color: Colors.grey.shade700,
+                ),
+              ),
+              Text(
+                NumberFormatter.format(value.toString()),
+                style: AppTypography.bodySemiBold.copyWith(color: color),
+              ),
+            ],
+          ),
+        ),
+      ],
     ),
   );
 }

@@ -15,6 +15,11 @@ extension DashboardSummaryNonJukirMapper on DashboardSummaryNonJukirModel {
       totalNominalBersihUntukWajibPajak: totalNominalBersihUntukWajibPajak,
       totalNominalBersihUntukBapenda: totalNominalBersihUntukBapenda,
       sofParkirResults: sofParkirResults.map((e) => e.toEntity()).toList(),
+      digital: digital.toEntity(),
+      nonDigital: nonDigital.toEntity(),
+
+      persentaseDigital: persentaseDigital,
+      persentaseNonDigital: persentaseNonDigital,
     );
   }
 }
@@ -31,6 +36,20 @@ extension SofParkirResultMapper on SofParkirResultModel {
       nominalBersihUntukBapendaMobil: nominalBersihUntukBapendaMobil,
       jumlahMotor: jumlahMotor,
       jumlahMobil: jumlahMobil,
+    );
+  }
+}
+
+extension OpCategoryMapper on OpCategoryModel {
+  OpCategoryEntity toEntity() {
+    return OpCategoryEntity(
+      total: total,
+      totalBertarif: totalBertarif,
+      totalNonTarif: totalNonTarif,
+      totalTidakDiketahui: totalTidakDiketahui,
+      persentaseBertarif: persentaseBertarif,
+      persentaseNonTarif: persentaseNonTarif,
+      persentaseTidakDiketahui: persentaseTidakDiketahui,
     );
   }
 }

@@ -38,6 +38,10 @@ mixin _$DashboardSummaryNonJukirModel {
       throw _privateConstructorUsedError;
   List<SofParkirResultModel> get sofParkirResults =>
       throw _privateConstructorUsedError;
+  OpCategoryModel get digital => throw _privateConstructorUsedError;
+  OpCategoryModel get nonDigital => throw _privateConstructorUsedError;
+  double get persentaseDigital => throw _privateConstructorUsedError;
+  double get persentaseNonDigital => throw _privateConstructorUsedError;
 
   /// Serializes this DashboardSummaryNonJukirModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -73,7 +77,14 @@ abstract class $DashboardSummaryNonJukirModelCopyWith<$Res> {
     double totalNominalBersihUntukWajibPajak,
     double totalNominalBersihUntukBapenda,
     List<SofParkirResultModel> sofParkirResults,
+    OpCategoryModel digital,
+    OpCategoryModel nonDigital,
+    double persentaseDigital,
+    double persentaseNonDigital,
   });
+
+  $OpCategoryModelCopyWith<$Res> get digital;
+  $OpCategoryModelCopyWith<$Res> get nonDigital;
 }
 
 /// @nodoc
@@ -106,6 +117,10 @@ class _$DashboardSummaryNonJukirModelCopyWithImpl<
     Object? totalNominalBersihUntukWajibPajak = null,
     Object? totalNominalBersihUntukBapenda = null,
     Object? sofParkirResults = null,
+    Object? digital = null,
+    Object? nonDigital = null,
+    Object? persentaseDigital = null,
+    Object? persentaseNonDigital = null,
   }) {
     return _then(
       _value.copyWith(
@@ -159,9 +174,45 @@ class _$DashboardSummaryNonJukirModelCopyWithImpl<
                 ? _value.sofParkirResults
                 : sofParkirResults // ignore: cast_nullable_to_non_nullable
                       as List<SofParkirResultModel>,
+            digital: null == digital
+                ? _value.digital
+                : digital // ignore: cast_nullable_to_non_nullable
+                      as OpCategoryModel,
+            nonDigital: null == nonDigital
+                ? _value.nonDigital
+                : nonDigital // ignore: cast_nullable_to_non_nullable
+                      as OpCategoryModel,
+            persentaseDigital: null == persentaseDigital
+                ? _value.persentaseDigital
+                : persentaseDigital // ignore: cast_nullable_to_non_nullable
+                      as double,
+            persentaseNonDigital: null == persentaseNonDigital
+                ? _value.persentaseNonDigital
+                : persentaseNonDigital // ignore: cast_nullable_to_non_nullable
+                      as double,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of DashboardSummaryNonJukirModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OpCategoryModelCopyWith<$Res> get digital {
+    return $OpCategoryModelCopyWith<$Res>(_value.digital, (value) {
+      return _then(_value.copyWith(digital: value) as $Val);
+    });
+  }
+
+  /// Create a copy of DashboardSummaryNonJukirModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OpCategoryModelCopyWith<$Res> get nonDigital {
+    return $OpCategoryModelCopyWith<$Res>(_value.nonDigital, (value) {
+      return _then(_value.copyWith(nonDigital: value) as $Val);
+    });
   }
 }
 
@@ -187,7 +238,16 @@ abstract class _$$DashboardSummaryNonJukirModelImplCopyWith<$Res>
     double totalNominalBersihUntukWajibPajak,
     double totalNominalBersihUntukBapenda,
     List<SofParkirResultModel> sofParkirResults,
+    OpCategoryModel digital,
+    OpCategoryModel nonDigital,
+    double persentaseDigital,
+    double persentaseNonDigital,
   });
+
+  @override
+  $OpCategoryModelCopyWith<$Res> get digital;
+  @override
+  $OpCategoryModelCopyWith<$Res> get nonDigital;
 }
 
 /// @nodoc
@@ -220,6 +280,10 @@ class __$$DashboardSummaryNonJukirModelImplCopyWithImpl<$Res>
     Object? totalNominalBersihUntukWajibPajak = null,
     Object? totalNominalBersihUntukBapenda = null,
     Object? sofParkirResults = null,
+    Object? digital = null,
+    Object? nonDigital = null,
+    Object? persentaseDigital = null,
+    Object? persentaseNonDigital = null,
   }) {
     return _then(
       _$DashboardSummaryNonJukirModelImpl(
@@ -272,6 +336,22 @@ class __$$DashboardSummaryNonJukirModelImplCopyWithImpl<$Res>
             ? _value._sofParkirResults
             : sofParkirResults // ignore: cast_nullable_to_non_nullable
                   as List<SofParkirResultModel>,
+        digital: null == digital
+            ? _value.digital
+            : digital // ignore: cast_nullable_to_non_nullable
+                  as OpCategoryModel,
+        nonDigital: null == nonDigital
+            ? _value.nonDigital
+            : nonDigital // ignore: cast_nullable_to_non_nullable
+                  as OpCategoryModel,
+        persentaseDigital: null == persentaseDigital
+            ? _value.persentaseDigital
+            : persentaseDigital // ignore: cast_nullable_to_non_nullable
+                  as double,
+        persentaseNonDigital: null == persentaseNonDigital
+            ? _value.persentaseNonDigital
+            : persentaseNonDigital // ignore: cast_nullable_to_non_nullable
+                  as double,
       ),
     );
   }
@@ -294,6 +374,10 @@ class _$DashboardSummaryNonJukirModelImpl
     this.totalNominalBersihUntukWajibPajak = 0.0,
     this.totalNominalBersihUntukBapenda = 0.0,
     final List<SofParkirResultModel> sofParkirResults = const [],
+    this.digital = const OpCategoryModel(),
+    this.nonDigital = const OpCategoryModel(),
+    this.persentaseDigital = 0.0,
+    this.persentaseNonDigital = 0.0,
   }) : _sofParkirResults = sofParkirResults;
 
   factory _$DashboardSummaryNonJukirModelImpl.fromJson(
@@ -344,8 +428,21 @@ class _$DashboardSummaryNonJukirModelImpl
   }
 
   @override
+  @JsonKey()
+  final OpCategoryModel digital;
+  @override
+  @JsonKey()
+  final OpCategoryModel nonDigital;
+  @override
+  @JsonKey()
+  final double persentaseDigital;
+  @override
+  @JsonKey()
+  final double persentaseNonDigital;
+
+  @override
   String toString() {
-    return 'DashboardSummaryNonJukirModel(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults)';
+    return 'DashboardSummaryNonJukirModel(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults, digital: $digital, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital)';
   }
 
   @override
@@ -388,7 +485,14 @@ class _$DashboardSummaryNonJukirModelImpl
             const DeepCollectionEquality().equals(
               other._sofParkirResults,
               _sofParkirResults,
-            ));
+            ) &&
+            (identical(other.digital, digital) || other.digital == digital) &&
+            (identical(other.nonDigital, nonDigital) ||
+                other.nonDigital == nonDigital) &&
+            (identical(other.persentaseDigital, persentaseDigital) ||
+                other.persentaseDigital == persentaseDigital) &&
+            (identical(other.persentaseNonDigital, persentaseNonDigital) ||
+                other.persentaseNonDigital == persentaseNonDigital));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -407,6 +511,10 @@ class _$DashboardSummaryNonJukirModelImpl
     totalNominalBersihUntukWajibPajak,
     totalNominalBersihUntukBapenda,
     const DeepCollectionEquality().hash(_sofParkirResults),
+    digital,
+    nonDigital,
+    persentaseDigital,
+    persentaseNonDigital,
   );
 
   /// Create a copy of DashboardSummaryNonJukirModel
@@ -443,6 +551,10 @@ abstract class _DashboardSummaryNonJukirModel
     final double totalNominalBersihUntukWajibPajak,
     final double totalNominalBersihUntukBapenda,
     final List<SofParkirResultModel> sofParkirResults,
+    final OpCategoryModel digital,
+    final OpCategoryModel nonDigital,
+    final double persentaseDigital,
+    final double persentaseNonDigital,
   }) = _$DashboardSummaryNonJukirModelImpl;
 
   factory _DashboardSummaryNonJukirModel.fromJson(Map<String, dynamic> json) =
@@ -472,6 +584,14 @@ abstract class _DashboardSummaryNonJukirModel
   double get totalNominalBersihUntukBapenda;
   @override
   List<SofParkirResultModel> get sofParkirResults;
+  @override
+  OpCategoryModel get digital;
+  @override
+  OpCategoryModel get nonDigital;
+  @override
+  double get persentaseDigital;
+  @override
+  double get persentaseNonDigital;
 
   /// Create a copy of DashboardSummaryNonJukirModel
   /// with the given fields replaced by the non-null parameter values.
@@ -865,4 +985,315 @@ abstract class _SofParkirResultModel implements SofParkirResultModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SofParkirResultModelImplCopyWith<_$SofParkirResultModelImpl>
   get copyWith => throw _privateConstructorUsedError;
+}
+
+OpCategoryModel _$OpCategoryModelFromJson(Map<String, dynamic> json) {
+  return _OpCategoryModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$OpCategoryModel {
+  int get total => throw _privateConstructorUsedError;
+  int get totalBertarif => throw _privateConstructorUsedError;
+  int get totalNonTarif => throw _privateConstructorUsedError;
+  int get totalTidakDiketahui => throw _privateConstructorUsedError;
+  double get persentaseBertarif => throw _privateConstructorUsedError;
+  double get persentaseNonTarif => throw _privateConstructorUsedError;
+  double get persentaseTidakDiketahui => throw _privateConstructorUsedError;
+
+  /// Serializes this OpCategoryModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of OpCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $OpCategoryModelCopyWith<OpCategoryModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $OpCategoryModelCopyWith<$Res> {
+  factory $OpCategoryModelCopyWith(
+    OpCategoryModel value,
+    $Res Function(OpCategoryModel) then,
+  ) = _$OpCategoryModelCopyWithImpl<$Res, OpCategoryModel>;
+  @useResult
+  $Res call({
+    int total,
+    int totalBertarif,
+    int totalNonTarif,
+    int totalTidakDiketahui,
+    double persentaseBertarif,
+    double persentaseNonTarif,
+    double persentaseTidakDiketahui,
+  });
+}
+
+/// @nodoc
+class _$OpCategoryModelCopyWithImpl<$Res, $Val extends OpCategoryModel>
+    implements $OpCategoryModelCopyWith<$Res> {
+  _$OpCategoryModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of OpCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? total = null,
+    Object? totalBertarif = null,
+    Object? totalNonTarif = null,
+    Object? totalTidakDiketahui = null,
+    Object? persentaseBertarif = null,
+    Object? persentaseNonTarif = null,
+    Object? persentaseTidakDiketahui = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            total: null == total
+                ? _value.total
+                : total // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalBertarif: null == totalBertarif
+                ? _value.totalBertarif
+                : totalBertarif // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalNonTarif: null == totalNonTarif
+                ? _value.totalNonTarif
+                : totalNonTarif // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTidakDiketahui: null == totalTidakDiketahui
+                ? _value.totalTidakDiketahui
+                : totalTidakDiketahui // ignore: cast_nullable_to_non_nullable
+                      as int,
+            persentaseBertarif: null == persentaseBertarif
+                ? _value.persentaseBertarif
+                : persentaseBertarif // ignore: cast_nullable_to_non_nullable
+                      as double,
+            persentaseNonTarif: null == persentaseNonTarif
+                ? _value.persentaseNonTarif
+                : persentaseNonTarif // ignore: cast_nullable_to_non_nullable
+                      as double,
+            persentaseTidakDiketahui: null == persentaseTidakDiketahui
+                ? _value.persentaseTidakDiketahui
+                : persentaseTidakDiketahui // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$OpCategoryModelImplCopyWith<$Res>
+    implements $OpCategoryModelCopyWith<$Res> {
+  factory _$$OpCategoryModelImplCopyWith(
+    _$OpCategoryModelImpl value,
+    $Res Function(_$OpCategoryModelImpl) then,
+  ) = __$$OpCategoryModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    int total,
+    int totalBertarif,
+    int totalNonTarif,
+    int totalTidakDiketahui,
+    double persentaseBertarif,
+    double persentaseNonTarif,
+    double persentaseTidakDiketahui,
+  });
+}
+
+/// @nodoc
+class __$$OpCategoryModelImplCopyWithImpl<$Res>
+    extends _$OpCategoryModelCopyWithImpl<$Res, _$OpCategoryModelImpl>
+    implements _$$OpCategoryModelImplCopyWith<$Res> {
+  __$$OpCategoryModelImplCopyWithImpl(
+    _$OpCategoryModelImpl _value,
+    $Res Function(_$OpCategoryModelImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of OpCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? total = null,
+    Object? totalBertarif = null,
+    Object? totalNonTarif = null,
+    Object? totalTidakDiketahui = null,
+    Object? persentaseBertarif = null,
+    Object? persentaseNonTarif = null,
+    Object? persentaseTidakDiketahui = null,
+  }) {
+    return _then(
+      _$OpCategoryModelImpl(
+        total: null == total
+            ? _value.total
+            : total // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalBertarif: null == totalBertarif
+            ? _value.totalBertarif
+            : totalBertarif // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalNonTarif: null == totalNonTarif
+            ? _value.totalNonTarif
+            : totalNonTarif // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTidakDiketahui: null == totalTidakDiketahui
+            ? _value.totalTidakDiketahui
+            : totalTidakDiketahui // ignore: cast_nullable_to_non_nullable
+                  as int,
+        persentaseBertarif: null == persentaseBertarif
+            ? _value.persentaseBertarif
+            : persentaseBertarif // ignore: cast_nullable_to_non_nullable
+                  as double,
+        persentaseNonTarif: null == persentaseNonTarif
+            ? _value.persentaseNonTarif
+            : persentaseNonTarif // ignore: cast_nullable_to_non_nullable
+                  as double,
+        persentaseTidakDiketahui: null == persentaseTidakDiketahui
+            ? _value.persentaseTidakDiketahui
+            : persentaseTidakDiketahui // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$OpCategoryModelImpl implements _OpCategoryModel {
+  const _$OpCategoryModelImpl({
+    this.total = 0,
+    this.totalBertarif = 0,
+    this.totalNonTarif = 0,
+    this.totalTidakDiketahui = 0,
+    this.persentaseBertarif = 0.0,
+    this.persentaseNonTarif = 0.0,
+    this.persentaseTidakDiketahui = 0.0,
+  });
+
+  factory _$OpCategoryModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OpCategoryModelImplFromJson(json);
+
+  @override
+  @JsonKey()
+  final int total;
+  @override
+  @JsonKey()
+  final int totalBertarif;
+  @override
+  @JsonKey()
+  final int totalNonTarif;
+  @override
+  @JsonKey()
+  final int totalTidakDiketahui;
+  @override
+  @JsonKey()
+  final double persentaseBertarif;
+  @override
+  @JsonKey()
+  final double persentaseNonTarif;
+  @override
+  @JsonKey()
+  final double persentaseTidakDiketahui;
+
+  @override
+  String toString() {
+    return 'OpCategoryModel(total: $total, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTidakDiketahui: $totalTidakDiketahui, persentaseBertarif: $persentaseBertarif, persentaseNonTarif: $persentaseNonTarif, persentaseTidakDiketahui: $persentaseTidakDiketahui)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$OpCategoryModelImpl &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.totalBertarif, totalBertarif) ||
+                other.totalBertarif == totalBertarif) &&
+            (identical(other.totalNonTarif, totalNonTarif) ||
+                other.totalNonTarif == totalNonTarif) &&
+            (identical(other.totalTidakDiketahui, totalTidakDiketahui) ||
+                other.totalTidakDiketahui == totalTidakDiketahui) &&
+            (identical(other.persentaseBertarif, persentaseBertarif) ||
+                other.persentaseBertarif == persentaseBertarif) &&
+            (identical(other.persentaseNonTarif, persentaseNonTarif) ||
+                other.persentaseNonTarif == persentaseNonTarif) &&
+            (identical(
+                  other.persentaseTidakDiketahui,
+                  persentaseTidakDiketahui,
+                ) ||
+                other.persentaseTidakDiketahui == persentaseTidakDiketahui));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    total,
+    totalBertarif,
+    totalNonTarif,
+    totalTidakDiketahui,
+    persentaseBertarif,
+    persentaseNonTarif,
+    persentaseTidakDiketahui,
+  );
+
+  /// Create a copy of OpCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$OpCategoryModelImplCopyWith<_$OpCategoryModelImpl> get copyWith =>
+      __$$OpCategoryModelImplCopyWithImpl<_$OpCategoryModelImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$OpCategoryModelImplToJson(this);
+  }
+}
+
+abstract class _OpCategoryModel implements OpCategoryModel {
+  const factory _OpCategoryModel({
+    final int total,
+    final int totalBertarif,
+    final int totalNonTarif,
+    final int totalTidakDiketahui,
+    final double persentaseBertarif,
+    final double persentaseNonTarif,
+    final double persentaseTidakDiketahui,
+  }) = _$OpCategoryModelImpl;
+
+  factory _OpCategoryModel.fromJson(Map<String, dynamic> json) =
+      _$OpCategoryModelImpl.fromJson;
+
+  @override
+  int get total;
+  @override
+  int get totalBertarif;
+  @override
+  int get totalNonTarif;
+  @override
+  int get totalTidakDiketahui;
+  @override
+  double get persentaseBertarif;
+  @override
+  double get persentaseNonTarif;
+  @override
+  double get persentaseTidakDiketahui;
+
+  /// Create a copy of OpCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$OpCategoryModelImplCopyWith<_$OpCategoryModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

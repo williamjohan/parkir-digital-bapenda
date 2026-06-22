@@ -40,8 +40,10 @@ mixin _$HomeState {
   int get totalOp => throw _privateConstructorUsedError;
   int get totalOpDigital => throw _privateConstructorUsedError;
   int get totalOpNonDigital => throw _privateConstructorUsedError;
-  int get totalOpFree => throw _privateConstructorUsedError;
-  int get totalOpNonFree => throw _privateConstructorUsedError;
+  OpCategoryEntity get digital => throw _privateConstructorUsedError;
+  OpCategoryEntity get nonDigital => throw _privateConstructorUsedError;
+  double get persentaseDigital => throw _privateConstructorUsedError;
+  double get persentaseNonDigital => throw _privateConstructorUsedError;
   List<SofParkirResultEntity> get sofParkirResults =>
       throw _privateConstructorUsedError;
   RoleLoginDigitalParkir get role => throw _privateConstructorUsedError;
@@ -79,11 +81,16 @@ abstract class $HomeStateCopyWith<$Res> {
     int totalOp,
     int totalOpDigital,
     int totalOpNonDigital,
-    int totalOpFree,
-    int totalOpNonFree,
+    OpCategoryEntity digital,
+    OpCategoryEntity nonDigital,
+    double persentaseDigital,
+    double persentaseNonDigital,
     List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
   });
+
+  $OpCategoryEntityCopyWith<$Res> get digital;
+  $OpCategoryEntityCopyWith<$Res> get nonDigital;
 }
 
 /// @nodoc
@@ -121,8 +128,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? totalOp = null,
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
-    Object? totalOpFree = null,
-    Object? totalOpNonFree = null,
+    Object? digital = null,
+    Object? nonDigital = null,
+    Object? persentaseDigital = null,
+    Object? persentaseNonDigital = null,
     Object? sofParkirResults = null,
     Object? role = null,
   }) {
@@ -208,14 +217,22 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.totalOpNonDigital
                 : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
                       as int,
-            totalOpFree: null == totalOpFree
-                ? _value.totalOpFree
-                : totalOpFree // ignore: cast_nullable_to_non_nullable
-                      as int,
-            totalOpNonFree: null == totalOpNonFree
-                ? _value.totalOpNonFree
-                : totalOpNonFree // ignore: cast_nullable_to_non_nullable
-                      as int,
+            digital: null == digital
+                ? _value.digital
+                : digital // ignore: cast_nullable_to_non_nullable
+                      as OpCategoryEntity,
+            nonDigital: null == nonDigital
+                ? _value.nonDigital
+                : nonDigital // ignore: cast_nullable_to_non_nullable
+                      as OpCategoryEntity,
+            persentaseDigital: null == persentaseDigital
+                ? _value.persentaseDigital
+                : persentaseDigital // ignore: cast_nullable_to_non_nullable
+                      as double,
+            persentaseNonDigital: null == persentaseNonDigital
+                ? _value.persentaseNonDigital
+                : persentaseNonDigital // ignore: cast_nullable_to_non_nullable
+                      as double,
             sofParkirResults: null == sofParkirResults
                 ? _value.sofParkirResults
                 : sofParkirResults // ignore: cast_nullable_to_non_nullable
@@ -227,6 +244,26 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OpCategoryEntityCopyWith<$Res> get digital {
+    return $OpCategoryEntityCopyWith<$Res>(_value.digital, (value) {
+      return _then(_value.copyWith(digital: value) as $Val);
+    });
+  }
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OpCategoryEntityCopyWith<$Res> get nonDigital {
+    return $OpCategoryEntityCopyWith<$Res>(_value.nonDigital, (value) {
+      return _then(_value.copyWith(nonDigital: value) as $Val);
+    });
   }
 }
 
@@ -260,11 +297,18 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     int totalOp,
     int totalOpDigital,
     int totalOpNonDigital,
-    int totalOpFree,
-    int totalOpNonFree,
+    OpCategoryEntity digital,
+    OpCategoryEntity nonDigital,
+    double persentaseDigital,
+    double persentaseNonDigital,
     List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
   });
+
+  @override
+  $OpCategoryEntityCopyWith<$Res> get digital;
+  @override
+  $OpCategoryEntityCopyWith<$Res> get nonDigital;
 }
 
 /// @nodoc
@@ -301,8 +345,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? totalOp = null,
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
-    Object? totalOpFree = null,
-    Object? totalOpNonFree = null,
+    Object? digital = null,
+    Object? nonDigital = null,
+    Object? persentaseDigital = null,
+    Object? persentaseNonDigital = null,
     Object? sofParkirResults = null,
     Object? role = null,
   }) {
@@ -388,14 +434,22 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.totalOpNonDigital
             : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
                   as int,
-        totalOpFree: null == totalOpFree
-            ? _value.totalOpFree
-            : totalOpFree // ignore: cast_nullable_to_non_nullable
-                  as int,
-        totalOpNonFree: null == totalOpNonFree
-            ? _value.totalOpNonFree
-            : totalOpNonFree // ignore: cast_nullable_to_non_nullable
-                  as int,
+        digital: null == digital
+            ? _value.digital
+            : digital // ignore: cast_nullable_to_non_nullable
+                  as OpCategoryEntity,
+        nonDigital: null == nonDigital
+            ? _value.nonDigital
+            : nonDigital // ignore: cast_nullable_to_non_nullable
+                  as OpCategoryEntity,
+        persentaseDigital: null == persentaseDigital
+            ? _value.persentaseDigital
+            : persentaseDigital // ignore: cast_nullable_to_non_nullable
+                  as double,
+        persentaseNonDigital: null == persentaseNonDigital
+            ? _value.persentaseNonDigital
+            : persentaseNonDigital // ignore: cast_nullable_to_non_nullable
+                  as double,
         sofParkirResults: null == sofParkirResults
             ? _value._sofParkirResults
             : sofParkirResults // ignore: cast_nullable_to_non_nullable
@@ -433,8 +487,26 @@ class _$HomeStateImpl implements _HomeState {
     this.totalOp = 0,
     this.totalOpDigital = 0,
     this.totalOpNonDigital = 0,
-    this.totalOpFree = 0,
-    this.totalOpNonFree = 0,
+    this.digital = const OpCategoryEntity(
+      total: 0,
+      totalBertarif: 0,
+      totalNonTarif: 0,
+      totalTidakDiketahui: 0,
+      persentaseBertarif: 0,
+      persentaseNonTarif: 0,
+      persentaseTidakDiketahui: 0,
+    ),
+    this.nonDigital = const OpCategoryEntity(
+      total: 0,
+      totalBertarif: 0,
+      totalNonTarif: 0,
+      totalTidakDiketahui: 0,
+      persentaseBertarif: 0,
+      persentaseNonTarif: 0,
+      persentaseTidakDiketahui: 0,
+    ),
+    this.persentaseDigital = 0,
+    this.persentaseNonDigital = 0,
     final List<SofParkirResultEntity> sofParkirResults = const [],
     this.role = RoleLoginDigitalParkir.tidakDiketahui,
   }) : _recentTransactions = recentTransactions,
@@ -512,10 +584,16 @@ class _$HomeStateImpl implements _HomeState {
   final int totalOpNonDigital;
   @override
   @JsonKey()
-  final int totalOpFree;
+  final OpCategoryEntity digital;
   @override
   @JsonKey()
-  final int totalOpNonFree;
+  final OpCategoryEntity nonDigital;
+  @override
+  @JsonKey()
+  final double persentaseDigital;
+  @override
+  @JsonKey()
+  final double persentaseNonDigital;
   final List<SofParkirResultEntity> _sofParkirResults;
   @override
   @JsonKey()
@@ -532,7 +610,7 @@ class _$HomeStateImpl implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, totalOpFree: $totalOpFree, totalOpNonFree: $totalOpNonFree, sofParkirResults: $sofParkirResults, role: $role)';
+    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role)';
   }
 
   @override
@@ -582,10 +660,13 @@ class _$HomeStateImpl implements _HomeState {
                 other.totalOpDigital == totalOpDigital) &&
             (identical(other.totalOpNonDigital, totalOpNonDigital) ||
                 other.totalOpNonDigital == totalOpNonDigital) &&
-            (identical(other.totalOpFree, totalOpFree) ||
-                other.totalOpFree == totalOpFree) &&
-            (identical(other.totalOpNonFree, totalOpNonFree) ||
-                other.totalOpNonFree == totalOpNonFree) &&
+            (identical(other.digital, digital) || other.digital == digital) &&
+            (identical(other.nonDigital, nonDigital) ||
+                other.nonDigital == nonDigital) &&
+            (identical(other.persentaseDigital, persentaseDigital) ||
+                other.persentaseDigital == persentaseDigital) &&
+            (identical(other.persentaseNonDigital, persentaseNonDigital) ||
+                other.persentaseNonDigital == persentaseNonDigital) &&
             const DeepCollectionEquality().equals(
               other._sofParkirResults,
               _sofParkirResults,
@@ -616,8 +697,10 @@ class _$HomeStateImpl implements _HomeState {
     totalOp,
     totalOpDigital,
     totalOpNonDigital,
-    totalOpFree,
-    totalOpNonFree,
+    digital,
+    nonDigital,
+    persentaseDigital,
+    persentaseNonDigital,
     const DeepCollectionEquality().hash(_sofParkirResults),
     role,
   ]);
@@ -653,8 +736,10 @@ abstract class _HomeState implements HomeState {
     final int totalOp,
     final int totalOpDigital,
     final int totalOpNonDigital,
-    final int totalOpFree,
-    final int totalOpNonFree,
+    final OpCategoryEntity digital,
+    final OpCategoryEntity nonDigital,
+    final double persentaseDigital,
+    final double persentaseNonDigital,
     final List<SofParkirResultEntity> sofParkirResults,
     final RoleLoginDigitalParkir role,
   }) = _$HomeStateImpl;
@@ -700,9 +785,13 @@ abstract class _HomeState implements HomeState {
   @override
   int get totalOpNonDigital;
   @override
-  int get totalOpFree;
+  OpCategoryEntity get digital;
   @override
-  int get totalOpNonFree;
+  OpCategoryEntity get nonDigital;
+  @override
+  double get persentaseDigital;
+  @override
+  double get persentaseNonDigital;
   @override
   List<SofParkirResultEntity> get sofParkirResults;
   @override

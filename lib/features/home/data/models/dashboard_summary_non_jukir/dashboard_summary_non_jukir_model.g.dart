@@ -29,6 +29,15 @@ _$$DashboardSummaryNonJukirModelImplFromJson(
           ?.map((e) => SofParkirResultModel.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
+  digital: json['digital'] == null
+      ? const OpCategoryModel()
+      : OpCategoryModel.fromJson(json['digital'] as Map<String, dynamic>),
+  nonDigital: json['nonDigital'] == null
+      ? const OpCategoryModel()
+      : OpCategoryModel.fromJson(json['nonDigital'] as Map<String, dynamic>),
+  persentaseDigital: (json['persentaseDigital'] as num?)?.toDouble() ?? 0.0,
+  persentaseNonDigital:
+      (json['persentaseNonDigital'] as num?)?.toDouble() ?? 0.0,
 );
 
 Map<String, dynamic> _$$DashboardSummaryNonJukirModelImplToJson(
@@ -47,6 +56,10 @@ Map<String, dynamic> _$$DashboardSummaryNonJukirModelImplToJson(
       instance.totalNominalBersihUntukWajibPajak,
   'totalNominalBersihUntukBapenda': instance.totalNominalBersihUntukBapenda,
   'sofParkirResults': instance.sofParkirResults,
+  'digital': instance.digital,
+  'nonDigital': instance.nonDigital,
+  'persentaseDigital': instance.persentaseDigital,
+  'persentaseNonDigital': instance.persentaseNonDigital,
 };
 
 _$SofParkirResultModelImpl _$$SofParkirResultModelImplFromJson(
@@ -81,4 +94,29 @@ Map<String, dynamic> _$$SofParkirResultModelImplToJson(
   'nominalBersihUntukBapendaMobil': instance.nominalBersihUntukBapendaMobil,
   'jumlahMotor': instance.jumlahMotor,
   'jumlahMobil': instance.jumlahMobil,
+};
+
+_$OpCategoryModelImpl _$$OpCategoryModelImplFromJson(
+  Map<String, dynamic> json,
+) => _$OpCategoryModelImpl(
+  total: (json['total'] as num?)?.toInt() ?? 0,
+  totalBertarif: (json['totalBertarif'] as num?)?.toInt() ?? 0,
+  totalNonTarif: (json['totalNonTarif'] as num?)?.toInt() ?? 0,
+  totalTidakDiketahui: (json['totalTidakDiketahui'] as num?)?.toInt() ?? 0,
+  persentaseBertarif: (json['persentaseBertarif'] as num?)?.toDouble() ?? 0.0,
+  persentaseNonTarif: (json['persentaseNonTarif'] as num?)?.toDouble() ?? 0.0,
+  persentaseTidakDiketahui:
+      (json['persentaseTidakDiketahui'] as num?)?.toDouble() ?? 0.0,
+);
+
+Map<String, dynamic> _$$OpCategoryModelImplToJson(
+  _$OpCategoryModelImpl instance,
+) => <String, dynamic>{
+  'total': instance.total,
+  'totalBertarif': instance.totalBertarif,
+  'totalNonTarif': instance.totalNonTarif,
+  'totalTidakDiketahui': instance.totalTidakDiketahui,
+  'persentaseBertarif': instance.persentaseBertarif,
+  'persentaseNonTarif': instance.persentaseNonTarif,
+  'persentaseTidakDiketahui': instance.persentaseTidakDiketahui,
 };
