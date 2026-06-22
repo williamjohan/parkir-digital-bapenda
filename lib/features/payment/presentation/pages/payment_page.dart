@@ -1,40 +1,24 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
 import '../widgets/payment_local_qris_view.dart';
 
-// ─── ARGS ─────────────────────────────────────────────────────────────────────
-
 class PaymentPageArgs {
   final int jenisKendaraanId;
   final String kategoriKendaraan;
-
-  // Field legacy — dipertahankan agar tidak break kode lain.
-  // TODO: hapus setelah semua flow migrasi ke QRIS Rompi.
-  final String idTransaksiLokal;
-  final String platNomor;
-  final int nominal;
-  final String latitude;
-  final String longitude;
+  final bool isDemoMode;
 
   PaymentPageArgs({
     required this.jenisKendaraanId,
     required this.kategoriKendaraan,
-    this.idTransaksiLokal = '',
-    this.platNomor = '',
-    this.nominal = 0,
-    this.latitude = '0',
-    this.longitude = '0',
+    this.isDemoMode = false,
   });
 }
-
-// ─── PAGE ─────────────────────────────────────────────────────────────────────
-// BlocProvider ada di router (app_router.dart), bukan di sini.
-// PaymentPage hanya membaca cubit via context.read — tidak create, tidak dispose.
-// Lifecycle cubit sepenuhnya dikendalikan oleh BlocProvider di router.
 
 class PaymentPage extends StatefulWidget {
   final PaymentPageArgs args;
@@ -48,9 +32,10 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   void initState() {
     super.initState();
-    // Cubit sudah tersedia di context karena BlocProvider ada di router.
-    // Panggil loadLocalQris di sini — aman karena widget sudah mounted.
-    context.read<PaymentCubit>().loadLocalQris(widget.args.jenisKendaraanId);
+    context.read<PaymentCubit>().loadQris(
+      jenisKendaraanId: widget.args.jenisKendaraanId,
+      isDemoMode: widget.args.isDemoMode,
+    );
   }
 
   @override
@@ -74,20 +59,41 @@ class _PaymentPageState extends State<PaymentPage> {
               );
             }
 
+            // ─── 1. JALUR JUKIR LOKAL ───
             if (state is PaymentLocalQrisReady) {
               return PaymentLocalQrisView(
-                imagePath: state.qrisImagePath,
                 kategoriKendaraan: widget.args.kategoriKendaraan,
-                // TODO: aktifkan saat SignalR siap
-                // onCheckStatus: () => context.read<PaymentCubit>().checkStatus(),
+                qrWidget: Image.file(
+                  File(state.qrisImagePath),
+                  width: 220,
+                  height: 220,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) =>
+                      const Icon(Icons.broken_image, size: 48),
+                ),
               );
             }
 
+            // ─── 2. JALUR DEMO BAPENDA ───
+            if (state is PaymentDemoQrisReady) {
+              return PaymentLocalQrisView(
+                kategoriKendaraan: '${widget.args.kategoriKendaraan} (Demo)',
+                qrWidget: QrImageView(
+                  data: state.rawQrisString,
+                  version: QrVersions.auto,
+                  size: 220,
+                  backgroundColor: Colors.white,
+                ),
+              );
+            }
+
+            // ─── ERROR HANDLER ───
             if (state is PaymentLocalQrisError) {
               return _QrisErrorView(
                 message: state.message,
-                onRetry: () => context.read<PaymentCubit>().loadLocalQris(
-                  widget.args.jenisKendaraanId,
+                onRetry: () => context.read<PaymentCubit>().loadQris(
+                  jenisKendaraanId: widget.args.jenisKendaraanId,
+                  isDemoMode: widget.args.isDemoMode,
                 ),
               );
             }

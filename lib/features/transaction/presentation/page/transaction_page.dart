@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:parkir_digital_bapenda/features/transaction/presentation/widgets/card_data_jukir.dart';
 import 'package:parkir_digital_bapenda/features/transaction/presentation/widgets/tarif_empty_widget.dart';
 import '../../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
@@ -19,8 +18,14 @@ import '../widgets/card_jenis_kendaraan.dart';
 class TransactionPage extends StatefulWidget {
   final Map<String, dynamic>? itemOP;
   final bool isFree;
+  final bool isDemoMode; // 🚀 Flag dari FAB Home
 
-  const TransactionPage({super.key, required this.isFree, this.itemOP});
+  const TransactionPage({
+    super.key,
+    required this.isFree,
+    this.itemOP,
+    this.isDemoMode = false,
+  });
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -29,16 +34,18 @@ class TransactionPage extends StatefulWidget {
 class _TransactionPageState extends State<TransactionPage> {
   late Future<Map<String, dynamic>?> _profileFuture;
 
+  // Karena kita dari FAB, itemOP pasti null, sehingga _requiresJukir = false.
+  bool get _requiresJukir => widget.itemOP != null;
+
   @override
   void initState() {
     super.initState();
-    print('itemOP = ${widget.itemOP}');
 
-    if (widget.itemOP != null) {
-      context.read<TransactionCubit>().getDataJukir(widget.itemOP!['nop']);
-    }
-
-    context.read<TransactionCubit>().init(widget.isFree);
+    // 🚀 INIT CUBIT DENGAN KONTEKS DEMO
+    context.read<TransactionCubit>().init(
+      isFree: widget.isFree,
+      isDemoMode: widget.isDemoMode,
+    );
 
     _profileFuture = GetIt.I<ISecureStorageManager>().getJukirProfile();
   }
@@ -46,9 +53,11 @@ class _TransactionPageState extends State<TransactionPage> {
   void _navigateToPayment(TransactionState state) {
     final selected = state.selectedTarif!;
 
+    // 🚀 OPER BOLA KE PAYMENT PAGE BESERTA STATUS DEMO-NYA
     final args = PaymentPageArgs(
       jenisKendaraanId: selected.id,
       kategoriKendaraan: selected.jenisTarif,
+      isDemoMode: widget.isDemoMode,
     );
 
     context.push(AppRoutes.payment, extra: args).then((result) {
@@ -65,16 +74,12 @@ class _TransactionPageState extends State<TransactionPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<TransactionCubit, TransactionState>(
       listener: (context, state) {
-        // 🚀 Satu-satunya listener: validasi lolos → navigasi ke PaymentPage.
-        // Tidak ada cek lokasi, tidak ada insert transaksi.
         if (state.status == TransactionStatus.success) {
           _navigateToPayment(state);
         }
       },
       builder: (context, state) {
-        final bool isLoading =
-            state.status == TransactionStatus.loading ||
-            state.dataJukirStatus == DataJukirStatus.loading;
+        final bool isLoading = state.status == TransactionStatus.loading;
 
         return SafeArea(
           bottom: true,
@@ -109,6 +114,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         ? const TarifEmptyWidget()
                         : Column(
                             children: [
+                              _buildDemoModeBanner(),
                               Expanded(
                                 child: SingleChildScrollView(
                                   physics: const BouncingScrollPhysics(),
@@ -137,35 +143,20 @@ class _TransactionPageState extends State<TransactionPage> {
                                           );
                                         },
                                       ),
-
-                                      const SizedBox(height: 16),
-                                      if (widget.itemOP != null)
-                                        CardDataJukir(
-                                          dataJukirList: state.dataJukirList,
-                                          selectedJukir: state.selectedJukir,
-                                          onSelected: (value) {
-                                            context
-                                                .read<TransactionCubit>()
-                                                .selectJukir(value);
-                                          },
-                                        ),
                                     ],
                                   ),
                                 ),
                               ),
-
-                              // 🚀 Tombol lanjut — aktif hanya jika kendaraan dipilih
                               const SizedBox(height: 8),
                               PbPrimaryButton(
                                 text: widget.isFree
                                     ? 'Simpan Parkir Gratis'
                                     : 'Lanjut Pembayaran',
-                                onPressed:
-                                    (state.selectedTarif != null &&
-                                        state.selectedJukir != null)
+                                // 🚀 VALIDASI TOMBOL: Karena _requiresJukir false, hanya cek kendaraan
+                                onPressed: state.isValid(_requiresJukir)
                                     ? () => context
                                           .read<TransactionCubit>()
-                                          .proceedToPayment()
+                                          .proceedToPayment(_requiresJukir)
                                     : null,
                               ),
                               const SizedBox(height: 16),
@@ -175,6 +166,33 @@ class _TransactionPageState extends State<TransactionPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildDemoModeBanner() {
+    if (!widget.isDemoMode) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, color: AppColors.warning, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Mode Demo — transaksi ini hanya simulasi.',
+              style: AppTypography.bodySmall.copyWith(color: AppColors.warning),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
