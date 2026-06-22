@@ -59,4 +59,34 @@ class SearchOpCubit extends Cubit<SearchOpState> {
 
     emit(state.copyWith(nopList: filtered));
   }
+
+  Future<void> getNopListByKategori({required SearchOpType type}) async {
+    emit(state.copyWith(isLoading: true));
+
+    try {
+      List<Map<String, dynamic>> result;
+
+      switch (type) {
+        case SearchOpType.digital:
+          result = await databaseHelper.getNopListByIsDigital(true);
+          break;
+
+        case SearchOpType.nonDigital:
+          result = await databaseHelper.getNopListByIsDigital(false);
+          break;
+
+        case SearchOpType.free:
+          result = await databaseHelper.getNopListByTarif('1');
+          break;
+
+        case SearchOpType.paid:
+          result = await databaseHelper.getNopListByTarif('2');
+          break;
+      }
+
+      emit(state.copyWith(isLoading: false, nopList: result));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
 }

@@ -14,8 +14,9 @@ import '../cubit/search_op/search_op_state.dart';
 
 class SearchOpPage extends StatefulWidget {
   final RoleLoginDigitalParkir role;
+  final SearchOpType? opType;
 
-  const SearchOpPage({super.key, required this.role});
+  const SearchOpPage({super.key, required this.role, this.opType});
 
   @override
   State<SearchOpPage> createState() => _SearchOpPageState();
@@ -27,7 +28,11 @@ class _SearchOpPageState extends State<SearchOpPage> {
   @override
   void initState() {
     super.initState();
-    context.read<SearchOpCubit>().getNopList();
+    if (widget.opType != null) {
+      context.read<SearchOpCubit>().getNopListByKategori(type: widget.opType!);
+    } else {
+      context.read<SearchOpCubit>().getNopList();
+    }
   }
 
   @override
@@ -244,13 +249,13 @@ class _SearchOpPageState extends State<SearchOpPage> {
 String getDigitalLabel(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
 
-  return isDigital == 0 ? 'Digitalisasi' : 'Belum Digitalisasi';
+  return isDigital == 1 ? 'Digitalisasi' : 'Belum Digitalisasi';
 }
 
 PbChipType getDigitalType(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
 
-  return isDigital == 0 ? PbChipType.success : PbChipType.warning;
+  return isDigital == 1 ? PbChipType.success : PbChipType.warning;
 }
 
 String getTarifLabel(Map<String, dynamic> item) {

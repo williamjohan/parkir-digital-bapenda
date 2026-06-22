@@ -95,7 +95,7 @@ class HomeDrawer extends StatelessWidget {
                     } else {
                       final result = await context.pushNamed(
                         AppRoutes.searchObjekPajak,
-                        extra: role,
+                        extra: {'role': RoleLoginDigitalParkir.bapenda},
                       );
 
                       if (result != null) {

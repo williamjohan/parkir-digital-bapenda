@@ -255,7 +255,10 @@ class _HomePageState extends State<HomePage> {
                                                           .pushNamed(
                                                             AppRoutes
                                                                 .searchObjekPajak,
-                                                            extra: state.role,
+                                                            extra: {
+                                                              'role':
+                                                                  state.role,
+                                                            },
                                                           );
 
                                                       if (result != null) {
@@ -270,10 +273,58 @@ class _HomePageState extends State<HomePage> {
                                                             );
                                                       }
                                                     },
-                                                    onTapDigitalisasi: () {},
-                                                    onTapNonDigital: () {},
-                                                    onTapFreePark: () {},
-                                                    onTapNonFreePark: () {},
+                                                    onTapDigitalisasi: () {
+                                                      context.pushNamed(
+                                                        AppRoutes
+                                                            .searchObjekPajak,
+                                                        extra: {
+                                                          'role':
+                                                              RoleLoginDigitalParkir
+                                                                  .bapenda,
+                                                          'opType': SearchOpType
+                                                              .digital,
+                                                        },
+                                                      );
+                                                    },
+                                                    onTapNonDigital: () {
+                                                      context.pushNamed(
+                                                        AppRoutes
+                                                            .searchObjekPajak,
+                                                        extra: {
+                                                          'role':
+                                                              RoleLoginDigitalParkir
+                                                                  .bapenda,
+                                                          'opType': SearchOpType
+                                                              .nonDigital,
+                                                        },
+                                                      );
+                                                    },
+                                                    onTapFreePark: () {
+                                                      context.pushNamed(
+                                                        AppRoutes
+                                                            .searchObjekPajak,
+                                                        extra: {
+                                                          'role':
+                                                              RoleLoginDigitalParkir
+                                                                  .bapenda,
+                                                          'opType':
+                                                              SearchOpType.free,
+                                                        },
+                                                      );
+                                                    },
+                                                    onTapNonFreePark: () {
+                                                      context.pushNamed(
+                                                        AppRoutes
+                                                            .searchObjekPajak,
+                                                        extra: {
+                                                          'role':
+                                                              RoleLoginDigitalParkir
+                                                                  .bapenda,
+                                                          'opType':
+                                                              SearchOpType.paid,
+                                                        },
+                                                      );
+                                                    },
                                                   ),
                                                 ),
                                               ),

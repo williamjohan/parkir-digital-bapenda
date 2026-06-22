@@ -108,11 +108,11 @@ class DatabaseHelper2 {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getNopListFree() async {
+  Future<List<Map<String, dynamic>>> getNopListByTarif(String tarif) async {
     final db = await database;
     return await db.query(
       tableNopList,
-      where: 'pungut_tarif = 1',
+      where: 'pungut_tarif = $tarif',
       orderBy: 'nama_op ASC',
     );
   }

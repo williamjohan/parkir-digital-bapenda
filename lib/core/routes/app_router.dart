@@ -81,15 +81,31 @@ class AppRouter {
             child: const HomePage(),
           ),
         ),
+        // GoRoute(
+        //   path: AppRoutes.searchObjekPajak,
+        //   name: AppRoutes.searchObjekPajak,
+        //   builder: (context, state) {
+        //     final role = state.extra as RoleLoginDigitalParkir;
+
+        //     return BlocProvider(
+        //       create: (_) => locator<SearchOpCubit>(),
+        //       child: SearchOpPage(role: role),
+        //     );
+        //   },
+        // ),
         GoRoute(
           path: AppRoutes.searchObjekPajak,
           name: AppRoutes.searchObjekPajak,
           builder: (context, state) {
-            final role = state.extra as RoleLoginDigitalParkir;
+            final extra = state.extra as Map<String, dynamic>?;
+
+            final role = extra?['role'] as RoleLoginDigitalParkir;
+
+            final opType = extra?['opType'] as SearchOpType?;
 
             return BlocProvider(
               create: (_) => locator<SearchOpCubit>(),
-              child: SearchOpPage(role: role),
+              child: SearchOpPage(role: role, opType: opType),
             );
           },
         ),
