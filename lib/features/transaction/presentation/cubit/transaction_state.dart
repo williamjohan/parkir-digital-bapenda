@@ -1,91 +1,38 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:parkir_digital_bapenda/features/home/domain/entities/data_jukir_entity.dart';
 import '../../../home/data/models/tarif_model.dart';
 
-enum TransactionStatus {
-  ready,
-  loading,
-  success,
-  // Status di bawah tidak lagi dipakai di flow QRIS Rompi.
-  // Dipertahankan agar tidak break kode lain yang mungkin masih referensi enum ini.
-  // ignore: unused_field
-  submitting,
-  // ignore: unused_field
-  failure,
-  // ignore: unused_field
-  locationDisabled,
-  // ignore: unused_field
-  locationPermissionDenied,
-}
+part 'transaction_state.freezed.dart';
+
+enum TransactionStatus { ready, loading, success, submitting, failure }
 
 enum DataJukirStatus { initial, loading, success, error }
 
-class TransactionState extends Equatable {
-  final TransactionStatus status;
-  final DataJukirStatus dataJukirStatus;
-  final List<TarifModel> tarifList;
-  final List<DataJukirEntity> dataJukirList;
-  final TarifModel? selectedTarif;
-  final bool isFree;
-  final String? errorMessage;
-  final DataJukirEntity? selectedJukir;
+@freezed
+class TransactionState with _$TransactionState {
+  const TransactionState._();
 
-  // Map<jenisKendaraanId, localImagePath> — disimpan dari hasil getLocalQris
-  final Map<String, String> qrisMap;
-
-  const TransactionState({
-    this.status = TransactionStatus.ready,
-    this.dataJukirStatus = DataJukirStatus.initial,
-    this.tarifList = const [],
-    this.dataJukirList = const [],
-    this.selectedTarif,
-    this.isFree = false,
-    this.errorMessage,
-    this.qrisMap = const {},
-    this.selectedJukir,
-  });
-
-  bool get isValid => selectedTarif != null;
-
-  bool get isTarifEmpty => tarifList.isEmpty;
-
-  TransactionState copyWith({
-    TransactionStatus? status,
-    DataJukirStatus? dataJukirStatus,
-    List<TarifModel>? tarifList,
-    List<DataJukirEntity>? dataJukirList,
+  const factory TransactionState({
+    @Default(TransactionStatus.ready) TransactionStatus status,
+    @Default([]) List<TarifModel> tarifList,
     TarifModel? selectedTarif,
-    bool clearSelectedTarif = false,
-    bool? isFree,
-    String? errorMessage,
-    Map<String, String>? qrisMap,
+    @Default(false) bool isFree,
+    @Default({}) Map<String, String> qrisMap,
+
+    // 💡 Legacy/Future properties (Dipertahankan agar UI lama tidak error)
+    @Default(DataJukirStatus.initial) DataJukirStatus dataJukirStatus,
+    @Default([]) List<DataJukirEntity> dataJukirList,
     DataJukirEntity? selectedJukir,
-  }) {
-    return TransactionState(
-      status: status ?? this.status,
-      dataJukirStatus: dataJukirStatus ?? this.dataJukirStatus,
-      tarifList: tarifList ?? this.tarifList,
-      dataJukirList: dataJukirList ?? this.dataJukirList,
-      selectedTarif: clearSelectedTarif
-          ? null
-          : (selectedTarif ?? this.selectedTarif),
-      isFree: isFree ?? this.isFree,
-      errorMessage: errorMessage ?? this.errorMessage,
-      qrisMap: qrisMap ?? this.qrisMap,
-      selectedJukir: selectedJukir ?? this.selectedJukir,
-    );
+    String? errorMessage,
+  }) = _TransactionState;
+
+  // 🚀 VALIDASI CERDAS: Karena dari FAB, requiresJukir pasti false.
+  bool isValid(bool requiresJukir) {
+    if (requiresJukir) {
+      return selectedTarif != null && selectedJukir != null;
+    }
+    return selectedTarif != null;
   }
 
-  @override
-  List<Object?> get props => [
-    status,
-    dataJukirStatus,
-    tarifList,
-    dataJukirList,
-    selectedTarif,
-    isFree,
-    errorMessage,
-    qrisMap,
-    selectedJukir,
-  ];
+  bool get isTarifEmpty => tarifList.isEmpty;
 }

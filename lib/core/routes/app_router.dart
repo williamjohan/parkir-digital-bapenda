@@ -168,6 +168,7 @@ class AppRouter {
               child: TransactionPage(
                 isFree: extra?['isFree'] ?? false,
                 itemOP: extra?['itemOP'],
+                isDemoMode: extra?['isDemoMode'] ?? false,
               ),
             );
           },

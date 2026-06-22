@@ -393,7 +393,10 @@ class _HomePageState extends State<HomePage> {
 
                   floatingActionButton: FeatureFlags.enableCreateOrderFeature
                       ? PbPermissionGate(
-                          allowedRoles: const [RoleLoginDigitalParkir.jukir],
+                          allowedRoles: const [
+                            RoleLoginDigitalParkir.jukir,
+                            RoleLoginDigitalParkir.bapenda,
+                          ],
                           currentRole: state.role,
                           child: FloatingActionButton(
                             backgroundColor: AppColors.primary,
@@ -402,7 +405,12 @@ class _HomePageState extends State<HomePage> {
                             onPressed: () async {
                               final result = await context.push(
                                 AppRoutes.transaction,
-                                extra: {'isFree': state.isFree},
+                                extra: {
+                                  'isFree': state.isFree,
+                                  'isDemoMode':
+                                      state.role ==
+                                      RoleLoginDigitalParkir.bapenda,
+                                },
                               );
 
                               // kalau transaksi sukses

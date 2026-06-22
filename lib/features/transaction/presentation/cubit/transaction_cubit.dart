@@ -6,9 +6,6 @@ import '../../domain/usecases/get_local_qris_usecase.dart';
 import 'transaction_state.dart';
 import '../../../home/data/models/tarif_model.dart';
 
-// IAppLocationService tidak dipakai lagi di flow QRIS Rompi.
-// submitTransaction tidak lagi butuh lokasi — navigasi langsung ke PaymentPage.
-
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
   final GetLocalQrisUseCase _getLocalQrisUseCase;
@@ -17,11 +14,21 @@ class TransactionCubit extends Cubit<TransactionState> {
   TransactionCubit(this._getLocalQrisUseCase, this._getDataJukirUseCase)
     : super(const TransactionState());
 
-  // ─── INIT ────────────────────────────────────────────────────────────────────
+  // ─── INIT (DUAL FLOW ENTRY POINT) ────────────────────────────────────────────
 
-  Future<void> init(bool isFree) async {
-    emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
+  Future<void> init({required bool isFree, required bool isDemoMode}) async {
+    if (!isClosed) {
+      emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
+    }
 
+    // 🚀 JALUR 1: BAPENDA FAB (DEMO MODE)
+    // Langsung injeksi data statis, bypass pencarian SQLite
+    if (isDemoMode) {
+      _injectFallbackVehicles();
+      return;
+    }
+
+    // 🚀 JALUR 2: JUKIR FAB (LOKAL)
     final result = await _getLocalQrisUseCase.execute();
     if (isClosed) return;
 
@@ -34,8 +41,6 @@ class TransactionCubit extends Cubit<TransactionState> {
     });
   }
 
-  // ─── SETUP KENDARAAN ─────────────────────────────────────────────────────────
-
   void _setupVehiclesFromQris(Map<String, String> qrisMap) {
     final List<TarifModel> vehicles = qrisMap.keys.map((id) {
       return TarifModel(
@@ -45,28 +50,31 @@ class TransactionCubit extends Cubit<TransactionState> {
       );
     }).toList();
 
-    emit(
-      state.copyWith(
-        status: TransactionStatus.ready,
-        tarifList: vehicles,
-        qrisMap: qrisMap,
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          status: TransactionStatus.ready,
+          tarifList: vehicles,
+          qrisMap: qrisMap,
+        ),
+      );
+    }
   }
 
   void _injectFallbackVehicles() {
-    // qrisMap kosong → PaymentPage akan tampilkan error "QRIS tidak tersedia"
     final List<TarifModel> fallback = [
       const TarifModel(id: 1, jenisTarif: 'Mobil', tarif: 0),
       const TarifModel(id: 2, jenisTarif: 'Motor', tarif: 0),
     ];
-    emit(
-      state.copyWith(
-        status: TransactionStatus.ready,
-        tarifList: fallback,
-        qrisMap: const {},
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          status: TransactionStatus.ready,
+          tarifList: fallback,
+          qrisMap: const {},
+        ),
+      );
+    }
   }
 
   String _labelFromId(String id) {
@@ -80,56 +88,32 @@ class TransactionCubit extends Cubit<TransactionState> {
     }
   }
 
-  // ─── SELEKSI KENDARAAN ───────────────────────────────────────────────────────
-
   void selectTarif(TarifModel tarif) {
-    emit(state.copyWith(selectedTarif: tarif));
+    if (!isClosed) emit(state.copyWith(selectedTarif: tarif));
   }
 
-  // ─── SUBMIT → langsung navigasi, tanpa cek lokasi ────────────────────────────
-
-  void proceedToPayment() {
-    if (!state.isValid) return;
-    // Tidak ada cek lokasi, tidak ada insert transaksi.
-    // Cukup sinyal ke UI bahwa validasi lolos → navigasi ke PaymentPage.
-    emit(state.copyWith(status: TransactionStatus.success));
+  void proceedToPayment(bool requiresJukir) {
+    if (!state.isValid(requiresJukir)) return;
+    if (!isClosed) emit(state.copyWith(status: TransactionStatus.success));
   }
-
-  // ─── RESET ───────────────────────────────────────────────────────────────────
 
   void resetForm() {
-    emit(
-      state.copyWith(status: TransactionStatus.ready, clearSelectedTarif: true),
-    );
-  }
-
-  Future<void> getDataJukir(String nop) async {
-    emit(state.copyWith(dataJukirStatus: DataJukirStatus.loading));
-
-    try {
-      final result = await _getDataJukirUseCase(nop);
-
+    if (!isClosed) {
       emit(
-        state.copyWith(
-          dataJukirStatus: DataJukirStatus.success,
-          dataJukirList: result,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          dataJukirStatus: DataJukirStatus.error,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: TransactionStatus.ready, selectedTarif: null),
       );
     }
   }
 
+  // (Legacy function: Tetap ada agar tidak error jika UI memanggilnya,
+  // meskipun tidak dipakai karena Search OP dimatikan)
   void selectJukir(DataJukirEntity jukir) {
-    emit(
-      state.copyWith(
-        selectedJukir: state.selectedJukir == jukir ? null : jukir,
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          selectedJukir: state.selectedJukir == jukir ? null : jukir,
+        ),
+      );
+    }
   }
 }
