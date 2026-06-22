@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/design_system/components/chip_indicator/pb_chip_indicator.dart';
 import '../../../../core/design_system/components/chip_indicator/pb_chip_type.dart';
 import '../../../../core/design_system/components/chip_indicator/pb_radius_type.dart';
-import '../../../../core/design_system/components/pb_action_menu_card.dart';
-import '../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
 import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -81,13 +78,20 @@ class _SearchOpPageState extends State<SearchOpPage> {
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final item = state.nopList[index];
-                      final chipType = getStatusType(item);
-
-                      final isFree = (item['pungut_tarif'] ?? 0) == 1;
+                      final chipType = getDigitalType(item);
+                      // final isDigital = item['is_digital'] == true;
+                      // final isNonDigital =
+                      //     item['is_digital'] == false &&
+                      //     item['pungut_tarif'] == 2;
+                      // final isFree = (item['pungut_tarif'] ?? 0) == 1;
 
                       return InkWell(
                         borderRadius: BorderRadius.circular(16),
                         onTap: () async {
+                          context.pushNamed(
+                            AppRoutes.history,
+                            extra: {'isFree': false, 'nop': item['nop']},
+                          );
                           // kode onTap lama
                         },
                         child: Container(
@@ -145,10 +149,22 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                       ),
 
                                       const SizedBox(height: 4),
-                                      PbChipIndicator(
-                                        labelText: getStatusLabel(item),
-                                        type: getStatusType(item),
-                                        radius: PbRadiusType.full,
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 4,
+                                        children: [
+                                          PbChipIndicator(
+                                            labelText: getDigitalLabel(item),
+                                            type: getDigitalType(item),
+                                            radius: PbRadiusType.full,
+                                          ),
+
+                                          PbChipIndicator(
+                                            labelText: getTarifLabel(item),
+                                            type: getTarifType(item),
+                                            radius: PbRadiusType.full,
+                                          ),
+                                        ],
                                       ),
                                       const SizedBox(height: 4),
 
@@ -225,32 +241,32 @@ class _SearchOpPageState extends State<SearchOpPage> {
   }
 }
 
-String getStatusLabel(Map<String, dynamic> item) {
+String getDigitalLabel(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
-  final pungutTarif = item['pungut_tarif'] ?? 0;
 
-  if (pungutTarif == 1) {
-    return 'Parkir Bebas';
-  }
-
-  if (isDigital == 0) {
-    return 'Digitalisasi';
-  }
-
-  return 'Belum Digitalisasi';
+  return isDigital == 0 ? 'Digitalisasi' : 'Belum Digitalisasi';
 }
 
-PbChipType getStatusType(Map<String, dynamic> item) {
+PbChipType getDigitalType(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
-  final pungutTarif = item['pungut_tarif'] ?? 0;
+
+  return isDigital == 0 ? PbChipType.success : PbChipType.warning;
+}
+
+String getTarifLabel(Map<String, dynamic> item) {
+  final pungutTarif = item['pungut_tarif'] ?? 1;
 
   if (pungutTarif == 1) {
-    return PbChipType.info;
+    return 'Tidak Berbayar';
+  } else if (pungutTarif == 2) {
+    return 'Berbayar';
   }
 
-  if (isDigital == 0) {
-    return PbChipType.success;
-  }
+  return pungutTarif == 1 ? 'Berbayar' : 'Tidak Berbayar';
+}
 
-  return PbChipType.warning;
+PbChipType getTarifType(Map<String, dynamic> item) {
+  final pungutTarif = item['pungut_tarif'] ?? 1;
+
+  return pungutTarif == 1 ? PbChipType.info : PbChipType.idle;
 }

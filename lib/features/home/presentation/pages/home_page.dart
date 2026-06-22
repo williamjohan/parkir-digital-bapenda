@@ -248,6 +248,8 @@ class _HomePageState extends State<HomePage> {
                                                         state.totalOpNonDigital,
                                                     totalOpFree:
                                                         state.totalOpFree,
+                                                    totalOpNonFree:
+                                                        state.totalOpNonFree,
                                                     lihatSemuaOnPressed: () async {
                                                       final result = await context
                                                           .pushNamed(
@@ -268,6 +270,10 @@ class _HomePageState extends State<HomePage> {
                                                             );
                                                       }
                                                     },
+                                                    onTapDigitalisasi: () {},
+                                                    onTapNonDigital: () {},
+                                                    onTapFreePark: () {},
+                                                    onTapNonFreePark: () {},
                                                   ),
                                                 ),
                                               ),

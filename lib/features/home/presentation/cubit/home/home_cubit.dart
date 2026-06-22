@@ -131,6 +131,7 @@ class HomeCubit extends Cubit<HomeState> {
               totalOpDigital: 0,
               totalOpNonDigital: 0,
               totalOpFree: 0,
+              totalOpNonFree: 0,
               sofParkirResults: [],
             ),
           );
@@ -150,6 +151,7 @@ class HomeCubit extends Cubit<HomeState> {
               totalOpDigital: summary.totalOpDigital,
               totalOpNonDigital: summary.totalOpNonDigital,
               totalOpFree: summary.totalOpFree,
+              totalOpNonFree: summary.totalOpNonFree,
               sofParkirResults: summary.sofParkirResults,
             ),
           );

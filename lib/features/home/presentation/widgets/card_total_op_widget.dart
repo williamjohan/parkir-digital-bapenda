@@ -9,7 +9,12 @@ class CardTotalOpWidget extends StatelessWidget {
   final int totalOpDigitalisasi;
   final int totalOpNonDigitalisasi;
   final int totalOpFree;
+  final int totalOpNonFree;
   final VoidCallback? lihatSemuaOnPressed;
+  final VoidCallback? onTapDigitalisasi;
+  final VoidCallback? onTapNonDigital;
+  final VoidCallback? onTapFreePark;
+  final VoidCallback? onTapNonFreePark;
 
   const CardTotalOpWidget({
     super.key,
@@ -17,14 +22,20 @@ class CardTotalOpWidget extends StatelessWidget {
     required this.totalOpDigitalisasi,
     required this.totalOpNonDigitalisasi,
     required this.totalOpFree,
+    required this.totalOpNonFree,
     required this.lihatSemuaOnPressed,
+    required this.onTapDigitalisasi,
+    required this.onTapNonDigital,
+    required this.onTapFreePark,
+    required this.onTapNonFreePark,
   });
 
   @override
   Widget build(BuildContext context) {
     // 🚀 THE MATH FIX: Hitung total riil 3 elemen untuk pembagi persentase
-    final int realTotal =
-        totalOpDigitalisasi + totalOpNonDigitalisasi + totalOpFree;
+    final int realTotal = totalOpDigitalisasi + totalOpNonDigitalisasi;
+
+    final int realTotal2 = totalOpFree + totalOpNonFree;
 
     // 🚀 THE SAFE PERCENTAGE: Cegah error pembagian dengan 0
     final double digitalPercent = realTotal == 0
@@ -33,9 +44,12 @@ class CardTotalOpWidget extends StatelessWidget {
     final double nonDigitalPercent = realTotal == 0
         ? 0.0
         : (totalOpNonDigitalisasi / realTotal) * 100;
-    final double isFreePercent = realTotal == 0
+    final double isFreePercent = realTotal2 == 0
         ? 0.0
-        : (totalOpFree / realTotal) * 100;
+        : (totalOpFree / realTotal2) * 100;
+    final double isNonFreePercent = realTotal2 == 0
+        ? 0.0
+        : (totalOpNonFree / realTotal2) * 100;
 
     return Container(
       padding: const EdgeInsets.all(24), // Diperbesar sedikit agar tidak sesak
@@ -118,6 +132,7 @@ class CardTotalOpWidget extends StatelessWidget {
             subtitle: "Sudah terhubung sistem",
             total: totalOpDigitalisasi,
             percentage: digitalPercent,
+            onTap: onTapDigitalisasi,
           ),
 
           const SizedBox(height: 12),
@@ -127,10 +142,11 @@ class CardTotalOpWidget extends StatelessWidget {
             icon: Icons.cancel_outlined,
             iconColor: AppColors.error,
             bgColor: AppColors.error.withValues(alpha: 0.12),
-            title: "Non-Digital",
+            title: "Belum Digitalisasi",
             subtitle: "Belum terhubung sistem",
             total: totalOpNonDigitalisasi,
             percentage: nonDigitalPercent,
+            onTap: onTapNonDigital,
           ),
 
           const SizedBox(height: 12),
@@ -144,6 +160,21 @@ class CardTotalOpWidget extends StatelessWidget {
             subtitle: "Tidak dipungut biaya",
             total: totalOpFree,
             percentage: isFreePercent,
+            onTap: onTapFreePark,
+          ),
+
+          const SizedBox(height: 12),
+
+          /// 🚀 === LIST ITEM PARKIR BERBAYAR (BARU) ===
+          _statusItem(
+            icon: Icons.payments_rounded,
+            iconColor: AppColors.primary,
+            bgColor: AppColors.primary.withOpacity(0.2),
+            title: "Parkir Berbayar",
+            subtitle: "Dipungut biaya",
+            total: totalOpNonFree,
+            percentage: isNonFreePercent,
+            onTap: onTapNonFreePark,
           ),
 
           const SizedBox(height: 24),
@@ -170,59 +201,63 @@ Widget _statusItem({
   required String subtitle,
   required int total,
   required double percentage,
+  required VoidCallback? onTap,
 }) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.grey.shade100),
-      color: Colors.grey.shade50, // Latar belakang halus untuk pemisah visual
-    ),
-    child: Row(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(12),
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
+        color: Colors.grey.shade50, // Latar belakang halus untuk pemisah visual
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: iconColor, size: 24),
           ),
-          child: Icon(icon, color: iconColor, size: 24),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: AppTypography.bodySemiBold),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: AppTypography.caption.copyWith(
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(title, style: AppTypography.bodySemiBold),
+              Text(
+                NumberFormatter.format(total.toString()),
+                style: AppTypography.heading2,
+              ),
               const SizedBox(height: 2),
               Text(
-                subtitle,
+                "${percentage.toStringAsFixed(1)}%",
                 style: AppTypography.caption.copyWith(
-                  color: Colors.grey.shade600,
+                  color: iconColor,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              NumberFormatter.format(total.toString()),
-              style: AppTypography.heading2,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              "${percentage.toStringAsFixed(1)}%",
-              style: AppTypography.caption.copyWith(
-                color: iconColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

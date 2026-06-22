@@ -9,6 +9,7 @@ class DashboardSummaryNonJukirEntity with _$DashboardSummaryNonJukirEntity {
     required int totalOpDigital,
     required int totalOpNonDigital,
     required int totalOpFree,
+    required int totalOpNonFree,
     required int jumlahMotorHariIni,
     required int jumlahMobilHariIni,
     required double totalNominalHariIni,

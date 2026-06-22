@@ -21,6 +21,7 @@ mixin _$DashboardSummaryNonJukirEntity {
   int get totalOpDigital => throw _privateConstructorUsedError;
   int get totalOpNonDigital => throw _privateConstructorUsedError;
   int get totalOpFree => throw _privateConstructorUsedError;
+  int get totalOpNonFree => throw _privateConstructorUsedError;
   int get jumlahMotorHariIni => throw _privateConstructorUsedError;
   int get jumlahMobilHariIni => throw _privateConstructorUsedError;
   double get totalNominalHariIni => throw _privateConstructorUsedError;
@@ -54,6 +55,7 @@ abstract class $DashboardSummaryNonJukirEntityCopyWith<$Res> {
     int totalOpDigital,
     int totalOpNonDigital,
     int totalOpFree,
+    int totalOpNonFree,
     int jumlahMotorHariIni,
     int jumlahMobilHariIni,
     double totalNominalHariIni,
@@ -85,6 +87,7 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
     Object? totalOpFree = null,
+    Object? totalOpNonFree = null,
     Object? jumlahMotorHariIni = null,
     Object? jumlahMobilHariIni = null,
     Object? totalNominalHariIni = null,
@@ -109,6 +112,10 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
             totalOpFree: null == totalOpFree
                 ? _value.totalOpFree
                 : totalOpFree // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalOpNonFree: null == totalOpNonFree
+                ? _value.totalOpNonFree
+                : totalOpNonFree // ignore: cast_nullable_to_non_nullable
                       as int,
             jumlahMotorHariIni: null == jumlahMotorHariIni
                 ? _value.jumlahMotorHariIni
@@ -156,6 +163,7 @@ abstract class _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res>
     int totalOpDigital,
     int totalOpNonDigital,
     int totalOpFree,
+    int totalOpNonFree,
     int jumlahMotorHariIni,
     int jumlahMobilHariIni,
     double totalNominalHariIni,
@@ -187,6 +195,7 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
     Object? totalOpFree = null,
+    Object? totalOpNonFree = null,
     Object? jumlahMotorHariIni = null,
     Object? jumlahMobilHariIni = null,
     Object? totalNominalHariIni = null,
@@ -211,6 +220,10 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
         totalOpFree: null == totalOpFree
             ? _value.totalOpFree
             : totalOpFree // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalOpNonFree: null == totalOpNonFree
+            ? _value.totalOpNonFree
+            : totalOpNonFree // ignore: cast_nullable_to_non_nullable
                   as int,
         jumlahMotorHariIni: null == jumlahMotorHariIni
             ? _value.jumlahMotorHariIni
@@ -251,6 +264,7 @@ class _$DashboardSummaryNonJukirEntityImpl
     required this.totalOpDigital,
     required this.totalOpNonDigital,
     required this.totalOpFree,
+    required this.totalOpNonFree,
     required this.jumlahMotorHariIni,
     required this.jumlahMobilHariIni,
     required this.totalNominalHariIni,
@@ -267,6 +281,8 @@ class _$DashboardSummaryNonJukirEntityImpl
   final int totalOpNonDigital;
   @override
   final int totalOpFree;
+  @override
+  final int totalOpNonFree;
   @override
   final int jumlahMotorHariIni;
   @override
@@ -288,7 +304,7 @@ class _$DashboardSummaryNonJukirEntityImpl
 
   @override
   String toString() {
-    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, totalOpFree: $totalOpFree, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults)';
+    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, totalOpFree: $totalOpFree, totalOpNonFree: $totalOpNonFree, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults)';
   }
 
   @override
@@ -303,6 +319,8 @@ class _$DashboardSummaryNonJukirEntityImpl
                 other.totalOpNonDigital == totalOpNonDigital) &&
             (identical(other.totalOpFree, totalOpFree) ||
                 other.totalOpFree == totalOpFree) &&
+            (identical(other.totalOpNonFree, totalOpNonFree) ||
+                other.totalOpNonFree == totalOpNonFree) &&
             (identical(other.jumlahMotorHariIni, jumlahMotorHariIni) ||
                 other.jumlahMotorHariIni == jumlahMotorHariIni) &&
             (identical(other.jumlahMobilHariIni, jumlahMobilHariIni) ||
@@ -334,6 +352,7 @@ class _$DashboardSummaryNonJukirEntityImpl
     totalOpDigital,
     totalOpNonDigital,
     totalOpFree,
+    totalOpNonFree,
     jumlahMotorHariIni,
     jumlahMobilHariIni,
     totalNominalHariIni,
@@ -363,6 +382,7 @@ abstract class _DashboardSummaryNonJukirEntity
     required final int totalOpDigital,
     required final int totalOpNonDigital,
     required final int totalOpFree,
+    required final int totalOpNonFree,
     required final int jumlahMotorHariIni,
     required final int jumlahMobilHariIni,
     required final double totalNominalHariIni,
@@ -379,6 +399,8 @@ abstract class _DashboardSummaryNonJukirEntity
   int get totalOpNonDigital;
   @override
   int get totalOpFree;
+  @override
+  int get totalOpNonFree;
   @override
   int get jumlahMotorHariIni;
   @override

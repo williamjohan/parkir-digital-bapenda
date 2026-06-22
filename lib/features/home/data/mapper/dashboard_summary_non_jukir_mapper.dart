@@ -8,6 +8,7 @@ extension DashboardSummaryNonJukirMapper on DashboardSummaryNonJukirModel {
       totalOpDigital: totalOpDigital,
       totalOpNonDigital: totalOpNonDigital,
       totalOpFree: totalNonTarif,
+      totalOpNonFree: totalBertarif,
       jumlahMotorHariIni: jumlahMotorHariIni,
       jumlahMobilHariIni: jumlahMobilHariIni,
       totalNominalHariIni: totalNominalHariIni,
