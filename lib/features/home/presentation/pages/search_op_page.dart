@@ -31,18 +31,21 @@ class _SearchOpPageState extends State<SearchOpPage>
   void initState() {
     super.initState();
 
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
 
     context.read<SearchOpCubit>().getNopList(type: SearchOpType.digital);
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) return;
 
-      context.read<SearchOpCubit>().changeTab(
-        _tabController.index == 0
-            ? SearchOpType.digital
-            : SearchOpType.nonDigital,
-      );
+      final type = switch (_tabController.index) {
+        0 => SearchOpType.digital,
+        1 => SearchOpType.nonDigital,
+        2 => SearchOpType.free,
+        _ => SearchOpType.digital,
+      };
+
+      context.read<SearchOpCubit>().changeTab(type);
 
       searchController.clear();
     });
@@ -98,6 +101,7 @@ class _SearchOpPageState extends State<SearchOpPage>
                 tabs: const [
                   Tab(text: 'Digitalisasi'),
                   Tab(text: 'Non-Digital'),
+                  Tab(text: 'Parkir Bebas'),
                 ],
               ),
             ),
@@ -141,56 +145,68 @@ class _SearchOpPageState extends State<SearchOpPage>
                           color: Colors.grey.shade400,
                         ),
                         onTap: () async {
+                          final isDigital = (item['is_digital'] ?? 0) == 1;
+                          final isFree = (item['pungut_tarif'] ?? 0) == 1;
                           if (widget.role == RoleLoginDigitalParkir.wp) {
                             Navigator.pop<Map<String, dynamic>>(context, item);
                             return;
                           }
 
                           if (widget.role == RoleLoginDigitalParkir.bapenda) {
-                            await PbBasicBottomSheet.show(
-                              context: context,
-                              title: 'Pilih Aksi',
-                              subTitle:
-                                  'Apa yang ingin Anda lakukan untuk objek pajak ini?',
-                              child: Column(
-                                children: [
-                                  ActionMenuCard(
-                                    icon: Icons.history_rounded,
-                                    title: 'Lihat Riwayat',
-                                    subtitle:
-                                        'Lihat seluruh riwayat transaksi objek pajak',
-                                    onTap: () {
-                                      Navigator.pop(context);
+                            if (isDigital && !isFree) {
+                              await PbBasicBottomSheet.show(
+                                context: context,
+                                title: 'Pilih Aksi',
+                                subTitle:
+                                    'Apa yang ingin Anda lakukan untuk objek pajak ini?',
+                                child: Column(
+                                  children: [
+                                    ActionMenuCard(
+                                      icon: Icons.history_rounded,
+                                      title: 'Lihat Riwayat',
+                                      subtitle:
+                                          'Lihat seluruh riwayat transaksi objek pajak',
+                                      onTap: () {
+                                        Navigator.pop(context);
 
-                                      context.pushNamed(
-                                        AppRoutes.history,
-                                        extra: {
-                                          'isFree': true,
-                                          'nop': item['nop'],
-                                        },
-                                      );
-                                    },
-                                  ),
+                                        context.pushNamed(
+                                          AppRoutes.history,
+                                          extra: {
+                                            'isFree': isFree,
+                                            'nop': item['nop'],
+                                          },
+                                        );
+                                      },
+                                    ),
 
-                                  const SizedBox(height: 12),
+                                    const SizedBox(height: 12),
 
-                                  ActionMenuCard(
-                                    icon: Icons.add_circle_outline_rounded,
-                                    title: 'Tambah Transaksi',
-                                    subtitle:
-                                        'Input transaksi baru untuk objek pajak ini',
-                                    onTap: () {
-                                      Navigator.pop(context);
+                                    ActionMenuCard(
+                                      icon: Icons.add_circle_outline_rounded,
+                                      title: 'Tambah Transaksi',
+                                      subtitle:
+                                          'Input transaksi baru untuk objek pajak ini',
+                                      onTap: () {
+                                        Navigator.pop(context);
 
-                                      context.pushNamed(
-                                        AppRoutes.transaction,
-                                        extra: {'isFree': true, 'itemOP': item},
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
+                                        context.pushNamed(
+                                          AppRoutes.transaction,
+                                          extra: {
+                                            'isFree': isFree,
+                                            'itemOP': item,
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (isFree) {
+                              context.pushNamed(
+                                AppRoutes.history,
+                                extra: {'isFree': isFree, 'nop': item['nop']},
+                              );
+                            }
                           }
                         },
                       );

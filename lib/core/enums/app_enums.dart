@@ -59,4 +59,4 @@ enum RoleLoginDigitalParkir {
   }
 }
 
-enum SearchOpType { digital, nonDigital }
+enum SearchOpType { digital, nonDigital, free }

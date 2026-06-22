@@ -15,13 +15,21 @@ class SearchOpCubit extends Cubit<SearchOpState> {
     emit(state.copyWith(isLoading: true, selectedType: type));
 
     try {
-      // final result = await databaseHelper.getNopListByIsDigital(
-      //   state.selectedType == SearchOpType.digital ? true : false,
-      // );
+      List<Map<String, dynamic>> result;
 
-      final result = await databaseHelper.getNopListByIsDigital(
-        type == SearchOpType.digital,
-      );
+      switch (type) {
+        case SearchOpType.digital:
+          result = await databaseHelper.getNopListByIsDigital(true);
+          break;
+
+        case SearchOpType.nonDigital:
+          result = await databaseHelper.getNopListByIsDigital(false);
+          break;
+
+        case SearchOpType.free:
+          result = await databaseHelper.getNopListFree();
+          break;
+      }
 
       emit(
         state.copyWith(
