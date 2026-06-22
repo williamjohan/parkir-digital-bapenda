@@ -5,6 +5,7 @@ import '../../../../../core/enums/app_enums.dart';
 import '../../../../../core/storage/database_helper_2.dart';
 import '../../../../../core/storage/secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
+import '../../../../transaction/domain/usecases/sync_qris_usecase.dart';
 import '../../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
 import '../../../domain/usecases/get_recent_transaction_usecase.dart';
 import 'home_state.dart';
@@ -15,6 +16,7 @@ class HomeCubit extends Cubit<HomeState> {
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
   final GetDashboardSummaryNonJukirUseCase _getDashboardSummaryNonJukirUseCase;
   final ISecureStorageManager _secureStorage;
+  final SyncQrisUseCase _syncQrisUseCase;
   final DatabaseHelper2 _databaseHelper;
 
   HomeCubit(
@@ -22,6 +24,7 @@ class HomeCubit extends Cubit<HomeState> {
     this._getRecentTransactionsUseCase,
     this._getDashboardSummaryNonJukirUseCase,
     this._secureStorage,
+    this._syncQrisUseCase,
     this._databaseHelper,
   ) : super(const HomeState());
 
@@ -36,6 +39,8 @@ class HomeCubit extends Cubit<HomeState> {
 
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboardData();
+
+      await _syncQrisUseCase.execute();
     } else {
       await _ensureValidToken();
       await _loadDashboardNonJukir();

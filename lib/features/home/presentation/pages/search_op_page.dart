@@ -131,7 +131,7 @@ class _SearchOpPageState extends State<SearchOpPage>
                           ),
                         ),
                         subtitle: Text(
-                          item['nop'] ?? '-',
+                          item['alamat_op'] ?? '-',
                           style: AppTypography.caption,
                         ),
                         trailing: Icon(
