@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/home/domain/entities/data_jukir_entity.dart';
 import '../../domain/usecases/get_data_jukir_usecase.dart';
 import '../../domain/usecases/get_local_qris_usecase.dart';
 import 'transaction_state.dart';
@@ -122,5 +123,13 @@ class TransactionCubit extends Cubit<TransactionState> {
         ),
       );
     }
+  }
+
+  void selectJukir(DataJukirEntity jukir) {
+    emit(
+      state.copyWith(
+        selectedJukir: state.selectedJukir == jukir ? null : jukir,
+      ),
+    );
   }
 }

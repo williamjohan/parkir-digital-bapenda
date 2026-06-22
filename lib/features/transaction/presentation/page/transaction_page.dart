@@ -72,7 +72,9 @@ class _TransactionPageState extends State<TransactionPage> {
         }
       },
       builder: (context, state) {
-        final bool isLoading = state.status == TransactionStatus.loading;
+        final bool isLoading =
+            state.status == TransactionStatus.loading ||
+            state.dataJukirStatus == DataJukirStatus.loading;
 
         return SafeArea(
           bottom: true,
@@ -140,6 +142,12 @@ class _TransactionPageState extends State<TransactionPage> {
                                       if (widget.itemOP != null)
                                         CardDataJukir(
                                           dataJukirList: state.dataJukirList,
+                                          selectedJukir: state.selectedJukir,
+                                          onSelected: (value) {
+                                            context
+                                                .read<TransactionCubit>()
+                                                .selectJukir(value);
+                                          },
                                         ),
                                     ],
                                   ),

@@ -28,6 +28,7 @@ class TransactionState extends Equatable {
   final TarifModel? selectedTarif;
   final bool isFree;
   final String? errorMessage;
+  final DataJukirEntity? selectedJukir;
 
   // Map<jenisKendaraanId, localImagePath> — disimpan dari hasil getLocalQris
   final Map<String, String> qrisMap;
@@ -41,6 +42,7 @@ class TransactionState extends Equatable {
     this.isFree = false,
     this.errorMessage,
     this.qrisMap = const {},
+    this.selectedJukir,
   });
 
   bool get isValid => selectedTarif != null;
@@ -57,6 +59,7 @@ class TransactionState extends Equatable {
     bool? isFree,
     String? errorMessage,
     Map<String, String>? qrisMap,
+    DataJukirEntity? selectedJukir,
   }) {
     return TransactionState(
       status: status ?? this.status,
@@ -69,6 +72,7 @@ class TransactionState extends Equatable {
       isFree: isFree ?? this.isFree,
       errorMessage: errorMessage ?? this.errorMessage,
       qrisMap: qrisMap ?? this.qrisMap,
+      selectedJukir: selectedJukir ?? this.selectedJukir,
     );
   }
 
@@ -82,5 +86,6 @@ class TransactionState extends Equatable {
     isFree,
     errorMessage,
     qrisMap,
+    selectedJukir,
   ];
 }

@@ -5,8 +5,15 @@ import 'package:parkir_digital_bapenda/features/home/domain/entities/data_jukir_
 
 class CardDataJukir extends StatelessWidget {
   final List<DataJukirEntity> dataJukirList;
+  final DataJukirEntity? selectedJukir;
+  final ValueChanged<DataJukirEntity> onSelected;
 
-  const CardDataJukir({super.key, required this.dataJukirList});
+  const CardDataJukir({
+    super.key,
+    required this.dataJukirList,
+    required this.selectedJukir,
+    required this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +52,14 @@ class CardDataJukir extends StatelessWidget {
                     letterSpacing: 1,
                   ),
                 ),
+                const SizedBox(width: 4),
+                Text(
+                  '*',
+                  style: TextStyle(
+                    color: AppColors.error,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -78,25 +93,41 @@ class CardDataJukir extends StatelessWidget {
               ),
             )
           else
-            Padding(
+            ListView.separated(
               padding: const EdgeInsets.all(12),
-              child: Column(
-                children: dataJukirList.map((jukir) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 10),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: dataJukirList.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final jukir = dataJukirList[index];
+
+                final isSelected = selectedJukir?.username == jukir.username;
+
+                return InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => onSelected(jukir),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.border),
+                      color: isSelected
+                          ? AppColors.primary.withValues(alpha: 0.08)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.border,
+                        width: isSelected ? 2 : 1,
+                      ),
                     ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CircleAvatar(
-                          radius: 22,
+                          radius: 24,
                           backgroundColor: AppColors.primary.withValues(
-                            alpha: 0.1,
+                            alpha: 0.15,
                           ),
                           child: Icon(Icons.person, color: AppColors.primary),
                         ),
@@ -109,18 +140,16 @@ class CardDataJukir extends StatelessWidget {
                             children: [
                               Text(
                                 jukir.namaPetugas,
-                                style: AppTypography.bodySemiBold,
+                                style: AppTypography.bodySemiBold.copyWith(
+                                  color: isSelected ? AppColors.primary : null,
+                                ),
                               ),
 
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 6),
 
                               Row(
                                 children: [
-                                  Icon(
-                                    Icons.badge_outlined,
-                                    size: 14,
-                                    color: AppColors.textSecondary,
-                                  ),
+                                  const Icon(Icons.badge_outlined, size: 14),
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
@@ -135,10 +164,9 @@ class CardDataJukir extends StatelessWidget {
 
                               Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.phone_android_outlined,
                                     size: 14,
-                                    color: AppColors.textSecondary,
                                   ),
                                   const SizedBox(width: 4),
                                   Expanded(
@@ -152,11 +180,26 @@ class CardDataJukir extends StatelessWidget {
                             ],
                           ),
                         ),
+
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  key: ValueKey('selected'),
+                                  color: AppColors.primary,
+                                )
+                              : const Icon(
+                                  Icons.radio_button_unchecked,
+                                  key: ValueKey('unselected'),
+                                  color: Colors.grey,
+                                ),
+                        ),
                       ],
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              },
             ),
         ],
       ),
