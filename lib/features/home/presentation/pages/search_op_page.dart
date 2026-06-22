@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:parkir_digital_bapenda/core/design_system/components/pb_text_field.dart';
-import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 
+import '../../../../core/design_system/components/chip_indicator/pb_chip_indicator.dart';
+import '../../../../core/design_system/components/chip_indicator/pb_chip_type.dart';
+import '../../../../core/design_system/components/chip_indicator/pb_radius_type.dart';
 import '../../../../core/design_system/components/pb_action_menu_card.dart';
 import '../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
+import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../cubit/search_op/search_op_cubit.dart';
 import '../cubit/search_op/search_op_state.dart';
@@ -21,40 +24,18 @@ class SearchOpPage extends StatefulWidget {
   State<SearchOpPage> createState() => _SearchOpPageState();
 }
 
-class _SearchOpPageState extends State<SearchOpPage>
-    with SingleTickerProviderStateMixin {
+class _SearchOpPageState extends State<SearchOpPage> {
   final TextEditingController searchController = TextEditingController();
-
-  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-
-    _tabController = TabController(length: 3, vsync: this);
-
-    context.read<SearchOpCubit>().getNopList(type: SearchOpType.digital);
-
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) return;
-
-      final type = switch (_tabController.index) {
-        0 => SearchOpType.digital,
-        1 => SearchOpType.nonDigital,
-        2 => SearchOpType.free,
-        _ => SearchOpType.digital,
-      };
-
-      context.read<SearchOpCubit>().changeTab(type);
-
-      searchController.clear();
-    });
+    context.read<SearchOpCubit>().getNopList();
   }
 
   @override
   void dispose() {
     searchController.dispose();
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -75,35 +56,10 @@ class _SearchOpPageState extends State<SearchOpPage>
           children: [
             PbTextField(
               controller: searchController,
-              hintText: "Cari berdasarkan nama / alamat ...",
+              hintText: 'Cari berdasarkan nama / alamat ...',
               onChanged: (value) {
                 context.read<SearchOpCubit>().searchNopAlamat(value);
               },
-            ),
-
-            const SizedBox(height: 12),
-
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black87,
-                indicator: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                tabs: const [
-                  Tab(text: 'Digitalisasi'),
-                  Tab(text: 'Non-Digital'),
-                  Tab(text: 'Parkir Bebas'),
-                ],
-              ),
             ),
 
             const SizedBox(height: 16),
@@ -115,100 +71,147 @@ class _SearchOpPageState extends State<SearchOpPage>
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (state.filteredNopList.isEmpty) {
+                  if (state.nopList.isEmpty) {
                     return const Center(child: Text('Data tidak ditemukan'));
                   }
 
                   return ListView.separated(
-                    itemCount: state.filteredNopList.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemCount: state.nopList.length,
+                    // separatorBuilder: (_, __) => const Divider(height: 1),
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      final item = state.filteredNopList[index];
+                      final item = state.nopList[index];
+                      final chipType = getStatusType(item);
 
-                      return ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 4,
-                        ),
-                        title: Text(
-                          item['nama_op'] ?? '-',
-                          style: AppTypography.bodySemiBold.copyWith(
-                            color: AppColors.primary,
+                      final isFree = (item['pungut_tarif'] ?? 0) == 1;
+
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () async {
+                          // kode onTap lama
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: AppColors.border),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 4,
+                                  // height: 72,
+                                  decoration: BoxDecoration(
+                                    color: chipType.foregroundColor,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                ),
+
+                                const SizedBox(width: 12),
+
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              item['nama_op'] ?? '-',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppTypography.bodySemiBold
+                                                  .copyWith(
+                                                    color:
+                                                        AppColors.textPrimary,
+                                                    fontSize: 15,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      const SizedBox(height: 4),
+                                      PbChipIndicator(
+                                        labelText: getStatusLabel(item),
+                                        type: getStatusType(item),
+                                        radius: PbRadiusType.full,
+                                      ),
+                                      const SizedBox(height: 4),
+
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.confirmation_number_outlined,
+                                            size: 14,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Expanded(
+                                            child: Text(
+                                              item['nop'] ?? '-',
+                                              style: AppTypography.caption
+                                                  .copyWith(
+                                                    color: Colors.grey.shade700,
+                                                  ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                        ],
+                                      ),
+
+                                      const SizedBox(height: 6),
+
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            Icons.location_on_outlined,
+                                            size: 14,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Expanded(
+                                            child: Text(
+                                              item['alamat_op'] ?? '-',
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppTypography.caption
+                                                  .copyWith(
+                                                    color: Colors.grey.shade700,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(width: 8),
+
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: Colors.grey.shade400,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        subtitle: Text(
-                          item['alamat_op'] ?? '-',
-                          style: AppTypography.caption,
-                        ),
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: Colors.grey.shade400,
-                        ),
-                        onTap: () async {
-                          final isDigital = (item['is_digital'] ?? 0) == 1;
-                          final isFree = (item['pungut_tarif'] ?? 0) == 1;
-                          if (widget.role == RoleLoginDigitalParkir.wp) {
-                            Navigator.pop<Map<String, dynamic>>(context, item);
-                            return;
-                          }
-
-                          if (widget.role == RoleLoginDigitalParkir.bapenda) {
-                            if (isDigital && !isFree) {
-                              await PbBasicBottomSheet.show(
-                                context: context,
-                                title: 'Pilih Aksi',
-                                subTitle:
-                                    'Apa yang ingin Anda lakukan untuk objek pajak ini?',
-                                child: Column(
-                                  children: [
-                                    ActionMenuCard(
-                                      icon: Icons.history_rounded,
-                                      title: 'Lihat Riwayat',
-                                      subtitle:
-                                          'Lihat seluruh riwayat transaksi objek pajak',
-                                      onTap: () {
-                                        Navigator.pop(context);
-
-                                        context.pushNamed(
-                                          AppRoutes.history,
-                                          extra: {
-                                            'isFree': isFree,
-                                            'nop': item['nop'],
-                                          },
-                                        );
-                                      },
-                                    ),
-
-                                    const SizedBox(height: 12),
-
-                                    ActionMenuCard(
-                                      icon: Icons.add_circle_outline_rounded,
-                                      title: 'Tambah Transaksi',
-                                      subtitle:
-                                          'Input transaksi baru untuk objek pajak ini',
-                                      onTap: () {
-                                        Navigator.pop(context);
-
-                                        context.pushNamed(
-                                          AppRoutes.transaction,
-                                          extra: {
-                                            'isFree': isFree,
-                                            'itemOP': item,
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else if (isFree) {
-                              context.pushNamed(
-                                AppRoutes.history,
-                                extra: {'isFree': isFree, 'nop': item['nop']},
-                              );
-                            }
-                          }
-                        },
                       );
                     },
                   );
@@ -220,4 +223,34 @@ class _SearchOpPageState extends State<SearchOpPage>
       ),
     );
   }
+}
+
+String getStatusLabel(Map<String, dynamic> item) {
+  final isDigital = item['is_digital'] ?? 0;
+  final pungutTarif = item['pungut_tarif'] ?? 0;
+
+  if (pungutTarif == 1) {
+    return 'Parkir Bebas';
+  }
+
+  if (isDigital == 0) {
+    return 'Digitalisasi';
+  }
+
+  return 'Belum Digitalisasi';
+}
+
+PbChipType getStatusType(Map<String, dynamic> item) {
+  final isDigital = item['is_digital'] ?? 0;
+  final pungutTarif = item['pungut_tarif'] ?? 0;
+
+  if (pungutTarif == 1) {
+    return PbChipType.info;
+  }
+
+  if (isDigital == 0) {
+    return PbChipType.success;
+  }
+
+  return PbChipType.warning;
 }

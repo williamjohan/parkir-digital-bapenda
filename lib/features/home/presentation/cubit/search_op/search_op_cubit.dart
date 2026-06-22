@@ -11,45 +11,22 @@ class SearchOpCubit extends Cubit<SearchOpState> {
 
   SearchOpCubit(this.databaseHelper) : super(const SearchOpState());
 
-  Future<void> getNopList({SearchOpType type = SearchOpType.digital}) async {
-    emit(state.copyWith(isLoading: true, selectedType: type));
+  Future<void> getNopList() async {
+    emit(state.copyWith(isLoading: true));
 
     try {
       List<Map<String, dynamic>> result;
+      result = await databaseHelper.getNopList();
 
-      switch (type) {
-        case SearchOpType.digital:
-          result = await databaseHelper.getNopListByIsDigital(true);
-          break;
-
-        case SearchOpType.nonDigital:
-          result = await databaseHelper.getNopListByIsDigital(false);
-          break;
-
-        case SearchOpType.free:
-          result = await databaseHelper.getNopListFree();
-          break;
-      }
-
-      emit(
-        state.copyWith(
-          isLoading: false,
-          nopList: result,
-          filteredNopList: result,
-        ),
-      );
+      emit(state.copyWith(isLoading: false, nopList: result));
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 
-  void changeTab(SearchOpType type) {
-    getNopList(type: type);
-  }
-
   void searchNop(String keyword) {
     if (keyword.trim().isEmpty) {
-      emit(state.copyWith(filteredNopList: state.nopList));
+      emit(state.copyWith(nopList: state.nopList));
       return;
     }
 
@@ -61,12 +38,12 @@ class SearchOpCubit extends Cubit<SearchOpState> {
           namaLokasi.contains(keyword.toLowerCase());
     }).toList();
 
-    emit(state.copyWith(filteredNopList: filtered));
+    emit(state.copyWith(nopList: filtered));
   }
 
   void searchNopAlamat(String keyword) {
     if (keyword.trim().isEmpty) {
-      emit(state.copyWith(filteredNopList: state.nopList));
+      emit(state.copyWith(nopList: state.nopList));
       return;
     }
 
@@ -80,6 +57,6 @@ class SearchOpCubit extends Cubit<SearchOpState> {
           alamatOP.contains(keyword.toLowerCase());
     }).toList();
 
-    emit(state.copyWith(filteredNopList: filtered));
+    emit(state.copyWith(nopList: filtered));
   }
 }

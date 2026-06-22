@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/utils/number_formatter.dart';
 
 import '../../../../core/design_system/tokens/app_typography.dart';
 
@@ -65,7 +66,7 @@ class CardRekapKendaraanWidget extends StatelessWidget {
               Expanded(
                 child: _MetricItem(
                   title: "Roda 2",
-                  value: motorCount.toString(),
+                  value: NumberFormatter.format(motorCount.toString()),
                   icon: Icons.two_wheeler,
                   color: Colors.teal.shade600,
                   bgColor: Colors.teal.shade50,
@@ -77,7 +78,7 @@ class CardRekapKendaraanWidget extends StatelessWidget {
               Expanded(
                 child: _MetricItem(
                   title: "Roda 4",
-                  value: mobilCount.toString(),
+                  value: NumberFormatter.format(mobilCount.toString()),
                   icon: Icons.directions_car,
                   color: Colors.blue.shade700,
                   bgColor: Colors.blue.shade50,
@@ -89,7 +90,7 @@ class CardRekapKendaraanWidget extends StatelessWidget {
               Expanded(
                 child: _MetricItem(
                   title: "Total",
-                  value: totalKendaraan.toString(),
+                  value: NumberFormatter.format(totalKendaraan.toString()),
                   icon: Icons.local_parking, // Ikon parkir lebih representatif
                   color: Colors.white,
                   bgColor:

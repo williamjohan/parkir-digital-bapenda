@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
+import 'package:parkir_digital_bapenda/core/utils/number_formatter.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
@@ -72,7 +73,7 @@ class CardTotalOpWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      totalObjekPajak.toString(),
+                      NumberFormatter.format(totalObjekPajak.toString()),
                       style: AppTypography.heading1.copyWith(
                         color: AppColors.primary,
                         fontSize: 32, // Angka diperbesar
@@ -107,62 +108,6 @@ class CardTotalOpWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(height: 1),
           ),
-
-          /// === KOMPOSISI STATUS ===
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Text(
-          //       "KOMPOSISI STATUS",
-          //       style: AppTypography.bodyRegular.copyWith(
-          //         fontWeight: FontWeight.w700,
-          //         color: Colors.grey.shade700,
-          //       ),
-          //     ),
-          //     Text(
-          //       // Update komposisi menjadi 3 angka
-          //       "$totalOpDigitalisasi + $totalOpNonDigitalisasi + $totalOpFree",
-          //       style: AppTypography.bodyRegular.copyWith(
-          //         fontWeight: FontWeight.w700,
-          //       ),
-          //     ),
-          //   ],
-          // ),
-
-          // const SizedBox(height: 12),
-
-          /// 🚀 THE SAFE PROGRESS BAR (3 SEGMEN)
-          // ClipRRect(
-          //   borderRadius: BorderRadius.circular(8),
-          //   child: SizedBox(
-          //     height: 10,
-          //     child: realTotal == 0
-          //         ? Container(color: Colors.grey.shade200) // Jika semua 0
-          //         : Row(
-          //             children: [
-          //               // IF logic wajib ada agar flex tidak pernah bernilai 0 (mencegah crash)
-          //               if (totalOpDigitalisasi > 0)
-          //                 Expanded(
-          //                   flex: totalOpDigitalisasi,
-          //                   child: Container(color: AppColors.success),
-          //                 ),
-          //               if (totalOpNonDigitalisasi > 0)
-          //                 Expanded(
-          //                   flex: totalOpNonDigitalisasi,
-          //                   child: Container(color: AppColors.error),
-          //                 ),
-          //               if (totalOpFree > 0)
-          //                 Expanded(
-          //                   flex: totalOpFree,
-          //                   child: Container(
-          //                     color: Colors.blue.shade400,
-          //                   ), // Warna untuk Free
-          //                 ),
-          //             ],
-          //           ),
-          //   ),
-          // ),
-          // const SizedBox(height: 20),
 
           /// === LIST ITEM DIGITALISASI ===
           _statusItem(
@@ -263,7 +208,10 @@ Widget _statusItem({
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(total.toString(), style: AppTypography.heading2),
+            Text(
+              NumberFormatter.format(total.toString()),
+              style: AppTypography.heading2,
+            ),
             const SizedBox(height: 2),
             Text(
               "${percentage.toStringAsFixed(1)}%",
