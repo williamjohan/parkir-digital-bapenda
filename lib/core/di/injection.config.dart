@@ -82,14 +82,20 @@ import '../../features/parking_transaction/persentation/cubit/sync_cubit.dart'
     as _i420;
 import '../../features/payment/data/datasources/payment_remote_datasource.dart'
     as _i247;
+import '../../features/payment/data/datasources/qris_rompi_datasource.dart'
+    as _i949;
 import '../../features/payment/data/datasources/qris_signalr_datasource.dart'
     as _i57;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
     as _i265;
 import '../../features/payment/domain/repositories/i_payment_repository.dart'
     as _i1004;
+import '../../features/payment/domain/repositories/qris_rompi_repository.dart'
+    as _i24;
 import '../../features/payment/domain/usecases/check_payment_status_usecase.dart'
     as _i191;
+import '../../features/payment/domain/usecases/get_qris_rompi_usecase.dart'
+    as _i751;
 import '../../features/payment/domain/usecases/stop_monitoring_payment_usecase.dart'
     as _i907;
 import '../../features/payment/domain/usecases/watch_payment_status_usecase.dart'
@@ -227,6 +233,9 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i751.GetQrisRompiUseCase>(
+    () => _i751.GetQrisRompiUseCase(gh<_i24.QrisRompiRepository>()),
+  );
   gh.lazySingleton<_i11.ISummaryRemoteDataSource>(
     () => _i11.SummaryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -235,6 +244,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i92.IParkingTransactionLocalDataSource>(
     () => _i462.ParkingTransactionLocalDataSourceImpl(gh<_i37.IImageService>()),
+  );
+  gh.lazySingleton<_i949.QrisRompiDatasource>(
+    () => _i949.QrisRompiDatasourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i896.ITransactionHistoryRemoteDataSource>(
     () => _i896.TransactionHistoryRemoteDataSourceImpl(gh<_i361.Dio>()),

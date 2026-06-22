@@ -109,61 +109,60 @@ class CardTotalOpWidget extends StatelessWidget {
           ),
 
           /// === KOMPOSISI STATUS ===
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "KOMPOSISI STATUS",
-                style: AppTypography.bodyRegular.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-              Text(
-                // Update komposisi menjadi 3 angka
-                "$totalOpDigitalisasi + $totalOpNonDigitalisasi + $totalOpFree",
-                style: AppTypography.bodyRegular.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       "KOMPOSISI STATUS",
+          //       style: AppTypography.bodyRegular.copyWith(
+          //         fontWeight: FontWeight.w700,
+          //         color: Colors.grey.shade700,
+          //       ),
+          //     ),
+          //     Text(
+          //       // Update komposisi menjadi 3 angka
+          //       "$totalOpDigitalisasi + $totalOpNonDigitalisasi + $totalOpFree",
+          //       style: AppTypography.bodyRegular.copyWith(
+          //         fontWeight: FontWeight.w700,
+          //       ),
+          //     ),
+          //   ],
+          // ),
 
-          const SizedBox(height: 12),
+          // const SizedBox(height: 12),
 
           /// 🚀 THE SAFE PROGRESS BAR (3 SEGMEN)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: SizedBox(
-              height: 10,
-              child: realTotal == 0
-                  ? Container(color: Colors.grey.shade200) // Jika semua 0
-                  : Row(
-                      children: [
-                        // IF logic wajib ada agar flex tidak pernah bernilai 0 (mencegah crash)
-                        if (totalOpDigitalisasi > 0)
-                          Expanded(
-                            flex: totalOpDigitalisasi,
-                            child: Container(color: AppColors.success),
-                          ),
-                        if (totalOpNonDigitalisasi > 0)
-                          Expanded(
-                            flex: totalOpNonDigitalisasi,
-                            child: Container(color: AppColors.error),
-                          ),
-                        if (totalOpFree > 0)
-                          Expanded(
-                            flex: totalOpFree,
-                            child: Container(
-                              color: Colors.blue.shade400,
-                            ), // Warna untuk Free
-                          ),
-                      ],
-                    ),
-            ),
-          ),
-
-          const SizedBox(height: 20),
+          // ClipRRect(
+          //   borderRadius: BorderRadius.circular(8),
+          //   child: SizedBox(
+          //     height: 10,
+          //     child: realTotal == 0
+          //         ? Container(color: Colors.grey.shade200) // Jika semua 0
+          //         : Row(
+          //             children: [
+          //               // IF logic wajib ada agar flex tidak pernah bernilai 0 (mencegah crash)
+          //               if (totalOpDigitalisasi > 0)
+          //                 Expanded(
+          //                   flex: totalOpDigitalisasi,
+          //                   child: Container(color: AppColors.success),
+          //                 ),
+          //               if (totalOpNonDigitalisasi > 0)
+          //                 Expanded(
+          //                   flex: totalOpNonDigitalisasi,
+          //                   child: Container(color: AppColors.error),
+          //                 ),
+          //               if (totalOpFree > 0)
+          //                 Expanded(
+          //                   flex: totalOpFree,
+          //                   child: Container(
+          //                     color: Colors.blue.shade400,
+          //                   ), // Warna untuk Free
+          //                 ),
+          //             ],
+          //           ),
+          //   ),
+          // ),
+          // const SizedBox(height: 20),
 
           /// === LIST ITEM DIGITALISASI ===
           _statusItem(
@@ -193,7 +192,7 @@ class CardTotalOpWidget extends StatelessWidget {
 
           /// 🚀 === LIST ITEM PARKIR BEBAS (BARU) ===
           _statusItem(
-            icon: Icons.money_off_csred_outlined,
+            icon: Icons.local_parking_rounded,
             iconColor: Colors.blue.shade700,
             bgColor: Colors.blue.shade50,
             title: "Parkir Bebas",

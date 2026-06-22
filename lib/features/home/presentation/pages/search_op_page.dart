@@ -75,7 +75,7 @@ class _SearchOpPageState extends State<SearchOpPage>
           children: [
             PbTextField(
               controller: searchController,
-              hintText: "Cari objek pajak",
+              hintText: "Cari berdasarkan nama / alamat ...",
               onChanged: (value) {
                 context.read<SearchOpCubit>().searchNopAlamat(value);
               },

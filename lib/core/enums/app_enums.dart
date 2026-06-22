@@ -60,3 +60,12 @@ enum RoleLoginDigitalParkir {
 }
 
 enum SearchOpType { digital, nonDigital, free }
+
+enum JenisKendaraan {
+  mobil(1),
+  motor(2);
+
+  final int id;
+
+  const JenisKendaraan(this.id);
+}

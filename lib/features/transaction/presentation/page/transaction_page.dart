@@ -160,7 +160,9 @@ class _TransactionPageState extends State<TransactionPage> {
                                 text: widget.isFree
                                     ? 'Simpan Parkir Gratis'
                                     : 'Lanjut Pembayaran',
-                                onPressed: state.selectedTarif != null
+                                onPressed:
+                                    (state.selectedTarif != null &&
+                                        state.selectedJukir != null)
                                     ? () => context
                                           .read<TransactionCubit>()
                                           .proceedToPayment()
