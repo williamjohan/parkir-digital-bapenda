@@ -84,11 +84,11 @@ class _SearchOpPageState extends State<SearchOpPage> {
                     itemBuilder: (context, index) {
                       final item = state.nopList[index];
                       final chipType = getDigitalType(item);
-                      // final isDigital = item['is_digital'] == true;
+                      // final isDigital = (item['is_digital'] ?? 0) == 1;
                       // final isNonDigital =
                       //     item['is_digital'] == false &&
                       //     item['pungut_tarif'] == 2;
-                      // final isFree = (item['pungut_tarif'] ?? 0) == 1;
+                      // final isFree = (item['pungut_tari f'] ?? 0) == 1;
 
                       return InkWell(
                         borderRadius: BorderRadius.circular(16),
