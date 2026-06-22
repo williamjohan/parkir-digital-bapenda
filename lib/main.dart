@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -14,7 +15,8 @@ import 'features/parking_transaction/persentation/cubit/sync_cubit.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = BapendaHttpOverrides();
-  await dotenv.load(fileName: ".env");
+  final String envFileName = appFlavor == 'demo' ? '.env.demo' : '.env.prod';
+  await dotenv.load(fileName: envFileName);
   await initializeDateFormatting('id_ID', null);
   configureDependencies();
   runApp(const MyApp());

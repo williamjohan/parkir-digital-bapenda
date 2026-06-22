@@ -12,7 +12,7 @@ enum PbButtonVariant {
   outlinedSecondaryDark,
 }
 
-enum PbButtonSize { regular, small }
+enum PbButtonSize { regular, small, medium }
 
 class PbPrimaryButton extends StatelessWidget {
   final String text;

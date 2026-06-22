@@ -46,6 +46,7 @@ app.*.map.json
 
 # Environment Files
 .env
+.env.*
 .env.local
 .env.*.local
 .fvm/

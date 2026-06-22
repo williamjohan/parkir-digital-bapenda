@@ -46,7 +46,7 @@ class PbTextField extends StatelessWidget {
           enabled: enabled,
           textCapitalization: TextCapitalization.characters,
           inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9 ]')),
+            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 ]')),
           ],
           style: AppTypography.bodySmall.copyWith(
             letterSpacing: 2,

@@ -1,73 +1,45 @@
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
+// lib/features/home/data/models/dashboard_summary_non_jukir_model.dart
 
-import '../sof/sof_parkir_result_model.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'dashboard_summary_non_jukir_model.freezed.dart';
 part 'dashboard_summary_non_jukir_model.g.dart';
 
-double _toDouble(dynamic value) {
-  if (value == null) return 0.0;
-
-  if (value is double) return value;
-  if (value is int) return value.toDouble();
-
-  return double.tryParse(value.toString()) ?? 0.0;
-}
-
-@JsonSerializable()
-class DashboardSummaryNonJukirModel extends Equatable {
-  @JsonKey(defaultValue: 0)
-  final int totalOp;
-
-  @JsonKey(defaultValue: 0)
-  final int totalOpDigital;
-
-  @JsonKey(defaultValue: 0)
-  final int totalOpNonDigital;
-
-  @JsonKey(defaultValue: 0)
-  final int jumlahMotorHariIni;
-
-  @JsonKey(defaultValue: 0)
-  final int jumlahMobilHariIni;
-
-  @JsonKey(fromJson: _toDouble)
-  final double totalNominalHariIni;
-
-  @JsonKey(fromJson: _toDouble)
-  final double totalNominalBersihUntukWajibPajak;
-
-  @JsonKey(fromJson: _toDouble)
-  final double totalNominalBersihUntukBapenda;
-
-  @JsonKey(defaultValue: [])
-  final List<SofParkirResultModel> sofParkirResults;
-
-  const DashboardSummaryNonJukirModel({
-    required this.totalOp,
-    required this.totalOpDigital,
-    required this.totalOpNonDigital,
-    required this.jumlahMotorHariIni,
-    required this.jumlahMobilHariIni,
-    required this.totalNominalHariIni,
-    required this.totalNominalBersihUntukWajibPajak,
-    required this.totalNominalBersihUntukBapenda,
-    required this.sofParkirResults,
-  });
+@freezed
+class DashboardSummaryNonJukirModel with _$DashboardSummaryNonJukirModel {
+  const factory DashboardSummaryNonJukirModel({
+    @Default(0) int totalOp,
+    @Default(0) int totalOpDigital,
+    @Default(0) int totalOpNonDigital,
+    @Default(0) int jumlahMotorHariIni,
+    @Default(0) int jumlahMobilHariIni,
+    @Default(0) int totalBertarif,
+    @Default(0) int totalNonTarif,
+    @Default(0) int totalTarifTidakDiketahui,
+    @Default(0.0) double totalNominalHariIni,
+    @Default(0.0) double totalNominalBersihUntukWajibPajak,
+    @Default(0.0) double totalNominalBersihUntukBapenda,
+    @Default([]) List<SofParkirResultModel> sofParkirResults,
+  }) = _DashboardSummaryNonJukirModel;
 
   factory DashboardSummaryNonJukirModel.fromJson(Map<String, dynamic> json) =>
       _$DashboardSummaryNonJukirModelFromJson(json);
+}
 
-  Map<String, dynamic> toJson() => _$DashboardSummaryNonJukirModelToJson(this);
+@freezed
+class SofParkirResultModel with _$SofParkirResultModel {
+  const factory SofParkirResultModel({
+    @Default('') String sof,
+    @Default(0.0) double nominalMotor,
+    @Default(0.0) double nominalMobil,
+    @Default(0.0) double nominalBersihUntukWajibPajakMotor,
+    @Default(0.0) double nominalBersihUntukWajibPajakMobil,
+    @Default(0.0) double nominalBersihUntukBapendaMotor,
+    @Default(0.0) double nominalBersihUntukBapendaMobil,
+    @Default(0) int jumlahMotor,
+    @Default(0) int jumlahMobil,
+  }) = _SofParkirResultModel;
 
-  @override
-  List<Object?> get props => [
-    totalOp,
-    jumlahMotorHariIni,
-    jumlahMobilHariIni,
-    totalNominalHariIni,
-    totalNominalBersihUntukWajibPajak,
-    totalNominalBersihUntukBapenda,
-    sofParkirResults,
-  ];
+  factory SofParkirResultModel.fromJson(Map<String, dynamic> json) =>
+      _$SofParkirResultModelFromJson(json);
 }

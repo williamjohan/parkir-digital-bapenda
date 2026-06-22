@@ -246,6 +246,8 @@ class _HomePageState extends State<HomePage> {
                                                         state.totalOpDigital,
                                                     totalOpNonDigitalisasi:
                                                         state.totalOpNonDigital,
+                                                    totalOpFree:
+                                                        state.totalOpFree,
                                                     lihatSemuaOnPressed: () async {
                                                       final result = await context
                                                           .pushNamed(
@@ -340,10 +342,7 @@ class _HomePageState extends State<HomePage> {
 
                   floatingActionButton: FeatureFlags.enableCreateOrderFeature
                       ? PbPermissionGate(
-                          allowedRoles: const [
-                            RoleLoginDigitalParkir.jukir,
-                            RoleLoginDigitalParkir.bapenda,
-                          ],
+                          allowedRoles: const [RoleLoginDigitalParkir.jukir],
                           currentRole: state.role,
                           child: FloatingActionButton(
                             backgroundColor: AppColors.primary,

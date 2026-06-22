@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'dashboard_summary_non_jukir_entity.dart';
+part of 'dashboard_summary_non_jukir_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,68 +15,81 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
+DashboardSummaryNonJukirModel _$DashboardSummaryNonJukirModelFromJson(
+  Map<String, dynamic> json,
+) {
+  return _DashboardSummaryNonJukirModel.fromJson(json);
+}
+
 /// @nodoc
-mixin _$DashboardSummaryNonJukirEntity {
+mixin _$DashboardSummaryNonJukirModel {
   int get totalOp => throw _privateConstructorUsedError;
   int get totalOpDigital => throw _privateConstructorUsedError;
   int get totalOpNonDigital => throw _privateConstructorUsedError;
-  int get totalOpFree => throw _privateConstructorUsedError;
   int get jumlahMotorHariIni => throw _privateConstructorUsedError;
   int get jumlahMobilHariIni => throw _privateConstructorUsedError;
+  int get totalBertarif => throw _privateConstructorUsedError;
+  int get totalNonTarif => throw _privateConstructorUsedError;
+  int get totalTarifTidakDiketahui => throw _privateConstructorUsedError;
   double get totalNominalHariIni => throw _privateConstructorUsedError;
   double get totalNominalBersihUntukWajibPajak =>
       throw _privateConstructorUsedError;
   double get totalNominalBersihUntukBapenda =>
       throw _privateConstructorUsedError;
-  List<SofParkirResultEntity> get sofParkirResults =>
+  List<SofParkirResultModel> get sofParkirResults =>
       throw _privateConstructorUsedError;
 
-  /// Create a copy of DashboardSummaryNonJukirEntity
+  /// Serializes this DashboardSummaryNonJukirModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of DashboardSummaryNonJukirModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $DashboardSummaryNonJukirEntityCopyWith<DashboardSummaryNonJukirEntity>
+  $DashboardSummaryNonJukirModelCopyWith<DashboardSummaryNonJukirModel>
   get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $DashboardSummaryNonJukirEntityCopyWith<$Res> {
-  factory $DashboardSummaryNonJukirEntityCopyWith(
-    DashboardSummaryNonJukirEntity value,
-    $Res Function(DashboardSummaryNonJukirEntity) then,
+abstract class $DashboardSummaryNonJukirModelCopyWith<$Res> {
+  factory $DashboardSummaryNonJukirModelCopyWith(
+    DashboardSummaryNonJukirModel value,
+    $Res Function(DashboardSummaryNonJukirModel) then,
   ) =
-      _$DashboardSummaryNonJukirEntityCopyWithImpl<
+      _$DashboardSummaryNonJukirModelCopyWithImpl<
         $Res,
-        DashboardSummaryNonJukirEntity
+        DashboardSummaryNonJukirModel
       >;
   @useResult
   $Res call({
     int totalOp,
     int totalOpDigital,
     int totalOpNonDigital,
-    int totalOpFree,
     int jumlahMotorHariIni,
     int jumlahMobilHariIni,
+    int totalBertarif,
+    int totalNonTarif,
+    int totalTarifTidakDiketahui,
     double totalNominalHariIni,
     double totalNominalBersihUntukWajibPajak,
     double totalNominalBersihUntukBapenda,
-    List<SofParkirResultEntity> sofParkirResults,
+    List<SofParkirResultModel> sofParkirResults,
   });
 }
 
 /// @nodoc
-class _$DashboardSummaryNonJukirEntityCopyWithImpl<
+class _$DashboardSummaryNonJukirModelCopyWithImpl<
   $Res,
-  $Val extends DashboardSummaryNonJukirEntity
+  $Val extends DashboardSummaryNonJukirModel
 >
-    implements $DashboardSummaryNonJukirEntityCopyWith<$Res> {
-  _$DashboardSummaryNonJukirEntityCopyWithImpl(this._value, this._then);
+    implements $DashboardSummaryNonJukirModelCopyWith<$Res> {
+  _$DashboardSummaryNonJukirModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of DashboardSummaryNonJukirEntity
+  /// Create a copy of DashboardSummaryNonJukirModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -84,9 +97,11 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
     Object? totalOp = null,
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
-    Object? totalOpFree = null,
     Object? jumlahMotorHariIni = null,
     Object? jumlahMobilHariIni = null,
+    Object? totalBertarif = null,
+    Object? totalNonTarif = null,
+    Object? totalTarifTidakDiketahui = null,
     Object? totalNominalHariIni = null,
     Object? totalNominalBersihUntukWajibPajak = null,
     Object? totalNominalBersihUntukBapenda = null,
@@ -106,10 +121,6 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
                 ? _value.totalOpNonDigital
                 : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
                       as int,
-            totalOpFree: null == totalOpFree
-                ? _value.totalOpFree
-                : totalOpFree // ignore: cast_nullable_to_non_nullable
-                      as int,
             jumlahMotorHariIni: null == jumlahMotorHariIni
                 ? _value.jumlahMotorHariIni
                 : jumlahMotorHariIni // ignore: cast_nullable_to_non_nullable
@@ -117,6 +128,18 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
             jumlahMobilHariIni: null == jumlahMobilHariIni
                 ? _value.jumlahMobilHariIni
                 : jumlahMobilHariIni // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalBertarif: null == totalBertarif
+                ? _value.totalBertarif
+                : totalBertarif // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalNonTarif: null == totalNonTarif
+                ? _value.totalNonTarif
+                : totalNonTarif // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTarifTidakDiketahui: null == totalTarifTidakDiketahui
+                ? _value.totalTarifTidakDiketahui
+                : totalTarifTidakDiketahui // ignore: cast_nullable_to_non_nullable
                       as int,
             totalNominalHariIni: null == totalNominalHariIni
                 ? _value.totalNominalHariIni
@@ -135,7 +158,7 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
             sofParkirResults: null == sofParkirResults
                 ? _value.sofParkirResults
                 : sofParkirResults // ignore: cast_nullable_to_non_nullable
-                      as List<SofParkirResultEntity>,
+                      as List<SofParkirResultModel>,
           )
           as $Val,
     );
@@ -143,42 +166,44 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
 }
 
 /// @nodoc
-abstract class _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res>
-    implements $DashboardSummaryNonJukirEntityCopyWith<$Res> {
-  factory _$$DashboardSummaryNonJukirEntityImplCopyWith(
-    _$DashboardSummaryNonJukirEntityImpl value,
-    $Res Function(_$DashboardSummaryNonJukirEntityImpl) then,
-  ) = __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>;
+abstract class _$$DashboardSummaryNonJukirModelImplCopyWith<$Res>
+    implements $DashboardSummaryNonJukirModelCopyWith<$Res> {
+  factory _$$DashboardSummaryNonJukirModelImplCopyWith(
+    _$DashboardSummaryNonJukirModelImpl value,
+    $Res Function(_$DashboardSummaryNonJukirModelImpl) then,
+  ) = __$$DashboardSummaryNonJukirModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({
     int totalOp,
     int totalOpDigital,
     int totalOpNonDigital,
-    int totalOpFree,
     int jumlahMotorHariIni,
     int jumlahMobilHariIni,
+    int totalBertarif,
+    int totalNonTarif,
+    int totalTarifTidakDiketahui,
     double totalNominalHariIni,
     double totalNominalBersihUntukWajibPajak,
     double totalNominalBersihUntukBapenda,
-    List<SofParkirResultEntity> sofParkirResults,
+    List<SofParkirResultModel> sofParkirResults,
   });
 }
 
 /// @nodoc
-class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
+class __$$DashboardSummaryNonJukirModelImplCopyWithImpl<$Res>
     extends
-        _$DashboardSummaryNonJukirEntityCopyWithImpl<
+        _$DashboardSummaryNonJukirModelCopyWithImpl<
           $Res,
-          _$DashboardSummaryNonJukirEntityImpl
+          _$DashboardSummaryNonJukirModelImpl
         >
-    implements _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res> {
-  __$$DashboardSummaryNonJukirEntityImplCopyWithImpl(
-    _$DashboardSummaryNonJukirEntityImpl _value,
-    $Res Function(_$DashboardSummaryNonJukirEntityImpl) _then,
+    implements _$$DashboardSummaryNonJukirModelImplCopyWith<$Res> {
+  __$$DashboardSummaryNonJukirModelImplCopyWithImpl(
+    _$DashboardSummaryNonJukirModelImpl _value,
+    $Res Function(_$DashboardSummaryNonJukirModelImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of DashboardSummaryNonJukirEntity
+  /// Create a copy of DashboardSummaryNonJukirModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -186,16 +211,18 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
     Object? totalOp = null,
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
-    Object? totalOpFree = null,
     Object? jumlahMotorHariIni = null,
     Object? jumlahMobilHariIni = null,
+    Object? totalBertarif = null,
+    Object? totalNonTarif = null,
+    Object? totalTarifTidakDiketahui = null,
     Object? totalNominalHariIni = null,
     Object? totalNominalBersihUntukWajibPajak = null,
     Object? totalNominalBersihUntukBapenda = null,
     Object? sofParkirResults = null,
   }) {
     return _then(
-      _$DashboardSummaryNonJukirEntityImpl(
+      _$DashboardSummaryNonJukirModelImpl(
         totalOp: null == totalOp
             ? _value.totalOp
             : totalOp // ignore: cast_nullable_to_non_nullable
@@ -208,10 +235,6 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
             ? _value.totalOpNonDigital
             : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
                   as int,
-        totalOpFree: null == totalOpFree
-            ? _value.totalOpFree
-            : totalOpFree // ignore: cast_nullable_to_non_nullable
-                  as int,
         jumlahMotorHariIni: null == jumlahMotorHariIni
             ? _value.jumlahMotorHariIni
             : jumlahMotorHariIni // ignore: cast_nullable_to_non_nullable
@@ -219,6 +242,18 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
         jumlahMobilHariIni: null == jumlahMobilHariIni
             ? _value.jumlahMobilHariIni
             : jumlahMobilHariIni // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalBertarif: null == totalBertarif
+            ? _value.totalBertarif
+            : totalBertarif // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalNonTarif: null == totalNonTarif
+            ? _value.totalNonTarif
+            : totalNonTarif // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTarifTidakDiketahui: null == totalTarifTidakDiketahui
+            ? _value.totalTarifTidakDiketahui
+            : totalTarifTidakDiketahui // ignore: cast_nullable_to_non_nullable
                   as int,
         totalNominalHariIni: null == totalNominalHariIni
             ? _value.totalNominalHariIni
@@ -236,50 +271,72 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
         sofParkirResults: null == sofParkirResults
             ? _value._sofParkirResults
             : sofParkirResults // ignore: cast_nullable_to_non_nullable
-                  as List<SofParkirResultEntity>,
+                  as List<SofParkirResultModel>,
       ),
     );
   }
 }
 
 /// @nodoc
-
-class _$DashboardSummaryNonJukirEntityImpl
-    implements _DashboardSummaryNonJukirEntity {
-  const _$DashboardSummaryNonJukirEntityImpl({
-    required this.totalOp,
-    required this.totalOpDigital,
-    required this.totalOpNonDigital,
-    required this.totalOpFree,
-    required this.jumlahMotorHariIni,
-    required this.jumlahMobilHariIni,
-    required this.totalNominalHariIni,
-    required this.totalNominalBersihUntukWajibPajak,
-    required this.totalNominalBersihUntukBapenda,
-    required final List<SofParkirResultEntity> sofParkirResults,
+@JsonSerializable()
+class _$DashboardSummaryNonJukirModelImpl
+    implements _DashboardSummaryNonJukirModel {
+  const _$DashboardSummaryNonJukirModelImpl({
+    this.totalOp = 0,
+    this.totalOpDigital = 0,
+    this.totalOpNonDigital = 0,
+    this.jumlahMotorHariIni = 0,
+    this.jumlahMobilHariIni = 0,
+    this.totalBertarif = 0,
+    this.totalNonTarif = 0,
+    this.totalTarifTidakDiketahui = 0,
+    this.totalNominalHariIni = 0.0,
+    this.totalNominalBersihUntukWajibPajak = 0.0,
+    this.totalNominalBersihUntukBapenda = 0.0,
+    final List<SofParkirResultModel> sofParkirResults = const [],
   }) : _sofParkirResults = sofParkirResults;
 
+  factory _$DashboardSummaryNonJukirModelImpl.fromJson(
+    Map<String, dynamic> json,
+  ) => _$$DashboardSummaryNonJukirModelImplFromJson(json);
+
   @override
+  @JsonKey()
   final int totalOp;
   @override
+  @JsonKey()
   final int totalOpDigital;
   @override
+  @JsonKey()
   final int totalOpNonDigital;
   @override
-  final int totalOpFree;
-  @override
+  @JsonKey()
   final int jumlahMotorHariIni;
   @override
+  @JsonKey()
   final int jumlahMobilHariIni;
   @override
+  @JsonKey()
+  final int totalBertarif;
+  @override
+  @JsonKey()
+  final int totalNonTarif;
+  @override
+  @JsonKey()
+  final int totalTarifTidakDiketahui;
+  @override
+  @JsonKey()
   final double totalNominalHariIni;
   @override
+  @JsonKey()
   final double totalNominalBersihUntukWajibPajak;
   @override
+  @JsonKey()
   final double totalNominalBersihUntukBapenda;
-  final List<SofParkirResultEntity> _sofParkirResults;
+  final List<SofParkirResultModel> _sofParkirResults;
   @override
-  List<SofParkirResultEntity> get sofParkirResults {
+  @JsonKey()
+  List<SofParkirResultModel> get sofParkirResults {
     if (_sofParkirResults is EqualUnmodifiableListView)
       return _sofParkirResults;
     // ignore: implicit_dynamic_type
@@ -288,25 +345,32 @@ class _$DashboardSummaryNonJukirEntityImpl
 
   @override
   String toString() {
-    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, totalOpFree: $totalOpFree, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults)';
+    return 'DashboardSummaryNonJukirModel(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DashboardSummaryNonJukirEntityImpl &&
+            other is _$DashboardSummaryNonJukirModelImpl &&
             (identical(other.totalOp, totalOp) || other.totalOp == totalOp) &&
             (identical(other.totalOpDigital, totalOpDigital) ||
                 other.totalOpDigital == totalOpDigital) &&
             (identical(other.totalOpNonDigital, totalOpNonDigital) ||
                 other.totalOpNonDigital == totalOpNonDigital) &&
-            (identical(other.totalOpFree, totalOpFree) ||
-                other.totalOpFree == totalOpFree) &&
             (identical(other.jumlahMotorHariIni, jumlahMotorHariIni) ||
                 other.jumlahMotorHariIni == jumlahMotorHariIni) &&
             (identical(other.jumlahMobilHariIni, jumlahMobilHariIni) ||
                 other.jumlahMobilHariIni == jumlahMobilHariIni) &&
+            (identical(other.totalBertarif, totalBertarif) ||
+                other.totalBertarif == totalBertarif) &&
+            (identical(other.totalNonTarif, totalNonTarif) ||
+                other.totalNonTarif == totalNonTarif) &&
+            (identical(
+                  other.totalTarifTidakDiketahui,
+                  totalTarifTidakDiketahui,
+                ) ||
+                other.totalTarifTidakDiketahui == totalTarifTidakDiketahui) &&
             (identical(other.totalNominalHariIni, totalNominalHariIni) ||
                 other.totalNominalHariIni == totalNominalHariIni) &&
             (identical(
@@ -327,49 +391,62 @@ class _$DashboardSummaryNonJukirEntityImpl
             ));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
     totalOp,
     totalOpDigital,
     totalOpNonDigital,
-    totalOpFree,
     jumlahMotorHariIni,
     jumlahMobilHariIni,
+    totalBertarif,
+    totalNonTarif,
+    totalTarifTidakDiketahui,
     totalNominalHariIni,
     totalNominalBersihUntukWajibPajak,
     totalNominalBersihUntukBapenda,
     const DeepCollectionEquality().hash(_sofParkirResults),
   );
 
-  /// Create a copy of DashboardSummaryNonJukirEntity
+  /// Create a copy of DashboardSummaryNonJukirModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$DashboardSummaryNonJukirEntityImplCopyWith<
-    _$DashboardSummaryNonJukirEntityImpl
+  _$$DashboardSummaryNonJukirModelImplCopyWith<
+    _$DashboardSummaryNonJukirModelImpl
   >
   get copyWith =>
-      __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<
-        _$DashboardSummaryNonJukirEntityImpl
+      __$$DashboardSummaryNonJukirModelImplCopyWithImpl<
+        _$DashboardSummaryNonJukirModelImpl
       >(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DashboardSummaryNonJukirModelImplToJson(this);
+  }
 }
 
-abstract class _DashboardSummaryNonJukirEntity
-    implements DashboardSummaryNonJukirEntity {
-  const factory _DashboardSummaryNonJukirEntity({
-    required final int totalOp,
-    required final int totalOpDigital,
-    required final int totalOpNonDigital,
-    required final int totalOpFree,
-    required final int jumlahMotorHariIni,
-    required final int jumlahMobilHariIni,
-    required final double totalNominalHariIni,
-    required final double totalNominalBersihUntukWajibPajak,
-    required final double totalNominalBersihUntukBapenda,
-    required final List<SofParkirResultEntity> sofParkirResults,
-  }) = _$DashboardSummaryNonJukirEntityImpl;
+abstract class _DashboardSummaryNonJukirModel
+    implements DashboardSummaryNonJukirModel {
+  const factory _DashboardSummaryNonJukirModel({
+    final int totalOp,
+    final int totalOpDigital,
+    final int totalOpNonDigital,
+    final int jumlahMotorHariIni,
+    final int jumlahMobilHariIni,
+    final int totalBertarif,
+    final int totalNonTarif,
+    final int totalTarifTidakDiketahui,
+    final double totalNominalHariIni,
+    final double totalNominalBersihUntukWajibPajak,
+    final double totalNominalBersihUntukBapenda,
+    final List<SofParkirResultModel> sofParkirResults,
+  }) = _$DashboardSummaryNonJukirModelImpl;
+
+  factory _DashboardSummaryNonJukirModel.fromJson(Map<String, dynamic> json) =
+      _$DashboardSummaryNonJukirModelImpl.fromJson;
 
   @override
   int get totalOp;
@@ -378,11 +455,15 @@ abstract class _DashboardSummaryNonJukirEntity
   @override
   int get totalOpNonDigital;
   @override
-  int get totalOpFree;
-  @override
   int get jumlahMotorHariIni;
   @override
   int get jumlahMobilHariIni;
+  @override
+  int get totalBertarif;
+  @override
+  int get totalNonTarif;
+  @override
+  int get totalTarifTidakDiketahui;
   @override
   double get totalNominalHariIni;
   @override
@@ -390,20 +471,24 @@ abstract class _DashboardSummaryNonJukirEntity
   @override
   double get totalNominalBersihUntukBapenda;
   @override
-  List<SofParkirResultEntity> get sofParkirResults;
+  List<SofParkirResultModel> get sofParkirResults;
 
-  /// Create a copy of DashboardSummaryNonJukirEntity
+  /// Create a copy of DashboardSummaryNonJukirModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$DashboardSummaryNonJukirEntityImplCopyWith<
-    _$DashboardSummaryNonJukirEntityImpl
+  _$$DashboardSummaryNonJukirModelImplCopyWith<
+    _$DashboardSummaryNonJukirModelImpl
   >
   get copyWith => throw _privateConstructorUsedError;
 }
 
+SofParkirResultModel _$SofParkirResultModelFromJson(Map<String, dynamic> json) {
+  return _SofParkirResultModel.fromJson(json);
+}
+
 /// @nodoc
-mixin _$SofParkirResultEntity {
+mixin _$SofParkirResultModel {
   String get sof => throw _privateConstructorUsedError;
   double get nominalMotor => throw _privateConstructorUsedError;
   double get nominalMobil => throw _privateConstructorUsedError;
@@ -418,19 +503,22 @@ mixin _$SofParkirResultEntity {
   int get jumlahMotor => throw _privateConstructorUsedError;
   int get jumlahMobil => throw _privateConstructorUsedError;
 
-  /// Create a copy of SofParkirResultEntity
+  /// Serializes this SofParkirResultModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SofParkirResultModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $SofParkirResultEntityCopyWith<SofParkirResultEntity> get copyWith =>
+  $SofParkirResultModelCopyWith<SofParkirResultModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SofParkirResultEntityCopyWith<$Res> {
-  factory $SofParkirResultEntityCopyWith(
-    SofParkirResultEntity value,
-    $Res Function(SofParkirResultEntity) then,
-  ) = _$SofParkirResultEntityCopyWithImpl<$Res, SofParkirResultEntity>;
+abstract class $SofParkirResultModelCopyWith<$Res> {
+  factory $SofParkirResultModelCopyWith(
+    SofParkirResultModel value,
+    $Res Function(SofParkirResultModel) then,
+  ) = _$SofParkirResultModelCopyWithImpl<$Res, SofParkirResultModel>;
   @useResult
   $Res call({
     String sof,
@@ -446,19 +534,19 @@ abstract class $SofParkirResultEntityCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$SofParkirResultEntityCopyWithImpl<
+class _$SofParkirResultModelCopyWithImpl<
   $Res,
-  $Val extends SofParkirResultEntity
+  $Val extends SofParkirResultModel
 >
-    implements $SofParkirResultEntityCopyWith<$Res> {
-  _$SofParkirResultEntityCopyWithImpl(this._value, this._then);
+    implements $SofParkirResultModelCopyWith<$Res> {
+  _$SofParkirResultModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of SofParkirResultEntity
+  /// Create a copy of SofParkirResultModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -522,12 +610,12 @@ class _$SofParkirResultEntityCopyWithImpl<
 }
 
 /// @nodoc
-abstract class _$$SofParkirResultEntityImplCopyWith<$Res>
-    implements $SofParkirResultEntityCopyWith<$Res> {
-  factory _$$SofParkirResultEntityImplCopyWith(
-    _$SofParkirResultEntityImpl value,
-    $Res Function(_$SofParkirResultEntityImpl) then,
-  ) = __$$SofParkirResultEntityImplCopyWithImpl<$Res>;
+abstract class _$$SofParkirResultModelImplCopyWith<$Res>
+    implements $SofParkirResultModelCopyWith<$Res> {
+  factory _$$SofParkirResultModelImplCopyWith(
+    _$SofParkirResultModelImpl value,
+    $Res Function(_$SofParkirResultModelImpl) then,
+  ) = __$$SofParkirResultModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({
@@ -544,16 +632,15 @@ abstract class _$$SofParkirResultEntityImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$SofParkirResultEntityImplCopyWithImpl<$Res>
-    extends
-        _$SofParkirResultEntityCopyWithImpl<$Res, _$SofParkirResultEntityImpl>
-    implements _$$SofParkirResultEntityImplCopyWith<$Res> {
-  __$$SofParkirResultEntityImplCopyWithImpl(
-    _$SofParkirResultEntityImpl _value,
-    $Res Function(_$SofParkirResultEntityImpl) _then,
+class __$$SofParkirResultModelImplCopyWithImpl<$Res>
+    extends _$SofParkirResultModelCopyWithImpl<$Res, _$SofParkirResultModelImpl>
+    implements _$$SofParkirResultModelImplCopyWith<$Res> {
+  __$$SofParkirResultModelImplCopyWithImpl(
+    _$SofParkirResultModelImpl _value,
+    $Res Function(_$SofParkirResultModelImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of SofParkirResultEntity
+  /// Create a copy of SofParkirResultModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -569,7 +656,7 @@ class __$$SofParkirResultEntityImplCopyWithImpl<$Res>
     Object? jumlahMobil = null,
   }) {
     return _then(
-      _$SofParkirResultEntityImpl(
+      _$SofParkirResultModelImpl(
         sof: null == sof
             ? _value.sof
             : sof // ignore: cast_nullable_to_non_nullable
@@ -614,49 +701,61 @@ class __$$SofParkirResultEntityImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-class _$SofParkirResultEntityImpl implements _SofParkirResultEntity {
-  const _$SofParkirResultEntityImpl({
-    required this.sof,
-    required this.nominalMotor,
-    required this.nominalMobil,
-    required this.nominalBersihUntukWajibPajakMotor,
-    required this.nominalBersihUntukWajibPajakMobil,
-    required this.nominalBersihUntukBapendaMotor,
-    required this.nominalBersihUntukBapendaMobil,
-    required this.jumlahMotor,
-    required this.jumlahMobil,
+@JsonSerializable()
+class _$SofParkirResultModelImpl implements _SofParkirResultModel {
+  const _$SofParkirResultModelImpl({
+    this.sof = '',
+    this.nominalMotor = 0.0,
+    this.nominalMobil = 0.0,
+    this.nominalBersihUntukWajibPajakMotor = 0.0,
+    this.nominalBersihUntukWajibPajakMobil = 0.0,
+    this.nominalBersihUntukBapendaMotor = 0.0,
+    this.nominalBersihUntukBapendaMobil = 0.0,
+    this.jumlahMotor = 0,
+    this.jumlahMobil = 0,
   });
 
+  factory _$SofParkirResultModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SofParkirResultModelImplFromJson(json);
+
   @override
+  @JsonKey()
   final String sof;
   @override
+  @JsonKey()
   final double nominalMotor;
   @override
+  @JsonKey()
   final double nominalMobil;
   @override
+  @JsonKey()
   final double nominalBersihUntukWajibPajakMotor;
   @override
+  @JsonKey()
   final double nominalBersihUntukWajibPajakMobil;
   @override
+  @JsonKey()
   final double nominalBersihUntukBapendaMotor;
   @override
+  @JsonKey()
   final double nominalBersihUntukBapendaMobil;
   @override
+  @JsonKey()
   final int jumlahMotor;
   @override
+  @JsonKey()
   final int jumlahMobil;
 
   @override
   String toString() {
-    return 'SofParkirResultEntity(sof: $sof, nominalMotor: $nominalMotor, nominalMobil: $nominalMobil, nominalBersihUntukWajibPajakMotor: $nominalBersihUntukWajibPajakMotor, nominalBersihUntukWajibPajakMobil: $nominalBersihUntukWajibPajakMobil, nominalBersihUntukBapendaMotor: $nominalBersihUntukBapendaMotor, nominalBersihUntukBapendaMobil: $nominalBersihUntukBapendaMobil, jumlahMotor: $jumlahMotor, jumlahMobil: $jumlahMobil)';
+    return 'SofParkirResultModel(sof: $sof, nominalMotor: $nominalMotor, nominalMobil: $nominalMobil, nominalBersihUntukWajibPajakMotor: $nominalBersihUntukWajibPajakMotor, nominalBersihUntukWajibPajakMobil: $nominalBersihUntukWajibPajakMobil, nominalBersihUntukBapendaMotor: $nominalBersihUntukBapendaMotor, nominalBersihUntukBapendaMobil: $nominalBersihUntukBapendaMobil, jumlahMotor: $jumlahMotor, jumlahMobil: $jumlahMobil)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SofParkirResultEntityImpl &&
+            other is _$SofParkirResultModelImpl &&
             (identical(other.sof, sof) || other.sof == sof) &&
             (identical(other.nominalMotor, nominalMotor) ||
                 other.nominalMotor == nominalMotor) &&
@@ -692,6 +791,7 @@ class _$SofParkirResultEntityImpl implements _SofParkirResultEntity {
                 other.jumlahMobil == jumlahMobil));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
@@ -706,31 +806,39 @@ class _$SofParkirResultEntityImpl implements _SofParkirResultEntity {
     jumlahMobil,
   );
 
-  /// Create a copy of SofParkirResultEntity
+  /// Create a copy of SofParkirResultModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$SofParkirResultEntityImplCopyWith<_$SofParkirResultEntityImpl>
+  _$$SofParkirResultModelImplCopyWith<_$SofParkirResultModelImpl>
   get copyWith =>
-      __$$SofParkirResultEntityImplCopyWithImpl<_$SofParkirResultEntityImpl>(
+      __$$SofParkirResultModelImplCopyWithImpl<_$SofParkirResultModelImpl>(
         this,
         _$identity,
       );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SofParkirResultModelImplToJson(this);
+  }
 }
 
-abstract class _SofParkirResultEntity implements SofParkirResultEntity {
-  const factory _SofParkirResultEntity({
-    required final String sof,
-    required final double nominalMotor,
-    required final double nominalMobil,
-    required final double nominalBersihUntukWajibPajakMotor,
-    required final double nominalBersihUntukWajibPajakMobil,
-    required final double nominalBersihUntukBapendaMotor,
-    required final double nominalBersihUntukBapendaMobil,
-    required final int jumlahMotor,
-    required final int jumlahMobil,
-  }) = _$SofParkirResultEntityImpl;
+abstract class _SofParkirResultModel implements SofParkirResultModel {
+  const factory _SofParkirResultModel({
+    final String sof,
+    final double nominalMotor,
+    final double nominalMobil,
+    final double nominalBersihUntukWajibPajakMotor,
+    final double nominalBersihUntukWajibPajakMobil,
+    final double nominalBersihUntukBapendaMotor,
+    final double nominalBersihUntukBapendaMobil,
+    final int jumlahMotor,
+    final int jumlahMobil,
+  }) = _$SofParkirResultModelImpl;
+
+  factory _SofParkirResultModel.fromJson(Map<String, dynamic> json) =
+      _$SofParkirResultModelImpl.fromJson;
 
   @override
   String get sof;
@@ -751,10 +859,10 @@ abstract class _SofParkirResultEntity implements SofParkirResultEntity {
   @override
   int get jumlahMobil;
 
-  /// Create a copy of SofParkirResultEntity
+  /// Create a copy of SofParkirResultModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SofParkirResultEntityImplCopyWith<_$SofParkirResultEntityImpl>
+  _$$SofParkirResultModelImplCopyWith<_$SofParkirResultModelImpl>
   get copyWith => throw _privateConstructorUsedError;
 }

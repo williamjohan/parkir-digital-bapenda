@@ -7,6 +7,7 @@ class CardTotalOpWidget extends StatelessWidget {
   final int totalObjekPajak;
   final int totalOpDigitalisasi;
   final int totalOpNonDigitalisasi;
+  final int totalOpFree;
   final VoidCallback? lihatSemuaOnPressed;
 
   const CardTotalOpWidget({
@@ -14,27 +15,38 @@ class CardTotalOpWidget extends StatelessWidget {
     required this.totalObjekPajak,
     required this.totalOpDigitalisasi,
     required this.totalOpNonDigitalisasi,
+    required this.totalOpFree,
     required this.lihatSemuaOnPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    final digitalPercent = totalObjekPajak == 0
-        ? 0.0
-        : totalOpDigitalisasi / totalObjekPajak;
+    // 🚀 THE MATH FIX: Hitung total riil 3 elemen untuk pembagi persentase
+    final int realTotal =
+        totalOpDigitalisasi + totalOpNonDigitalisasi + totalOpFree;
 
-    final nonDigitalPercent = totalObjekPajak == 0
+    // 🚀 THE SAFE PERCENTAGE: Cegah error pembagian dengan 0
+    final double digitalPercent = realTotal == 0
         ? 0.0
-        : totalOpNonDigitalisasi / totalObjekPajak;
+        : (totalOpDigitalisasi / realTotal) * 100;
+    final double nonDigitalPercent = realTotal == 0
+        ? 0.0
+        : (totalOpNonDigitalisasi / realTotal) * 100;
+    final double isFreePercent = realTotal == 0
+        ? 0.0
+        : (totalOpFree / realTotal) * 100;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24), // Diperbesar sedikit agar tidak sesak
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: Colors.grey.shade200,
+        ), // Tambahan border tipis
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withValues(alpha: 0.04), // Shadow dihaluskan
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -43,7 +55,7 @@ class CardTotalOpWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Header
+          /// === HEADER ===
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -51,59 +63,52 @@ class CardTotalOpWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "TOTAL OBJEK PAJAK PARKIR",
-                          style: AppTypography.bodySemiBold,
-                        ),
-                      ],
+                    Text(
+                      "TOTAL OBJEK PAJAK PARKIR",
+                      style: AppTypography.bodySemiBold.copyWith(
+                        color: Colors.grey.shade600,
+                        letterSpacing: 0.5,
+                      ),
                     ),
-                    // const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              totalObjekPajak.toString(),
-                              style: AppTypography.heading1.copyWith(
-                                color: AppColors.primary,
-                              ),
-                            ),
-                            Text(
-                              "Objek terdaftar di sistem",
-                              style: AppTypography.caption,
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            gradient: const LinearGradient(
-                              colors: [Color(0xffF3A51D), Color(0xffD57D00)],
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.inventory_2_outlined,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 8),
+                    Text(
+                      totalObjekPajak.toString(),
+                      style: AppTypography.heading1.copyWith(
+                        color: AppColors.primary,
+                        fontSize: 32, // Angka diperbesar
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      "Objek terdaftar di sistem",
+                      style: AppTypography.caption.copyWith(
+                        color: Colors.grey.shade500,
+                      ),
                     ),
                   ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                ),
+                child: Icon(
+                  Icons.domain_outlined, // Icon gedung lebih representatif
+                  color: AppColors.primary,
+                  size: 28,
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Divider(height: 1),
+          ),
 
-          /// Komposisi
+          /// === KOMPOSISI STATUS ===
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -111,11 +116,12 @@ class CardTotalOpWidget extends StatelessWidget {
                 "KOMPOSISI STATUS",
                 style: AppTypography.bodyRegular.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Colors.grey[700],
+                  color: Colors.grey.shade700,
                 ),
               ),
               Text(
-                "$totalOpDigitalisasi + $totalOpNonDigitalisasi",
+                // Update komposisi menjadi 3 angka
+                "$totalOpDigitalisasi + $totalOpNonDigitalisasi + $totalOpFree",
                 style: AppTypography.bodyRegular.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -123,57 +129,87 @@ class CardTotalOpWidget extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
+          /// 🚀 THE SAFE PROGRESS BAR (3 SEGMEN)
           ClipRRect(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             child: SizedBox(
-              height: 8,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: totalOpDigitalisasi,
-                    child: Container(color: AppColors.success),
-                  ),
-                  Expanded(
-                    flex: totalOpNonDigitalisasi,
-                    child: Container(color: AppColors.error),
-                  ),
-                ],
-              ),
+              height: 10,
+              child: realTotal == 0
+                  ? Container(color: Colors.grey.shade200) // Jika semua 0
+                  : Row(
+                      children: [
+                        // IF logic wajib ada agar flex tidak pernah bernilai 0 (mencegah crash)
+                        if (totalOpDigitalisasi > 0)
+                          Expanded(
+                            flex: totalOpDigitalisasi,
+                            child: Container(color: AppColors.success),
+                          ),
+                        if (totalOpNonDigitalisasi > 0)
+                          Expanded(
+                            flex: totalOpNonDigitalisasi,
+                            child: Container(color: AppColors.error),
+                          ),
+                        if (totalOpFree > 0)
+                          Expanded(
+                            flex: totalOpFree,
+                            child: Container(
+                              color: Colors.blue.shade400,
+                            ), // Warna untuk Free
+                          ),
+                      ],
+                    ),
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
+          /// === LIST ITEM DIGITALISASI ===
           _statusItem(
-            icon: Icons.check,
+            icon: Icons.check_circle_outline,
             iconColor: AppColors.success,
             bgColor: AppColors.success.withValues(alpha: 0.12),
             title: "Digitalisasi",
             subtitle: "Sudah terhubung sistem",
             total: totalOpDigitalisasi,
-            percentage: digitalPercent * 100,
+            percentage: digitalPercent,
           ),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
+          /// === LIST ITEM NON-DIGITAL ===
           _statusItem(
-            icon: Icons.close,
+            icon: Icons.cancel_outlined,
             iconColor: AppColors.error,
             bgColor: AppColors.error.withValues(alpha: 0.12),
             title: "Non-Digital",
             subtitle: "Belum terhubung sistem",
             total: totalOpNonDigitalisasi,
-            percentage: nonDigitalPercent * 100,
+            percentage: nonDigitalPercent,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+
+          /// 🚀 === LIST ITEM PARKIR BEBAS (BARU) ===
+          _statusItem(
+            icon: Icons.money_off_csred_outlined,
+            iconColor: Colors.blue.shade700,
+            bgColor: Colors.blue.shade50,
+            title: "Parkir Bebas",
+            subtitle: "Tidak dipungut biaya",
+            total: totalOpFree,
+            percentage: isFreePercent,
+          ),
+
+          const SizedBox(height: 24),
+
+          /// === TOMBOL LIHAT SEMUA ===
           PbPrimaryButton(
             text: "Lihat Semua Objek Pajak",
-            size: PbButtonSize.small,
-            onPressed: lihatSemuaOnPressed,
+            size: PbButtonSize.medium,
             variant: PbButtonVariant.outlinedPrimary,
+            onPressed: lihatSemuaOnPressed,
           ),
         ],
       ),
@@ -181,6 +217,7 @@ class CardTotalOpWidget extends StatelessWidget {
   }
 }
 
+/// WIDGET ANAK STATUS ITEM
 Widget _statusItem({
   required IconData icon,
   required Color iconColor,
@@ -191,42 +228,50 @@ Widget _statusItem({
   required double percentage,
 }) {
   return Container(
-    padding: const EdgeInsets.all(8),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.grey.shade200),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: Colors.grey.shade100),
+      color: Colors.grey.shade50, // Latar belakang halus untuk pemisah visual
     ),
     child: Row(
       children: [
         Container(
-          width: 45,
-          height: 45,
+          width: 44,
+          height: 44,
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: iconColor, size: 28),
+          child: Icon(icon, color: iconColor, size: 24),
         ),
-
         const SizedBox(width: 16),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(title, style: AppTypography.bodySemiBold),
-              Text(subtitle, style: AppTypography.caption),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: AppTypography.caption.copyWith(
+                  color: Colors.grey.shade600,
+                ),
+              ),
             ],
           ),
         ),
-
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(total.toString(), style: AppTypography.heading1),
+            Text(total.toString(), style: AppTypography.heading2),
+            const SizedBox(height: 2),
             Text(
               "${percentage.toStringAsFixed(1)}%",
-              style: AppTypography.bodySmall.copyWith(color: iconColor),
+              style: AppTypography.caption.copyWith(
+                color: iconColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

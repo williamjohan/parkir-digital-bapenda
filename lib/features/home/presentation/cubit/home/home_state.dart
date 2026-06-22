@@ -33,6 +33,7 @@ class HomeState with _$HomeState {
     @Default(0) int totalOp,
     @Default(0) int totalOpDigital,
     @Default(0) int totalOpNonDigital,
+    @Default(0) int totalOpFree,
 
     @Default([]) List<SofParkirResultEntity> sofParkirResults,
     @Default(RoleLoginDigitalParkir.tidakDiketahui) RoleLoginDigitalParkir role,

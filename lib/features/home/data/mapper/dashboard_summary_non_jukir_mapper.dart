@@ -1,6 +1,5 @@
-import '../../domain/entities/dashboard_summary_non_jukir_entity.dart';
-import '../models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
-import '../models/sof/sof_parkir_result_model.dart';
+import 'package:parkir_digital_bapenda/features/home/data/models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
+import 'package:parkir_digital_bapenda/features/home/domain/entities/dashboard_summary_non_jukir_entity.dart';
 
 extension DashboardSummaryNonJukirMapper on DashboardSummaryNonJukirModel {
   DashboardSummaryNonJukirEntity toEntity() {
@@ -8,6 +7,7 @@ extension DashboardSummaryNonJukirMapper on DashboardSummaryNonJukirModel {
       totalOp: totalOp,
       totalOpDigital: totalOpDigital,
       totalOpNonDigital: totalOpNonDigital,
+      totalOpFree: totalNonTarif,
       jumlahMotorHariIni: jumlahMotorHariIni,
       jumlahMobilHariIni: jumlahMobilHariIni,
       totalNominalHariIni: totalNominalHariIni,

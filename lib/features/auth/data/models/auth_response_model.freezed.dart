@@ -26,6 +26,7 @@ mixin _$AuthResponseModel {
   String get nop => throw _privateConstructorUsedError;
   String get uuidStatic => throw _privateConstructorUsedError;
   int get roleLoginId => throw _privateConstructorUsedError;
+  int get pungutTarif => throw _privateConstructorUsedError;
   List<NopModel> get nopList => throw _privateConstructorUsedError;
 
   /// Serializes this AuthResponseModel to a JSON map.
@@ -51,6 +52,7 @@ abstract class $AuthResponseModelCopyWith<$Res> {
     String nop,
     String uuidStatic,
     int roleLoginId,
+    int pungutTarif,
     List<NopModel> nopList,
   });
 }
@@ -75,6 +77,7 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
     Object? nop = null,
     Object? uuidStatic = null,
     Object? roleLoginId = null,
+    Object? pungutTarif = null,
     Object? nopList = null,
   }) {
     return _then(
@@ -98,6 +101,10 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
             roleLoginId: null == roleLoginId
                 ? _value.roleLoginId
                 : roleLoginId // ignore: cast_nullable_to_non_nullable
+                      as int,
+            pungutTarif: null == pungutTarif
+                ? _value.pungutTarif
+                : pungutTarif // ignore: cast_nullable_to_non_nullable
                       as int,
             nopList: null == nopList
                 ? _value.nopList
@@ -124,6 +131,7 @@ abstract class _$$AuthResponseModelImplCopyWith<$Res>
     String nop,
     String uuidStatic,
     int roleLoginId,
+    int pungutTarif,
     List<NopModel> nopList,
   });
 }
@@ -147,6 +155,7 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
     Object? nop = null,
     Object? uuidStatic = null,
     Object? roleLoginId = null,
+    Object? pungutTarif = null,
     Object? nopList = null,
   }) {
     return _then(
@@ -171,6 +180,10 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
             ? _value.roleLoginId
             : roleLoginId // ignore: cast_nullable_to_non_nullable
                   as int,
+        pungutTarif: null == pungutTarif
+            ? _value.pungutTarif
+            : pungutTarif // ignore: cast_nullable_to_non_nullable
+                  as int,
         nopList: null == nopList
             ? _value._nopList
             : nopList // ignore: cast_nullable_to_non_nullable
@@ -189,6 +202,7 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
     this.nop = '',
     this.uuidStatic = '',
     this.roleLoginId = 0,
+    this.pungutTarif = 0,
     final List<NopModel> nopList = const [],
   }) : _nopList = nopList;
 
@@ -210,6 +224,9 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
   @override
   @JsonKey()
   final int roleLoginId;
+  @override
+  @JsonKey()
+  final int pungutTarif;
   final List<NopModel> _nopList;
   @override
   @JsonKey()
@@ -221,7 +238,7 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
 
   @override
   String toString() {
-    return 'AuthResponseModel(accessToken: $accessToken, refreshToken: $refreshToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, nopList: $nopList)';
+    return 'AuthResponseModel(accessToken: $accessToken, refreshToken: $refreshToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList)';
   }
 
   @override
@@ -238,6 +255,8 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
                 other.uuidStatic == uuidStatic) &&
             (identical(other.roleLoginId, roleLoginId) ||
                 other.roleLoginId == roleLoginId) &&
+            (identical(other.pungutTarif, pungutTarif) ||
+                other.pungutTarif == pungutTarif) &&
             const DeepCollectionEquality().equals(other._nopList, _nopList));
   }
 
@@ -250,6 +269,7 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
     nop,
     uuidStatic,
     roleLoginId,
+    pungutTarif,
     const DeepCollectionEquality().hash(_nopList),
   );
 
@@ -277,6 +297,7 @@ abstract class _AuthResponseModel implements AuthResponseModel {
     final String nop,
     final String uuidStatic,
     final int roleLoginId,
+    final int pungutTarif,
     final List<NopModel> nopList,
   }) = _$AuthResponseModelImpl;
 
@@ -293,6 +314,8 @@ abstract class _AuthResponseModel implements AuthResponseModel {
   String get uuidStatic;
   @override
   int get roleLoginId;
+  @override
+  int get pungutTarif;
   @override
   List<NopModel> get nopList;
 
@@ -314,6 +337,7 @@ mixin _$NopModel {
   String get namaOp => throw _privateConstructorUsedError;
   String get alamatOp => throw _privateConstructorUsedError;
   bool get isDigital => throw _privateConstructorUsedError;
+  int get pungutTarif => throw _privateConstructorUsedError;
 
   /// Serializes this NopModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -330,7 +354,13 @@ abstract class $NopModelCopyWith<$Res> {
   factory $NopModelCopyWith(NopModel value, $Res Function(NopModel) then) =
       _$NopModelCopyWithImpl<$Res, NopModel>;
   @useResult
-  $Res call({String nop, String namaOp, String alamatOp, bool isDigital});
+  $Res call({
+    String nop,
+    String namaOp,
+    String alamatOp,
+    bool isDigital,
+    int pungutTarif,
+  });
 }
 
 /// @nodoc
@@ -352,6 +382,7 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
     Object? namaOp = null,
     Object? alamatOp = null,
     Object? isDigital = null,
+    Object? pungutTarif = null,
   }) {
     return _then(
       _value.copyWith(
@@ -371,6 +402,10 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
                 ? _value.isDigital
                 : isDigital // ignore: cast_nullable_to_non_nullable
                       as bool,
+            pungutTarif: null == pungutTarif
+                ? _value.pungutTarif
+                : pungutTarif // ignore: cast_nullable_to_non_nullable
+                      as int,
           )
           as $Val,
     );
@@ -386,7 +421,13 @@ abstract class _$$NopModelImplCopyWith<$Res>
   ) = __$$NopModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String nop, String namaOp, String alamatOp, bool isDigital});
+  $Res call({
+    String nop,
+    String namaOp,
+    String alamatOp,
+    bool isDigital,
+    int pungutTarif,
+  });
 }
 
 /// @nodoc
@@ -407,6 +448,7 @@ class __$$NopModelImplCopyWithImpl<$Res>
     Object? namaOp = null,
     Object? alamatOp = null,
     Object? isDigital = null,
+    Object? pungutTarif = null,
   }) {
     return _then(
       _$NopModelImpl(
@@ -426,6 +468,10 @@ class __$$NopModelImplCopyWithImpl<$Res>
             ? _value.isDigital
             : isDigital // ignore: cast_nullable_to_non_nullable
                   as bool,
+        pungutTarif: null == pungutTarif
+            ? _value.pungutTarif
+            : pungutTarif // ignore: cast_nullable_to_non_nullable
+                  as int,
       ),
     );
   }
@@ -439,6 +485,7 @@ class _$NopModelImpl implements _NopModel {
     this.namaOp = '',
     this.alamatOp = '',
     this.isDigital = false,
+    this.pungutTarif = 0,
   });
 
   factory _$NopModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -456,10 +503,13 @@ class _$NopModelImpl implements _NopModel {
   @override
   @JsonKey()
   final bool isDigital;
+  @override
+  @JsonKey()
+  final int pungutTarif;
 
   @override
   String toString() {
-    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital)';
+    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital, pungutTarif: $pungutTarif)';
   }
 
   @override
@@ -472,13 +522,15 @@ class _$NopModelImpl implements _NopModel {
             (identical(other.alamatOp, alamatOp) ||
                 other.alamatOp == alamatOp) &&
             (identical(other.isDigital, isDigital) ||
-                other.isDigital == isDigital));
+                other.isDigital == isDigital) &&
+            (identical(other.pungutTarif, pungutTarif) ||
+                other.pungutTarif == pungutTarif));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, nop, namaOp, alamatOp, isDigital);
+      Object.hash(runtimeType, nop, namaOp, alamatOp, isDigital, pungutTarif);
 
   /// Create a copy of NopModel
   /// with the given fields replaced by the non-null parameter values.
@@ -500,6 +552,7 @@ abstract class _NopModel implements NopModel {
     final String namaOp,
     final String alamatOp,
     final bool isDigital,
+    final int pungutTarif,
   }) = _$NopModelImpl;
 
   factory _NopModel.fromJson(Map<String, dynamic> json) =
@@ -513,6 +566,8 @@ abstract class _NopModel implements NopModel {
   String get alamatOp;
   @override
   bool get isDigital;
+  @override
+  int get pungutTarif;
 
   /// Create a copy of NopModel
   /// with the given fields replaced by the non-null parameter values.

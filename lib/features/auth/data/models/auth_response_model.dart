@@ -13,6 +13,7 @@ class AuthResponseModel with _$AuthResponseModel {
     @Default('') String nop,
     @Default('') String uuidStatic,
     @Default(0) int roleLoginId,
+    @Default(0) int pungutTarif,
     @Default([]) List<NopModel> nopList,
   }) = _AuthResponseModel;
 
@@ -27,6 +28,7 @@ class NopModel with _$NopModel {
     @Default('') String namaOp,
     @Default('') String alamatOp,
     @Default(false) bool isDigital,
+    @Default(0) int pungutTarif,
   }) = _NopModel;
 
   factory NopModel.fromJson(Map<String, dynamic> json) =>

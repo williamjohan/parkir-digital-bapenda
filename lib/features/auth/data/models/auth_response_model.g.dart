@@ -14,6 +14,7 @@ _$AuthResponseModelImpl _$$AuthResponseModelImplFromJson(
   nop: json['nop'] as String? ?? '',
   uuidStatic: json['uuidStatic'] as String? ?? '',
   roleLoginId: (json['roleLoginId'] as num?)?.toInt() ?? 0,
+  pungutTarif: (json['pungutTarif'] as num?)?.toInt() ?? 0,
   nopList:
       (json['nopList'] as List<dynamic>?)
           ?.map((e) => NopModel.fromJson(e as Map<String, dynamic>))
@@ -29,6 +30,7 @@ Map<String, dynamic> _$$AuthResponseModelImplToJson(
   'nop': instance.nop,
   'uuidStatic': instance.uuidStatic,
   'roleLoginId': instance.roleLoginId,
+  'pungutTarif': instance.pungutTarif,
   'nopList': instance.nopList,
 };
 
@@ -38,6 +40,7 @@ _$NopModelImpl _$$NopModelImplFromJson(Map<String, dynamic> json) =>
       namaOp: json['namaOp'] as String? ?? '',
       alamatOp: json['alamatOp'] as String? ?? '',
       isDigital: json['isDigital'] as bool? ?? false,
+      pungutTarif: (json['pungutTarif'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
@@ -46,4 +49,5 @@ Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
       'namaOp': instance.namaOp,
       'alamatOp': instance.alamatOp,
       'isDigital': instance.isDigital,
+      'pungutTarif': instance.pungutTarif,
     };

@@ -120,6 +120,8 @@ flutter:
 
   assets:
     - .env
+    - .env.demo
+    - .env.prod
     - assets/images/
     - assets/lottie/
     - assets/iconlogo/

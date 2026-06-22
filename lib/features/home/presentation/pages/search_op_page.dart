@@ -74,7 +74,7 @@ class _SearchOpPageState extends State<SearchOpPage>
               controller: searchController,
               hintText: "Cari objek pajak",
               onChanged: (value) {
-                context.read<SearchOpCubit>().searchNop(value);
+                context.read<SearchOpCubit>().searchNopAlamat(value);
               },
             ),
 

@@ -113,7 +113,6 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  // home_cubit.dart
   Future<void> _loadDashboardNonJukir() async {
     final result = await _getDashboardSummaryNonJukirUseCase.execute();
 
@@ -131,6 +130,7 @@ class HomeCubit extends Cubit<HomeState> {
               totalOp: 0,
               totalOpDigital: 0,
               totalOpNonDigital: 0,
+              totalOpFree: 0,
               sofParkirResults: [],
             ),
           );
@@ -140,6 +140,7 @@ class HomeCubit extends Cubit<HomeState> {
         if (!isClosed) {
           emit(
             state.copyWith(
+              status: HomeStatus.success,
               motorCount: summary.jumlahMotorHariIni,
               mobilCount: summary.jumlahMobilHariIni,
               totalPendapatan: summary.totalNominalHariIni,
@@ -148,17 +149,13 @@ class HomeCubit extends Cubit<HomeState> {
               totalOp: summary.totalOp,
               totalOpDigital: summary.totalOpDigital,
               totalOpNonDigital: summary.totalOpNonDigital,
+              totalOpFree: summary.totalOpFree,
               sofParkirResults: summary.sofParkirResults,
             ),
           );
         }
       },
     );
-
-    // ✅ TAMBAHKAN INI - Set status ke success setelah selesai
-    if (!isClosed) {
-      emit(state.copyWith(status: HomeStatus.success));
-    }
   }
 
   // ==========================================================

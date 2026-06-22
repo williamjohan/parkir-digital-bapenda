@@ -55,4 +55,23 @@ class SearchOpCubit extends Cubit<SearchOpState> {
 
     emit(state.copyWith(filteredNopList: filtered));
   }
+
+  void searchNopAlamat(String keyword) {
+    if (keyword.trim().isEmpty) {
+      emit(state.copyWith(filteredNopList: state.nopList));
+      return;
+    }
+
+    final filtered = state.nopList.where((item) {
+      final nop = (item['nop'] ?? '').toString().toLowerCase();
+      final namaLokasi = (item['nama_op'] ?? '').toString().toLowerCase();
+      final alamatOP = (item['alamat_op'] ?? '').toString().toLowerCase();
+
+      return nop.contains(keyword.toLowerCase()) ||
+          namaLokasi.contains(keyword.toLowerCase()) ||
+          alamatOP.contains(keyword.toLowerCase());
+    }).toList();
+
+    emit(state.copyWith(filteredNopList: filtered));
+  }
 }
