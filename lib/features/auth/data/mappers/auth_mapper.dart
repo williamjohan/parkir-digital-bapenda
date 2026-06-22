@@ -15,6 +15,11 @@ class AuthMapper {
             'alamat_op': e.alamatOp,
             'is_digital': e.isDigital ? 1 : 0,
             'pungut_tarif': e.pungutTarif,
+            "uptb": e.uptb,
+            "kdCamat": e.kdCamat,
+            "nmCamat": e.nmCamat,
+            "kdLurah": e.kdLurah,
+            "nmLurah": e.nmLurah,
           },
         )
         .toList();

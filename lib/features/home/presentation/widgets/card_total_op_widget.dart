@@ -281,15 +281,23 @@ Widget _miniInfoCard({
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: AppTypography.caption.copyWith(
-                  color: Colors.grey.shade700,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  style: AppTypography.caption.copyWith(
+                    color: Colors.grey.shade700,
+                  ),
                 ),
               ),
-              Text(
-                NumberFormatter.format(value.toString()),
-                style: AppTypography.bodySemiBold.copyWith(color: color),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  NumberFormatter.format(value.toString()),
+                  style: AppTypography.bodySemiBold.copyWith(color: color),
+                ),
               ),
             ],
           ),

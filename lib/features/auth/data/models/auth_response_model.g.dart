@@ -41,6 +41,11 @@ _$NopModelImpl _$$NopModelImplFromJson(Map<String, dynamic> json) =>
       alamatOp: json['alamatOp'] as String? ?? '',
       isDigital: json['isDigital'] as bool? ?? false,
       pungutTarif: (json['pungutTarif'] as num?)?.toInt() ?? 0,
+      uptb: (json['uptb'] as num?)?.toInt() ?? 0,
+      kdCamat: json['kdCamat'] as String? ?? '',
+      nmCamat: json['nmCamat'] as String? ?? '',
+      kdLurah: json['kdLurah'] as String? ?? '',
+      nmLurah: json['nmLurah'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
@@ -50,4 +55,9 @@ Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
       'alamatOp': instance.alamatOp,
       'isDigital': instance.isDigital,
       'pungutTarif': instance.pungutTarif,
+      'uptb': instance.uptb,
+      'kdCamat': instance.kdCamat,
+      'nmCamat': instance.nmCamat,
+      'kdLurah': instance.kdLurah,
+      'nmLurah': instance.nmLurah,
     };

@@ -11,8 +11,8 @@ class DatabaseHelper2 {
   static Database? _database;
 
   static const String dbName = 'surabaya_tax.db';
-  // 🚀 1. NAIKKAN VERSI: Dari 1 menjadi 2
-  static const int dbVersion = 2;
+  // 🚀 1. NAIKKAN VERSI: Dari 2 menjadi 3
+  static const int dbVersion = 3;
 
   static const String tableNopList = 'nop_list';
 
@@ -43,7 +43,12 @@ class DatabaseHelper2 {
         nama_op TEXT NOT NULL,
         alamat_op TEXT NOT NULL,
         is_digital INTEGER NOT NULL DEFAULT 0,
-        pungut_tarif INTEGER NOT NULL DEFAULT 0 -- 🚀 KOLOM BARU
+        pungut_tarif INTEGER NOT NULL DEFAULT 0,
+        uptb INTEGER NOT NULL DEFAULT 0,
+        kdCamat TEXT NOT NULL,
+        nmCamat TEXT NOT NULL,
+        kdLurah TEXT NOT NULL,
+        nmLurah TEXT NOT NULL
       )
     ''');
   }
@@ -51,11 +56,15 @@ class DatabaseHelper2 {
   /// 🚀 3. FUNGSI MIGRASI: Dijalankan untuk User lama yang melakukan update aplikasi
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     // Jika user berasal dari versi 1 dan update ke versi 2 (atau lebih)
-    if (oldVersion < 2) {
+    if (oldVersion < 3) {
       // Injeksi kolom baru ke tabel yang sudah ada tanpa menghapus data mereka
       await db.execute('''
         ALTER TABLE $tableNopList 
-        ADD COLUMN pungut_tarif INTEGER NOT NULL DEFAULT 0;
+        ADD COLUMN uptb INTEGER NOT NULL DEFAULT 0;
+        ADD COLUMN kdCamat TEXT NOT NULL;
+        ADD COLUMN nmCamat TEXT NOT NULL;
+        ADD COLUMN kdLurah TEXT NOT NULL;
+        ADD COLUMN nmLurah TEXT NOT NULL;
       ''');
     }
     // Jika nanti ada versi 3, tambahkan: if (oldVersion < 3) { ... }
@@ -83,6 +92,11 @@ class DatabaseHelper2 {
         'alamat_op': item['alamat_op'],
         'is_digital': isDigitalInt,
         'pungut_tarif': item['pungut_tarif'] ?? 0, // 🚀 MASUKKAN DATA BARU
+        'uptb': item['uptb'] ?? 0,
+        'kdCamat': item['kdCamat'],
+        'nmCamat': item['nmCamat'],
+        'kdLurah': item['kdLurah'],
+        'nmLurah': item['nmLurah'],
       }, conflictAlgorithm: ConflictAlgorithm.replace);
     }
 

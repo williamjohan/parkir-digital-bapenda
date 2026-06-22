@@ -133,15 +133,49 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              item['nama_op'] ?? '-',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
+                                      RichText(
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        text: TextSpan(
+                                          children: [
+                                            WidgetSpan(
+                                              alignment:
+                                                  PlaceholderAlignment.middle,
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                  right: 8,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary
+                                                      .withValues(alpha: 0.08),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  border: Border.all(
+                                                    color: AppColors.primary
+                                                        .withValues(
+                                                          alpha: 0.15,
+                                                        ),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  "UPTB ${item['uptb'] ?? '-'}",
+                                                  style: AppTypography.caption
+                                                      .copyWith(
+                                                        color:
+                                                            AppColors.primary,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: item['nama_op'] ?? '-',
                                               style: AppTypography.bodySemiBold
                                                   .copyWith(
                                                     color:
@@ -149,11 +183,10 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                                     fontSize: 15,
                                                   ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-
-                                      const SizedBox(height: 4),
+                                      const SizedBox(height: 16),
                                       Wrap(
                                         spacing: 8,
                                         runSpacing: 4,
@@ -255,14 +288,14 @@ String getDigitalLabel(Map<String, dynamic> item) {
 PbChipType getDigitalType(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
 
-  return isDigital == 1 ? PbChipType.success : PbChipType.warning;
+  return isDigital == 1 ? PbChipType.success : PbChipType.error;
 }
 
 String getTarifLabel(Map<String, dynamic> item) {
   final pungutTarif = item['pungut_tarif'] ?? 1;
 
   if (pungutTarif == 1) {
-    return 'Tidak Berbayar';
+    return 'Gratis';
   } else if (pungutTarif == 2) {
     return 'Berbayar';
   }

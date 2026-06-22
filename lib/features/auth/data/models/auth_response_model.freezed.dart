@@ -338,6 +338,11 @@ mixin _$NopModel {
   String get alamatOp => throw _privateConstructorUsedError;
   bool get isDigital => throw _privateConstructorUsedError;
   int get pungutTarif => throw _privateConstructorUsedError;
+  int get uptb => throw _privateConstructorUsedError;
+  String get kdCamat => throw _privateConstructorUsedError;
+  String get nmCamat => throw _privateConstructorUsedError;
+  String get kdLurah => throw _privateConstructorUsedError;
+  String get nmLurah => throw _privateConstructorUsedError;
 
   /// Serializes this NopModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -360,6 +365,11 @@ abstract class $NopModelCopyWith<$Res> {
     String alamatOp,
     bool isDigital,
     int pungutTarif,
+    int uptb,
+    String kdCamat,
+    String nmCamat,
+    String kdLurah,
+    String nmLurah,
   });
 }
 
@@ -383,6 +393,11 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
     Object? alamatOp = null,
     Object? isDigital = null,
     Object? pungutTarif = null,
+    Object? uptb = null,
+    Object? kdCamat = null,
+    Object? nmCamat = null,
+    Object? kdLurah = null,
+    Object? nmLurah = null,
   }) {
     return _then(
       _value.copyWith(
@@ -406,6 +421,26 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
                 ? _value.pungutTarif
                 : pungutTarif // ignore: cast_nullable_to_non_nullable
                       as int,
+            uptb: null == uptb
+                ? _value.uptb
+                : uptb // ignore: cast_nullable_to_non_nullable
+                      as int,
+            kdCamat: null == kdCamat
+                ? _value.kdCamat
+                : kdCamat // ignore: cast_nullable_to_non_nullable
+                      as String,
+            nmCamat: null == nmCamat
+                ? _value.nmCamat
+                : nmCamat // ignore: cast_nullable_to_non_nullable
+                      as String,
+            kdLurah: null == kdLurah
+                ? _value.kdLurah
+                : kdLurah // ignore: cast_nullable_to_non_nullable
+                      as String,
+            nmLurah: null == nmLurah
+                ? _value.nmLurah
+                : nmLurah // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -427,6 +462,11 @@ abstract class _$$NopModelImplCopyWith<$Res>
     String alamatOp,
     bool isDigital,
     int pungutTarif,
+    int uptb,
+    String kdCamat,
+    String nmCamat,
+    String kdLurah,
+    String nmLurah,
   });
 }
 
@@ -449,6 +489,11 @@ class __$$NopModelImplCopyWithImpl<$Res>
     Object? alamatOp = null,
     Object? isDigital = null,
     Object? pungutTarif = null,
+    Object? uptb = null,
+    Object? kdCamat = null,
+    Object? nmCamat = null,
+    Object? kdLurah = null,
+    Object? nmLurah = null,
   }) {
     return _then(
       _$NopModelImpl(
@@ -472,6 +517,26 @@ class __$$NopModelImplCopyWithImpl<$Res>
             ? _value.pungutTarif
             : pungutTarif // ignore: cast_nullable_to_non_nullable
                   as int,
+        uptb: null == uptb
+            ? _value.uptb
+            : uptb // ignore: cast_nullable_to_non_nullable
+                  as int,
+        kdCamat: null == kdCamat
+            ? _value.kdCamat
+            : kdCamat // ignore: cast_nullable_to_non_nullable
+                  as String,
+        nmCamat: null == nmCamat
+            ? _value.nmCamat
+            : nmCamat // ignore: cast_nullable_to_non_nullable
+                  as String,
+        kdLurah: null == kdLurah
+            ? _value.kdLurah
+            : kdLurah // ignore: cast_nullable_to_non_nullable
+                  as String,
+        nmLurah: null == nmLurah
+            ? _value.nmLurah
+            : nmLurah // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -486,6 +551,11 @@ class _$NopModelImpl implements _NopModel {
     this.alamatOp = '',
     this.isDigital = false,
     this.pungutTarif = 0,
+    this.uptb = 0,
+    this.kdCamat = '',
+    this.nmCamat = '',
+    this.kdLurah = '',
+    this.nmLurah = '',
   });
 
   factory _$NopModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -506,10 +576,25 @@ class _$NopModelImpl implements _NopModel {
   @override
   @JsonKey()
   final int pungutTarif;
+  @override
+  @JsonKey()
+  final int uptb;
+  @override
+  @JsonKey()
+  final String kdCamat;
+  @override
+  @JsonKey()
+  final String nmCamat;
+  @override
+  @JsonKey()
+  final String kdLurah;
+  @override
+  @JsonKey()
+  final String nmLurah;
 
   @override
   String toString() {
-    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital, pungutTarif: $pungutTarif)';
+    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital, pungutTarif: $pungutTarif, uptb: $uptb, kdCamat: $kdCamat, nmCamat: $nmCamat, kdLurah: $kdLurah, nmLurah: $nmLurah)';
   }
 
   @override
@@ -524,13 +609,29 @@ class _$NopModelImpl implements _NopModel {
             (identical(other.isDigital, isDigital) ||
                 other.isDigital == isDigital) &&
             (identical(other.pungutTarif, pungutTarif) ||
-                other.pungutTarif == pungutTarif));
+                other.pungutTarif == pungutTarif) &&
+            (identical(other.uptb, uptb) || other.uptb == uptb) &&
+            (identical(other.kdCamat, kdCamat) || other.kdCamat == kdCamat) &&
+            (identical(other.nmCamat, nmCamat) || other.nmCamat == nmCamat) &&
+            (identical(other.kdLurah, kdLurah) || other.kdLurah == kdLurah) &&
+            (identical(other.nmLurah, nmLurah) || other.nmLurah == nmLurah));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, nop, namaOp, alamatOp, isDigital, pungutTarif);
+  int get hashCode => Object.hash(
+    runtimeType,
+    nop,
+    namaOp,
+    alamatOp,
+    isDigital,
+    pungutTarif,
+    uptb,
+    kdCamat,
+    nmCamat,
+    kdLurah,
+    nmLurah,
+  );
 
   /// Create a copy of NopModel
   /// with the given fields replaced by the non-null parameter values.
@@ -553,6 +654,11 @@ abstract class _NopModel implements NopModel {
     final String alamatOp,
     final bool isDigital,
     final int pungutTarif,
+    final int uptb,
+    final String kdCamat,
+    final String nmCamat,
+    final String kdLurah,
+    final String nmLurah,
   }) = _$NopModelImpl;
 
   factory _NopModel.fromJson(Map<String, dynamic> json) =
@@ -568,6 +674,16 @@ abstract class _NopModel implements NopModel {
   bool get isDigital;
   @override
   int get pungutTarif;
+  @override
+  int get uptb;
+  @override
+  String get kdCamat;
+  @override
+  String get nmCamat;
+  @override
+  String get kdLurah;
+  @override
+  String get nmLurah;
 
   /// Create a copy of NopModel
   /// with the given fields replaced by the non-null parameter values.

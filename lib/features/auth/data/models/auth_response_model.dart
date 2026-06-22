@@ -29,6 +29,11 @@ class NopModel with _$NopModel {
     @Default('') String alamatOp,
     @Default(false) bool isDigital,
     @Default(0) int pungutTarif,
+    @Default(0) int uptb,
+    @Default('') String kdCamat,
+    @Default('') String nmCamat,
+    @Default('') String kdLurah,
+    @Default('') String nmLurah,
   }) = _NopModel;
 
   factory NopModel.fromJson(Map<String, dynamic> json) =>
