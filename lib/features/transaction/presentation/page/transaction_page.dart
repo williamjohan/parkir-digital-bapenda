@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/transaction/presentation/widgets/card_data_jukir.dart';
 import 'package:parkir_digital_bapenda/features/transaction/presentation/widgets/tarif_empty_widget.dart';
 import '../../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
@@ -16,9 +17,10 @@ import '../cubit/transaction_state.dart';
 import '../widgets/card_jenis_kendaraan.dart';
 
 class TransactionPage extends StatefulWidget {
+  final Map<String, dynamic>? itemOP;
   final bool isFree;
 
-  const TransactionPage({super.key, required this.isFree});
+  const TransactionPage({super.key, required this.isFree, this.itemOP});
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -30,6 +32,12 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   void initState() {
     super.initState();
+    print('itemOP = ${widget.itemOP}');
+
+    if (widget.itemOP != null) {
+      context.read<TransactionCubit>().getDataJukir(widget.itemOP!['nop']);
+    }
+
     context.read<TransactionCubit>().init(widget.isFree);
 
     _profileFuture = GetIt.I<ISecureStorageManager>().getJukirProfile();
@@ -105,28 +113,19 @@ class _TransactionPageState extends State<TransactionPage> {
                                   child: Column(
                                     children: [
                                       const SizedBox(height: 8),
-
-                                      // 🚀 Pilih jenis kendaraan
-                                      // CardJenisKendaraan(
-                                      //   op: "Tes",
-                                      //   alamat: "Tes",
-                                      //   tarifList: state.tarifList,
-                                      //   selectedTarif: state.selectedTarif,
-                                      //   isFree: widget.isFree,
-                                      //   onSelected: (tarif) => context
-                                      //       .read<TransactionCubit>()
-                                      //       .selectTarif(tarif),
-                                      // ),
                                       FutureBuilder<Map<String, dynamic>?>(
                                         future: _profileFuture,
                                         builder: (context, snapshot) {
                                           final profile = snapshot.data;
 
                                           return CardJenisKendaraan(
-                                            op:
-                                                profile?['namaObjekPajak'] ??
-                                                '',
-                                            alamat: profile?['alamat'] ?? '',
+                                            op: widget.itemOP != null
+                                                ? widget.itemOP!['nama_op']
+                                                : profile?['namaObjekPajak'] ??
+                                                      '',
+                                            alamat: widget.itemOP != null
+                                                ? widget.itemOP!['alamat_op']
+                                                : profile?['alamat'] ?? '',
                                             tarifList: state.tarifList,
                                             selectedTarif: state.selectedTarif,
                                             isFree: widget.isFree,
@@ -138,6 +137,10 @@ class _TransactionPageState extends State<TransactionPage> {
                                       ),
 
                                       const SizedBox(height: 16),
+                                      if (widget.itemOP != null)
+                                        CardDataJukir(
+                                          dataJukirList: state.dataJukirList,
+                                        ),
                                     ],
                                   ),
                                 ),

@@ -38,4 +38,6 @@ class ApiEndpoints {
   static const String cekUuidDev = '/api/mobile/parking/check-device-uuid-dev';
   static const String laporanPendapatanDev =
       '/api/mobile/parking/laporan-pendapatan-dev';
+  static const String dataJukirDev = '/api/mobile/parking/get-data-jukir-dev';
+  static const String qrisRompiDev = '/api/mobile/parking/get-qris-rompi-dev';
 }

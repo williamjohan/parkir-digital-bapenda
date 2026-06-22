@@ -145,10 +145,14 @@ class AppRouter {
           path: AppRoutes.transaction,
           name: AppRoutes.transaction,
           builder: (context, state) {
-            final isFree = state.extra as bool? ?? false;
+            final extra = state.extra as Map<String, dynamic>?;
+
             return BlocProvider(
               create: (_) => locator<TransactionCubit>(),
-              child: TransactionPage(isFree: isFree),
+              child: TransactionPage(
+                isFree: extra?['isFree'] ?? false,
+                itemOP: extra?['itemOP'],
+              ),
             );
           },
         ),

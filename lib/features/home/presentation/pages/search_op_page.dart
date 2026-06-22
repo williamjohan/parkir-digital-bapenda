@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_text_field.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 
+import '../../../../core/design_system/components/pb_action_menu_card.dart';
+import '../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
@@ -138,16 +140,56 @@ class _SearchOpPageState extends State<SearchOpPage>
                           Icons.chevron_right,
                           color: Colors.grey.shade400,
                         ),
-                        onTap: () {
+                        onTap: () async {
                           if (widget.role == RoleLoginDigitalParkir.wp) {
                             Navigator.pop<Map<String, dynamic>>(context, item);
                             return;
                           }
 
                           if (widget.role == RoleLoginDigitalParkir.bapenda) {
-                            context.pushNamed(
-                              AppRoutes.history,
-                              extra: {'isFree': true, 'nop': item['nop']},
+                            await PbBasicBottomSheet.show(
+                              context: context,
+                              title: 'Pilih Aksi',
+                              subTitle:
+                                  'Apa yang ingin Anda lakukan untuk objek pajak ini?',
+                              child: Column(
+                                children: [
+                                  ActionMenuCard(
+                                    icon: Icons.history_rounded,
+                                    title: 'Lihat Riwayat',
+                                    subtitle:
+                                        'Lihat seluruh riwayat transaksi objek pajak',
+                                    onTap: () {
+                                      Navigator.pop(context);
+
+                                      context.pushNamed(
+                                        AppRoutes.history,
+                                        extra: {
+                                          'isFree': true,
+                                          'nop': item['nop'],
+                                        },
+                                      );
+                                    },
+                                  ),
+
+                                  const SizedBox(height: 12),
+
+                                  ActionMenuCard(
+                                    icon: Icons.add_circle_outline_rounded,
+                                    title: 'Tambah Transaksi',
+                                    subtitle:
+                                        'Input transaksi baru untuk objek pajak ini',
+                                    onTap: () {
+                                      Navigator.pop(context);
+
+                                      context.pushNamed(
+                                        AppRoutes.transaction,
+                                        extra: {'isFree': true, 'itemOP': item},
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
                             );
                           }
                         },

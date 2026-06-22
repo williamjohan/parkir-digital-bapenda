@@ -142,7 +142,7 @@ class DashboardWidget extends StatelessWidget {
             onPressed: () async {
               final result = await context.push<bool?>(
                 AppRoutes.transaction,
-                extra: isFree,
+                extra: {'isFree': isFree},
               );
 
               if (!context.mounted) return;

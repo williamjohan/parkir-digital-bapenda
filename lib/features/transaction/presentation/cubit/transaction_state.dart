@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:parkir_digital_bapenda/features/home/domain/entities/data_jukir_entity.dart';
 import '../../../home/data/models/tarif_model.dart';
 
 enum TransactionStatus {
@@ -17,9 +18,13 @@ enum TransactionStatus {
   locationPermissionDenied,
 }
 
+enum DataJukirStatus { initial, loading, success, error }
+
 class TransactionState extends Equatable {
   final TransactionStatus status;
+  final DataJukirStatus dataJukirStatus;
   final List<TarifModel> tarifList;
+  final List<DataJukirEntity> dataJukirList;
   final TarifModel? selectedTarif;
   final bool isFree;
   final String? errorMessage;
@@ -29,7 +34,9 @@ class TransactionState extends Equatable {
 
   const TransactionState({
     this.status = TransactionStatus.ready,
+    this.dataJukirStatus = DataJukirStatus.initial,
     this.tarifList = const [],
+    this.dataJukirList = const [],
     this.selectedTarif,
     this.isFree = false,
     this.errorMessage,
@@ -42,7 +49,9 @@ class TransactionState extends Equatable {
 
   TransactionState copyWith({
     TransactionStatus? status,
+    DataJukirStatus? dataJukirStatus,
     List<TarifModel>? tarifList,
+    List<DataJukirEntity>? dataJukirList,
     TarifModel? selectedTarif,
     bool clearSelectedTarif = false,
     bool? isFree,
@@ -51,7 +60,9 @@ class TransactionState extends Equatable {
   }) {
     return TransactionState(
       status: status ?? this.status,
+      dataJukirStatus: dataJukirStatus ?? this.dataJukirStatus,
       tarifList: tarifList ?? this.tarifList,
+      dataJukirList: dataJukirList ?? this.dataJukirList,
       selectedTarif: clearSelectedTarif
           ? null
           : (selectedTarif ?? this.selectedTarif),
@@ -64,7 +75,9 @@ class TransactionState extends Equatable {
   @override
   List<Object?> get props => [
     status,
+    dataJukirStatus,
     tarifList,
+    dataJukirList,
     selectedTarif,
     isFree,
     errorMessage,

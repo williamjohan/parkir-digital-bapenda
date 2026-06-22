@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                 bottom: true,
                 child: Scaffold(
                   backgroundColor: AppColors.background,
-                  drawer: HomeDrawer(isFree: state.isFree, role: state.role,),
+                  drawer: HomeDrawer(isFree: state.isFree, role: state.role),
                   body: Stack(
                     children: [
                       // 1. BACKGROUND GRADIENT
@@ -352,7 +352,7 @@ class _HomePageState extends State<HomePage> {
                             onPressed: () async {
                               final result = await context.push(
                                 AppRoutes.transaction,
-                                extra: state.isFree,
+                                extra: {'isFree': state.isFree},
                               );
 
                               // kalau transaksi sukses

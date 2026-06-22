@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import '../../domain/usecases/get_data_jukir_usecase.dart';
 import '../../domain/usecases/get_local_qris_usecase.dart';
 import 'transaction_state.dart';
 import '../../../home/data/models/tarif_model.dart';
@@ -10,8 +11,10 @@ import '../../../home/data/models/tarif_model.dart';
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
   final GetLocalQrisUseCase _getLocalQrisUseCase;
+  final GetDataJukirUseCase _getDataJukirUseCase;
 
-  TransactionCubit(this._getLocalQrisUseCase) : super(const TransactionState());
+  TransactionCubit(this._getLocalQrisUseCase, this._getDataJukirUseCase)
+    : super(const TransactionState());
 
   // ─── INIT ────────────────────────────────────────────────────────────────────
 
@@ -97,5 +100,27 @@ class TransactionCubit extends Cubit<TransactionState> {
     emit(
       state.copyWith(status: TransactionStatus.ready, clearSelectedTarif: true),
     );
+  }
+
+  Future<void> getDataJukir(String nop) async {
+    emit(state.copyWith(dataJukirStatus: DataJukirStatus.loading));
+
+    try {
+      final result = await _getDataJukirUseCase(nop);
+
+      emit(
+        state.copyWith(
+          dataJukirStatus: DataJukirStatus.success,
+          dataJukirList: result,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          dataJukirStatus: DataJukirStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
   }
 }

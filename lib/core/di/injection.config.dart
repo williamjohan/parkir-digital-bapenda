@@ -29,6 +29,8 @@ import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
+import '../../features/home/data/datasources/data_jukir_datasource.dart'
+    as _i196;
 import '../../features/home/data/datasources/i_tarif_remote_datasource.dart'
     as _i59;
 import '../../features/home/data/datasources/summary_remote_datasource.dart'
@@ -105,10 +107,16 @@ import '../../features/profile/domain/usecases/get_profile_usecase.dart'
 import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
 import '../../features/transaction/data/datasources/qris_remote_data_source.dart'
     as _i502;
+import '../../features/transaction/data/repositories/data_jukir_repository_impl.dart'
+    as _i527;
 import '../../features/transaction/data/repositories/qris_repository_impl.dart'
     as _i718;
+import '../../features/transaction/domain/repositories/data_jukir_repository.dart'
+    as _i717;
 import '../../features/transaction/domain/repositories/i_qris_repository.dart'
     as _i215;
+import '../../features/transaction/domain/usecases/get_data_jukir_usecase.dart'
+    as _i254;
 import '../../features/transaction/domain/usecases/get_local_qris_usecase.dart'
     as _i212;
 import '../../features/transaction/domain/usecases/sync_qris_usecase.dart'
@@ -243,6 +251,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i1051.IUpdateRemoteDataSource>(
     () => _i1051.UpdateRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i196.DataJukirDatasource>(
+    () => _i196.DataJukirDatasourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i502.ITransactionHistoryRepository>(
     () => _i19.TransactionHistoryRepositoryImpl(
       gh<_i896.ITransactionHistoryRemoteDataSource>(),
@@ -278,6 +289,9 @@ _i174.GetIt init(
       gh<_i502.ITransactionHistoryRepository>(),
     ),
   );
+  gh.lazySingleton<_i717.DataJukirRepository>(
+    () => _i527.DataJukirRepositoryImpl(gh<_i196.DataJukirDatasource>()),
+  );
   gh.lazySingleton<_i280.IUpdateRepository>(
     () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
   );
@@ -301,6 +315,9 @@ _i174.GetIt init(
       gh<_i361.Dio>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
+  );
+  gh.lazySingleton<_i254.GetDataJukirUseCase>(
+    () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
     () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),
@@ -399,9 +416,6 @@ _i174.GetIt init(
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(gh<_i212.GetLocalQrisUseCase>()),
   );
-  gh.factory<_i616.TransactionCubit>(
-    () => _i616.TransactionCubit(gh<_i212.GetLocalQrisUseCase>()),
-  );
   gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
     () => _i512.SaveParkingTransactionUseCase(
       gh<_i1054.IParkingTransactionRepository>(),
@@ -421,6 +435,12 @@ _i174.GetIt init(
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
+  );
+  gh.factory<_i616.TransactionCubit>(
+    () => _i616.TransactionCubit(
+      gh<_i212.GetLocalQrisUseCase>(),
+      gh<_i254.GetDataJukirUseCase>(),
+    ),
   );
   gh.factory<_i877.ParkingTransactionCubit>(
     () => _i877.ParkingTransactionCubit(
