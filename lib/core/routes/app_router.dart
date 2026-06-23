@@ -1,6 +1,7 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/screen/dashboard_op_screen.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
@@ -117,7 +118,12 @@ class AppRouter {
             final extra = state.extra as Map<String, dynamic>?;
 
             final item = extra?['item'] as Map<String, dynamic>;
-            return DashboardOpScreen(item: item);
+            return BlocProvider(
+              create: (context) =>
+                  locator<DashboardOpCubit>()
+                    ..getSummaryDashboardOp(item['nop']),
+              child: DashboardOpScreen(item: item),
+            );
           },
         ),
         GoRoute(

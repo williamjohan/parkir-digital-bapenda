@@ -29,6 +29,16 @@ import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
+import '../../features/dashboard_op/data/datasources/dashboard_op_datasource.dart'
+    as _i531;
+import '../../features/dashboard_op/data/repositories/dashboard_op_repository_impl.dart'
+    as _i368;
+import '../../features/dashboard_op/domain/repositories/dashboard_op_repository.dart'
+    as _i260;
+import '../../features/dashboard_op/domain/usecases/dashboard_op_usecase.dart'
+    as _i185;
+import '../../features/dashboard_op/presentation/cubit/dashboard_op_cubit.dart'
+    as _i154;
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart'
     as _i60;
 import '../../features/home/data/datasources/data_jukir_datasource.dart'
@@ -278,6 +288,12 @@ _i174.GetIt init(
   gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
     () => _i247.PaymentRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i531.DashboardOpDatasource>(
+    () => _i531.DashboardOpDatasourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i260.DashboardOpRepository>(
+    () => _i368.DashboardOpRepositoryImpl(gh<_i531.DashboardOpDatasource>()),
+  );
   gh.factory<_i674.InitCubit>(
     () => _i674.InitCubit(
       checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
@@ -358,6 +374,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
   );
+  gh.lazySingleton<_i185.GetSummaryDashboardOpUsecase>(
+    () => _i185.GetSummaryDashboardOpUsecase(gh<_i260.DashboardOpRepository>()),
+  );
   gh.lazySingleton<_i1004.IPaymentRepository>(
     () => _i265.PaymentRepositoryImpl(
       gh<_i247.IPaymentRemoteDataSource>(),
@@ -384,6 +403,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i770.SyncTarifUseCase>(
     () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
+  );
+  gh.factory<_i154.DashboardOpCubit>(
+    () => _i154.DashboardOpCubit(gh<_i185.GetSummaryDashboardOpUsecase>()),
   );
   gh.lazySingleton<_i191.CheckPaymentStatusUseCase>(
     () => _i191.CheckPaymentStatusUseCase(gh<_i1004.IPaymentRepository>()),

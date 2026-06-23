@@ -18,8 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$RealisasiState {
   int get selectedYear => throw _privateConstructorUsedError;
-  int get currentYear =>
-      throw _privateConstructorUsedError; // 🚀 Referensi absolut untuk mengunci panah kanan
+  int get currentYear => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   RealisasiTahunEntity? get data => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
@@ -195,7 +194,6 @@ class _$RealisasiStateImpl extends _RealisasiState {
   final int selectedYear;
   @override
   final int currentYear;
-  // 🚀 Referensi absolut untuk mengunci panah kanan
   @override
   @JsonKey()
   final bool isLoading;
@@ -260,7 +258,7 @@ abstract class _RealisasiState extends RealisasiState {
   @override
   int get selectedYear;
   @override
-  int get currentYear; // 🚀 Referensi absolut untuk mengunci panah kanan
+  int get currentYear;
   @override
   bool get isLoading;
   @override

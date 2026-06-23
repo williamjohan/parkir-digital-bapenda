@@ -1,0 +1,28 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+
+import '../../domain/usecases/dashboard_op_usecase.dart';
+import 'dashboard_op_state.dart';
+
+@injectable
+class DashboardOpCubit extends Cubit<DashboardOpState> {
+  final GetSummaryDashboardOpUsecase _usecase;
+
+  DashboardOpCubit(this._usecase) : super(DashboardOpState.initial());
+
+  Future<void> getSummaryDashboardOp(String nop) async {
+    try {
+      emit(state.copyWith(loading: true, errorMessage: null));
+
+      final result = await _usecase(nop);
+
+      if (isClosed) return;
+
+      emit(state.copyWith(loading: false, data: result));
+    } catch (e) {
+      if (isClosed) return;
+
+      emit(state.copyWith(loading: false, errorMessage: e.toString()));
+    }
+  }
+}

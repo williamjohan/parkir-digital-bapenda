@@ -3,6 +3,8 @@ import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
 
+import '../../domain/entities/dashboard_op_entity.dart';
+
 class CardRiwayatPendapatanOp extends StatelessWidget {
   const CardRiwayatPendapatanOp({
     super.key,
@@ -14,7 +16,7 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
 
   final int totalMotor;
   final int totalMobil;
-  final List<RiwayatPendapatanItem> riwayat;
+  final List<RiwayatPendapatanEntity> riwayat;
   final VoidCallback? onLihatSemua;
 
   @override
@@ -157,7 +159,7 @@ class _VehicleSummaryCard extends StatelessWidget {
 }
 
 class _RiwayatItem extends StatelessWidget {
-  final RiwayatPendapatanItem item;
+  final RiwayatPendapatanEntity item;
   final String Function(int) currency;
 
   const _RiwayatItem({required this.item, required this.currency});
@@ -171,7 +173,7 @@ class _RiwayatItem extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            '${item.jenisKendaraan} · ${item.tanggal}',
+            '${item.jenisKendaraan} · ${item.tgl}',
             style: AppTypography.bodyRegular.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -179,25 +181,11 @@ class _RiwayatItem extends StatelessWidget {
         ),
 
         Text(
-          currency(item.nominal),
+          currency(item.kredit),
           textAlign: TextAlign.end,
           style: AppTypography.bodySemiBold,
         ),
       ],
     );
   }
-}
-
-class RiwayatPendapatanItem {
-  const RiwayatPendapatanItem({
-    required this.jenisKendaraan,
-    required this.tanggal,
-    required this.nominal,
-    this.status = 'LUNAS',
-  });
-
-  final String jenisKendaraan;
-  final String tanggal;
-  final int nominal;
-  final String status;
 }

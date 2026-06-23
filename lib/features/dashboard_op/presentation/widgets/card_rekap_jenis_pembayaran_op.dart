@@ -2,24 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
-
-class RekapJenisPembayaranItem {
-  const RekapJenisPembayaranItem({
-    required this.nama,
-    required this.motorNominal,
-    required this.motorJumlah,
-    required this.mobilNominal,
-    required this.mobilJumlah,
-  });
-
-  final String nama;
-
-  final int motorNominal;
-  final int motorJumlah;
-
-  final int mobilNominal;
-  final int mobilJumlah;
-}
+import 'package:parkir_digital_bapenda/features/dashboard_op/domain/entities/dashboard_op_entity.dart';
 
 class CardRekapJenisPembayaranOp extends StatelessWidget {
   const CardRekapJenisPembayaranOp({
@@ -28,13 +11,13 @@ class CardRekapJenisPembayaranOp extends StatelessWidget {
     this.onLihatSemua,
   });
 
-  final List<RekapJenisPembayaranItem> items;
+  final List<SofEntity> items;
   final VoidCallback? onLihatSemua;
 
   @override
   Widget build(BuildContext context) {
     final maxValue = items
-        .expand((e) => [e.motorNominal, e.mobilNominal])
+        .expand((e) => [e.nominalMotor, e.nominalMobil])
         .fold<int>(0, (prev, value) => value > prev ? value : prev);
 
     return Container(
@@ -82,16 +65,18 @@ class CardRekapJenisPembayaranOp extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          ...items.map(
-            (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _PaymentItem(
-                item: item,
-                maxValue: maxValue,
-                formatCurrency: CurrencyFormatter.toIdr,
+          ...items
+              .take(3)
+              .map(
+                (item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: _PaymentItem(
+                    item: item,
+                    maxValue: maxValue,
+                    formatCurrency: CurrencyFormatter.toIdr,
+                  ),
+                ),
               ),
-            ),
-          ),
         ],
       ),
     );
@@ -105,7 +90,7 @@ class _PaymentItem extends StatelessWidget {
     required this.formatCurrency,
   });
 
-  final RekapJenisPembayaranItem item;
+  final SofEntity item;
   final int maxValue;
   final String Function(int) formatCurrency;
 
@@ -117,7 +102,7 @@ class _PaymentItem extends StatelessWidget {
         SizedBox(
           width: 70,
           child: Text(
-            item.nama,
+            item.sof,
             softWrap: true,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -132,16 +117,16 @@ class _PaymentItem extends StatelessWidget {
             children: [
               _BarRow(
                 icon: Icons.two_wheeler,
-                nominal: item.motorNominal,
-                jumlah: item.motorJumlah,
+                nominal: item.nominalMotor,
+                jumlah: item.jumlahMotor,
                 maxValue: maxValue,
                 formatCurrency: formatCurrency,
               ),
               const SizedBox(height: 8),
               _BarRow(
                 icon: Icons.directions_car,
-                nominal: item.mobilNominal,
-                jumlah: item.mobilJumlah,
+                nominal: item.nominalMobil,
+                jumlah: item.jumlahMobil,
                 maxValue: maxValue,
                 formatCurrency: formatCurrency,
               ),

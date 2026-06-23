@@ -7,7 +7,6 @@ class CardRealisasiOp extends StatelessWidget {
   final int nonDigital;
   final int digital;
   final int totalRealisasi;
-  final String tahun;
   final VoidCallback? onLihatSemua;
 
   const CardRealisasiOp({
@@ -16,7 +15,6 @@ class CardRealisasiOp extends StatelessWidget {
     required this.digital,
     required this.totalRealisasi,
     this.onLihatSemua,
-    this.tahun = '2026',
   });
 
   @override
@@ -104,7 +102,7 @@ class CardRealisasiOp extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Total realisasi $tahun',
+                  'Total realisasi',
                   style: AppTypography.caption.copyWith(
                     color: AppColors.textSecondary,
                   ),

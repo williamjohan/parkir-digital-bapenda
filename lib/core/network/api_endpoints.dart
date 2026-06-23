@@ -40,4 +40,6 @@ class ApiEndpoints {
       '/api/mobile/parking/laporan-pendapatan-dev';
   static const String dataJukirDev = '/api/mobile/parking/get-data-jukir-dev';
   static const String qrisRompiDev = '/api/mobile/parking/get-qris-rompi-dev';
+
+  static const String summaryOpDev = '/api/mobile/parking/get-summary-op-dev';
 }
