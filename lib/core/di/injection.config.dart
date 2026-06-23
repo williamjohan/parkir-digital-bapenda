@@ -29,6 +29,8 @@ import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
+import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart'
+    as _i60;
 import '../../features/home/data/datasources/data_jukir_datasource.dart'
     as _i196;
 import '../../features/home/data/datasources/i_tarif_remote_datasource.dart'
@@ -179,6 +181,7 @@ _i174.GetIt init(
 }) {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
+  gh.factory<_i60.RealisasiCubit>(() => _i60.RealisasiCubit());
   gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
   gh.lazySingleton<_i654.DatabaseHelper2>(() => _i654.DatabaseHelper2());
   gh.lazySingleton<_i57.QrisSignalRDatasource>(
