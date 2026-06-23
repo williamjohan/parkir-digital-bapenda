@@ -14,4 +14,5 @@ class AppRoutes {
   static const String update = '/update';
 
   static const String searchObjekPajak = '/op';
+  static const String dashboardObjekPajak = '/dashboard-op';
 }

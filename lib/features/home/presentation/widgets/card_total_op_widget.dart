@@ -117,8 +117,6 @@ class CardTotalOpWidget extends StatelessWidget {
             subtitle: "Sudah terhubung sistem",
             total: totalOpDigitalisasi,
             percentage: digitalPercent,
-            freeCount: totalOpFreeDigitalisasi,
-            paidCount: totalOpNonFreeDigitalisasi,
             onTap: onTapDigitalisasi,
           ),
           const SizedBox(height: 12),
@@ -161,8 +159,8 @@ Widget _statusItem({
   required String subtitle,
   required int total,
   required double percentage,
-  required int freeCount,
-  required int paidCount,
+  int? freeCount,
+  int? paidCount,
   required VoidCallback? onTap,
 }) {
   return GestureDetector(
@@ -224,29 +222,31 @@ Widget _statusItem({
             ],
           ),
 
-          const SizedBox(height: 14),
+          if (paidCount != null || freeCount != null) ...[
+            const SizedBox(height: 14),
 
-          Row(
-            children: [
-              Expanded(
-                child: _miniInfoCard(
-                  icon: Icons.payments_rounded,
-                  title: "Berbayar",
-                  value: paidCount,
-                  color: Colors.orange,
+            Row(
+              children: [
+                Expanded(
+                  child: _miniInfoCard(
+                    icon: Icons.payments_rounded,
+                    title: "Berbayar",
+                    value: paidCount!,
+                    color: Colors.orange,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _miniInfoCard(
-                  icon: Icons.money_off_rounded,
-                  title: "Gratis",
-                  value: freeCount,
-                  color: Colors.green,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _miniInfoCard(
+                    icon: Icons.money_off_rounded,
+                    title: "Gratis",
+                    value: freeCount!,
+                    color: Colors.green,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
     ),

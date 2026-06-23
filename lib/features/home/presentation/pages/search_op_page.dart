@@ -84,7 +84,7 @@ class _SearchOpPageState extends State<SearchOpPage> {
                     itemBuilder: (context, index) {
                       final item = state.nopList[index];
                       final chipType = getDigitalType(item);
-                      // final isDigital = (item['is_digital'] ?? 0) == 1;
+                      final isDigital = (item['is_digital'] ?? 0) == 1;
                       // final isNonDigital =
                       //     item['is_digital'] == false &&
                       //     item['pungut_tarif'] == 2;
@@ -93,11 +93,16 @@ class _SearchOpPageState extends State<SearchOpPage> {
                       return InkWell(
                         borderRadius: BorderRadius.circular(16),
                         onTap: () async {
-                          context.pushNamed(
-                            AppRoutes.history,
-                            extra: {'isFree': false, 'nop': item['nop']},
-                          );
+                          // context.pushNamed(
+                          //   AppRoutes.history,
+                          //   extra: {'isFree': false, 'nop': item['nop']},
+                          // );
                           // kode onTap lama
+
+                          context.pushNamed(
+                            AppRoutes.dashboardObjekPajak,
+                            extra: {'item': item},
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(16),
@@ -187,6 +192,7 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                         ),
                                       ),
                                       const SizedBox(height: 16),
+
                                       Wrap(
                                         spacing: 8,
                                         runSpacing: 4,
@@ -196,12 +202,12 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                             type: getDigitalType(item),
                                             radius: PbRadiusType.full,
                                           ),
-
-                                          PbChipIndicator(
-                                            labelText: getTarifLabel(item),
-                                            type: getTarifType(item),
-                                            radius: PbRadiusType.full,
-                                          ),
+                                          if (!isDigital)
+                                            PbChipIndicator(
+                                              labelText: getTarifLabel(item),
+                                              type: getTarifType(item),
+                                              radius: PbRadiusType.full,
+                                            ),
                                         ],
                                       ),
                                       const SizedBox(height: 4),
@@ -306,5 +312,5 @@ String getTarifLabel(Map<String, dynamic> item) {
 PbChipType getTarifType(Map<String, dynamic> item) {
   final pungutTarif = item['pungut_tarif'] ?? 1;
 
-  return pungutTarif == 1 ? PbChipType.info : PbChipType.idle;
+  return pungutTarif == 1 ? PbChipType.success : PbChipType.warning;
 }
