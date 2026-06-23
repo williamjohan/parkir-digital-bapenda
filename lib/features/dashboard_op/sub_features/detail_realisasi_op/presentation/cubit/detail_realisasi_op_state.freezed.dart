@@ -16,49 +16,52 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
-mixin _$RealisasiState {
+mixin _$DetailRealisasiOpState {
   int get selectedYear => throw _privateConstructorUsedError;
   int get currentYear => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
-  RealisasiTahunEntity? get data => throw _privateConstructorUsedError;
+  DetailRealisasiOpEntity? get data => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
 
-  /// Create a copy of RealisasiState
+  /// Create a copy of DetailRealisasiOpState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $RealisasiStateCopyWith<RealisasiState> get copyWith =>
+  $DetailRealisasiOpStateCopyWith<DetailRealisasiOpState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $RealisasiStateCopyWith<$Res> {
-  factory $RealisasiStateCopyWith(
-    RealisasiState value,
-    $Res Function(RealisasiState) then,
-  ) = _$RealisasiStateCopyWithImpl<$Res, RealisasiState>;
+abstract class $DetailRealisasiOpStateCopyWith<$Res> {
+  factory $DetailRealisasiOpStateCopyWith(
+    DetailRealisasiOpState value,
+    $Res Function(DetailRealisasiOpState) then,
+  ) = _$DetailRealisasiOpStateCopyWithImpl<$Res, DetailRealisasiOpState>;
   @useResult
   $Res call({
     int selectedYear,
     int currentYear,
     bool isLoading,
-    RealisasiTahunEntity? data,
+    DetailRealisasiOpEntity? data,
     String? errorMessage,
   });
 
-  $RealisasiTahunEntityCopyWith<$Res>? get data;
+  $DetailRealisasiOpEntityCopyWith<$Res>? get data;
 }
 
 /// @nodoc
-class _$RealisasiStateCopyWithImpl<$Res, $Val extends RealisasiState>
-    implements $RealisasiStateCopyWith<$Res> {
-  _$RealisasiStateCopyWithImpl(this._value, this._then);
+class _$DetailRealisasiOpStateCopyWithImpl<
+  $Res,
+  $Val extends DetailRealisasiOpState
+>
+    implements $DetailRealisasiOpStateCopyWith<$Res> {
+  _$DetailRealisasiOpStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of RealisasiState
+  /// Create a copy of DetailRealisasiOpState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -86,7 +89,7 @@ class _$RealisasiStateCopyWithImpl<$Res, $Val extends RealisasiState>
             data: freezed == data
                 ? _value.data
                 : data // ignore: cast_nullable_to_non_nullable
-                      as RealisasiTahunEntity?,
+                      as DetailRealisasiOpEntity?,
             errorMessage: freezed == errorMessage
                 ? _value.errorMessage
                 : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -96,52 +99,53 @@ class _$RealisasiStateCopyWithImpl<$Res, $Val extends RealisasiState>
     );
   }
 
-  /// Create a copy of RealisasiState
+  /// Create a copy of DetailRealisasiOpState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $RealisasiTahunEntityCopyWith<$Res>? get data {
+  $DetailRealisasiOpEntityCopyWith<$Res>? get data {
     if (_value.data == null) {
       return null;
     }
 
-    return $RealisasiTahunEntityCopyWith<$Res>(_value.data!, (value) {
+    return $DetailRealisasiOpEntityCopyWith<$Res>(_value.data!, (value) {
       return _then(_value.copyWith(data: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$$RealisasiStateImplCopyWith<$Res>
-    implements $RealisasiStateCopyWith<$Res> {
-  factory _$$RealisasiStateImplCopyWith(
-    _$RealisasiStateImpl value,
-    $Res Function(_$RealisasiStateImpl) then,
-  ) = __$$RealisasiStateImplCopyWithImpl<$Res>;
+abstract class _$$DetailRealisasiOpStateImplCopyWith<$Res>
+    implements $DetailRealisasiOpStateCopyWith<$Res> {
+  factory _$$DetailRealisasiOpStateImplCopyWith(
+    _$DetailRealisasiOpStateImpl value,
+    $Res Function(_$DetailRealisasiOpStateImpl) then,
+  ) = __$$DetailRealisasiOpStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({
     int selectedYear,
     int currentYear,
     bool isLoading,
-    RealisasiTahunEntity? data,
+    DetailRealisasiOpEntity? data,
     String? errorMessage,
   });
 
   @override
-  $RealisasiTahunEntityCopyWith<$Res>? get data;
+  $DetailRealisasiOpEntityCopyWith<$Res>? get data;
 }
 
 /// @nodoc
-class __$$RealisasiStateImplCopyWithImpl<$Res>
-    extends _$RealisasiStateCopyWithImpl<$Res, _$RealisasiStateImpl>
-    implements _$$RealisasiStateImplCopyWith<$Res> {
-  __$$RealisasiStateImplCopyWithImpl(
-    _$RealisasiStateImpl _value,
-    $Res Function(_$RealisasiStateImpl) _then,
+class __$$DetailRealisasiOpStateImplCopyWithImpl<$Res>
+    extends
+        _$DetailRealisasiOpStateCopyWithImpl<$Res, _$DetailRealisasiOpStateImpl>
+    implements _$$DetailRealisasiOpStateImplCopyWith<$Res> {
+  __$$DetailRealisasiOpStateImplCopyWithImpl(
+    _$DetailRealisasiOpStateImpl _value,
+    $Res Function(_$DetailRealisasiOpStateImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of RealisasiState
+  /// Create a copy of DetailRealisasiOpState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -153,7 +157,7 @@ class __$$RealisasiStateImplCopyWithImpl<$Res>
     Object? errorMessage = freezed,
   }) {
     return _then(
-      _$RealisasiStateImpl(
+      _$DetailRealisasiOpStateImpl(
         selectedYear: null == selectedYear
             ? _value.selectedYear
             : selectedYear // ignore: cast_nullable_to_non_nullable
@@ -169,7 +173,7 @@ class __$$RealisasiStateImplCopyWithImpl<$Res>
         data: freezed == data
             ? _value.data
             : data // ignore: cast_nullable_to_non_nullable
-                  as RealisasiTahunEntity?,
+                  as DetailRealisasiOpEntity?,
         errorMessage: freezed == errorMessage
             ? _value.errorMessage
             : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -181,8 +185,8 @@ class __$$RealisasiStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$RealisasiStateImpl extends _RealisasiState {
-  const _$RealisasiStateImpl({
+class _$DetailRealisasiOpStateImpl extends _DetailRealisasiOpState {
+  const _$DetailRealisasiOpStateImpl({
     required this.selectedYear,
     required this.currentYear,
     this.isLoading = false,
@@ -198,20 +202,20 @@ class _$RealisasiStateImpl extends _RealisasiState {
   @JsonKey()
   final bool isLoading;
   @override
-  final RealisasiTahunEntity? data;
+  final DetailRealisasiOpEntity? data;
   @override
   final String? errorMessage;
 
   @override
   String toString() {
-    return 'RealisasiState(selectedYear: $selectedYear, currentYear: $currentYear, isLoading: $isLoading, data: $data, errorMessage: $errorMessage)';
+    return 'DetailRealisasiOpState(selectedYear: $selectedYear, currentYear: $currentYear, isLoading: $isLoading, data: $data, errorMessage: $errorMessage)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$RealisasiStateImpl &&
+            other is _$DetailRealisasiOpStateImpl &&
             (identical(other.selectedYear, selectedYear) ||
                 other.selectedYear == selectedYear) &&
             (identical(other.currentYear, currentYear) ||
@@ -233,27 +237,28 @@ class _$RealisasiStateImpl extends _RealisasiState {
     errorMessage,
   );
 
-  /// Create a copy of RealisasiState
+  /// Create a copy of DetailRealisasiOpState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$RealisasiStateImplCopyWith<_$RealisasiStateImpl> get copyWith =>
-      __$$RealisasiStateImplCopyWithImpl<_$RealisasiStateImpl>(
+  _$$DetailRealisasiOpStateImplCopyWith<_$DetailRealisasiOpStateImpl>
+  get copyWith =>
+      __$$DetailRealisasiOpStateImplCopyWithImpl<_$DetailRealisasiOpStateImpl>(
         this,
         _$identity,
       );
 }
 
-abstract class _RealisasiState extends RealisasiState {
-  const factory _RealisasiState({
+abstract class _DetailRealisasiOpState extends DetailRealisasiOpState {
+  const factory _DetailRealisasiOpState({
     required final int selectedYear,
     required final int currentYear,
     final bool isLoading,
-    final RealisasiTahunEntity? data,
+    final DetailRealisasiOpEntity? data,
     final String? errorMessage,
-  }) = _$RealisasiStateImpl;
-  const _RealisasiState._() : super._();
+  }) = _$DetailRealisasiOpStateImpl;
+  const _DetailRealisasiOpState._() : super._();
 
   @override
   int get selectedYear;
@@ -262,14 +267,14 @@ abstract class _RealisasiState extends RealisasiState {
   @override
   bool get isLoading;
   @override
-  RealisasiTahunEntity? get data;
+  DetailRealisasiOpEntity? get data;
   @override
   String? get errorMessage;
 
-  /// Create a copy of RealisasiState
+  /// Create a copy of DetailRealisasiOpState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$RealisasiStateImplCopyWith<_$RealisasiStateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$DetailRealisasiOpStateImplCopyWith<_$DetailRealisasiOpStateImpl>
+  get copyWith => throw _privateConstructorUsedError;
 }

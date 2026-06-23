@@ -1,21 +1,36 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+
 import 'detail_realisasi_op_state.dart';
+import '../../domain/repositories/detail_realisasi_op_repository.dart';
 
 @injectable
-class RealisasiCubit extends Cubit<RealisasiState> {
-  // 🚀 Senjata Rahasia: Timer untuk Debouncing
-  Timer? _debounceTimer;
+class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
+  // 🚀 1. INJEKSI REPOSITORY
+  final DetailRealisasiOpRepository _repository;
 
-  RealisasiCubit()
+  Timer? _debounceTimer;
+  String _currentNop = ''; // Simpan NOP di memori Cubit
+
+  DetailRealisasiOpCubit(this._repository)
     : super(
-        RealisasiState(
-          // Karena kita hidup di tahun 2026, kita inisialisasi default-nya
+        DetailRealisasiOpState(
           selectedYear: DateTime.now().year,
           currentYear: DateTime.now().year,
         ),
       );
+
+  // 🚀 2. ENTRY POINT (Dipanggil dari UI/Router saat halaman pertama kali dibuka)
+  void init(String nop) {
+    _currentNop = nop;
+
+    // Langsung fetch data tahun berjalan saat halaman terbuka
+    if (!isClosed) {
+      emit(state.copyWith(isLoading: true, errorMessage: null));
+    }
+    _fetchDataForYear(state.selectedYear);
+  }
 
   // ─── FUNGSI TRIGGER DARI UI ──────────────────────────────────────────────────
 
@@ -24,86 +39,78 @@ class RealisasiCubit extends Cubit<RealisasiState> {
   }
 
   void incrementYear() {
-    if (!state.canIncrementYear) return; // Guard: Cegah lompat ke masa depan
+    if (!state.canIncrementYear) return;
     _changeYear(state.selectedYear + 1);
   }
 
   void selectYearFromBottomSheet(int year) {
-    if (year > state.currentYear) return; // Guard tambahan
+    if (year > state.currentYear) return;
     _changeYear(year);
   }
 
-  // ─── LOGIC UTAMA (DEBOUNCING) ────────────────────────────────────────────────
+  // ─── LOGIC DEBOUNCING ────────────────────────────────────────────────────────
 
   void _changeYear(int targetYear) {
-    // 1. Langsung update UI agar angka tahunnya berubah instan (UX responsif)
-    // dan nyalakan mode shimmer/loading
     if (!isClosed) {
+      // Kosongkan data lama agar UI tidak menampilkan data tahun sebelumnya
+      // sambil menunggu API selesai merespons
       emit(
         state.copyWith(
           selectedYear: targetYear,
           isLoading: true,
           errorMessage: null,
+          data: null,
         ),
       );
     }
 
-    // 2. Batalkan hit API sebelumnya (jika Pimpinan masih asyik mencet)
     if (_debounceTimer?.isActive ?? false) {
       _debounceTimer!.cancel();
-      print(
-        'DEBUG: Hit API untuk tahun sebelumnya DIBATALKAN. User masih mencet.',
-      );
     }
 
-    // 3. Pasang jebakan waktu (Debounce 500ms)
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      print(
-        'DEBUG: User berhenti mencet. Mulai FETCH data untuk tahun $targetYear...',
-      );
       _fetchDataForYear(targetYear);
     });
   }
 
-  // ─── FETCHING DATA (DUMMY) ───────────────────────────────────────────────────
+  // ─── FETCHING DATA DARI REPOSITORY ───────────────────────────────────────────
 
   Future<void> _fetchDataForYear(int year) async {
-    // Guard jika cubit keburu mati saat menunggu timer
+    if (isClosed) return;
+    if (_currentNop.isEmpty) {
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage:
+              'Sistem kehilangan data NOP OP. Silakan kembali ke halaman sebelumnya.',
+        ),
+      );
+      return;
+    }
+
+    // 🚀 3. TEMBAK API VIA REPOSITORY
+    final result = await _repository.getSummaryRealisasi(
+      nop: _currentNop,
+      tahun: year,
+    );
+
     if (isClosed) return;
 
-    try {
-      // TODO: Panggil Usecase / Repository di sini
-      // final result = await _getRealisasiUseCase(year);
-
-      // Simulasi delay jaringan Bapenda 1 detik
-      await Future.delayed(const Duration(seconds: 1));
-
-      if (!isClosed) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            // data: result, // Masukkan hasil mapping
-          ),
-        );
-      }
-    } catch (e) {
-      if (!isClosed) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage:
-                'Gagal mengambil data tahun $year. Silakan coba lagi.',
-          ),
-        );
-      }
-    }
+    // 🚀 4. HANDLE RESPONSE (DARTZ EITHER)
+    result.fold(
+      (failureMessage) {
+        emit(state.copyWith(isLoading: false, errorMessage: failureMessage));
+      },
+      (entityData) {
+        emit(state.copyWith(isLoading: false, data: entityData));
+      },
+    );
   }
 
   // ─── PEMBERSIHAN MEMORI ──────────────────────────────────────────────────────
 
   @override
   Future<void> close() {
-    // Wajib dimatikan agar tidak ada proses fetch gaib saat halaman ditutup
     _debounceTimer?.cancel();
     return super.close();
   }

@@ -39,6 +39,12 @@ import '../../features/dashboard_op/domain/usecases/dashboard_op_usecase.dart'
     as _i185;
 import '../../features/dashboard_op/presentation/cubit/dashboard_op_cubit.dart'
     as _i154;
+import '../../features/dashboard_op/sub_features/detail_realisasi_op/data/datasources/detail_realisasi_op_datasources.dart'
+    as _i367;
+import '../../features/dashboard_op/sub_features/detail_realisasi_op/data/repositories/detail_realisasi_op_impl.dart'
+    as _i931;
+import '../../features/dashboard_op/sub_features/detail_realisasi_op/domain/repositories/detail_realisasi_op_repository.dart'
+    as _i352;
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart'
     as _i60;
 import '../../features/home/data/datasources/data_jukir_datasource.dart'
@@ -191,7 +197,6 @@ _i174.GetIt init(
 }) {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
-  gh.factory<_i60.RealisasiCubit>(() => _i60.RealisasiCubit());
   gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
   gh.lazySingleton<_i654.DatabaseHelper2>(() => _i654.DatabaseHelper2());
   gh.lazySingleton<_i57.QrisSignalRDatasource>(
@@ -276,6 +281,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i1051.IUpdateRemoteDataSource>(
     () => _i1051.UpdateRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i367.DetailRealisasiOpRemoteDataSource>(
+    () => _i367.DetailRealisasiOpRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i196.DataJukirDatasource>(
     () => _i196.DataJukirDatasourceImpl(gh<_i361.Dio>()),
   );
@@ -326,6 +334,11 @@ _i174.GetIt init(
   gh.lazySingleton<_i280.IUpdateRepository>(
     () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
   );
+  gh.lazySingleton<_i352.DetailRealisasiOpRepository>(
+    () => _i931.DetailRealisasiOpRepositoryImpl(
+      gh<_i367.DetailRealisasiOpRemoteDataSource>(),
+    ),
+  );
   gh.lazySingleton<_i274.IHomeRepository>(
     () => _i76.HomeRepositoryImpl(
       gh<_i59.ITarifRemoteDataSource>(),
@@ -346,6 +359,9 @@ _i174.GetIt init(
       gh<_i361.Dio>(),
       gh<_i1042.ISecureStorageManager>(),
     ),
+  );
+  gh.factory<_i60.DetailRealisasiOpCubit>(
+    () => _i60.DetailRealisasiOpCubit(gh<_i352.DetailRealisasiOpRepository>()),
   );
   gh.lazySingleton<_i254.GetDataJukirUseCase>(
     () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),

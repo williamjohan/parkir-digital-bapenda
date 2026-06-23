@@ -4,17 +4,16 @@ import '../../domain/entities/detail_realisasi_op_entity.dart';
 part 'detail_realisasi_op_state.freezed.dart';
 
 @freezed
-class RealisasiState with _$RealisasiState {
-  const RealisasiState._();
+class DetailRealisasiOpState with _$DetailRealisasiOpState {
+  const DetailRealisasiOpState._();
 
-  const factory RealisasiState({
+  const factory DetailRealisasiOpState({
     required int selectedYear,
     required int currentYear,
     @Default(false) bool isLoading,
-    RealisasiTahunEntity? data,
+    DetailRealisasiOpEntity? data,
     String? errorMessage,
-  }) = _RealisasiState;
+  }) = _DetailRealisasiOpState;
 
-  // 🚀 Helper Cerdas untuk UI: Mengecek apakah panah kanan boleh ditekan
   bool get canIncrementYear => selectedYear < currentYear;
 }

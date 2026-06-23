@@ -3,22 +3,29 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'detail_realisasi_op_entity.freezed.dart';
 
 @freezed
-class RealisasiBulanEntity with _$RealisasiBulanEntity {
-  const factory RealisasiBulanEntity({
-    required String namaBulan, // Contoh: "Januari"
-    required String tanggalSspd, // Contoh: "SSPD 04 Feb 2025"
-    required double nominal, // Contoh: 860000
-  }) = _RealisasiBulanEntity;
+class DetailRealisasiOpEntity with _$DetailRealisasiOpEntity {
+  const factory DetailRealisasiOpEntity({
+    required String nop,
+    required String namaOp,
+    required int uptbId,
+    required int tahun,
+    required bool isDigital,
+    required String tglDigitalisasi,
+    required double nominalNonDigital,
+    required double nominalDigital,
+    required double totalNominal,
+    @Default([]) List<RealisasiPerBulanEntity> realisasiPerBulan,
+  }) = _DetailRealisasiOpEntity;
 }
 
 @freezed
-class RealisasiTahunEntity with _$RealisasiTahunEntity {
-  const factory RealisasiTahunEntity({
-    required int tahun,
-    required double totalRealisasi,
-    @Default([]) List<RealisasiBulanEntity> daftarBulan,
-  }) = _RealisasiTahunEntity;
+class RealisasiPerBulanEntity with _$RealisasiPerBulanEntity {
+  const factory RealisasiPerBulanEntity({
+    required int bulan,
+    required String bulanNama,
+    required String tglSspd,
+    required double nominalNonDigital,
+    required double nominalDigital,
+    required double totalNominal,
+  }) = _RealisasiPerBulanEntity;
 }
-
-// Enum untuk filter jenis pembayaran
-enum JenisRealisasi { semua, digital, nonDigital }
