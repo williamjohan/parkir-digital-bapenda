@@ -1,0 +1,205 @@
+import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
+import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
+import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
+
+class RekapJenisPembayaranItem {
+  const RekapJenisPembayaranItem({
+    required this.nama,
+    required this.motorNominal,
+    required this.motorJumlah,
+    required this.mobilNominal,
+    required this.mobilJumlah,
+  });
+
+  final String nama;
+
+  final int motorNominal;
+  final int motorJumlah;
+
+  final int mobilNominal;
+  final int mobilJumlah;
+}
+
+class CardRekapJenisPembayaranOp extends StatelessWidget {
+  const CardRekapJenisPembayaranOp({
+    super.key,
+    required this.items,
+    this.onLihatSemua,
+  });
+
+  final List<RekapJenisPembayaranItem> items;
+  final VoidCallback? onLihatSemua;
+
+  @override
+  Widget build(BuildContext context) {
+    final maxValue = items
+        .expand((e) => [e.motorNominal, e.mobilNominal])
+        .fold<int>(0, (prev, value) => value > prev ? value : prev);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.textPrimary.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.credit_card, size: 20, color: AppColors.primary),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'Jenis pembayaran',
+                  style: AppTypography.bodySemiBold,
+                ),
+              ),
+              InkWell(
+                onTap: onLihatSemua,
+                child: Row(
+                  children: [
+                    Text(
+                      'Lihat semua',
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    SizedBox(width: 2),
+                    Icon(Icons.chevron_right, size: 18, color: Colors.orange),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          ...items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _PaymentItem(
+                item: item,
+                maxValue: maxValue,
+                formatCurrency: CurrencyFormatter.toIdr,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PaymentItem extends StatelessWidget {
+  const _PaymentItem({
+    required this.item,
+    required this.maxValue,
+    required this.formatCurrency,
+  });
+
+  final RekapJenisPembayaranItem item;
+  final int maxValue;
+  final String Function(int) formatCurrency;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 70,
+          child: Text(
+            item.nama,
+            softWrap: true,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.bodySemiBold,
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        Expanded(
+          child: Column(
+            children: [
+              _BarRow(
+                icon: Icons.two_wheeler,
+                nominal: item.motorNominal,
+                jumlah: item.motorJumlah,
+                maxValue: maxValue,
+                formatCurrency: formatCurrency,
+              ),
+              const SizedBox(height: 8),
+              _BarRow(
+                icon: Icons.directions_car,
+                nominal: item.mobilNominal,
+                jumlah: item.mobilJumlah,
+                maxValue: maxValue,
+                formatCurrency: formatCurrency,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BarRow extends StatelessWidget {
+  const _BarRow({
+    required this.icon,
+    required this.nominal,
+    required this.jumlah,
+    required this.maxValue,
+    required this.formatCurrency,
+  });
+
+  final IconData icon;
+  final int nominal;
+  final int jumlah;
+  final int maxValue;
+  final String Function(int) formatCurrency;
+
+  @override
+  Widget build(BuildContext context) {
+    final percent = maxValue == 0 ? 0.0 : nominal / maxValue;
+
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: Colors.orange),
+
+        const SizedBox(width: 8),
+
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: percent,
+              minHeight: 6,
+              backgroundColor: const Color(0xFFEDEDED),
+              valueColor: const AlwaysStoppedAnimation(Color(0xFFE58E00)),
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
+        SizedBox(
+          width: 95,
+          child: Text(
+            '${formatCurrency(nominal)} · $jumlah',
+            style: const TextStyle(fontSize: 11, color: Colors.grey),
+          ),
+        ),
+      ],
+    );
+  }
+}
