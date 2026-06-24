@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/errors/failure.dart';
 import '../../domain/entities/update_entity.dart';
 import '../../domain/repositories/i_update_repository.dart';
@@ -15,29 +14,26 @@ class UpdateRepositoryImpl implements IUpdateRepository {
   @override
   Future<Either<Failure, UpdateEntity?>> checkUpdate() async {
     try {
-      // 1. Ambil JSON dari Nextcloud
+      // 1. Ambil JSON dari Nextcloud (Sudah pasti berupa Map berkat DataSource Anda)
       final data = await _remoteDataSource.fetchUpdateJson();
+
       final serverBuildNumber =
           int.tryParse(data['buildNumber'].toString()) ?? 0;
 
-      // 2. Ambil versi lokal HP Jukir
-      final packageInfo = await PackageInfo.fromPlatform();
-      final localBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
+      print(
+        ">>> AUDIT REPO: Berhasil parsing! Build Number Server: $serverBuildNumber",
+      );
 
-      // 3. Bandingkan
-      if (serverBuildNumber > localBuildNumber) {
-        return Right(
-          UpdateEntity(
-            versionName: data['versionName'] ?? 'Unknown',
-            buildNumber: serverBuildNumber,
-            changelog: data['changelog'] ?? '-',
-            downloadUrl: data['url'] ?? '',
-            isForceUpdate: data['isForceUpdate'] ?? false,
-          ),
-        );
-      } else {
-        return const Right(null); // Aplikasi sudah mutakhir
-      }
+      // 2. 🚀 LANGSUNG RETURN ENTITY-NYA UTUH!
+      return Right(
+        UpdateEntity(
+          versionName: data['versionName'] ?? 'Unknown',
+          buildNumber: serverBuildNumber,
+          changelog: data['changelog'] ?? '-',
+          downloadUrl: data['url'] ?? '',
+          isForceUpdate: data['isForceUpdate'] ?? false,
+        ),
+      );
     } catch (e) {
       return Left(
         ServerFailure("Gagal memeriksa pembaruan. Pastikan internet stabil."),
