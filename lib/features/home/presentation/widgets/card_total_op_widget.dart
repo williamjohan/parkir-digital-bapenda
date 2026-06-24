@@ -6,7 +6,7 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 
 class CardTotalOpWidget extends StatelessWidget {
   final int totalObjekPajak;
-  final int totalOpDigitalisasi;
+  final int totalOpBerbayar;
   final int jmlDigital;
   final int jmlNonDigital;
   final int totalOpFree;
@@ -19,7 +19,7 @@ class CardTotalOpWidget extends StatelessWidget {
   const CardTotalOpWidget({
     super.key,
     required this.totalObjekPajak,
-    required this.totalOpDigitalisasi,
+    required this.totalOpBerbayar,
     required this.totalOpFree,
     required this.lihatSemuaOnPressed,
     required this.onTapBerbayar,
@@ -112,7 +112,7 @@ class CardTotalOpWidget extends StatelessWidget {
             bgColor: AppColors.info.withValues(alpha: 0.12),
             title: "Berbayar",
             subtitle: "Objek pajak bertarif",
-            total: totalOpDigitalisasi,
+            total: totalOpBerbayar,
             digitalCount: jmlDigital,
             nonDigitalCount: jmlNonDigital,
             onTap: onTapBerbayar,

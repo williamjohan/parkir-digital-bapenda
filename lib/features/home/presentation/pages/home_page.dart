@@ -245,15 +245,14 @@ class _HomePageState extends State<HomePage> {
                                                   child: CardTotalOpWidget(
                                                     totalObjekPajak:
                                                         state.totalOp,
-                                                    totalOpDigitalisasi:
-                                                        state.digital.total,
-                                                    digitalPercent:
-                                                        state.persentaseDigital,
-                                                    nonDigitalPercent: state
-                                                        .persentaseNonDigital,
+                                                    totalOpBerbayar: 0,
+                                                    digitalPercent: 0,
+                                                    nonDigitalPercent: 0,
                                                     totalOpFree: 0,
-                                                    jmlDigital: 0,
-                                                    jmlNonDigital: 0,
+                                                    jmlDigital:
+                                                        state.digital.total,
+                                                    jmlNonDigital:
+                                                        state.nonDigital.total,
                                                     lihatSemuaOnPressed: () async {
                                                       final result = await context
                                                           .pushNamed(
