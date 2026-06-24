@@ -49,7 +49,7 @@ class CardSofWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: ItemNominalSofWidget(
-                    title: 'Motor',
+                    isMotor: true,
                     nominal: item.nominalMotor,
                     jumlah: item.jumlahMotor,
                     borderColor: const Color(0xFF4CAF50),
@@ -58,7 +58,7 @@ class CardSofWidget extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ItemNominalSofWidget(
-                    title: 'Mobil',
+                    isMotor: false,
                     nominal: item.nominalMobil,
                     jumlah: item.jumlahMobil,
                     borderColor: const Color(0xFF2196F3),

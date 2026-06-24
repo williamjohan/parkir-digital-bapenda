@@ -5,17 +5,17 @@ import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.
 import '../../../../../../core/utils/currency_formatter.dart';
 
 class ItemNominalSofWidget extends StatelessWidget {
-  final String title;
   final int nominal;
   final int jumlah;
   final Color borderColor;
+  final bool isMotor;
 
   const ItemNominalSofWidget({
     super.key,
-    required this.title,
     required this.nominal,
     required this.jumlah,
     required this.borderColor,
+    required this.isMotor,
   });
 
   @override
@@ -23,6 +23,9 @@ class ItemNominalSofWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
+        color: isMotor
+            ? Colors.teal.shade600.withValues(alpha: 0.1)
+            : Colors.blue.shade700.withValues(alpha: 0.1),
         border: Border.all(color: borderColor.withValues(alpha: 0.4)),
         borderRadius: BorderRadius.circular(10),
       ),
@@ -30,7 +33,7 @@ class ItemNominalSofWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            isMotor ? 'Motor' : 'Mobil',
             style: AppTypography.caption.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -41,11 +44,17 @@ class ItemNominalSofWidget extends StatelessWidget {
           Row(
             children: [
               Icon(
-                title == 'Motor' ? Icons.two_wheeler : Icons.directions_car,
-                size: 14,
+                isMotor ? Icons.two_wheeler : Icons.directions_car,
+                size: 20,
+                color: isMotor ? Colors.teal.shade600 : Colors.blue.shade700,
               ),
               const SizedBox(width: 4),
-              Text(jumlah.toString(), style: AppTypography.bodySmall),
+              Text(
+                jumlah.toString(),
+                style: AppTypography.bodySemiBold.copyWith(
+                  color: isMotor ? Colors.teal.shade600 : Colors.blue.shade700,
+                ),
+              ),
             ],
           ),
         ],
