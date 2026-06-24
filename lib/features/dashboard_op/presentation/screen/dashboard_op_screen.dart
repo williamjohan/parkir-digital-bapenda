@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/widgets/header_dashboard_op_widget.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
-
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
-import '../../domain/entities/dashboard_op_entity.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../cubit/dashboard_op_state.dart';
 import '../widgets/card_rekap_jenis_pembayaran_op.dart';
 import '../widgets/card_realisasi_op.dart';
@@ -72,7 +72,13 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                                   state.data?.realisasiTahunIni.digital ?? 0,
                               totalRealisasi:
                                   state.data?.realisasiTahunIni.realisasi ?? 0,
-                              onLihatSemua: () {},
+                              onLihatSemua: () {
+                                String currentNop = widget.item['nop'];
+                                context.pushNamed(
+                                  AppRoutes.detailRealisasiObjekPajak,
+                                  extra: currentNop,
+                                );
+                              },
                             ),
                             SizedBox(height: 16),
                             CardRekapJenisPembayaranOp(

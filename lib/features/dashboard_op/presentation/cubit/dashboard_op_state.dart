@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 import '../../domain/entities/dashboard_op_entity.dart';
 
 part 'dashboard_op_state.freezed.dart';

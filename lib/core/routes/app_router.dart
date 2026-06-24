@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/screen/dashboard_op_screen.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
+import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
+import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
 import '../../features/transaction/presentation/page/transaction_page.dart';
 import '../../features/transaction/presentation/cubit/transaction_cubit.dart';
@@ -116,7 +118,6 @@ class AppRouter {
           name: AppRoutes.dashboardObjekPajak,
           builder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
-
             final item = extra?['item'] as Map<String, dynamic>;
             return BlocProvider(
               create: (context) =>
@@ -126,6 +127,19 @@ class AppRouter {
             );
           },
         ),
+
+        GoRoute(
+          path: AppRoutes.detailRealisasiObjekPajak,
+          name: AppRoutes.detailRealisasiObjekPajak,
+          builder: (context, state) {
+            final nop = state.extra as String? ?? '';
+            return BlocProvider(
+              create: (context) => locator<DetailRealisasiOpCubit>()..init(nop),
+              child: const DetailRealisasiOpPage(),
+            );
+          },
+        ),
+
         GoRoute(
           path: AppRoutes.capture,
           name: AppRoutes.capture,
