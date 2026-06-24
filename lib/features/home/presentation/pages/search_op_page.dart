@@ -65,7 +65,7 @@ class _SearchOpPageState extends State<SearchOpPage> {
         foregroundColor: Colors.black,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(top: 16, right: 16, left: 16),
         child: Column(
           children: [
             PbTextField(
