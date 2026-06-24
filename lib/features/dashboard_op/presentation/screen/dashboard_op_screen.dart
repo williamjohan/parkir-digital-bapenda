@@ -38,74 +38,72 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
           if (state.loading) {
             return const DashboardOpShimmer();
           }
-          return SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                HeaderDashboardOp(
-                  item: widget.item,
-                  totalPendapatan: state.data?.pendapatanHariIniKotor ?? 0,
-                  pajakPercent: 10,
-                  pendapatanBersih:
-                      state.data?.pendapatanHariIniBersihWajibPajak ?? 0,
-                  isDigital: state.data?.isDigital ?? false,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          CardRiwayatPendapatanOp(
-                            totalMotor: state.data?.totalTransaksiRodaDua ?? 0,
-                            totalMobil:
-                                state.data?.totalTransaksiRodaEmpat ?? 0,
-                            onLihatSemua: () {
-                              context.pushNamed(
-                                AppRoutes.history,
-                                extra: {
-                                  'isFree': false,
-                                  'nop': widget.item['nop'],
-                                },
-                              );
-                            },
-                            riwayat: state.data?.riwayatList ?? [],
-                          ),
-                          SizedBox(height: 16),
-                          CardRealisasiOp(
-                            nonDigital:
-                                state.data?.realisasiTahunIni.nonDigital ?? 0,
-                            digital: state.data?.realisasiTahunIni.digital ?? 0,
-                            totalRealisasi:
-                                state.data?.realisasiTahunIni.realisasi ?? 0,
-                            onLihatSemua: () {
-                              String currentNop = widget.item['nop'];
-                              context.pushNamed(
-                                AppRoutes.detailRealisasiObjekPajak,
-                                extra: currentNop,
-                              );
-                            },
-                          ),
-                          if (state.data?.isDigital == true) ...[
-                            SizedBox(height: 16),
-                            CardRekapJenisPembayaranOp(
-                              items: state.data?.sofList ?? [],
-                              onLihatSemua: () {
-                                context.pushNamed(
-                                  AppRoutes.detailRekapJenisPembayaran,
-                                  extra: {'data': state.data?.sofList ?? []},
-                                );
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              HeaderDashboardOp(
+                item: widget.item,
+                totalPendapatan: state.data?.pendapatanHariIniKotor ?? 0,
+                pajakPercent: 10,
+                pendapatanBersih:
+                    state.data?.pendapatanHariIniBersihWajibPajak ?? 0,
+                isDigital: state.data?.isDigital ?? false,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CardRiwayatPendapatanOp(
+                          totalMotor: state.data?.totalTransaksiRodaDua ?? 0,
+                          totalMobil: state.data?.totalTransaksiRodaEmpat ?? 0,
+                          onLihatSemua: () {
+                            context.pushNamed(
+                              AppRoutes.history,
+                              extra: {
+                                'isFree': false,
+                                'nop': widget.item['nop'],
                               },
-                            ),
-                          ],
+                            );
+                          },
+                          riwayat: state.data?.riwayatList ?? [],
+                        ),
+                        SizedBox(height: 16),
+                        CardRealisasiOp(
+                          nonDigital:
+                              state.data?.realisasiTahunIni.nonDigital ?? 0,
+                          digital: state.data?.realisasiTahunIni.digital ?? 0,
+                          totalRealisasi:
+                              state.data?.realisasiTahunIni.realisasi ?? 0,
+                          onLihatSemua: () {
+                            String currentNop = widget.item['nop'];
+                            context.pushNamed(
+                              AppRoutes.detailRealisasiObjekPajak,
+                              extra: currentNop,
+                            );
+                          },
+                        ),
+                        if (state.data?.isDigital == true) ...[
+                          SizedBox(height: 16),
+                          CardRekapJenisPembayaranOp(
+                            items: state.data?.sofList ?? [],
+                            onLihatSemua: () {
+                              context.pushNamed(
+                                AppRoutes.detailRekapJenisPembayaran,
+                                extra: {'data': state.data?.sofList ?? []},
+                              );
+                            },
+                          ),
                         ],
-                      ),
+                        SizedBox(height: 16),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
