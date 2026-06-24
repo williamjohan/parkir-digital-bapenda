@@ -36,8 +36,14 @@ abstract class RegisterModule {
         client.badCertificateCallback =
             (X509Certificate cert, String host, int port) {
               final baseUrl = EnvConfig.baseUrl;
-              // Hanya izinkan bypass jika URL-nya memang milik Bapenda
+
+              const allowedBypassHosts = <String>[
+                'drivebapenda.surabaya.go.id',
+              ];
+
               if (baseUrl.contains(host)) return true;
+              if (allowedBypassHosts.contains(host)) return true;
+
               return false;
             };
         return client;
