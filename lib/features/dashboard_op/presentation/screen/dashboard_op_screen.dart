@@ -80,7 +80,13 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                                   state.data?.realisasiTahunIni.digital ?? 0,
                               totalRealisasi:
                                   state.data?.realisasiTahunIni.realisasi ?? 0,
-                              onLihatSemua: () {},
+                              onLihatSemua: () {
+                                String currentNop = widget.item['nop'];
+                                context.pushNamed(
+                                  AppRoutes.detailRealisasiObjekPajak,
+                                  extra: currentNop,
+                                );
+                              },
                             ),
                             SizedBox(height: 16),
                             CardRekapJenisPembayaranOp(
