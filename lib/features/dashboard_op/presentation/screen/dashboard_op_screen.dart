@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/widgets/header_dashboard_op_widget.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
-
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
-import '../../domain/entities/dashboard_op_entity.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../cubit/dashboard_op_state.dart';
 import '../widgets/card_rekap_jenis_pembayaran_op.dart';
 import '../widgets/card_realisasi_op.dart';
@@ -61,7 +61,15 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                                   state.data?.totalTransaksiRodaDua ?? 0,
                               totalMobil:
                                   state.data?.totalTransaksiRodaEmpat ?? 0,
-                              onLihatSemua: () {},
+                              onLihatSemua: () {
+                                context.pushNamed(
+                                  AppRoutes.history,
+                                  extra: {
+                                    'isFree': false,
+                                    'nop': widget.item['nop'],
+                                  },
+                                );
+                              },
                               riwayat: state.data?.riwayatList ?? [],
                             ),
                             SizedBox(height: 16),
@@ -77,7 +85,12 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                             SizedBox(height: 16),
                             CardRekapJenisPembayaranOp(
                               items: state.data?.sofList ?? [],
-                              onLihatSemua: () {},
+                              onLihatSemua: () {
+                                context.pushNamed(
+                                  AppRoutes.detailRekapJenisPembayaran,
+                                  extra: {'data': state.data?.sofList ?? []},
+                                );
+                              },
                             ),
                           ],
                         ),

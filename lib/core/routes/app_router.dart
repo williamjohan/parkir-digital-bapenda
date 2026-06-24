@@ -1,8 +1,10 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/domain/entities/dashboard_op_entity.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/screen/dashboard_op_screen.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/sub_features/detail_rekap_jenis_pembayaran_op/presentation/detail_rekap_jenis_pembayaran_screen.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
 import '../../features/transaction/presentation/page/transaction_page.dart';
@@ -124,6 +126,16 @@ class AppRouter {
                     ..getSummaryDashboardOp(item['nop']),
               child: DashboardOpScreen(item: item),
             );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.detailRekapJenisPembayaran,
+          name: AppRoutes.detailRekapJenisPembayaran,
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>?;
+
+            final data = extra?['data'] as List<SofEntity>;
+            return DetailRekapJenisPembayaranScreen(data: data);
           },
         ),
         GoRoute(

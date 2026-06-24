@@ -15,4 +15,6 @@ class AppRoutes {
 
   static const String searchObjekPajak = '/op';
   static const String dashboardObjekPajak = '/dashboard-op';
+  static const String detailRekapJenisPembayaran =
+      '/detail-rekap-jenis-pembayaran';
 }
