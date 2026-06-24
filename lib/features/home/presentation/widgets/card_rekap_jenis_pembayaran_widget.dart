@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
+import 'package:parkir_digital_bapenda/core/utils/number_formatter.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 
@@ -204,13 +206,6 @@ class _ItemKendaraanBadge extends StatelessWidget {
         : accentColor.withValues(alpha: 0.2);
     final Color textColor = isZero ? Colors.grey.shade500 : Colors.black87;
 
-    // Formatter Rupiah Cantik (Menghilangkan .0 di belakang)
-    final formatCurrency = NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: 'Rp ',
-      decimalDigits: 0,
-    );
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
@@ -223,7 +218,7 @@ class _ItemKendaraanBadge extends StatelessWidget {
         children: [
           // Nominal Uang
           Text(
-            formatCurrency.format(total),
+            CurrencyFormatter.toIdr(total),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 12,
@@ -239,7 +234,7 @@ class _ItemKendaraanBadge extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                jumlahKendaraan.toString(),
+                NumberFormatter.format(jumlahKendaraan),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
