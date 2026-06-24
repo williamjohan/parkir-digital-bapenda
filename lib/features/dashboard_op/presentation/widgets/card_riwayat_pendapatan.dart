@@ -39,13 +39,38 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
         children: [
           /// Header
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Expanded(
-                child: Text(
-                  'Riwayat pendapatan',
-                  style: AppTypography.bodySemiBold,
+              // 🚀 Kolom 1: Ikon
+              const Padding(
+                padding: EdgeInsets.only(
+                  top: 2.0,
+                ), // Penyesuaian optikal agar sejajar dengan huruf kapital teks
+                child: Icon(
+                  Icons
+                      .access_time_rounded, // Atau ikon riwayat lain yang Anda suka
+                  size: 18,
+                  color: AppColors.primary,
                 ),
               ),
+              const SizedBox(width: 8),
+
+              // 🚀 Kolom 2: Teks Bersusun (Riwayat + Hari ini)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Riwayat Pendapatan',
+                      style: AppTypography.bodySemiBold,
+                    ),
+                    const SizedBox(height: 2),
+                    const Text('Hari Ini', style: AppTypography.bodySemiBold),
+                  ],
+                ),
+              ),
+
+              // 🚀 Kolom 3: Tombol Aksi
               InkWell(
                 onTap: onLihatSemua,
                 child: Row(
@@ -56,11 +81,12 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
-                    SizedBox(width: 2),
-                    Icon(
+                    const SizedBox(width: 2),
+                    const Icon(
                       Icons.chevron_right,
                       size: 18,
-                      color: AppColors.primary,
+                      color:
+                          Colors.orange, // Sesuaikan jika ada AppColors.primary
                     ),
                   ],
                 ),
@@ -68,9 +94,7 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
             ],
           ),
 
-          // const Divider(color: AppColors.border, height: 1),
-          Text('Hari ini', style: AppTypography.bodySemiBold),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Column(
             children: [
               /// Summary kendaraan

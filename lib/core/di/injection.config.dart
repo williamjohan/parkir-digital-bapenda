@@ -45,6 +45,8 @@ import '../../features/dashboard_op/sub_features/detail_realisasi_op/data/reposi
     as _i931;
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/domain/repositories/detail_realisasi_op_repository.dart'
     as _i352;
+import '../../features/dashboard_op/sub_features/detail_realisasi_op/domain/usecases/get_detail_realisasi_op_usecase.dart'
+    as _i1012;
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart'
     as _i60;
 import '../../features/home/data/datasources/data_jukir_datasource.dart'
@@ -360,8 +362,10 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.factory<_i60.DetailRealisasiOpCubit>(
-    () => _i60.DetailRealisasiOpCubit(gh<_i352.DetailRealisasiOpRepository>()),
+  gh.lazySingleton<_i1012.GetDetailRealisasiOpUseCase>(
+    () => _i1012.GetDetailRealisasiOpUseCase(
+      gh<_i352.DetailRealisasiOpRepository>(),
+    ),
   );
   gh.lazySingleton<_i254.GetDataJukirUseCase>(
     () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),
@@ -392,6 +396,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i185.GetSummaryDashboardOpUsecase>(
     () => _i185.GetSummaryDashboardOpUsecase(gh<_i260.DashboardOpRepository>()),
+  );
+  gh.factory<_i60.DetailRealisasiOpCubit>(
+    () => _i60.DetailRealisasiOpCubit(gh<_i1012.GetDetailRealisasiOpUseCase>()),
   );
   gh.lazySingleton<_i1004.IPaymentRepository>(
     () => _i265.PaymentRepositoryImpl(

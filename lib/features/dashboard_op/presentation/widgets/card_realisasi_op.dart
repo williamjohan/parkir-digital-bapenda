@@ -45,7 +45,7 @@ class CardRealisasiOp extends StatelessWidget {
               const SizedBox(width: 8),
               const Expanded(
                 child: Text(
-                  'Realisasi tahun ini',
+                  'Realisasi Tahun Ini',
                   style: AppTypography.bodySemiBold,
                 ),
               ),
