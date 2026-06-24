@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +26,7 @@ class SearchOpPage extends StatefulWidget {
 
 class _SearchOpPageState extends State<SearchOpPage> {
   final TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -38,7 +41,16 @@ class _SearchOpPageState extends State<SearchOpPage> {
   @override
   void dispose() {
     searchController.dispose();
+    _debounce?.cancel(); // 🚀 Bersihkan memory timer saat halaman ditutup
     super.dispose();
+  }
+
+  void _onSearchChanged(String value) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      // Hanya eksekusi pencarian jika user berhenti mengetik selama 400ms
+      context.read<SearchOpCubit>().searchNopAlamat(value);
+    });
   }
 
   @override
@@ -59,9 +71,7 @@ class _SearchOpPageState extends State<SearchOpPage> {
             PbTextField(
               controller: searchController,
               hintText: 'Cari berdasarkan nama / alamat ...',
-              onChanged: (value) {
-                context.read<SearchOpCubit>().searchNopAlamat(value);
-              },
+              onChanged: _onSearchChanged,
             ),
 
             const SizedBox(height: 16),
@@ -73,16 +83,15 @@ class _SearchOpPageState extends State<SearchOpPage> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (state.nopList.isEmpty) {
+                  if (state.filteredNopList.isEmpty) {
                     return const Center(child: Text('Data tidak ditemukan'));
                   }
 
                   return ListView.separated(
-                    itemCount: state.nopList.length,
-                    // separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemCount: state.filteredNopList.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      final item = state.nopList[index];
+                      final item = state.filteredNopList[index];
                       final chipType = getDigitalType(item);
                       final isDigital = (item['is_digital'] ?? 0) == 1;
                       // final isNonDigital =
@@ -286,32 +295,25 @@ class _SearchOpPageState extends State<SearchOpPage> {
   }
 }
 
+// ─── PERBAIKAN FUNGSI HELPER ──────────────────────────────────────────────────
+
 String getDigitalLabel(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
-
   return isDigital == 1 ? 'Digitalisasi' : 'Belum Digitalisasi';
 }
 
 PbChipType getDigitalType(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
-
   return isDigital == 1 ? PbChipType.success : PbChipType.error;
 }
 
 String getTarifLabel(Map<String, dynamic> item) {
   final pungutTarif = item['pungut_tarif'] ?? 1;
-
-  if (pungutTarif == 1) {
-    return 'Gratis';
-  } else if (pungutTarif == 2) {
-    return 'Berbayar';
-  }
-
-  return pungutTarif == 1 ? 'Berbayar' : 'Tidak Berbayar';
+  // 🚀 LOGIKA SUDAH DIBERSIHKAN
+  return pungutTarif == 1 ? 'Gratis' : 'Berbayar';
 }
 
 PbChipType getTarifType(Map<String, dynamic> item) {
   final pungutTarif = item['pungut_tarif'] ?? 1;
-
   return pungutTarif == 1 ? PbChipType.success : PbChipType.warning;
 }
