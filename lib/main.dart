@@ -58,23 +58,25 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return Directionality(
             textDirection: TextDirection.ltr,
-            child: Stack(
-              children: [
-                child ?? const SizedBox.shrink(),
-                BlocBuilder<NetworkCubit, NetworkState>(
-                  builder: (context, state) {
-                    if (state is NetworkDisconnected) {
-                      return const Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: GlobalNoInternetBanner(),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ],
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  child ?? const SizedBox.shrink(),
+                  BlocBuilder<NetworkCubit, NetworkState>(
+                    builder: (context, state) {
+                      if (state is NetworkDisconnected) {
+                        return const Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: GlobalNoInternetBanner(),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
             ),
           );
         },

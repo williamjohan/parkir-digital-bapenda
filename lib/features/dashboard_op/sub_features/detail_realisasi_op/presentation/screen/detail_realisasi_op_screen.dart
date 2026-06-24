@@ -5,10 +5,10 @@ import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
 import '../../../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
 import '../../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../../../shared/loading/loading_overlay.dart';
 import '../cubit/detail_realisasi_op_cubit.dart';
 import '../cubit/detail_realisasi_op_state.dart';
 import '../widgets/filter_header_widget.dart';
-import '../widgets/total_summary_card.dart';
 import '../widgets/bulan_item_card.dart';
 import '../widgets/footer_total_card.dart';
 
@@ -17,65 +17,54 @@ class DetailRealisasiOpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF2C3E50)),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Realisasi pembayaran',
-          style: TextStyle(
-            color: Color(0xFF2C3E50),
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+    return BlocBuilder<DetailRealisasiOpCubit, DetailRealisasiOpState>(
+      builder: (context, state) {
+        return LoadingOverlay(
+          isLoading: state.isLoading,
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFAFAFA),
+            appBar: AppBar(
+              title: Text('Detail Realisasi', style: AppTypography.heading5),
+              centerTitle: true,
+              backgroundColor: AppColors.surface,
+              elevation: 0,
+              foregroundColor: Colors.black,
+            ),
+
+            body: BlocBuilder<DetailRealisasiOpCubit, DetailRealisasiOpState>(
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    //  1. HEADER FILTER DINAMIS
+                    FilterHeaderWidget(
+                      selectedYear: state.selectedYear,
+                      canIncrement: state.canIncrementYear,
+                      onDecrementYear: () {
+                        context.read<DetailRealisasiOpCubit>().decrementYear();
+                      },
+                      onIncrementYear: () {
+                        context.read<DetailRealisasiOpCubit>().incrementYear();
+                      },
+                      onTapTahun: () {
+                        _showYearBottomSheet(context, state);
+                      },
+                    ),
+
+                    // 🚀 2. BODY CONTENT DINAMIS (Loading/Error/Empty/Data)
+                    Expanded(child: _buildBodyContent(context, state)),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      ),
-
-      // 🚀 WIRING UTAMA: Dengarkan perubahan State dari Cubit
-      body: BlocBuilder<DetailRealisasiOpCubit, DetailRealisasiOpState>(
-        builder: (context, state) {
-          return Column(
-            children: [
-              // 🚀 1. HEADER FILTER DINAMIS
-              FilterHeaderWidget(
-                selectedYear: state.selectedYear,
-                canIncrement:
-                    state.canIncrementYear, // Tombol kanan mati jika mentok
-                onDecrementYear: () {
-                  context.read<DetailRealisasiOpCubit>().decrementYear();
-                },
-                onIncrementYear: () {
-                  context.read<DetailRealisasiOpCubit>().incrementYear();
-                },
-                onTapTahun: () {
-                  _showYearBottomSheet(context, state);
-                },
-              ),
-
-              // 🚀 2. BODY CONTENT DINAMIS (Loading/Error/Empty/Data)
-              Expanded(child: _buildBodyContent(context, state)),
-            ],
-          );
-        },
-      ),
+        );
+      },
     );
   }
 
   // ─── PENGATUR LOGIKA TAMPILAN ───────────────────────────────────────────────
 
   Widget _buildBodyContent(BuildContext context, DetailRealisasiOpState state) {
-    // KONDISI 1: Loading
-    if (state.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF009688)),
-      );
-    }
-
     // KONDISI 2: Error Server / Jaringan
     if (state.errorMessage != null) {
       return Center(
@@ -119,7 +108,8 @@ class DetailRealisasiOpPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: [
-          TotalSummaryCard(tahun: strTahun, totalNominal: formatTotal),
+          // TotalSummaryCard(tahun: strTahun, totalNominal: formatTotal),
+          FooterTotalCard(tahun: strTahun, totalNominal: formatTotal),
           const SizedBox(height: 16),
 
           ...data.realisasiPerBulan.map((item) {
@@ -134,8 +124,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
           }),
 
           const SizedBox(height: 16),
-
-          FooterTotalCard(tahun: strTahun, totalNominal: formatTotal),
         ],
       ),
     );
