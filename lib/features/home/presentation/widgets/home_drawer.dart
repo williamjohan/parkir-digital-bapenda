@@ -77,11 +77,11 @@ class HomeDrawer extends StatelessWidget {
               children: [
                 ListTile(
                   leading: const Icon(
-                    Icons.history,
+                    Icons.store,
                     color: AppColors.textPrimary,
                   ),
                   title: const Text(
-                    'History Transaksi',
+                    'Objek Pajak',
                     style: AppTypography.bodyRegular,
                   ),
                   onTap: () async {
