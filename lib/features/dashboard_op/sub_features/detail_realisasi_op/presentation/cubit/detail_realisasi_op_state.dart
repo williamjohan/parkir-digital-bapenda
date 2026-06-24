@@ -16,4 +16,5 @@ class DetailRealisasiOpState with _$DetailRealisasiOpState {
   }) = _DetailRealisasiOpState;
 
   bool get canIncrementYear => selectedYear < currentYear;
+  bool get canDecrementYear => selectedYear > (currentYear - 1);
 }
