@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
-
 import '../../../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
 import '../../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../../core/design_system/tokens/app_typography.dart';
@@ -118,7 +117,9 @@ class DetailRealisasiOpPage extends StatelessWidget {
               child: BulanItemCard(
                 bulan: item.bulanNama,
                 sspd: item.tglSspd.isNotEmpty ? 'SSPD ${item.tglSspd}' : '-',
-                nominal: CurrencyFormatter.toIdr(item.totalNominal.toInt()),
+                nominalNonDigital: item.nominalNonDigital,
+                nominalDigital: item.nominalDigital,
+                totalNominal: item.totalNominal,
               ),
             );
           }),
