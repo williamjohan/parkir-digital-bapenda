@@ -33,7 +33,11 @@ class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
   // ─── FUNGSI TRIGGER DARI UI ──────────────────────────────────────────────────
 
   void decrementYear() {
-    _changeYear(state.selectedYear - 1);
+    if (!state.canDecrementYear) return;
+
+    final newYear = state.selectedYear - 1;
+    emit(state.copyWith(selectedYear: newYear, isLoading: true));
+    _fetchDataForYear(newYear);
   }
 
   void incrementYear() {

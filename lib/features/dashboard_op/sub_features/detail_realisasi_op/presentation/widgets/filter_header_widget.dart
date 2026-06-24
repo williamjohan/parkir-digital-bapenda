@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class FilterHeaderWidget extends StatelessWidget {
   final int selectedYear;
   final bool canIncrement;
+  final bool canDecrement;
   final VoidCallback onDecrementYear;
   final VoidCallback onIncrementYear;
   final VoidCallback onTapTahun;
@@ -11,6 +12,7 @@ class FilterHeaderWidget extends StatelessWidget {
     super.key,
     required this.selectedYear,
     required this.canIncrement,
+    required this.canDecrement,
     required this.onDecrementYear,
     required this.onIncrementYear,
     required this.onTapTahun,
@@ -22,29 +24,27 @@ class FilterHeaderWidget extends StatelessWidget {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Container(
-        // 🚀 Background Bone/Grey dan Border
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFFF8F9FA), // Warna "Bone" abu-abu sangat muda
+          color: const Color(0xFFF8F9FA),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: const Color(0xFFEBEBEB)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // ⬅️ Panah Kiri (Selalu Aktif)
+            // ⬅️ Panah Kiri (Sekarang Dinamis!)
             _NavButton(
               icon: Icons.chevron_left,
-              onTap: onDecrementYear,
-              isActive: true,
+              onTap: canDecrement ? onDecrementYear : () {},
+              isActive: canDecrement,
             ),
 
             // 📅 Teks Tahun (Rata Tengah)
             Expanded(
               child: GestureDetector(
                 onTap: onTapTahun,
-                behavior: HitTestBehavior
-                    .opaque, // Agar area kosong di sekitar teks bisa diklik
+                behavior: HitTestBehavior.opaque,
                 child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -63,7 +63,7 @@ class FilterHeaderWidget extends StatelessWidget {
                         Icons.arrow_drop_down_rounded,
                         color: Color(0xFF95A5A6),
                         size: 20,
-                      ), // Hint UX
+                      ),
                     ],
                   ),
                 ),
@@ -73,10 +73,8 @@ class FilterHeaderWidget extends StatelessWidget {
             // ➡️ Panah Kanan (Dinamis)
             _NavButton(
               icon: Icons.chevron_right,
-              onTap: canIncrement
-                  ? onIncrementYear
-                  : () {}, // Disable fungsi jika mentok
-              isActive: canIncrement, // Disable visual jika mentok
+              onTap: canIncrement ? onIncrementYear : () {},
+              isActive: canIncrement,
             ),
           ],
         ),
@@ -88,7 +86,7 @@ class FilterHeaderWidget extends StatelessWidget {
 class _NavButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  final bool isActive; // Penentu warna abu-abu atau jelas
+  final bool isActive;
 
   const _NavButton({
     required this.icon,

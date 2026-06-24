@@ -38,6 +38,7 @@ class DetailRealisasiOpPage extends StatelessWidget {
                     FilterHeaderWidget(
                       selectedYear: state.selectedYear,
                       canIncrement: state.canIncrementYear,
+                      canDecrement: state.canDecrementYear,
                       onDecrementYear: () {
                         context.read<DetailRealisasiOpCubit>().decrementYear();
                       },
