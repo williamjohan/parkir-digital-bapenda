@@ -175,7 +175,10 @@ class _HomePageState extends State<HomePage> {
                                                           .pushNamed(
                                                             AppRoutes
                                                                 .searchObjekPajak,
-                                                            extra: state.role,
+                                                            extra: {
+                                                              'role':
+                                                                  state.role,
+                                                            },
                                                           );
 
                                                       if (result != null) {

@@ -1,4 +1,5 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/domain/entities/dashboard_op_entity.dart';
@@ -105,9 +106,15 @@ class AppRouter {
           builder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
 
-            final role = extra?['role'] as RoleLoginDigitalParkir;
-
+            final role = extra?['role'] as RoleLoginDigitalParkir?;
             final opType = extra?['opType'] as SearchOpType?;
+
+            if (role == null) {
+              // fallback biar nggak crash — sesuaikan dengan kebutuhanmu
+              return const Scaffold(
+                body: Center(child: Text('Role tidak ditemukan')),
+              );
+            }
 
             return BlocProvider(
               create: (_) => locator<SearchOpCubit>(),
