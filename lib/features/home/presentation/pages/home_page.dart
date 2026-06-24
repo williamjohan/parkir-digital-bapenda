@@ -247,12 +247,13 @@ class _HomePageState extends State<HomePage> {
                                                         state.totalOp,
                                                     totalOpDigitalisasi:
                                                         state.digital.total,
-                                                    totalOpNonDigitalisasi:
-                                                        state.nonDigital.total,
-                                                    // totalOpFree:
-                                                    //     state.totalOpFree,
-                                                    // totalOpNonFree:
-                                                    //     state.totalOpNonFree,
+                                                    digitalPercent:
+                                                        state.persentaseDigital,
+                                                    nonDigitalPercent: state
+                                                        .persentaseNonDigital,
+                                                    totalOpFree: 0,
+                                                    jmlDigital: 0,
+                                                    jmlNonDigital: 0,
                                                     lihatSemuaOnPressed: () async {
                                                       final result = await context
                                                           .pushNamed(
@@ -276,7 +277,7 @@ class _HomePageState extends State<HomePage> {
                                                             );
                                                       }
                                                     },
-                                                    onTapDigitalisasi: () {
+                                                    onTapBerbayar: () {
                                                       context.pushNamed(
                                                         AppRoutes
                                                             .searchObjekPajak,
@@ -289,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                                                         },
                                                       );
                                                     },
-                                                    onTapNonDigital: () {
+                                                    onTapGratis: () {
                                                       context.pushNamed(
                                                         AppRoutes
                                                             .searchObjekPajak,
@@ -302,26 +303,30 @@ class _HomePageState extends State<HomePage> {
                                                         },
                                                       );
                                                     },
-                                                    totalOpFreeDigitalisasi:
-                                                        state
-                                                            .digital
-                                                            .totalNonTarif,
-                                                    totalOpNonFreeDigitalisasi:
-                                                        state
-                                                            .digital
-                                                            .totalBertarif,
-                                                    totalOpFreeNonDigitalisasi:
-                                                        state
-                                                            .nonDigital
-                                                            .totalNonTarif,
-                                                    totalOpNonFreeNonDigitalisasi:
-                                                        state
-                                                            .nonDigital
-                                                            .totalBertarif,
-                                                    digitalPercent:
-                                                        state.persentaseDigital,
-                                                    nonDigitalPercent: state
-                                                        .persentaseNonDigital,
+
+                                                    // totalOpNonDigitalisasi:
+                                                    //     state.nonDigital.total,
+                                                    // totalOpFree:
+                                                    //     state.totalOpFree,
+                                                    // totalOpNonFree:
+                                                    //     state.totalOpNonFree,
+
+                                                    // totalOpFreeDigitalisasi:
+                                                    //     state
+                                                    //         .digital
+                                                    //         .totalNonTarif,
+                                                    // totalOpNonFreeDigitalisasi:
+                                                    //     state
+                                                    //         .digital
+                                                    //         .totalBertarif,
+                                                    // totalOpFreeNonDigitalisasi:
+                                                    //     state
+                                                    //         .nonDigital
+                                                    //         .totalNonTarif,
+                                                    // totalOpNonFreeNonDigitalisasi:
+                                                    //     state
+                                                    //         .nonDigital
+                                                    //         .totalBertarif,
                                                   ),
                                                 ),
                                               ),

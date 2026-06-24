@@ -7,14 +7,12 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 class CardTotalOpWidget extends StatelessWidget {
   final int totalObjekPajak;
   final int totalOpDigitalisasi;
-  final int totalOpNonDigitalisasi;
-  final int totalOpFreeDigitalisasi;
-  final int totalOpNonFreeDigitalisasi;
-  final int totalOpFreeNonDigitalisasi;
-  final int totalOpNonFreeNonDigitalisasi;
+  final int jmlDigital;
+  final int jmlNonDigital;
+  final int totalOpFree;
   final VoidCallback? lihatSemuaOnPressed;
-  final VoidCallback? onTapDigitalisasi;
-  final VoidCallback? onTapNonDigital;
+  final VoidCallback? onTapBerbayar;
+  final VoidCallback? onTapGratis;
   final double digitalPercent;
   final double nonDigitalPercent;
 
@@ -22,16 +20,14 @@ class CardTotalOpWidget extends StatelessWidget {
     super.key,
     required this.totalObjekPajak,
     required this.totalOpDigitalisasi,
-    required this.totalOpNonDigitalisasi,
-    required this.totalOpFreeDigitalisasi,
-    required this.totalOpNonFreeDigitalisasi,
-    required this.totalOpFreeNonDigitalisasi,
-    required this.totalOpNonFreeNonDigitalisasi,
+    required this.totalOpFree,
     required this.lihatSemuaOnPressed,
-    required this.onTapDigitalisasi,
-    required this.onTapNonDigital,
+    required this.onTapBerbayar,
+    required this.onTapGratis,
     required this.digitalPercent,
     required this.nonDigitalPercent,
+    required this.jmlDigital,
+    required this.jmlNonDigital,
   });
 
   @override
@@ -108,31 +104,29 @@ class CardTotalOpWidget extends StatelessWidget {
             child: Divider(height: 1),
           ),
 
-          /// === LIST ITEM DIGITALISASI ===
+          /// === LIST ITEM NON-DIGITAL ===
           _statusItem(
             icon: Icons.check_circle_outline,
-            iconColor: AppColors.success,
-            bgColor: AppColors.success.withValues(alpha: 0.12),
-            title: "Digitalisasi",
-            subtitle: "Sudah terhubung sistem",
+
+            iconColor: AppColors.info,
+            bgColor: AppColors.info.withValues(alpha: 0.12),
+            title: "Berbayar",
+            subtitle: "Objek pajak bertarif",
             total: totalOpDigitalisasi,
-            percentage: digitalPercent,
-            onTap: onTapDigitalisasi,
+            digitalCount: jmlDigital,
+            nonDigitalCount: jmlNonDigital,
+            onTap: onTapBerbayar,
           ),
           const SizedBox(height: 12),
 
-          /// === LIST ITEM NON-DIGITAL ===
+          /// === LIST ITEM DIGITALISASI ===
           _statusItem(
             icon: Icons.cancel_outlined,
             iconColor: AppColors.error,
             bgColor: AppColors.error.withValues(alpha: 0.12),
-            title: "Belum Digitalisasi",
-            subtitle: "Belum terhubung sistem",
-            total: totalOpNonDigitalisasi,
-            percentage: nonDigitalPercent,
-            freeCount: totalOpFreeNonDigitalisasi,
-            paidCount: totalOpNonFreeNonDigitalisasi,
-            onTap: onTapNonDigital,
+            title: "Gratis",
+            subtitle: "Tidak bertarif",
+            onTap: onTapGratis,
           ),
 
           const SizedBox(height: 24),
@@ -157,10 +151,9 @@ Widget _statusItem({
   required Color bgColor,
   required String title,
   required String subtitle,
-  required int total,
-  required double percentage,
-  int? freeCount,
-  int? paidCount,
+  int? total,
+  int? digitalCount,
+  int? nonDigitalCount,
   required VoidCallback? onTap,
 }) {
   return GestureDetector(
@@ -210,41 +203,28 @@ Widget _statusItem({
                     NumberFormatter.format(total.toString()),
                     style: AppTypography.heading2,
                   ),
-                  Text(
-                    "${percentage.toStringAsFixed(1)}%",
-                    style: AppTypography.caption.copyWith(
-                      color: iconColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                 ],
               ),
             ],
           ),
 
-          if (paidCount != null || freeCount != null) ...[
+          if (nonDigitalCount != null && digitalCount != null) ...[
             const SizedBox(height: 14),
+            _miniInfoCard(
+              icon: Icons.payments_rounded,
+              title: "Sudah Digital",
+              value: digitalCount!,
+              color: Colors.green,
+              percentage: 0,
+            ),
+            SizedBox(height: 16),
+            _miniInfoCard(
+              icon: Icons.money_off_rounded,
 
-            Row(
-              children: [
-                Expanded(
-                  child: _miniInfoCard(
-                    icon: Icons.payments_rounded,
-                    title: "Berbayar",
-                    value: paidCount!,
-                    color: Colors.orange,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _miniInfoCard(
-                    icon: Icons.money_off_rounded,
-                    title: "Gratis",
-                    value: freeCount!,
-                    color: Colors.green,
-                  ),
-                ),
-              ],
+              title: "Belum Digital",
+              value: nonDigitalCount!,
+              color: Colors.orange,
+              percentage: 0,
             ),
           ],
         ],
@@ -258,6 +238,7 @@ Widget _miniInfoCard({
   required String title,
   required int value,
   required Color color,
+  required double percentage,
 }) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -281,23 +262,24 @@ Widget _miniInfoCard({
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  title,
-                  style: AppTypography.caption.copyWith(
-                    color: Colors.grey.shade700,
-                  ),
+              Text(
+                title,
+                style: AppTypography.caption.copyWith(
+                  color: Colors.grey.shade700,
                 ),
               ),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  NumberFormatter.format(value.toString()),
-                  style: AppTypography.bodySemiBold.copyWith(color: color),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    NumberFormatter.format(value.toString()),
+                    style: AppTypography.bodySemiBold.copyWith(color: color),
+                  ),
+                  Text(
+                    "${percentage.toStringAsFixed(1)}%",
+                    style: AppTypography.bodySemiBold.copyWith(color: color),
+                  ),
+                ],
               ),
             ],
           ),
