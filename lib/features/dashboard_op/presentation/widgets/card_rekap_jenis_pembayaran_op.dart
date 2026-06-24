@@ -174,13 +174,11 @@ class _BarRow extends StatelessWidget {
             ),
           ),
         ),
-
-        const SizedBox(width: 8),
-
+        SizedBox(width: 8),
         SizedBox(
-          width: 95,
+          width: 60,
           child: Text(
-            '${formatCurrency(nominal)} · $jumlah',
+            formatCurrency(nominal),
             style: const TextStyle(fontSize: 11, color: Colors.grey),
           ),
         ),

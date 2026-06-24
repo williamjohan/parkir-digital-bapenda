@@ -25,7 +25,7 @@ class CurrencyFormatter {
 
     final formatCurrency = NumberFormat.currency(
       locale: 'id_ID',
-      symbol: 'Rp. ', // Menggunakan "Rp. " sesuai permintaan Anda
+      symbol: 'Rp', // Menggunakan "Rp. " sesuai permintaan Anda
       decimalDigits: decimalDigits,
     );
 

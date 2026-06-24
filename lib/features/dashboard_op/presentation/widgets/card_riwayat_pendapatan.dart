@@ -73,37 +73,52 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
           SizedBox(height: 12),
           Column(
             children: [
-              /// Summary kendaraan
-              Row(
-                children: [
-                  Expanded(
-                    child: _VehicleSummaryCard(
-                      isRoda2: true,
-                      value: totalMotor,
+              if (riwayat.isNotEmpty) ...[
+                /// List Riwayat
+                ...riwayat.map(
+                  (item) => Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: _RiwayatItem(
+                      item: item,
+                      currency: CurrencyFormatter.toIdr,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _VehicleSummaryCard(
-                      isRoda2: false,
-                      value: totalMobil,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              /// List Riwayat
-              ...riwayat.map(
-                (item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 14),
-                  child: _RiwayatItem(
-                    item: item,
-                    currency: CurrencyFormatter.toIdr,
                   ),
                 ),
-              ),
+                Divider(color: AppColors.border),
+                const SizedBox(height: 6),
+
+                /// Summary kendaraan
+                Row(
+                  children: [
+                    Expanded(
+                      child: _VehicleSummaryCard(
+                        isRoda2: true,
+                        value: totalMotor,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _VehicleSummaryCard(
+                        isRoda2: false,
+                        value: totalMobil,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              if (riwayat.isEmpty) ...[
+                SizedBox(height: 16),
+                Icon(Icons.receipt_long, color: AppColors.textSecondary),
+                SizedBox(height: 4),
+                Center(
+                  child: Text(
+                    "Belum ada transkasi",
+                    style: AppTypography.caption,
+                  ),
+                ),
+                SizedBox(height: 16),
+              ],
             ],
           ),
         ],
@@ -171,15 +186,20 @@ class _RiwayatItem extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(
-          child: Text(
-            '${item.jenisKendaraan} · ${item.tgl}',
-            style: AppTypography.bodyRegular.copyWith(
-              color: AppColors.textSecondary,
-            ),
+        Text(
+          item.jenisKendaraan,
+          style: AppTypography.bodyRegular.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
-
+        Text('|', style: TextStyle(color: AppColors.textSecondary)),
+        Text(
+          item.tgl,
+          style: AppTypography.bodyRegular.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        Text('|', style: TextStyle(color: AppColors.textSecondary)),
         Text(
           currency(item.kredit),
           textAlign: TextAlign.end,

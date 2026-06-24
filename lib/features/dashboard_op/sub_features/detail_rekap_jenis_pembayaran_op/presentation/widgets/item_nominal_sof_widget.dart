@@ -23,7 +23,7 @@ class ItemNominalSofWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: borderColor.withOpacity(.4)),
+        border: Border.all(color: borderColor.withValues(alpha: 0.4)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(

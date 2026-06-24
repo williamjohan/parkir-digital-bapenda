@@ -49,7 +49,7 @@ class HeaderDashboardOp extends StatelessWidget {
             top: -50,
             child: CircleAvatar(
               radius: 100,
-              backgroundColor: AppColors.background.withOpacity(0.06),
+              backgroundColor: AppColors.background.withValues(alpha: 0.06),
             ),
           ),
           Positioned(
@@ -57,7 +57,7 @@ class HeaderDashboardOp extends StatelessWidget {
             bottom: -30,
             child: CircleAvatar(
               radius: 70,
-              backgroundColor: AppColors.textPrimary.withOpacity(0.04),
+              backgroundColor: AppColors.textPrimary.withValues(alpha: 0.04),
             ),
           ),
 
@@ -77,8 +77,8 @@ class HeaderDashboardOp extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: isDigital
-                            ? AppColors.background.withOpacity(0.25)
-                            : AppColors.textPrimary.withOpacity(0.15),
+                            ? AppColors.background.withValues(alpha: 0.25)
+                            : AppColors.textPrimary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -127,7 +127,7 @@ class HeaderDashboardOp extends StatelessWidget {
                     Text(
                       'TOTAL PENDAPATAN HARI INI',
                       style: AppTypography.caption.copyWith(
-                        color: AppColors.background.withOpacity(0.75),
+                        color: AppColors.background.withValues(alpha: 0.75),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -150,10 +150,10 @@ class HeaderDashboardOp extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: AppColors.textPrimary.withOpacity(0.12),
+                          color: AppColors.background.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: AppColors.background.withOpacity(0.1),
+                            color: AppColors.background.withValues(alpha: 0.1),
                             width: 1,
                           ),
                         ),
@@ -163,7 +163,9 @@ class HeaderDashboardOp extends StatelessWidget {
                             Text(
                               'Pajak (${pajakPercent.toStringAsFixed(0)}%)',
                               style: AppTypography.bodySmall.copyWith(
-                                color: AppColors.background.withOpacity(0.7),
+                                color: AppColors.background.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -172,7 +174,7 @@ class HeaderDashboardOp extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTypography.bodySemiBold.copyWith(
-                                color: AppColors.error.withOpacity(0.65),
+                                color: AppColors.error.withValues(alpha: 0.65),
                               ),
                             ),
                           ],
@@ -190,7 +192,9 @@ class HeaderDashboardOp extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.textPrimary.withOpacity(0.08),
+                              color: AppColors.textPrimary.withValues(
+                                alpha: 0.08,
+                              ),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -202,7 +206,9 @@ class HeaderDashboardOp extends StatelessWidget {
                             Text(
                               'Pendapatan Bersih',
                               style: AppTypography.bodySmall.copyWith(
-                                color: AppColors.textSecondary.withOpacity(0.7),
+                                color: AppColors.textSecondary.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 6),
