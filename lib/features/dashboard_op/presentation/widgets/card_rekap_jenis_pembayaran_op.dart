@@ -36,15 +36,33 @@ class CardRekapJenisPembayaranOp extends StatelessWidget {
       child: Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.credit_card, size: 20, color: AppColors.primary),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: Text(
-                  'Jenis pembayaran',
-                  style: AppTypography.bodySemiBold,
+              const Padding(
+                padding: EdgeInsets.only(top: 2.0),
+                child: Icon(
+                  Icons.credit_card,
+                  size: 18,
+                  color: AppColors.primary,
                 ),
               ),
+              const SizedBox(width: 8),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Jenis Pembayaran',
+                      style: AppTypography.bodySemiBold,
+                    ),
+                    const SizedBox(height: 2),
+                    const Text('Hari Ini', style: AppTypography.bodySemiBold),
+                  ],
+                ),
+              ),
+
+              // 🚀 Kolom 3: Tombol Aksi
               InkWell(
                 onTap: onLihatSemua,
                 child: Row(
@@ -55,8 +73,13 @@ class CardRekapJenisPembayaranOp extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
-                    SizedBox(width: 2),
-                    Icon(Icons.chevron_right, size: 18, color: Colors.orange),
+                    const SizedBox(width: 2),
+                    const Icon(
+                      Icons.chevron_right,
+                      size: 18,
+                      color:
+                          Colors.orange, // Sesuaikan jika ada AppColors.primary
+                    ),
                   ],
                 ),
               ),

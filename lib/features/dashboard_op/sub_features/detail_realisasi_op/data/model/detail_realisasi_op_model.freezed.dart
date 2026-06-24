@@ -23,13 +23,9 @@ DetailRealisasiOpResponse _$DetailRealisasiOpResponseFromJson(
 
 /// @nodoc
 mixin _$DetailRealisasiOpResponse {
-  @JsonKey(name: 'isSuccess')
   bool? get isSuccess => throw _privateConstructorUsedError;
-  @JsonKey(name: 'statusCode')
   int? get statusCode => throw _privateConstructorUsedError;
-  @JsonKey(name: 'message')
   String? get message => throw _privateConstructorUsedError;
-  @JsonKey(name: 'data')
   DetailRealisasiOpModel? get data => throw _privateConstructorUsedError;
 
   /// Serializes this DetailRealisasiOpResponse to a JSON map.
@@ -50,10 +46,10 @@ abstract class $DetailRealisasiOpResponseCopyWith<$Res> {
   ) = _$DetailRealisasiOpResponseCopyWithImpl<$Res, DetailRealisasiOpResponse>;
   @useResult
   $Res call({
-    @JsonKey(name: 'isSuccess') bool? isSuccess,
-    @JsonKey(name: 'statusCode') int? statusCode,
-    @JsonKey(name: 'message') String? message,
-    @JsonKey(name: 'data') DetailRealisasiOpModel? data,
+    bool? isSuccess,
+    int? statusCode,
+    String? message,
+    DetailRealisasiOpModel? data,
   });
 
   $DetailRealisasiOpModelCopyWith<$Res>? get data;
@@ -130,10 +126,10 @@ abstract class _$$DetailRealisasiOpResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @JsonKey(name: 'isSuccess') bool? isSuccess,
-    @JsonKey(name: 'statusCode') int? statusCode,
-    @JsonKey(name: 'message') String? message,
-    @JsonKey(name: 'data') DetailRealisasiOpModel? data,
+    bool? isSuccess,
+    int? statusCode,
+    String? message,
+    DetailRealisasiOpModel? data,
   });
 
   @override
@@ -190,26 +186,22 @@ class __$$DetailRealisasiOpResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DetailRealisasiOpResponseImpl implements _DetailRealisasiOpResponse {
   const _$DetailRealisasiOpResponseImpl({
-    @JsonKey(name: 'isSuccess') this.isSuccess,
-    @JsonKey(name: 'statusCode') this.statusCode,
-    @JsonKey(name: 'message') this.message,
-    @JsonKey(name: 'data') this.data,
+    this.isSuccess,
+    this.statusCode,
+    this.message,
+    this.data,
   });
 
   factory _$DetailRealisasiOpResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$DetailRealisasiOpResponseImplFromJson(json);
 
   @override
-  @JsonKey(name: 'isSuccess')
   final bool? isSuccess;
   @override
-  @JsonKey(name: 'statusCode')
   final int? statusCode;
   @override
-  @JsonKey(name: 'message')
   final String? message;
   @override
-  @JsonKey(name: 'data')
   final DetailRealisasiOpModel? data;
 
   @override
@@ -254,26 +246,22 @@ class _$DetailRealisasiOpResponseImpl implements _DetailRealisasiOpResponse {
 
 abstract class _DetailRealisasiOpResponse implements DetailRealisasiOpResponse {
   const factory _DetailRealisasiOpResponse({
-    @JsonKey(name: 'isSuccess') final bool? isSuccess,
-    @JsonKey(name: 'statusCode') final int? statusCode,
-    @JsonKey(name: 'message') final String? message,
-    @JsonKey(name: 'data') final DetailRealisasiOpModel? data,
+    final bool? isSuccess,
+    final int? statusCode,
+    final String? message,
+    final DetailRealisasiOpModel? data,
   }) = _$DetailRealisasiOpResponseImpl;
 
   factory _DetailRealisasiOpResponse.fromJson(Map<String, dynamic> json) =
       _$DetailRealisasiOpResponseImpl.fromJson;
 
   @override
-  @JsonKey(name: 'isSuccess')
   bool? get isSuccess;
   @override
-  @JsonKey(name: 'statusCode')
   int? get statusCode;
   @override
-  @JsonKey(name: 'message')
   String? get message;
   @override
-  @JsonKey(name: 'data')
   DetailRealisasiOpModel? get data;
 
   /// Create a copy of DetailRealisasiOpResponse
@@ -292,25 +280,15 @@ DetailRealisasiOpModel _$DetailRealisasiOpModelFromJson(
 
 /// @nodoc
 mixin _$DetailRealisasiOpModel {
-  @JsonKey(name: 'nop')
   String? get nop => throw _privateConstructorUsedError;
-  @JsonKey(name: 'namaOp')
   String? get namaOp => throw _privateConstructorUsedError;
-  @JsonKey(name: 'uptbId')
   int? get uptbId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'tahun')
   int? get tahun => throw _privateConstructorUsedError;
-  @JsonKey(name: 'isDigital')
   bool? get isDigital => throw _privateConstructorUsedError;
-  @JsonKey(name: 'tglDigitalisasi')
   String? get tglDigitalisasi => throw _privateConstructorUsedError;
-  @JsonKey(name: 'nominalNonDigital')
   double? get nominalNonDigital => throw _privateConstructorUsedError;
-  @JsonKey(name: 'nominalDigital')
   double? get nominalDigital => throw _privateConstructorUsedError;
-  @JsonKey(name: 'totalNominal')
   double? get totalNominal => throw _privateConstructorUsedError;
-  @JsonKey(name: 'realisasiPerBulan')
   List<RealisasiPerBulanModel>? get realisasiPerBulan =>
       throw _privateConstructorUsedError;
 
@@ -332,16 +310,15 @@ abstract class $DetailRealisasiOpModelCopyWith<$Res> {
   ) = _$DetailRealisasiOpModelCopyWithImpl<$Res, DetailRealisasiOpModel>;
   @useResult
   $Res call({
-    @JsonKey(name: 'nop') String? nop,
-    @JsonKey(name: 'namaOp') String? namaOp,
-    @JsonKey(name: 'uptbId') int? uptbId,
-    @JsonKey(name: 'tahun') int? tahun,
-    @JsonKey(name: 'isDigital') bool? isDigital,
-    @JsonKey(name: 'tglDigitalisasi') String? tglDigitalisasi,
-    @JsonKey(name: 'nominalNonDigital') double? nominalNonDigital,
-    @JsonKey(name: 'nominalDigital') double? nominalDigital,
-    @JsonKey(name: 'totalNominal') double? totalNominal,
-    @JsonKey(name: 'realisasiPerBulan')
+    String? nop,
+    String? namaOp,
+    int? uptbId,
+    int? tahun,
+    bool? isDigital,
+    String? tglDigitalisasi,
+    double? nominalNonDigital,
+    double? nominalDigital,
+    double? totalNominal,
     List<RealisasiPerBulanModel>? realisasiPerBulan,
   });
 }
@@ -433,16 +410,15 @@ abstract class _$$DetailRealisasiOpModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @JsonKey(name: 'nop') String? nop,
-    @JsonKey(name: 'namaOp') String? namaOp,
-    @JsonKey(name: 'uptbId') int? uptbId,
-    @JsonKey(name: 'tahun') int? tahun,
-    @JsonKey(name: 'isDigital') bool? isDigital,
-    @JsonKey(name: 'tglDigitalisasi') String? tglDigitalisasi,
-    @JsonKey(name: 'nominalNonDigital') double? nominalNonDigital,
-    @JsonKey(name: 'nominalDigital') double? nominalDigital,
-    @JsonKey(name: 'totalNominal') double? totalNominal,
-    @JsonKey(name: 'realisasiPerBulan')
+    String? nop,
+    String? namaOp,
+    int? uptbId,
+    int? tahun,
+    bool? isDigital,
+    String? tglDigitalisasi,
+    double? nominalNonDigital,
+    double? nominalDigital,
+    double? totalNominal,
     List<RealisasiPerBulanModel>? realisasiPerBulan,
   });
 }
@@ -524,16 +500,15 @@ class __$$DetailRealisasiOpModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DetailRealisasiOpModelImpl implements _DetailRealisasiOpModel {
   const _$DetailRealisasiOpModelImpl({
-    @JsonKey(name: 'nop') this.nop,
-    @JsonKey(name: 'namaOp') this.namaOp,
-    @JsonKey(name: 'uptbId') this.uptbId,
-    @JsonKey(name: 'tahun') this.tahun,
-    @JsonKey(name: 'isDigital') this.isDigital,
-    @JsonKey(name: 'tglDigitalisasi') this.tglDigitalisasi,
-    @JsonKey(name: 'nominalNonDigital') this.nominalNonDigital,
-    @JsonKey(name: 'nominalDigital') this.nominalDigital,
-    @JsonKey(name: 'totalNominal') this.totalNominal,
-    @JsonKey(name: 'realisasiPerBulan')
+    this.nop,
+    this.namaOp,
+    this.uptbId,
+    this.tahun,
+    this.isDigital,
+    this.tglDigitalisasi,
+    this.nominalNonDigital,
+    this.nominalDigital,
+    this.totalNominal,
     final List<RealisasiPerBulanModel>? realisasiPerBulan,
   }) : _realisasiPerBulan = realisasiPerBulan;
 
@@ -541,35 +516,25 @@ class _$DetailRealisasiOpModelImpl implements _DetailRealisasiOpModel {
       _$$DetailRealisasiOpModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'nop')
   final String? nop;
   @override
-  @JsonKey(name: 'namaOp')
   final String? namaOp;
   @override
-  @JsonKey(name: 'uptbId')
   final int? uptbId;
   @override
-  @JsonKey(name: 'tahun')
   final int? tahun;
   @override
-  @JsonKey(name: 'isDigital')
   final bool? isDigital;
   @override
-  @JsonKey(name: 'tglDigitalisasi')
   final String? tglDigitalisasi;
   @override
-  @JsonKey(name: 'nominalNonDigital')
   final double? nominalNonDigital;
   @override
-  @JsonKey(name: 'nominalDigital')
   final double? nominalDigital;
   @override
-  @JsonKey(name: 'totalNominal')
   final double? totalNominal;
   final List<RealisasiPerBulanModel>? _realisasiPerBulan;
   @override
-  @JsonKey(name: 'realisasiPerBulan')
   List<RealisasiPerBulanModel>? get realisasiPerBulan {
     final value = _realisasiPerBulan;
     if (value == null) return null;
@@ -645,16 +610,15 @@ class _$DetailRealisasiOpModelImpl implements _DetailRealisasiOpModel {
 
 abstract class _DetailRealisasiOpModel implements DetailRealisasiOpModel {
   const factory _DetailRealisasiOpModel({
-    @JsonKey(name: 'nop') final String? nop,
-    @JsonKey(name: 'namaOp') final String? namaOp,
-    @JsonKey(name: 'uptbId') final int? uptbId,
-    @JsonKey(name: 'tahun') final int? tahun,
-    @JsonKey(name: 'isDigital') final bool? isDigital,
-    @JsonKey(name: 'tglDigitalisasi') final String? tglDigitalisasi,
-    @JsonKey(name: 'nominalNonDigital') final double? nominalNonDigital,
-    @JsonKey(name: 'nominalDigital') final double? nominalDigital,
-    @JsonKey(name: 'totalNominal') final double? totalNominal,
-    @JsonKey(name: 'realisasiPerBulan')
+    final String? nop,
+    final String? namaOp,
+    final int? uptbId,
+    final int? tahun,
+    final bool? isDigital,
+    final String? tglDigitalisasi,
+    final double? nominalNonDigital,
+    final double? nominalDigital,
+    final double? totalNominal,
     final List<RealisasiPerBulanModel>? realisasiPerBulan,
   }) = _$DetailRealisasiOpModelImpl;
 
@@ -662,34 +626,24 @@ abstract class _DetailRealisasiOpModel implements DetailRealisasiOpModel {
       _$DetailRealisasiOpModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'nop')
   String? get nop;
   @override
-  @JsonKey(name: 'namaOp')
   String? get namaOp;
   @override
-  @JsonKey(name: 'uptbId')
   int? get uptbId;
   @override
-  @JsonKey(name: 'tahun')
   int? get tahun;
   @override
-  @JsonKey(name: 'isDigital')
   bool? get isDigital;
   @override
-  @JsonKey(name: 'tglDigitalisasi')
   String? get tglDigitalisasi;
   @override
-  @JsonKey(name: 'nominalNonDigital')
   double? get nominalNonDigital;
   @override
-  @JsonKey(name: 'nominalDigital')
   double? get nominalDigital;
   @override
-  @JsonKey(name: 'totalNominal')
   double? get totalNominal;
   @override
-  @JsonKey(name: 'realisasiPerBulan')
   List<RealisasiPerBulanModel>? get realisasiPerBulan;
 
   /// Create a copy of DetailRealisasiOpModel
@@ -708,17 +662,11 @@ RealisasiPerBulanModel _$RealisasiPerBulanModelFromJson(
 
 /// @nodoc
 mixin _$RealisasiPerBulanModel {
-  @JsonKey(name: 'bulan')
   int? get bulan => throw _privateConstructorUsedError;
-  @JsonKey(name: 'bulanNama')
   String? get bulanNama => throw _privateConstructorUsedError;
-  @JsonKey(name: 'tglSspd')
   String? get tglSspd => throw _privateConstructorUsedError;
-  @JsonKey(name: 'nominalNonDigital')
   double? get nominalNonDigital => throw _privateConstructorUsedError;
-  @JsonKey(name: 'nominalDigital')
   double? get nominalDigital => throw _privateConstructorUsedError;
-  @JsonKey(name: 'totalNominal')
   double? get totalNominal => throw _privateConstructorUsedError;
 
   /// Serializes this RealisasiPerBulanModel to a JSON map.
@@ -739,12 +687,12 @@ abstract class $RealisasiPerBulanModelCopyWith<$Res> {
   ) = _$RealisasiPerBulanModelCopyWithImpl<$Res, RealisasiPerBulanModel>;
   @useResult
   $Res call({
-    @JsonKey(name: 'bulan') int? bulan,
-    @JsonKey(name: 'bulanNama') String? bulanNama,
-    @JsonKey(name: 'tglSspd') String? tglSspd,
-    @JsonKey(name: 'nominalNonDigital') double? nominalNonDigital,
-    @JsonKey(name: 'nominalDigital') double? nominalDigital,
-    @JsonKey(name: 'totalNominal') double? totalNominal,
+    int? bulan,
+    String? bulanNama,
+    String? tglSspd,
+    double? nominalNonDigital,
+    double? nominalDigital,
+    double? totalNominal,
   });
 }
 
@@ -815,12 +763,12 @@ abstract class _$$RealisasiPerBulanModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @JsonKey(name: 'bulan') int? bulan,
-    @JsonKey(name: 'bulanNama') String? bulanNama,
-    @JsonKey(name: 'tglSspd') String? tglSspd,
-    @JsonKey(name: 'nominalNonDigital') double? nominalNonDigital,
-    @JsonKey(name: 'nominalDigital') double? nominalDigital,
-    @JsonKey(name: 'totalNominal') double? totalNominal,
+    int? bulan,
+    String? bulanNama,
+    String? tglSspd,
+    double? nominalNonDigital,
+    double? nominalDigital,
+    double? totalNominal,
   });
 }
 
@@ -881,34 +829,28 @@ class __$$RealisasiPerBulanModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$RealisasiPerBulanModelImpl implements _RealisasiPerBulanModel {
   const _$RealisasiPerBulanModelImpl({
-    @JsonKey(name: 'bulan') this.bulan,
-    @JsonKey(name: 'bulanNama') this.bulanNama,
-    @JsonKey(name: 'tglSspd') this.tglSspd,
-    @JsonKey(name: 'nominalNonDigital') this.nominalNonDigital,
-    @JsonKey(name: 'nominalDigital') this.nominalDigital,
-    @JsonKey(name: 'totalNominal') this.totalNominal,
+    this.bulan,
+    this.bulanNama,
+    this.tglSspd,
+    this.nominalNonDigital,
+    this.nominalDigital,
+    this.totalNominal,
   });
 
   factory _$RealisasiPerBulanModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RealisasiPerBulanModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'bulan')
   final int? bulan;
   @override
-  @JsonKey(name: 'bulanNama')
   final String? bulanNama;
   @override
-  @JsonKey(name: 'tglSspd')
   final String? tglSspd;
   @override
-  @JsonKey(name: 'nominalNonDigital')
   final double? nominalNonDigital;
   @override
-  @JsonKey(name: 'nominalDigital')
   final double? nominalDigital;
   @override
-  @JsonKey(name: 'totalNominal')
   final double? totalNominal;
 
   @override
@@ -965,34 +907,28 @@ class _$RealisasiPerBulanModelImpl implements _RealisasiPerBulanModel {
 
 abstract class _RealisasiPerBulanModel implements RealisasiPerBulanModel {
   const factory _RealisasiPerBulanModel({
-    @JsonKey(name: 'bulan') final int? bulan,
-    @JsonKey(name: 'bulanNama') final String? bulanNama,
-    @JsonKey(name: 'tglSspd') final String? tglSspd,
-    @JsonKey(name: 'nominalNonDigital') final double? nominalNonDigital,
-    @JsonKey(name: 'nominalDigital') final double? nominalDigital,
-    @JsonKey(name: 'totalNominal') final double? totalNominal,
+    final int? bulan,
+    final String? bulanNama,
+    final String? tglSspd,
+    final double? nominalNonDigital,
+    final double? nominalDigital,
+    final double? totalNominal,
   }) = _$RealisasiPerBulanModelImpl;
 
   factory _RealisasiPerBulanModel.fromJson(Map<String, dynamic> json) =
       _$RealisasiPerBulanModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'bulan')
   int? get bulan;
   @override
-  @JsonKey(name: 'bulanNama')
   String? get bulanNama;
   @override
-  @JsonKey(name: 'tglSspd')
   String? get tglSspd;
   @override
-  @JsonKey(name: 'nominalNonDigital')
   double? get nominalNonDigital;
   @override
-  @JsonKey(name: 'nominalDigital')
   double? get nominalDigital;
   @override
-  @JsonKey(name: 'totalNominal')
   double? get totalNominal;
 
   /// Create a copy of RealisasiPerBulanModel

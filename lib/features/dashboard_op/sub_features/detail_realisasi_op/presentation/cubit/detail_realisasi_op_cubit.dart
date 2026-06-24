@@ -1,19 +1,17 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-
+import 'package:parkir_digital_bapenda/features/dashboard_op/sub_features/detail_realisasi_op/domain/usecases/get_detail_realisasi_op_usecase.dart';
 import 'detail_realisasi_op_state.dart';
-import '../../domain/repositories/detail_realisasi_op_repository.dart';
 
 @injectable
 class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
-  // 🚀 1. INJEKSI REPOSITORY
-  final DetailRealisasiOpRepository _repository;
+  final GetDetailRealisasiOpUseCase _getDetailRealisasiOpUseCase;
 
   Timer? _debounceTimer;
   String _currentNop = ''; // Simpan NOP di memori Cubit
 
-  DetailRealisasiOpCubit(this._repository)
+  DetailRealisasiOpCubit(this._getDetailRealisasiOpUseCase)
     : super(
         DetailRealisasiOpState(
           selectedYear: DateTime.now().year,
@@ -21,7 +19,7 @@ class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
         ),
       );
 
-  // 🚀 2. ENTRY POINT (Dipanggil dari UI/Router saat halaman pertama kali dibuka)
+  //  2. ENTRY POINT (Dipanggil dari UI/Router saat halaman pertama kali dibuka)
   void init(String nop) {
     _currentNop = nop;
 
@@ -88,15 +86,15 @@ class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
       return;
     }
 
-    // 🚀 3. TEMBAK API VIA REPOSITORY
-    final result = await _repository.getSummaryRealisasi(
+    //  3. TEMBAK API VIA REPOSITORY
+    final result = await _getDetailRealisasiOpUseCase(
       nop: _currentNop,
       tahun: year,
     );
 
     if (isClosed) return;
 
-    // 🚀 4. HANDLE RESPONSE (DARTZ EITHER)
+    //  4. HANDLE RESPONSE (DARTZ EITHER)
     result.fold(
       (failureMessage) {
         emit(state.copyWith(isLoading: false, errorMessage: failureMessage));
