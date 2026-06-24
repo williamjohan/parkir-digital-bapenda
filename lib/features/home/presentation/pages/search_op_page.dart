@@ -102,17 +102,10 @@ class _SearchOpPageState extends State<SearchOpPage> {
                       return InkWell(
                         borderRadius: BorderRadius.circular(16),
                         onTap: () async {
-                          if (isDigital) {
-                            context.pushNamed(
-                              AppRoutes.dashboardObjekPajak,
-                              extra: {'item': item},
-                            );
-                          } else {
-                            context.pushNamed(
-                              AppRoutes.history,
-                              extra: {'isFree': false, 'nop': item['nop']},
-                            );
-                          }
+                          context.pushNamed(
+                            AppRoutes.dashboardObjekPajak,
+                            extra: {'item': item},
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(16),

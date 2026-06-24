@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -19,6 +20,8 @@ class DashboardOpCubit extends Cubit<DashboardOpState> {
       if (isClosed) return;
 
       emit(state.copyWith(loading: false, data: result));
+
+      debugPrint('isDigital = ${state.data?.isDigital}');
     } catch (e) {
       if (isClosed) return;
 

@@ -87,16 +87,18 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                               );
                             },
                           ),
-                          SizedBox(height: 16),
-                          CardRekapJenisPembayaranOp(
-                            items: state.data?.sofList ?? [],
-                            onLihatSemua: () {
-                              context.pushNamed(
-                                AppRoutes.detailRekapJenisPembayaran,
-                                extra: {'data': state.data?.sofList ?? []},
-                              );
-                            },
-                          ),
+                          if (state.data?.isDigital == true) ...[
+                            SizedBox(height: 16),
+                            CardRekapJenisPembayaranOp(
+                              items: state.data?.sofList ?? [],
+                              onLihatSemua: () {
+                                context.pushNamed(
+                                  AppRoutes.detailRekapJenisPembayaran,
+                                  extra: {'data': state.data?.sofList ?? []},
+                                );
+                              },
+                            ),
+                          ],
                         ],
                       ),
                     ),

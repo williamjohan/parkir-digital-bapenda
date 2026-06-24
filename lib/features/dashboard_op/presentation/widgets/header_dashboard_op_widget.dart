@@ -113,6 +113,13 @@ class HeaderDashboardOp extends StatelessWidget {
                     color: AppColors.background,
                   ),
                 ),
+                const SizedBox(height: 5),
+                Text(
+                  item['nop'],
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.background,
+                  ),
+                ),
 
                 const SizedBox(height: 5),
                 Row(
