@@ -112,38 +112,6 @@ class HomeDrawer extends StatelessWidget {
                     }
                   },
                 ),
-                ListTile(
-                  leading: role == RoleLoginDigitalParkir.bapenda
-                      ? Icon(Icons.store, color: AppColors.textPrimary)
-                      : Icon(Icons.receipt_long, color: AppColors.textPrimary),
-                  title: role == RoleLoginDigitalParkir.bapenda
-                      ? Text('Objek Pajak', style: AppTypography.bodyRegular)
-                      : Text(
-                          'Riwayat Transaksi',
-                          style: AppTypography.bodyRegular,
-                        ),
-                  onTap: () async {
-                    Navigator.pop(context);
-
-                    if (role == RoleLoginDigitalParkir.jukir) {
-                      context.pushNamed(
-                        AppRoutes.history,
-                        extra: {'isFree': true},
-                      );
-                    } else {
-                      final result = await context.pushNamed(
-                        AppRoutes.searchObjekPajak,
-                        extra: {'role': RoleLoginDigitalParkir.bapenda},
-                      );
-
-                      if (result != null) {
-                        await context.read<HomeCubit>().changeObjekPajak(
-                          result as Map<String, dynamic>,
-                        );
-                      }
-                    }
-                  },
-                ),
                 PbPermissionGate(
                   allowedRoles: [RoleLoginDigitalParkir.bapenda],
                   currentRole: role,
