@@ -41,6 +41,9 @@ _$$DashboardSummaryNonJukirModelImplFromJson(
   detail: json['detail'] == null
       ? const DetailModel()
       : DetailModel.fromJson(json['detail'] as Map<String, dynamic>),
+  berbayar: json['berbayar'] == null
+      ? const BerbayarModel()
+      : BerbayarModel.fromJson(json['berbayar'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$$DashboardSummaryNonJukirModelImplToJson(
@@ -64,6 +67,7 @@ Map<String, dynamic> _$$DashboardSummaryNonJukirModelImplToJson(
   'persentaseDigital': instance.persentaseDigital,
   'persentaseNonDigital': instance.persentaseNonDigital,
   'detail': instance.detail,
+  'berbayar': instance.berbayar,
 };
 
 _$SofParkirResultModelImpl _$$SofParkirResultModelImplFromJson(
@@ -143,4 +147,20 @@ Map<String, dynamic> _$$DetailModelImplToJson(_$DetailModelImpl instance) =>
       'totalTs': instance.totalTs,
       'totalBebasParkir': instance.totalBebasParkir,
       'totalNonDigital': instance.totalNonDigital,
+    };
+
+_$BerbayarModelImpl _$$BerbayarModelImplFromJson(Map<String, dynamic> json) =>
+    _$BerbayarModelImpl(
+      digital: (json['digital'] as num?)?.toInt() ?? 0,
+      nonDigital: (json['nonDigital'] as num?)?.toInt() ?? 0,
+      total: (json['total'] as num?)?.toInt() ?? 0,
+      persentase: (json['persentase'] as num?)?.toDouble() ?? 0,
+    );
+
+Map<String, dynamic> _$$BerbayarModelImplToJson(_$BerbayarModelImpl instance) =>
+    <String, dynamic>{
+      'digital': instance.digital,
+      'nonDigital': instance.nonDigital,
+      'total': instance.total,
+      'persentase': instance.persentase,
     };

@@ -7,6 +7,8 @@ import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/cubit/
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/screen/dashboard_op_screen.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/sub_features/detail_rekap_jenis_pembayaran_op/presentation/detail_rekap_jenis_pembayaran_screen.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
+import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart';
+import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/pendapatan_digital_screen.dart';
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
@@ -119,6 +121,17 @@ class AppRouter {
             return BlocProvider(
               create: (_) => locator<SearchOpCubit>(),
               child: SearchOpPage(role: role, opType: opType),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.pendapatanDigital,
+          name: AppRoutes.pendapatanDigital,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (context) =>
+                  locator<PendapatanDigitalCubit>()..getSummary(),
+              child: PendapatanDigitalScreen(),
             );
           },
         ),

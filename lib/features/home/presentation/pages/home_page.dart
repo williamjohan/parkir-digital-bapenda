@@ -245,10 +245,11 @@ class _HomePageState extends State<HomePage> {
                                                   child: CardTotalOpWidget(
                                                     totalObjekPajak:
                                                         state.totalOp,
-                                                    digitalPercent:
-                                                        state.persentaseDigital,
+                                                    digitalPercent: state
+                                                        .berbayar
+                                                        .persentase,
                                                     jmlDigital:
-                                                        state.totalOpDigital,
+                                                        state.berbayar.digital,
                                                     jmlEdc:
                                                         state.detail.totalEdc,
                                                     jmlQris: state
@@ -258,8 +259,9 @@ class _HomePageState extends State<HomePage> {
                                                         .detail
                                                         .totalCctvCounting,
                                                     jmlTs: state.detail.totalTs,
-                                                    jmlProsesDigital:
-                                                        state.totalOpNonDigital,
+                                                    jmlProsesDigital: state
+                                                        .berbayar
+                                                        .nonDigital,
                                                     jmlGratis:
                                                         state.totalNonTarif,
                                                     onTapDigital: () {},

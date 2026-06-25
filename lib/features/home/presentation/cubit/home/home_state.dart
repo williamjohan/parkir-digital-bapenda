@@ -60,6 +60,8 @@ class HomeState with _$HomeState {
       ),
     )
     DetailEntity detail,
+    @Default(BerbayarEntity(digital: 0, nonDigital: 0, total: 0, persentase: 0))
+    BerbayarEntity berbayar,
 
     @Default(
       OpCategoryEntity(

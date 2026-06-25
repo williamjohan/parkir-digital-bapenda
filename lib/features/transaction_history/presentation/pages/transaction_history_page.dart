@@ -183,7 +183,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   ),
 
                   // 🔹 FILTER KATEGORI (TETAP STATIS DI ATAS)
-                  if (state is TransactionHistoryLoaded)
+                  if (state is TransactionHistoryLoaded && widget.nop != null)
                     _buildFilterSection(state),
 
                   // 🔹 SCROLL AREA DENGAN MAGIC STACK OVERLAY
@@ -294,6 +294,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         persentasePajak: state.persentasePajak.toString(),
                         nominalPajak: state.totalPajak.toString(),
                         totalBersih: state.totalBersih.toString(),
+                        isRealisasiAvailable: widget.nop == null,
 
                         isFree: widget.isFree,
                       );

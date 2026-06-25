@@ -61,6 +61,8 @@ import '../../features/home/data/repositories/home_repository_impl.dart'
     as _i76;
 import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
+import '../../features/home/domain/usecases/get_dashboard_summary_non_jukir_range_usecase.dart'
+    as _i304;
 import '../../features/home/domain/usecases/get_dashboard_summary_non_jukir_usecase.dart'
     as _i348;
 import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart'
@@ -121,6 +123,8 @@ import '../../features/payment/domain/usecases/stop_monitoring_payment_usecase.d
 import '../../features/payment/domain/usecases/watch_payment_status_usecase.dart'
     as _i232;
 import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
+import '../../features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart'
+    as _i376;
 import '../../features/printer/presentation/cubit/printer_cubit.dart' as _i377;
 import '../../features/profile/data/datasources/profile_remote_data_source.dart'
     as _i847;
@@ -430,6 +434,11 @@ _i174.GetIt init(
   gh.lazySingleton<_i770.SyncTarifUseCase>(
     () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
   );
+  gh.lazySingleton<_i304.GetDashboardSummaryNonJukirRangeUseCase>(
+    () => _i304.GetDashboardSummaryNonJukirRangeUseCase(
+      gh<_i274.IHomeRepository>(),
+    ),
+  );
   gh.factory<_i154.DashboardOpCubit>(
     () => _i154.DashboardOpCubit(gh<_i185.GetSummaryDashboardOpUsecase>()),
   );
@@ -461,6 +470,11 @@ _i174.GetIt init(
     () => _i36.ProfileCubit(
       gh<_i965.GetProfileUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i376.PendapatanDigitalCubit>(
+    () => _i376.PendapatanDigitalCubit(
+      gh<_i304.GetDashboardSummaryNonJukirRangeUseCase>(),
     ),
   );
   gh.factory<_i273.HomeCubit>(

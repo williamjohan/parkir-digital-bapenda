@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:intl/intl.dart';
 import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/dio_error_handler.dart';
@@ -12,6 +13,10 @@ abstract class ISummaryRemoteDataSource {
   Future<DashboardSummaryModel> getDashboardSummary({required String nop});
 
   Future<DashboardSummaryNonJukirModel> getDashboardSummaryNonJukir();
+  Future<DashboardSummaryNonJukirModel> getDashboardSummaryNonJukirRange({
+    String? tglAwal,
+    String? tglAkhir,
+  });
 
   Future<List<WeeklyChartItemModel>> getWeeklyChart({required String nop});
 }
@@ -58,6 +63,57 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   Future<DashboardSummaryNonJukirModel> getDashboardSummaryNonJukir() async {
     try {
       final response = await _dio.get(ApiEndpoints.dashboardSummaryNonJukirDev);
+
+      if (response.data['isSuccess'] == true) {
+        return DashboardSummaryNonJukirModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException(
+          statusCode: response.data['statusCode'] ?? response.statusCode ?? 500,
+          message:
+              response.data['message'] ?? 'Gagal mengambil summary dashboard',
+        );
+      }
+    } on DioException catch (e) {
+      throw ServerException(
+        statusCode: e.response?.statusCode ?? 500,
+        message: e.message ?? 'Terjadi kesalahan koneksi saat memuat dashboard',
+      );
+    } catch (e) {
+      throw ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<DashboardSummaryNonJukirModel> getDashboardSummaryNonJukirRange({
+    String? tglAwal,
+    String? tglAkhir,
+  }) async {
+    try {
+      final now = DateTime.now();
+
+      String formatDate(String? date) {
+        if (date == null || date.trim().isEmpty) {
+          return DateFormat('yyyy-MM-dd').format(now);
+        }
+
+        try {
+          return DateFormat('yyyy-MM-dd').format(DateTime.parse(date.trim()));
+        } catch (_) {
+          // Kalau gagal parse, anggap sudah benar atau kirim apa adanya
+          return date.trim();
+        }
+      }
+
+      final response = await _dio.get(
+        ApiEndpoints.summaryRangeDev,
+        queryParameters: {
+          'tglAwal': formatDate(tglAwal),
+          'tglAkhir': formatDate(tglAkhir),
+        },
+      );
 
       if (response.data['isSuccess'] == true) {
         return DashboardSummaryNonJukirModel.fromJson(response.data['data']);
