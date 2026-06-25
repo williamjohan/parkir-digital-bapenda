@@ -245,14 +245,17 @@ class _HomePageState extends State<HomePage> {
                                                   child: CardTotalOpWidget(
                                                     totalObjekPajak:
                                                         state.totalOp,
-                                                    totalOpBerbayar: 0,
                                                     digitalPercent: 0,
-                                                    nonDigitalPercent: 0,
-                                                    totalOpFree: 0,
-                                                    jmlDigital:
-                                                        state.digital.total,
-                                                    jmlNonDigital:
-                                                        state.nonDigital.total,
+                                                    jmlDigital: 0,
+                                                    jmlEdc: 0,
+                                                    jmlQris: 0,
+                                                    jmlCctv: 0,
+                                                    jmlTs: 0,
+                                                    jmlProsesDigital: 0,
+                                                    jmlGratis: 0,
+                                                    onTapDigital: () {},
+                                                    onTapProses: () {},
+                                                    onTapGratis: () {},
                                                     lihatSemuaOnPressed: () async {
                                                       final result = await context
                                                           .pushNamed(
@@ -276,56 +279,6 @@ class _HomePageState extends State<HomePage> {
                                                             );
                                                       }
                                                     },
-                                                    onTapBerbayar: () {
-                                                      context.pushNamed(
-                                                        AppRoutes
-                                                            .searchObjekPajak,
-                                                        extra: {
-                                                          'role':
-                                                              RoleLoginDigitalParkir
-                                                                  .bapenda,
-                                                          'opType': SearchOpType
-                                                              .digital,
-                                                        },
-                                                      );
-                                                    },
-                                                    onTapGratis: () {
-                                                      context.pushNamed(
-                                                        AppRoutes
-                                                            .searchObjekPajak,
-                                                        extra: {
-                                                          'role':
-                                                              RoleLoginDigitalParkir
-                                                                  .bapenda,
-                                                          'opType': SearchOpType
-                                                              .nonDigital,
-                                                        },
-                                                      );
-                                                    },
-
-                                                    // totalOpNonDigitalisasi:
-                                                    //     state.nonDigital.total,
-                                                    // totalOpFree:
-                                                    //     state.totalOpFree,
-                                                    // totalOpNonFree:
-                                                    //     state.totalOpNonFree,
-
-                                                    // totalOpFreeDigitalisasi:
-                                                    //     state
-                                                    //         .digital
-                                                    //         .totalNonTarif,
-                                                    // totalOpNonFreeDigitalisasi:
-                                                    //     state
-                                                    //         .digital
-                                                    //         .totalBertarif,
-                                                    // totalOpFreeNonDigitalisasi:
-                                                    //     state
-                                                    //         .nonDigital
-                                                    //         .totalNonTarif,
-                                                    // totalOpNonFreeNonDigitalisasi:
-                                                    //     state
-                                                    //         .nonDigital
-                                                    //         .totalBertarif,
                                                   ),
                                                 ),
                                               ),

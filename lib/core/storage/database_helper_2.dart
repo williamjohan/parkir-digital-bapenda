@@ -106,7 +106,7 @@ class DatabaseHelper2 {
   /// Ambil seluruh NOP
   Future<List<Map<String, dynamic>>> getNopList() async {
     final db = await database;
-    return await db.query(tableNopList, orderBy: 'nama_op ASC');
+    return await db.query(tableNopList);
   }
 
   /// Ambil NOP berdasarkan status digital
@@ -118,17 +118,12 @@ class DatabaseHelper2 {
       tableNopList,
       where: 'is_digital = ?',
       whereArgs: [isDigital ? 1 : 0],
-      orderBy: 'nama_op ASC',
     );
   }
 
   Future<List<Map<String, dynamic>>> getNopListByTarif(String tarif) async {
     final db = await database;
-    return await db.query(
-      tableNopList,
-      where: 'pungut_tarif = $tarif',
-      orderBy: 'nama_op ASC',
-    );
+    return await db.query(tableNopList, where: 'pungut_tarif = $tarif');
   }
 
   /// Hapus semua data NOP

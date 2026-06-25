@@ -13,6 +13,7 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../cubit/search_op/search_op_cubit.dart';
 import '../cubit/search_op/search_op_state.dart';
+import '../widgets/search_op_widget.dart';
 
 class SearchOpPage extends StatefulWidget {
   final RoleLoginDigitalParkir role;
@@ -27,6 +28,7 @@ class SearchOpPage extends StatefulWidget {
 class _SearchOpPageState extends State<SearchOpPage> {
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
+  int selectedFilter = 0;
 
   @override
   void initState() {
@@ -53,6 +55,34 @@ class _SearchOpPageState extends State<SearchOpPage> {
     });
   }
 
+  void _onFilterChanged(int index) {
+    setState(() {
+      selectedFilter = index;
+    });
+
+    searchController.clear();
+
+    final cubit = context.read<SearchOpCubit>();
+
+    switch (index) {
+      case 0:
+        cubit.getNopList();
+        break;
+
+      case 1:
+        cubit.getNopListByKategori(type: SearchOpType.digital);
+        break;
+
+      case 2:
+        cubit.getNopListByKategori(type: SearchOpType.nonDigital);
+        break;
+
+      case 3:
+        cubit.getNopListByKategori(type: SearchOpType.free);
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -77,6 +107,14 @@ class _SearchOpPageState extends State<SearchOpPage> {
                 hintText: 'Cari berdasarkan nama / alamat ...',
                 onChanged: _onSearchChanged,
               ),
+              const SizedBox(height: 12),
+
+              SearchOpFilterWidget(
+                selectedIndex: selectedFilter,
+                onChanged: _onFilterChanged,
+              ),
+
+              const SizedBox(height: 16),
 
               const SizedBox(height: 16),
 

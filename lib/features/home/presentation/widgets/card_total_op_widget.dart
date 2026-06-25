@@ -6,43 +6,47 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 
 class CardTotalOpWidget extends StatelessWidget {
   final int totalObjekPajak;
-  final int totalOpBerbayar;
-  final int jmlDigital;
-  final int jmlNonDigital;
-  final int totalOpFree;
-  final VoidCallback? lihatSemuaOnPressed;
-  final VoidCallback? onTapBerbayar;
-  final VoidCallback? onTapGratis;
   final double digitalPercent;
-  final double nonDigitalPercent;
+  final int jmlDigital;
+  final int jmlEdc;
+  final int jmlQris;
+  final int jmlCctv;
+  final int jmlTs;
+  final int jmlProsesDigital;
+  final int jmlGratis;
+  final VoidCallback? lihatSemuaOnPressed;
+  final VoidCallback? onTapDigital;
+  final VoidCallback? onTapProses;
+  final VoidCallback? onTapGratis;
 
   const CardTotalOpWidget({
     super.key,
     required this.totalObjekPajak,
-    required this.totalOpBerbayar,
-    required this.totalOpFree,
-    required this.lihatSemuaOnPressed,
-    required this.onTapBerbayar,
-    required this.onTapGratis,
     required this.digitalPercent,
-    required this.nonDigitalPercent,
     required this.jmlDigital,
-    required this.jmlNonDigital,
+    required this.jmlEdc,
+    required this.jmlQris,
+    required this.jmlCctv,
+    required this.jmlTs,
+    required this.jmlProsesDigital,
+    required this.jmlGratis,
+    required this.lihatSemuaOnPressed,
+    required this.onTapDigital,
+    required this.onTapProses,
+    required this.onTapGratis,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24), // Diperbesar sedikit agar tidak sesak
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: Colors.grey.shade200,
-        ), // Tambahan border tipis
+        border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04), // Shadow dihaluskan
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -71,7 +75,7 @@ class CardTotalOpWidget extends StatelessWidget {
                       NumberFormatter.format(totalObjekPajak.toString()),
                       style: AppTypography.heading1.copyWith(
                         color: AppColors.primary,
-                        fontSize: 32, // Angka diperbesar
+                        fontSize: 32,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -91,9 +95,54 @@ class CardTotalOpWidget extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                 ),
                 child: Icon(
-                  Icons.domain_outlined, // Icon gedung lebih representatif
+                  Icons.domain_outlined,
                   color: AppColors.primary,
                   size: 28,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          /// === LINE INDICATOR DIGITAL & PROSES ===
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Progres Digitalisasi",
+                    style: AppTypography.caption.copyWith(
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "${(digitalPercent * 100).toStringAsFixed(1)}%",
+                    style: AppTypography.bodySemiBold.copyWith(
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: digitalPercent,
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  minHeight: 10,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "${NumberFormatter.format(jmlDigital.toString())} Digital + ${NumberFormatter.format(jmlProsesDigital.toString())} Proses",
+                style: AppTypography.caption.copyWith(
+                  color: Colors.grey.shade500,
+                  fontSize: 11,
                 ),
               ),
             ],
@@ -104,28 +153,71 @@ class CardTotalOpWidget extends StatelessWidget {
             child: Divider(height: 1),
           ),
 
-          /// === LIST ITEM NON-DIGITAL ===
+          /// === 1. CARD DIGITAL (WITH GRID BREAKDOWN) ===
           _statusItem(
-            icon: Icons.check_circle_outline,
-
-            iconColor: AppColors.info,
-            bgColor: AppColors.info.withValues(alpha: 0.12),
-            title: "Berbayar",
-            subtitle: "Objek pajak bertarif",
-            total: totalOpBerbayar,
-            digitalCount: jmlDigital,
-            nonDigitalCount: jmlNonDigital,
-            onTap: onTapBerbayar,
+            icon: Icons.qr_code_scanner_rounded,
+            iconColor: Colors.green,
+            bgColor: Colors.green.withValues(alpha: 0.12),
+            title: "Digital",
+            subtitle: "Sudah terintegrasi sistem digital",
+            total: jmlDigital,
+            onTap: onTapDigital,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 2.3,
+                children: [
+                  _miniInstrumentCard(
+                    title: "EDC",
+                    value: jmlEdc,
+                    icon: Icons.credit_card_rounded,
+                  ),
+                  _miniInstrumentCard(
+                    title: "QRIS",
+                    value: jmlQris,
+                    icon: Icons.qr_code_2_rounded,
+                  ),
+                  _miniInstrumentCard(
+                    title: "CCTV",
+                    value: jmlCctv,
+                    icon: Icons.videocam_rounded,
+                  ),
+                  _miniInstrumentCard(
+                    title: "TS",
+                    value: jmlTs,
+                    icon: Icons.touch_app_rounded,
+                  ),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
-          /// === LIST ITEM DIGITALISASI ===
+          /// === 2. CARD PROSES DIGITAL ===
           _statusItem(
-            icon: Icons.cancel_outlined,
-            iconColor: AppColors.error,
-            bgColor: AppColors.error.withValues(alpha: 0.12),
+            icon: Icons.hourglass_top_rounded,
+            iconColor: Colors.orange,
+            bgColor: Colors.orange.withValues(alpha: 0.12),
+            title: "Proses Digital",
+            subtitle: "Dalam tahap integrasi/survei",
+            total: jmlProsesDigital,
+            onTap: onTapProses,
+          ),
+          const SizedBox(height: 14),
+
+          /// === 3. CARD GRATIS ===
+          _statusItem(
+            icon: Icons.money_off_rounded,
+            iconColor: Colors.grey.shade600,
+            bgColor: Colors.grey.shade200,
             title: "Gratis",
-            subtitle: "Tidak bertarif",
+            subtitle: "Tidak dikenakan tarif parkir",
+            total: jmlGratis,
             onTap: onTapGratis,
           ),
 
@@ -142,149 +234,109 @@ class CardTotalOpWidget extends StatelessWidget {
       ),
     );
   }
-}
 
-/// WIDGET ANAK STATUS ITEM
-Widget _statusItem({
-  required IconData icon,
-  required Color iconColor,
-  required Color bgColor,
-  required String title,
-  required String subtitle,
-  int? total,
-  int? digitalCount,
-  int? nonDigitalCount,
-  required VoidCallback? onTap,
-}) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.grey.shade100),
-        color: Colors.grey.shade50,
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: iconColor, size: 24),
-              ),
-              const SizedBox(width: 16),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: AppTypography.bodySemiBold),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: AppTypography.caption.copyWith(
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    NumberFormatter.format(total.toString()),
-                    style: AppTypography.heading2,
+  /// WIDGET CARD UTAMA (REUSABLE)
+  Widget _statusItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    required String title,
+    required String subtitle,
+    required int total,
+    required VoidCallback? onTap,
+    Widget? child,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.grey.shade100),
+          color: Colors.grey.shade50,
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ],
-              ),
-            ],
-          ),
-
-          if (nonDigitalCount != null && digitalCount != null) ...[
-            const SizedBox(height: 14),
-            _miniInfoCard(
-              icon: Icons.payments_rounded,
-              title: "Sudah Digital",
-              value: digitalCount!,
-              color: Colors.green,
-              percentage: 0,
+                  child: Icon(icon, color: iconColor, size: 24),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: AppTypography.bodySemiBold),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: AppTypography.caption.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  NumberFormatter.format(total.toString()),
+                  style: AppTypography.heading2,
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            _miniInfoCard(
-              icon: Icons.money_off_rounded,
-
-              title: "Belum Digital",
-              value: nonDigitalCount!,
-              color: Colors.orange,
-              percentage: 0,
-            ),
+            if (child != null) child,
           ],
+        ),
+      ),
+    );
+  }
+
+  /// WIDGET MINI UNTUK INSTRUMEN DIGITAL (EDC, QRIS, DLL)
+  Widget _miniInstrumentCard({
+    required String title,
+    required int value,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: Colors.green.shade600),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: AppTypography.caption.copyWith(
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  NumberFormatter.format(value.toString()),
+                  style: AppTypography.bodySemiBold.copyWith(
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
-    ),
-  );
-}
-
-Widget _miniInfoCard({
-  required IconData icon,
-  required String title,
-  required int value,
-  required Color color,
-  required double percentage,
-}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: 0.08),
-      borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: color.withValues(alpha: 0.15)),
-    ),
-    child: Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, size: 16, color: color),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTypography.caption.copyWith(
-                  color: Colors.grey.shade700,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    NumberFormatter.format(value.toString()),
-                    style: AppTypography.bodySemiBold.copyWith(color: color),
-                  ),
-                  Text(
-                    "${percentage.toStringAsFixed(1)}%",
-                    style: AppTypography.bodySemiBold.copyWith(color: color),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
+    );
+  }
 }
