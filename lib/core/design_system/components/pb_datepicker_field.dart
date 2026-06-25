@@ -82,7 +82,10 @@ class _DateRangeFieldState extends State<DateRangeField> {
               child: TextField(
                 controller: _controller,
                 readOnly: true,
-                style: AppTypography.bodySemiBold.copyWith(color: Colors.white),
+                style: AppTypography.bodySemiBold.copyWith(
+                  color: Colors.white,
+                  fontSize: _controller.text.length > 20 ? 12 : 14,
+                ),
                 decoration: InputDecoration(
                   hintText: 'Pilih rentang tanggal',
                   hintStyle: AppTypography.bodySemiBold.copyWith(

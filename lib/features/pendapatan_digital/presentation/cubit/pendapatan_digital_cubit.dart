@@ -11,15 +11,23 @@ class PendapatanDigitalCubit extends Cubit<PendapatanDigitalState> {
   PendapatanDigitalCubit(this._useCase) : super(const PendapatanDigitalState());
 
   Future<void> getSummary({String? tglAwal, String? tglAkhir}) async {
+    if (isClosed) return;
+
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final result = await _useCase.execute(tglAwal: tglAwal, tglAkhir: tglAkhir);
 
+    if (isClosed) return;
+
     result.fold(
       (failure) {
+        if (isClosed) return;
+
         emit(state.copyWith(isLoading: false, errorMessage: failure.message));
       },
       (data) {
+        if (isClosed) return;
+
         emit(
           state.copyWith(
             isLoading: false,
@@ -34,6 +42,8 @@ class PendapatanDigitalCubit extends Cubit<PendapatanDigitalState> {
   }
 
   Future<void> refresh() async {
+    if (isClosed) return;
+
     await getSummary(tglAwal: state.tglAwal, tglAkhir: state.tglAkhir);
   }
 }
