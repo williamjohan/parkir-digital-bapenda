@@ -52,7 +52,7 @@ class HeaderDashboardOpShimmer extends StatelessWidget {
                   child: Container(
                     height: 90,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(.4),
+                      color: Colors.white.withValues(alpha: .4),
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/constants/feature_flag.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -31,7 +32,7 @@ class HomeDrawer extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.only(
               top: 60,
-              bottom: 52,
+              bottom: 30,
               left: 24,
               right: 24,
             ),
@@ -42,6 +43,10 @@ class HomeDrawer extends StatelessWidget {
                 Text(
                   "PARKIR DIGITAL",
                   style: AppTypography.heading1.copyWith(color: Colors.white),
+                ),
+                Text(
+                  "© Bapenda Kota Surabaya",
+                  style: AppTypography.heading6.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 4),
                 FutureBuilder<PackageInfo>(
@@ -76,14 +81,15 @@ class HomeDrawer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
                 ListTile(
-                  leading: const Icon(
-                    Icons.store,
-                    color: AppColors.textPrimary,
-                  ),
-                  title: const Text(
-                    'Objek Pajak',
-                    style: AppTypography.bodyRegular,
-                  ),
+                  leading: role == RoleLoginDigitalParkir.bapenda
+                      ? Icon(Icons.store, color: AppColors.textPrimary)
+                      : Icon(Icons.receipt_long, color: AppColors.textPrimary),
+                  title: role == RoleLoginDigitalParkir.bapenda
+                      ? Text('Objek Pajak', style: AppTypography.bodyRegular)
+                      : Text(
+                          'Riwayat Transaksi',
+                          style: AppTypography.bodyRegular,
+                        ),
                   onTap: () async {
                     Navigator.pop(context);
 
@@ -140,6 +146,41 @@ class HomeDrawer extends StatelessWidget {
                   ),
                 ],
 
+                PbPermissionGate(
+                  allowedRoles: [RoleLoginDigitalParkir.bapenda],
+                  currentRole: role,
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.trending_up,
+                      color: AppColors.textPrimary,
+                    ),
+                    title: const Text(
+                      'Realisasi',
+                      style: AppTypography.bodyRegular,
+                    ),
+                    onTap: () async {
+                      Navigator.pop(context);
+
+                      if (role == RoleLoginDigitalParkir.jukir) {
+                        context.pushNamed(
+                          AppRoutes.history,
+                          extra: {'isFree': true},
+                        );
+                      } else {
+                        final result = await context.pushNamed(
+                          AppRoutes.searchObjekPajak,
+                          extra: {'role': RoleLoginDigitalParkir.bapenda},
+                        );
+
+                        if (result != null) {
+                          await context.read<HomeCubit>().changeObjekPajak(
+                            result as Map<String, dynamic>,
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ),
                 ListTile(
                   leading: const Icon(
                     Icons.person_outline,

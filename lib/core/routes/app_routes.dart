@@ -18,4 +18,6 @@ class AppRoutes {
       '/detail-rekap-jenis-pembayaran';
   static const String detailRealisasiObjekPajak = '/detail-realisasi-op';
   static const String pendapatanDigital = '/pendapatan-digital';
+  static const String realisasiSeluruhOP =
+      '/api/mobile/parking/dashboard-summary-nonjukir-realisasi-dev';
 }
