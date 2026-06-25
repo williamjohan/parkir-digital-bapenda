@@ -14,4 +14,7 @@ abstract class IHomeRepository {
 
   Future<Either<Failure, DashboardSummaryNonJukirEntity>>
   getDashboardSummaryNonJukir();
+
+  Future<Either<Failure, DashboardSummaryNonJukirEntity>>
+  getDashboardSummaryNonJukirRange({String? tglAwal, String? tglAkhir});
 }

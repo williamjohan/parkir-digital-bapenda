@@ -106,24 +106,40 @@ class HomeDrawer extends StatelessWidget {
                     }
                   },
                 ),
-                if (role == RoleLoginDigitalParkir.bapenda)
+                if (role == RoleLoginDigitalParkir.bapenda) ...[
+                  // ListTile(
+                  //   leading: const Icon(
+                  //     Icons.history,
+                  //     color: AppColors.textPrimary,
+                  //   ),
+                  //   title: const Text(
+                  //     'Transaksi & Realisasi',
+                  //     style: AppTypography.bodyRegular,
+                  //   ),
+                  //   onTap: () {
+                  //     Navigator.pop(context); // Tutup drawer
+                  //     context.pushNamed(
+                  //       AppRoutes.history,
+                  //       extra: {'isFree': false},
+                  //     );
+                  //   },
+                  // ),
                   ListTile(
                     leading: const Icon(
-                      Icons.history,
+                      Icons.money,
                       color: AppColors.textPrimary,
                     ),
                     title: const Text(
-                      'Transaksi & Realisasi',
+                      'Pendapatan Digital',
                       style: AppTypography.bodyRegular,
                     ),
                     onTap: () {
                       Navigator.pop(context); // Tutup drawer
-                      context.pushNamed(
-                        AppRoutes.history,
-                        extra: {'isFree': false},
-                      );
+                      context.push(AppRoutes.pendapatanDigital);
                     },
                   ),
+                ],
+
                 ListTile(
                   leading: const Icon(
                     Icons.person_outline,

@@ -130,27 +130,27 @@ class HistoryRecapWidget extends StatelessWidget {
           // ==========================================
           // BARIS 2: METRIK KENDARAAN (2 KOLOM SAMA RATA)
           // ==========================================
-          if (isRealisasiAvailable == false)
-            Row(
-              children: [
-                Expanded(
-                  child: HistoryRecapItem(
-                    title: "Roda 2",
-                    subTitle: "Transaksi",
-                    value: roda2,
-                  ),
+          // if (isRealisasiAvailable == false)
+          Row(
+            children: [
+              Expanded(
+                child: HistoryRecapItem(
+                  title: "Roda 2",
+                  subTitle: "Transaksi",
+                  value: roda2,
                 ),
-                Container(width: 1, height: 40, color: AppColors.border),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: HistoryRecapItem(
-                    title: "Roda 4",
-                    subTitle: "Transaksi",
-                    value: roda4,
-                  ),
+              ),
+              Container(width: 1, height: 40, color: AppColors.border),
+              const SizedBox(width: 12),
+              Expanded(
+                child: HistoryRecapItem(
+                  title: "Roda 4",
+                  subTitle: "Transaksi",
+                  value: roda4,
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
         ],
       ),
     );

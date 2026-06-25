@@ -42,4 +42,6 @@ class ApiEndpoints {
   static const String qrisRompiDev = '/api/mobile/parking/get-qris-rompi-dev';
 
   static const String summaryOpDev = '/api/mobile/parking/get-summary-op-dev';
+  static const String summaryRangeDev =
+      '/api/mobile/parking/dashboard-summary-nonjukir-range-dev';
 }

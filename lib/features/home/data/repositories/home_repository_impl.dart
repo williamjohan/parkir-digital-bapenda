@@ -116,4 +116,19 @@ class HomeRepositoryImpl implements IHomeRepository {
       return Left(ServerFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, DashboardSummaryNonJukirEntity>>
+  getDashboardSummaryNonJukirRange({String? tglAwal, String? tglAkhir}) async {
+    try {
+      final model = await _summaryRemoteDS.getDashboardSummaryNonJukirRange(
+        tglAwal: tglAwal,
+        tglAkhir: tglAkhir,
+      );
+
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
 }
