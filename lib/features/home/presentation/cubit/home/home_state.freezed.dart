@@ -45,6 +45,7 @@ mixin _$HomeState {
   int get totalNonTarif => throw _privateConstructorUsedError;
   int get totalTarifTidakDiketahui => throw _privateConstructorUsedError;
   DetailEntity get detail => throw _privateConstructorUsedError;
+  BerbayarEntity get berbayar => throw _privateConstructorUsedError;
   OpCategoryEntity get nonDigital => throw _privateConstructorUsedError;
   double get persentaseDigital => throw _privateConstructorUsedError;
   double get persentaseNonDigital => throw _privateConstructorUsedError;
@@ -90,6 +91,7 @@ abstract class $HomeStateCopyWith<$Res> {
     int totalNonTarif,
     int totalTarifTidakDiketahui,
     DetailEntity detail,
+    BerbayarEntity berbayar,
     OpCategoryEntity nonDigital,
     double persentaseDigital,
     double persentaseNonDigital,
@@ -99,6 +101,7 @@ abstract class $HomeStateCopyWith<$Res> {
 
   $OpCategoryEntityCopyWith<$Res> get digital;
   $DetailEntityCopyWith<$Res> get detail;
+  $BerbayarEntityCopyWith<$Res> get berbayar;
   $OpCategoryEntityCopyWith<$Res> get nonDigital;
 }
 
@@ -142,6 +145,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? totalNonTarif = null,
     Object? totalTarifTidakDiketahui = null,
     Object? detail = null,
+    Object? berbayar = null,
     Object? nonDigital = null,
     Object? persentaseDigital = null,
     Object? persentaseNonDigital = null,
@@ -250,6 +254,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.detail
                 : detail // ignore: cast_nullable_to_non_nullable
                       as DetailEntity,
+            berbayar: null == berbayar
+                ? _value.berbayar
+                : berbayar // ignore: cast_nullable_to_non_nullable
+                      as BerbayarEntity,
             nonDigital: null == nonDigital
                 ? _value.nonDigital
                 : nonDigital // ignore: cast_nullable_to_non_nullable
@@ -299,6 +307,16 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $BerbayarEntityCopyWith<$Res> get berbayar {
+    return $BerbayarEntityCopyWith<$Res>(_value.berbayar, (value) {
+      return _then(_value.copyWith(berbayar: value) as $Val);
+    });
+  }
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $OpCategoryEntityCopyWith<$Res> get nonDigital {
     return $OpCategoryEntityCopyWith<$Res>(_value.nonDigital, (value) {
       return _then(_value.copyWith(nonDigital: value) as $Val);
@@ -341,6 +359,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     int totalNonTarif,
     int totalTarifTidakDiketahui,
     DetailEntity detail,
+    BerbayarEntity berbayar,
     OpCategoryEntity nonDigital,
     double persentaseDigital,
     double persentaseNonDigital,
@@ -352,6 +371,8 @@ abstract class _$$HomeStateImplCopyWith<$Res>
   $OpCategoryEntityCopyWith<$Res> get digital;
   @override
   $DetailEntityCopyWith<$Res> get detail;
+  @override
+  $BerbayarEntityCopyWith<$Res> get berbayar;
   @override
   $OpCategoryEntityCopyWith<$Res> get nonDigital;
 }
@@ -395,6 +416,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? totalNonTarif = null,
     Object? totalTarifTidakDiketahui = null,
     Object? detail = null,
+    Object? berbayar = null,
     Object? nonDigital = null,
     Object? persentaseDigital = null,
     Object? persentaseNonDigital = null,
@@ -503,6 +525,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.detail
             : detail // ignore: cast_nullable_to_non_nullable
                   as DetailEntity,
+        berbayar: null == berbayar
+            ? _value.berbayar
+            : berbayar // ignore: cast_nullable_to_non_nullable
+                  as BerbayarEntity,
         nonDigital: null == nonDigital
             ? _value.nonDigital
             : nonDigital // ignore: cast_nullable_to_non_nullable
@@ -571,6 +597,12 @@ class _$HomeStateImpl implements _HomeState {
       totalTs: 0,
       totalBebasParkir: 0,
       totalNonDigital: 0,
+    ),
+    this.berbayar = const BerbayarEntity(
+      digital: 0,
+      nonDigital: 0,
+      total: 0,
+      persentase: 0,
     ),
     this.nonDigital = const OpCategoryEntity(
       total: 0,
@@ -675,6 +707,9 @@ class _$HomeStateImpl implements _HomeState {
   final DetailEntity detail;
   @override
   @JsonKey()
+  final BerbayarEntity berbayar;
+  @override
+  @JsonKey()
   final OpCategoryEntity nonDigital;
   @override
   @JsonKey()
@@ -698,7 +733,7 @@ class _$HomeStateImpl implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role)';
+    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role)';
   }
 
   @override
@@ -759,6 +794,8 @@ class _$HomeStateImpl implements _HomeState {
                 ) ||
                 other.totalTarifTidakDiketahui == totalTarifTidakDiketahui) &&
             (identical(other.detail, detail) || other.detail == detail) &&
+            (identical(other.berbayar, berbayar) ||
+                other.berbayar == berbayar) &&
             (identical(other.nonDigital, nonDigital) ||
                 other.nonDigital == nonDigital) &&
             (identical(other.persentaseDigital, persentaseDigital) ||
@@ -800,6 +837,7 @@ class _$HomeStateImpl implements _HomeState {
     totalNonTarif,
     totalTarifTidakDiketahui,
     detail,
+    berbayar,
     nonDigital,
     persentaseDigital,
     persentaseNonDigital,
@@ -843,6 +881,7 @@ abstract class _HomeState implements HomeState {
     final int totalNonTarif,
     final int totalTarifTidakDiketahui,
     final DetailEntity detail,
+    final BerbayarEntity berbayar,
     final OpCategoryEntity nonDigital,
     final double persentaseDigital,
     final double persentaseNonDigital,
@@ -900,6 +939,8 @@ abstract class _HomeState implements HomeState {
   int get totalTarifTidakDiketahui;
   @override
   DetailEntity get detail;
+  @override
+  BerbayarEntity get berbayar;
   @override
   OpCategoryEntity get nonDigital;
   @override

@@ -161,6 +161,12 @@ class HomeCubit extends Cubit<HomeState> {
                 totalBebasParkir: 0,
                 totalNonDigital: 0,
               ),
+              berbayar: const BerbayarEntity(
+                digital: 0,
+                nonDigital: 0,
+                total: 0,
+                persentase: 0,
+              ),
 
               persentaseDigital: 0,
               persentaseNonDigital: 0,
@@ -192,6 +198,7 @@ class HomeCubit extends Cubit<HomeState> {
               totalNonTarif: summary.totalNonTarif,
               totalTarifTidakDiketahui: summary.totalTarifTidakDiketahui,
               detail: summary.detail,
+              berbayar: summary.berbayar,
             ),
           );
         }

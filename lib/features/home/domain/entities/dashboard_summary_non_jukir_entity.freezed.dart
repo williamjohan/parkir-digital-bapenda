@@ -37,6 +37,7 @@ mixin _$DashboardSummaryNonJukirEntity {
   OpCategoryEntity get digital => throw _privateConstructorUsedError;
   OpCategoryEntity get nonDigital => throw _privateConstructorUsedError;
   DetailEntity get detail => throw _privateConstructorUsedError;
+  BerbayarEntity get berbayar => throw _privateConstructorUsedError;
   double get persentaseDigital => throw _privateConstructorUsedError;
   double get persentaseNonDigital => throw _privateConstructorUsedError;
 
@@ -76,6 +77,7 @@ abstract class $DashboardSummaryNonJukirEntityCopyWith<$Res> {
     OpCategoryEntity digital,
     OpCategoryEntity nonDigital,
     DetailEntity detail,
+    BerbayarEntity berbayar,
     double persentaseDigital,
     double persentaseNonDigital,
   });
@@ -83,6 +85,7 @@ abstract class $DashboardSummaryNonJukirEntityCopyWith<$Res> {
   $OpCategoryEntityCopyWith<$Res> get digital;
   $OpCategoryEntityCopyWith<$Res> get nonDigital;
   $DetailEntityCopyWith<$Res> get detail;
+  $BerbayarEntityCopyWith<$Res> get berbayar;
 }
 
 /// @nodoc
@@ -120,6 +123,7 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
     Object? digital = null,
     Object? nonDigital = null,
     Object? detail = null,
+    Object? berbayar = null,
     Object? persentaseDigital = null,
     Object? persentaseNonDigital = null,
   }) {
@@ -195,6 +199,10 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
                 ? _value.detail
                 : detail // ignore: cast_nullable_to_non_nullable
                       as DetailEntity,
+            berbayar: null == berbayar
+                ? _value.berbayar
+                : berbayar // ignore: cast_nullable_to_non_nullable
+                      as BerbayarEntity,
             persentaseDigital: null == persentaseDigital
                 ? _value.persentaseDigital
                 : persentaseDigital // ignore: cast_nullable_to_non_nullable
@@ -237,6 +245,16 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
       return _then(_value.copyWith(detail: value) as $Val);
     });
   }
+
+  /// Create a copy of DashboardSummaryNonJukirEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $BerbayarEntityCopyWith<$Res> get berbayar {
+    return $BerbayarEntityCopyWith<$Res>(_value.berbayar, (value) {
+      return _then(_value.copyWith(berbayar: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -266,6 +284,7 @@ abstract class _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res>
     OpCategoryEntity digital,
     OpCategoryEntity nonDigital,
     DetailEntity detail,
+    BerbayarEntity berbayar,
     double persentaseDigital,
     double persentaseNonDigital,
   });
@@ -276,6 +295,8 @@ abstract class _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res>
   $OpCategoryEntityCopyWith<$Res> get nonDigital;
   @override
   $DetailEntityCopyWith<$Res> get detail;
+  @override
+  $BerbayarEntityCopyWith<$Res> get berbayar;
 }
 
 /// @nodoc
@@ -313,6 +334,7 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
     Object? digital = null,
     Object? nonDigital = null,
     Object? detail = null,
+    Object? berbayar = null,
     Object? persentaseDigital = null,
     Object? persentaseNonDigital = null,
   }) {
@@ -387,6 +409,10 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
             ? _value.detail
             : detail // ignore: cast_nullable_to_non_nullable
                   as DetailEntity,
+        berbayar: null == berbayar
+            ? _value.berbayar
+            : berbayar // ignore: cast_nullable_to_non_nullable
+                  as BerbayarEntity,
         persentaseDigital: null == persentaseDigital
             ? _value.persentaseDigital
             : persentaseDigital // ignore: cast_nullable_to_non_nullable
@@ -422,6 +448,7 @@ class _$DashboardSummaryNonJukirEntityImpl
     required this.digital,
     required this.nonDigital,
     required this.detail,
+    required this.berbayar,
     required this.persentaseDigital,
     required this.persentaseNonDigital,
   }) : _sofParkirResults = sofParkirResults;
@@ -469,13 +496,15 @@ class _$DashboardSummaryNonJukirEntityImpl
   @override
   final DetailEntity detail;
   @override
+  final BerbayarEntity berbayar;
+  @override
   final double persentaseDigital;
   @override
   final double persentaseNonDigital;
 
   @override
   String toString() {
-    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, totalOpFree: $totalOpFree, totalOpNonFree: $totalOpNonFree, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults, digital: $digital, nonDigital: $nonDigital, detail: $detail, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital)';
+    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, totalOpFree: $totalOpFree, totalOpNonFree: $totalOpNonFree, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults, digital: $digital, nonDigital: $nonDigital, detail: $detail, berbayar: $berbayar, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital)';
   }
 
   @override
@@ -527,6 +556,8 @@ class _$DashboardSummaryNonJukirEntityImpl
             (identical(other.nonDigital, nonDigital) ||
                 other.nonDigital == nonDigital) &&
             (identical(other.detail, detail) || other.detail == detail) &&
+            (identical(other.berbayar, berbayar) ||
+                other.berbayar == berbayar) &&
             (identical(other.persentaseDigital, persentaseDigital) ||
                 other.persentaseDigital == persentaseDigital) &&
             (identical(other.persentaseNonDigital, persentaseNonDigital) ||
@@ -553,6 +584,7 @@ class _$DashboardSummaryNonJukirEntityImpl
     digital,
     nonDigital,
     detail,
+    berbayar,
     persentaseDigital,
     persentaseNonDigital,
   ]);
@@ -591,6 +623,7 @@ abstract class _DashboardSummaryNonJukirEntity
     required final OpCategoryEntity digital,
     required final OpCategoryEntity nonDigital,
     required final DetailEntity detail,
+    required final BerbayarEntity berbayar,
     required final double persentaseDigital,
     required final double persentaseNonDigital,
   }) = _$DashboardSummaryNonJukirEntityImpl;
@@ -629,6 +662,8 @@ abstract class _DashboardSummaryNonJukirEntity
   OpCategoryEntity get nonDigital;
   @override
   DetailEntity get detail;
+  @override
+  BerbayarEntity get berbayar;
   @override
   double get persentaseDigital;
   @override
@@ -1540,5 +1575,205 @@ abstract class _DetailEntity implements DetailEntity {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DetailEntityImplCopyWith<_$DetailEntityImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$BerbayarEntity {
+  int get digital => throw _privateConstructorUsedError;
+  int get nonDigital => throw _privateConstructorUsedError;
+  int get total => throw _privateConstructorUsedError;
+  double get persentase => throw _privateConstructorUsedError;
+
+  /// Create a copy of BerbayarEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $BerbayarEntityCopyWith<BerbayarEntity> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BerbayarEntityCopyWith<$Res> {
+  factory $BerbayarEntityCopyWith(
+    BerbayarEntity value,
+    $Res Function(BerbayarEntity) then,
+  ) = _$BerbayarEntityCopyWithImpl<$Res, BerbayarEntity>;
+  @useResult
+  $Res call({int digital, int nonDigital, int total, double persentase});
+}
+
+/// @nodoc
+class _$BerbayarEntityCopyWithImpl<$Res, $Val extends BerbayarEntity>
+    implements $BerbayarEntityCopyWith<$Res> {
+  _$BerbayarEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of BerbayarEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? digital = null,
+    Object? nonDigital = null,
+    Object? total = null,
+    Object? persentase = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            digital: null == digital
+                ? _value.digital
+                : digital // ignore: cast_nullable_to_non_nullable
+                      as int,
+            nonDigital: null == nonDigital
+                ? _value.nonDigital
+                : nonDigital // ignore: cast_nullable_to_non_nullable
+                      as int,
+            total: null == total
+                ? _value.total
+                : total // ignore: cast_nullable_to_non_nullable
+                      as int,
+            persentase: null == persentase
+                ? _value.persentase
+                : persentase // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$BerbayarEntityImplCopyWith<$Res>
+    implements $BerbayarEntityCopyWith<$Res> {
+  factory _$$BerbayarEntityImplCopyWith(
+    _$BerbayarEntityImpl value,
+    $Res Function(_$BerbayarEntityImpl) then,
+  ) = __$$BerbayarEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int digital, int nonDigital, int total, double persentase});
+}
+
+/// @nodoc
+class __$$BerbayarEntityImplCopyWithImpl<$Res>
+    extends _$BerbayarEntityCopyWithImpl<$Res, _$BerbayarEntityImpl>
+    implements _$$BerbayarEntityImplCopyWith<$Res> {
+  __$$BerbayarEntityImplCopyWithImpl(
+    _$BerbayarEntityImpl _value,
+    $Res Function(_$BerbayarEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of BerbayarEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? digital = null,
+    Object? nonDigital = null,
+    Object? total = null,
+    Object? persentase = null,
+  }) {
+    return _then(
+      _$BerbayarEntityImpl(
+        digital: null == digital
+            ? _value.digital
+            : digital // ignore: cast_nullable_to_non_nullable
+                  as int,
+        nonDigital: null == nonDigital
+            ? _value.nonDigital
+            : nonDigital // ignore: cast_nullable_to_non_nullable
+                  as int,
+        total: null == total
+            ? _value.total
+            : total // ignore: cast_nullable_to_non_nullable
+                  as int,
+        persentase: null == persentase
+            ? _value.persentase
+            : persentase // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$BerbayarEntityImpl implements _BerbayarEntity {
+  const _$BerbayarEntityImpl({
+    required this.digital,
+    required this.nonDigital,
+    required this.total,
+    required this.persentase,
+  });
+
+  @override
+  final int digital;
+  @override
+  final int nonDigital;
+  @override
+  final int total;
+  @override
+  final double persentase;
+
+  @override
+  String toString() {
+    return 'BerbayarEntity(digital: $digital, nonDigital: $nonDigital, total: $total, persentase: $persentase)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BerbayarEntityImpl &&
+            (identical(other.digital, digital) || other.digital == digital) &&
+            (identical(other.nonDigital, nonDigital) ||
+                other.nonDigital == nonDigital) &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.persentase, persentase) ||
+                other.persentase == persentase));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, digital, nonDigital, total, persentase);
+
+  /// Create a copy of BerbayarEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BerbayarEntityImplCopyWith<_$BerbayarEntityImpl> get copyWith =>
+      __$$BerbayarEntityImplCopyWithImpl<_$BerbayarEntityImpl>(
+        this,
+        _$identity,
+      );
+}
+
+abstract class _BerbayarEntity implements BerbayarEntity {
+  const factory _BerbayarEntity({
+    required final int digital,
+    required final int nonDigital,
+    required final int total,
+    required final double persentase,
+  }) = _$BerbayarEntityImpl;
+
+  @override
+  int get digital;
+  @override
+  int get nonDigital;
+  @override
+  int get total;
+  @override
+  double get persentase;
+
+  /// Create a copy of BerbayarEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$BerbayarEntityImplCopyWith<_$BerbayarEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -120,7 +120,7 @@ class CardTotalOpWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "${(digitalPercent * 100).toStringAsFixed(1)}%",
+                    "$digitalPercent %",
                     style: AppTypography.bodySemiBold.copyWith(
                       color: AppColors.primary,
                     ),
@@ -131,7 +131,7 @@ class CardTotalOpWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: LinearProgressIndicator(
-                  value: digitalPercent,
+                  value: digitalPercent / 100,
                   backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                   minHeight: 10,
@@ -139,7 +139,7 @@ class CardTotalOpWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                "${NumberFormatter.format(jmlDigital.toString())} Digital + ${NumberFormatter.format(jmlProsesDigital.toString())} Proses",
+                "${NumberFormatter.format(jmlDigital.toString())} Digital + ${NumberFormatter.format(jmlProsesDigital.toString())} Proses Digital",
                 style: AppTypography.caption.copyWith(
                   color: Colors.grey.shade500,
                   fontSize: 11,
@@ -156,8 +156,8 @@ class CardTotalOpWidget extends StatelessWidget {
           /// === 1. CARD DIGITAL (WITH GRID BREAKDOWN) ===
           _statusItem(
             icon: Icons.qr_code_scanner_rounded,
-            iconColor: Colors.green,
-            bgColor: Colors.green.withValues(alpha: 0.12),
+            iconColor: AppColors.success,
+            bgColor: AppColors.success.withValues(alpha: 0.12),
             title: "Digital",
             subtitle: "Sudah terintegrasi sistem digital",
             total: jmlDigital,
@@ -178,7 +178,7 @@ class CardTotalOpWidget extends StatelessWidget {
                     icon: Icons.credit_card_rounded,
                   ),
                   _miniInstrumentCard(
-                    title: "QRIS",
+                    title: "QRIS Rompi",
                     value: jmlQris,
                     icon: Icons.qr_code_2_rounded,
                   ),
@@ -201,8 +201,8 @@ class CardTotalOpWidget extends StatelessWidget {
           /// === 2. CARD PROSES DIGITAL ===
           _statusItem(
             icon: Icons.hourglass_top_rounded,
-            iconColor: Colors.orange,
-            bgColor: Colors.orange.withValues(alpha: 0.12),
+            iconColor: AppColors.primaryLight,
+            bgColor: AppColors.primaryLight.withValues(alpha: 0.12),
             title: "Proses Digital",
             subtitle: "Dalam tahap integrasi/survei",
             total: jmlProsesDigital,
@@ -213,8 +213,8 @@ class CardTotalOpWidget extends StatelessWidget {
           /// === 3. CARD GRATIS ===
           _statusItem(
             icon: Icons.money_off_rounded,
-            iconColor: Colors.grey.shade600,
-            bgColor: Colors.grey.shade200,
+            iconColor: AppColors.info,
+            bgColor: AppColors.info.withValues(alpha: 0.12),
             title: "Gratis",
             subtitle: "Tidak dikenakan tarif parkir",
             total: jmlGratis,
@@ -284,6 +284,7 @@ class CardTotalOpWidget extends StatelessWidget {
                     ],
                   ),
                 ),
+                SizedBox(width: 8),
                 Text(
                   NumberFormatter.format(total.toString()),
                   style: AppTypography.heading2,

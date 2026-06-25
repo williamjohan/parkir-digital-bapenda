@@ -28,6 +28,7 @@ extension DashboardSummaryNonJukirMapper on DashboardSummaryNonJukirModel {
       nonDigital: nonDigital.toEntity(),
 
       detail: detail.toEntity(),
+      berbayar: berbayar.toEntity(),
 
       persentaseDigital: persentaseDigital,
       persentaseNonDigital: persentaseNonDigital,
@@ -74,6 +75,17 @@ extension DetailMapper on DetailModel {
       totalTs: totalTs,
       totalBebasParkir: totalBebasParkir,
       totalNonDigital: totalNonDigital,
+    );
+  }
+}
+
+extension BerbayarMapper on BerbayarModel {
+  BerbayarEntity toEntity() {
+    return BerbayarEntity(
+      digital: digital,
+      nonDigital: nonDigital,
+      total: total,
+      persentase: persentase,
     );
   }
 }

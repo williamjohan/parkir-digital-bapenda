@@ -30,6 +30,7 @@ class DashboardSummaryNonJukirEntity with _$DashboardSummaryNonJukirEntity {
     required OpCategoryEntity nonDigital,
 
     required DetailEntity detail,
+    required BerbayarEntity berbayar,
 
     required double persentaseDigital,
     required double persentaseNonDigital,
@@ -74,4 +75,14 @@ class DetailEntity with _$DetailEntity {
     required int totalBebasParkir,
     required int totalNonDigital,
   }) = _DetailEntity;
+}
+
+@freezed
+class BerbayarEntity with _$BerbayarEntity {
+  const factory BerbayarEntity({
+    required int digital,
+    required int nonDigital,
+    required int total,
+    required double persentase,
+  }) = _BerbayarEntity;
 }

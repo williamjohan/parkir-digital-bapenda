@@ -14,6 +14,11 @@ class HistoryRecapWidget extends StatelessWidget {
   final String totalBersih;
   final bool isFree;
 
+  // Parameter Baru
+  final bool isRealisasiAvailable;
+  final int realisasiDigital;
+  final int realisasiNonDigital;
+
   const HistoryRecapWidget({
     super.key,
     required this.title,
@@ -24,6 +29,9 @@ class HistoryRecapWidget extends StatelessWidget {
     required this.nominalPajak,
     required this.totalBersih,
     this.isFree = true,
+    this.isRealisasiAvailable = false, // Default false jika tidak dikirim
+    this.realisasiDigital = 0,
+    this.realisasiNonDigital = 0,
   });
 
   @override
@@ -90,7 +98,7 @@ class HistoryRecapWidget extends StatelessWidget {
               ],
             ),
 
-            // Garis Pemisah Horizontal
+            // Garis Pemisah Horizontal setelah Finansial
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Divider(height: 1),
@@ -98,28 +106,51 @@ class HistoryRecapWidget extends StatelessWidget {
           ],
 
           // ==========================================
+          // BARIS BARU: REALISASI (DIGITAL VS NON-DIGITAL)
+          // ==========================================
+          if (isRealisasiAvailable) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildFinancialColumn(
+                  label: "Realisasi Digital",
+                  value: CurrencyFormatter.toIdr(realisasiDigital),
+                  valueColor: AppColors.primary,
+                ),
+                _buildVerticalDivider(),
+                _buildFinancialColumn(
+                  label: "Realisasi Non-Digital",
+                  value: CurrencyFormatter.toIdr(realisasiNonDigital),
+                  valueColor: AppColors.primary,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+          // ==========================================
           // BARIS 2: METRIK KENDARAAN (2 KOLOM SAMA RATA)
           // ==========================================
-          Row(
-            children: [
-              Expanded(
-                child: HistoryRecapItem(
-                  title: "Roda 2",
-                  subTitle: "Transaksi",
-                  value: roda2,
+          if (isRealisasiAvailable == false)
+            Row(
+              children: [
+                Expanded(
+                  child: HistoryRecapItem(
+                    title: "Roda 2",
+                    subTitle: "Transaksi",
+                    value: roda2,
+                  ),
                 ),
-              ),
-              Container(width: 1, height: 40, color: AppColors.border),
-              const SizedBox(width: 12),
-              Expanded(
-                child: HistoryRecapItem(
-                  title: "Roda 4",
-                  subTitle: "Transaksi",
-                  value: roda4,
+                Container(width: 1, height: 40, color: AppColors.border),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: HistoryRecapItem(
+                    title: "Roda 4",
+                    subTitle: "Transaksi",
+                    value: roda4,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );
@@ -139,19 +170,17 @@ class HistoryRecapWidget extends StatelessWidget {
           label,
           style: AppTypography.caption.copyWith(
             color: AppColors.textSecondary,
-            fontSize: 11, // Ukuran ideal agar teks pajak tidak terlalu panjang
+            fontSize: 11,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
-        // Sabuk Pengaman: Jika angka miliaran, font otomatis mengecil
         FittedBox(
           fit: BoxFit.scaleDown,
           alignment: Alignment.centerLeft,
           child: Text(
             value,
-            // Menggunakan heading4 agar tidak terlalu raksasa saat dijejer 3
             style: AppTypography.heading4.copyWith(color: valueColor),
           ),
         ),
@@ -163,11 +192,9 @@ class HistoryRecapWidget extends StatelessWidget {
   Widget _buildVerticalDivider() {
     return Container(
       width: 1,
-      height: 36, // Menyesuaikan tinggi 2 baris teks (Label + Nominal)
+      height: 36,
       color: AppColors.border,
-      margin: const EdgeInsets.symmetric(
-        horizontal: 8,
-      ), // Memberi napas antar kolom
+      margin: const EdgeInsets.symmetric(horizontal: 8),
     );
   }
 }
