@@ -44,4 +44,7 @@ class ApiEndpoints {
   static const String summaryOpDev = '/api/mobile/parking/get-summary-op-dev';
   static const String summaryRangeDev =
       '/api/mobile/parking/dashboard-summary-nonjukir-range-dev';
+
+  static const String summayRealisasiOpDev =
+      '/api/mobile/parking/dashboard-summary-nonjukir-realisasi-dev';
 }

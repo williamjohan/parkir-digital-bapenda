@@ -135,6 +135,12 @@ import '../../features/profile/domain/repositories/i_profile_repository.dart'
 import '../../features/profile/domain/usecases/get_profile_usecase.dart'
     as _i965;
 import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
+import '../../features/realisasi/data/datasources/realisasi_remote_datasource.dart'
+    as _i135;
+import '../../features/realisasi/data/repositories/realisasi_repository_impl.dart'
+    as _i407;
+import '../../features/realisasi/domain/repositories/realisasi_repository.dart'
+    as _i534;
 import '../../features/transaction/data/datasources/qris_remote_data_source.dart'
     as _i502;
 import '../../features/transaction/data/repositories/data_jukir_repository_impl.dart'
@@ -266,6 +272,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i59.ITarifRemoteDataSource>(
     () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i135.RealisasiRemoteDataSource>(
+    () => _i135.RealisasiRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i92.IParkingTransactionLocalDataSource>(
     () => _i462.ParkingTransactionLocalDataSourceImpl(gh<_i37.IImageService>()),
   );
@@ -336,6 +345,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i717.DataJukirRepository>(
     () => _i527.DataJukirRepositoryImpl(gh<_i196.DataJukirDatasource>()),
+  );
+  gh.lazySingleton<_i534.RealisasiRepository>(
+    () => _i407.RealisasiRepositoryImpl(gh<_i135.RealisasiRemoteDataSource>()),
   );
   gh.lazySingleton<_i280.IUpdateRepository>(
     () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
