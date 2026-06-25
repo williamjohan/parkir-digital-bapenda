@@ -56,6 +56,7 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         CardTotalPendapatan(
+                          isShowHariIni: false,
                           totalKotor:
                               state.summary?.totalNominalHariIni.toString() ??
                               '0',
@@ -77,6 +78,7 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
                         ),
                         SizedBox(height: 16),
                         CardRekapJenisPembayaranWidget(
+                          isShowPembaruanTerakhir: false,
                           data: state.summary?.sofParkirResults ?? [],
                         ),
                       ],

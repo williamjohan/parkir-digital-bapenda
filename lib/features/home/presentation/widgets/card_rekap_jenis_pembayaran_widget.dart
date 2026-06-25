@@ -6,9 +6,14 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 
 class CardRekapJenisPembayaranWidget extends StatelessWidget {
+  final bool isShowPembaruanTerakhir;
   final List<SofParkirResultEntity> data;
 
-  const CardRekapJenisPembayaranWidget({super.key, required this.data});
+  const CardRekapJenisPembayaranWidget({
+    super.key,
+    required this.data,
+    this.isShowPembaruanTerakhir = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,37 +65,40 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
               ),
 
               // 🚀 WIDGET SYSDATE DI KANAN
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    "Pembaruan Terakhir",
-                    style: AppTypography.caption.copyWith(
-                      color: Colors.grey.shade500,
-                      fontSize: 10,
+              if (isShowPembaruanTerakhir)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "Pembaruan Terakhir",
+                      style: AppTypography.caption.copyWith(
+                        color: Colors.grey.shade500,
+                        fontSize: 10,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        // Format: 19 Jun 2026, 14:45
-                        DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now()),
-                        style: AppTypography.caption.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade700,
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 12,
+                          color: Colors.grey.shade600,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                        const SizedBox(width: 4),
+                        Text(
+                          // Format: 19 Jun 2026, 14:45
+                          DateFormat(
+                            'dd MMM yyyy, HH:mm',
+                          ).format(DateTime.now()),
+                          style: AppTypography.caption.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
             ],
           ),
           const SizedBox(height: 16),
