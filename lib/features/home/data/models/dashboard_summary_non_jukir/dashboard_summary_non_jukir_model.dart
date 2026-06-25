@@ -25,6 +25,7 @@ class DashboardSummaryNonJukirModel with _$DashboardSummaryNonJukirModel {
 
     @Default(0.0) double persentaseDigital,
     @Default(0.0) double persentaseNonDigital,
+    @Default(DetailModel()) DetailModel detail,
   }) = _DashboardSummaryNonJukirModel;
 
   factory DashboardSummaryNonJukirModel.fromJson(Map<String, dynamic> json) =>
@@ -63,4 +64,19 @@ class OpCategoryModel with _$OpCategoryModel {
 
   factory OpCategoryModel.fromJson(Map<String, dynamic> json) =>
       _$OpCategoryModelFromJson(json);
+}
+
+@freezed
+class DetailModel with _$DetailModel {
+  const factory DetailModel({
+    @Default(0) int totalEdc,
+    @Default(0) int totalRompiQris,
+    @Default(0) int totalCctvCounting,
+    @Default(0) int totalTs,
+    @Default(0) int totalBebasParkir,
+    @Default(0) int totalNonDigital,
+  }) = _DetailModel;
+
+  factory DetailModel.fromJson(Map<String, dynamic> json) =>
+      _$DetailModelFromJson(json);
 }

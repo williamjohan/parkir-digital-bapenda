@@ -46,6 +46,20 @@ class HomeState with _$HomeState {
       ),
     )
     OpCategoryEntity digital,
+    @Default(0) int totalBertarif,
+    @Default(0) int totalNonTarif,
+    @Default(0) int totalTarifTidakDiketahui,
+    @Default(
+      DetailEntity(
+        totalEdc: 0,
+        totalRompiQris: 0,
+        totalCctvCounting: 0,
+        totalTs: 0,
+        totalBebasParkir: 0,
+        totalNonDigital: 0,
+      ),
+    )
+    DetailEntity detail,
 
     @Default(
       OpCategoryEntity(

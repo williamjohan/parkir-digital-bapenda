@@ -245,14 +245,23 @@ class _HomePageState extends State<HomePage> {
                                                   child: CardTotalOpWidget(
                                                     totalObjekPajak:
                                                         state.totalOp,
-                                                    digitalPercent: 0,
-                                                    jmlDigital: 0,
-                                                    jmlEdc: 0,
-                                                    jmlQris: 0,
-                                                    jmlCctv: 0,
-                                                    jmlTs: 0,
-                                                    jmlProsesDigital: 0,
-                                                    jmlGratis: 0,
+                                                    digitalPercent:
+                                                        state.persentaseDigital,
+                                                    jmlDigital:
+                                                        state.totalOpDigital,
+                                                    jmlEdc:
+                                                        state.detail.totalEdc,
+                                                    jmlQris: state
+                                                        .detail
+                                                        .totalRompiQris,
+                                                    jmlCctv: state
+                                                        .detail
+                                                        .totalCctvCounting,
+                                                    jmlTs: state.detail.totalTs,
+                                                    jmlProsesDigital:
+                                                        state.totalOpNonDigital,
+                                                    jmlGratis:
+                                                        state.totalNonTarif,
                                                     onTapDigital: () {},
                                                     onTapProses: () {},
                                                     onTapGratis: () {},

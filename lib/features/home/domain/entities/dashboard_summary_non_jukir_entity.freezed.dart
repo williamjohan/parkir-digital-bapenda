@@ -19,7 +19,10 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$DashboardSummaryNonJukirEntity {
   int get totalOp => throw _privateConstructorUsedError;
   int get totalOpDigital => throw _privateConstructorUsedError;
-  int get totalOpNonDigital => throw _privateConstructorUsedError;
+  int get totalOpNonDigital => throw _privateConstructorUsedError; // baru
+  int get totalBertarif => throw _privateConstructorUsedError;
+  int get totalNonTarif => throw _privateConstructorUsedError;
+  int get totalTarifTidakDiketahui => throw _privateConstructorUsedError;
   int get totalOpFree => throw _privateConstructorUsedError;
   int get totalOpNonFree => throw _privateConstructorUsedError;
   int get jumlahMotorHariIni => throw _privateConstructorUsedError;
@@ -33,6 +36,7 @@ mixin _$DashboardSummaryNonJukirEntity {
       throw _privateConstructorUsedError;
   OpCategoryEntity get digital => throw _privateConstructorUsedError;
   OpCategoryEntity get nonDigital => throw _privateConstructorUsedError;
+  DetailEntity get detail => throw _privateConstructorUsedError;
   double get persentaseDigital => throw _privateConstructorUsedError;
   double get persentaseNonDigital => throw _privateConstructorUsedError;
 
@@ -58,6 +62,9 @@ abstract class $DashboardSummaryNonJukirEntityCopyWith<$Res> {
     int totalOp,
     int totalOpDigital,
     int totalOpNonDigital,
+    int totalBertarif,
+    int totalNonTarif,
+    int totalTarifTidakDiketahui,
     int totalOpFree,
     int totalOpNonFree,
     int jumlahMotorHariIni,
@@ -68,12 +75,14 @@ abstract class $DashboardSummaryNonJukirEntityCopyWith<$Res> {
     List<SofParkirResultEntity> sofParkirResults,
     OpCategoryEntity digital,
     OpCategoryEntity nonDigital,
+    DetailEntity detail,
     double persentaseDigital,
     double persentaseNonDigital,
   });
 
   $OpCategoryEntityCopyWith<$Res> get digital;
   $OpCategoryEntityCopyWith<$Res> get nonDigital;
+  $DetailEntityCopyWith<$Res> get detail;
 }
 
 /// @nodoc
@@ -97,6 +106,9 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
     Object? totalOp = null,
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
+    Object? totalBertarif = null,
+    Object? totalNonTarif = null,
+    Object? totalTarifTidakDiketahui = null,
     Object? totalOpFree = null,
     Object? totalOpNonFree = null,
     Object? jumlahMotorHariIni = null,
@@ -107,6 +119,7 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
     Object? sofParkirResults = null,
     Object? digital = null,
     Object? nonDigital = null,
+    Object? detail = null,
     Object? persentaseDigital = null,
     Object? persentaseNonDigital = null,
   }) {
@@ -123,6 +136,18 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
             totalOpNonDigital: null == totalOpNonDigital
                 ? _value.totalOpNonDigital
                 : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalBertarif: null == totalBertarif
+                ? _value.totalBertarif
+                : totalBertarif // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalNonTarif: null == totalNonTarif
+                ? _value.totalNonTarif
+                : totalNonTarif // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTarifTidakDiketahui: null == totalTarifTidakDiketahui
+                ? _value.totalTarifTidakDiketahui
+                : totalTarifTidakDiketahui // ignore: cast_nullable_to_non_nullable
                       as int,
             totalOpFree: null == totalOpFree
                 ? _value.totalOpFree
@@ -166,6 +191,10 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
                 ? _value.nonDigital
                 : nonDigital // ignore: cast_nullable_to_non_nullable
                       as OpCategoryEntity,
+            detail: null == detail
+                ? _value.detail
+                : detail // ignore: cast_nullable_to_non_nullable
+                      as DetailEntity,
             persentaseDigital: null == persentaseDigital
                 ? _value.persentaseDigital
                 : persentaseDigital // ignore: cast_nullable_to_non_nullable
@@ -198,6 +227,16 @@ class _$DashboardSummaryNonJukirEntityCopyWithImpl<
       return _then(_value.copyWith(nonDigital: value) as $Val);
     });
   }
+
+  /// Create a copy of DashboardSummaryNonJukirEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $DetailEntityCopyWith<$Res> get detail {
+    return $DetailEntityCopyWith<$Res>(_value.detail, (value) {
+      return _then(_value.copyWith(detail: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -213,6 +252,9 @@ abstract class _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res>
     int totalOp,
     int totalOpDigital,
     int totalOpNonDigital,
+    int totalBertarif,
+    int totalNonTarif,
+    int totalTarifTidakDiketahui,
     int totalOpFree,
     int totalOpNonFree,
     int jumlahMotorHariIni,
@@ -223,6 +265,7 @@ abstract class _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res>
     List<SofParkirResultEntity> sofParkirResults,
     OpCategoryEntity digital,
     OpCategoryEntity nonDigital,
+    DetailEntity detail,
     double persentaseDigital,
     double persentaseNonDigital,
   });
@@ -231,6 +274,8 @@ abstract class _$$DashboardSummaryNonJukirEntityImplCopyWith<$Res>
   $OpCategoryEntityCopyWith<$Res> get digital;
   @override
   $OpCategoryEntityCopyWith<$Res> get nonDigital;
+  @override
+  $DetailEntityCopyWith<$Res> get detail;
 }
 
 /// @nodoc
@@ -254,6 +299,9 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
     Object? totalOp = null,
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
+    Object? totalBertarif = null,
+    Object? totalNonTarif = null,
+    Object? totalTarifTidakDiketahui = null,
     Object? totalOpFree = null,
     Object? totalOpNonFree = null,
     Object? jumlahMotorHariIni = null,
@@ -264,6 +312,7 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
     Object? sofParkirResults = null,
     Object? digital = null,
     Object? nonDigital = null,
+    Object? detail = null,
     Object? persentaseDigital = null,
     Object? persentaseNonDigital = null,
   }) {
@@ -280,6 +329,18 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
         totalOpNonDigital: null == totalOpNonDigital
             ? _value.totalOpNonDigital
             : totalOpNonDigital // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalBertarif: null == totalBertarif
+            ? _value.totalBertarif
+            : totalBertarif // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalNonTarif: null == totalNonTarif
+            ? _value.totalNonTarif
+            : totalNonTarif // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTarifTidakDiketahui: null == totalTarifTidakDiketahui
+            ? _value.totalTarifTidakDiketahui
+            : totalTarifTidakDiketahui // ignore: cast_nullable_to_non_nullable
                   as int,
         totalOpFree: null == totalOpFree
             ? _value.totalOpFree
@@ -322,6 +383,10 @@ class __$$DashboardSummaryNonJukirEntityImplCopyWithImpl<$Res>
             ? _value.nonDigital
             : nonDigital // ignore: cast_nullable_to_non_nullable
                   as OpCategoryEntity,
+        detail: null == detail
+            ? _value.detail
+            : detail // ignore: cast_nullable_to_non_nullable
+                  as DetailEntity,
         persentaseDigital: null == persentaseDigital
             ? _value.persentaseDigital
             : persentaseDigital // ignore: cast_nullable_to_non_nullable
@@ -343,6 +408,9 @@ class _$DashboardSummaryNonJukirEntityImpl
     required this.totalOp,
     required this.totalOpDigital,
     required this.totalOpNonDigital,
+    required this.totalBertarif,
+    required this.totalNonTarif,
+    required this.totalTarifTidakDiketahui,
     required this.totalOpFree,
     required this.totalOpNonFree,
     required this.jumlahMotorHariIni,
@@ -353,6 +421,7 @@ class _$DashboardSummaryNonJukirEntityImpl
     required final List<SofParkirResultEntity> sofParkirResults,
     required this.digital,
     required this.nonDigital,
+    required this.detail,
     required this.persentaseDigital,
     required this.persentaseNonDigital,
   }) : _sofParkirResults = sofParkirResults;
@@ -363,6 +432,13 @@ class _$DashboardSummaryNonJukirEntityImpl
   final int totalOpDigital;
   @override
   final int totalOpNonDigital;
+  // baru
+  @override
+  final int totalBertarif;
+  @override
+  final int totalNonTarif;
+  @override
+  final int totalTarifTidakDiketahui;
   @override
   final int totalOpFree;
   @override
@@ -391,13 +467,15 @@ class _$DashboardSummaryNonJukirEntityImpl
   @override
   final OpCategoryEntity nonDigital;
   @override
+  final DetailEntity detail;
+  @override
   final double persentaseDigital;
   @override
   final double persentaseNonDigital;
 
   @override
   String toString() {
-    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, totalOpFree: $totalOpFree, totalOpNonFree: $totalOpNonFree, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults, digital: $digital, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital)';
+    return 'DashboardSummaryNonJukirEntity(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, totalOpFree: $totalOpFree, totalOpNonFree: $totalOpNonFree, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults, digital: $digital, nonDigital: $nonDigital, detail: $detail, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital)';
   }
 
   @override
@@ -410,6 +488,15 @@ class _$DashboardSummaryNonJukirEntityImpl
                 other.totalOpDigital == totalOpDigital) &&
             (identical(other.totalOpNonDigital, totalOpNonDigital) ||
                 other.totalOpNonDigital == totalOpNonDigital) &&
+            (identical(other.totalBertarif, totalBertarif) ||
+                other.totalBertarif == totalBertarif) &&
+            (identical(other.totalNonTarif, totalNonTarif) ||
+                other.totalNonTarif == totalNonTarif) &&
+            (identical(
+                  other.totalTarifTidakDiketahui,
+                  totalTarifTidakDiketahui,
+                ) ||
+                other.totalTarifTidakDiketahui == totalTarifTidakDiketahui) &&
             (identical(other.totalOpFree, totalOpFree) ||
                 other.totalOpFree == totalOpFree) &&
             (identical(other.totalOpNonFree, totalOpNonFree) ||
@@ -439,6 +526,7 @@ class _$DashboardSummaryNonJukirEntityImpl
             (identical(other.digital, digital) || other.digital == digital) &&
             (identical(other.nonDigital, nonDigital) ||
                 other.nonDigital == nonDigital) &&
+            (identical(other.detail, detail) || other.detail == detail) &&
             (identical(other.persentaseDigital, persentaseDigital) ||
                 other.persentaseDigital == persentaseDigital) &&
             (identical(other.persentaseNonDigital, persentaseNonDigital) ||
@@ -446,11 +534,14 @@ class _$DashboardSummaryNonJukirEntityImpl
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     totalOp,
     totalOpDigital,
     totalOpNonDigital,
+    totalBertarif,
+    totalNonTarif,
+    totalTarifTidakDiketahui,
     totalOpFree,
     totalOpNonFree,
     jumlahMotorHariIni,
@@ -461,9 +552,10 @@ class _$DashboardSummaryNonJukirEntityImpl
     const DeepCollectionEquality().hash(_sofParkirResults),
     digital,
     nonDigital,
+    detail,
     persentaseDigital,
     persentaseNonDigital,
-  );
+  ]);
 
   /// Create a copy of DashboardSummaryNonJukirEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -485,6 +577,9 @@ abstract class _DashboardSummaryNonJukirEntity
     required final int totalOp,
     required final int totalOpDigital,
     required final int totalOpNonDigital,
+    required final int totalBertarif,
+    required final int totalNonTarif,
+    required final int totalTarifTidakDiketahui,
     required final int totalOpFree,
     required final int totalOpNonFree,
     required final int jumlahMotorHariIni,
@@ -495,6 +590,7 @@ abstract class _DashboardSummaryNonJukirEntity
     required final List<SofParkirResultEntity> sofParkirResults,
     required final OpCategoryEntity digital,
     required final OpCategoryEntity nonDigital,
+    required final DetailEntity detail,
     required final double persentaseDigital,
     required final double persentaseNonDigital,
   }) = _$DashboardSummaryNonJukirEntityImpl;
@@ -504,7 +600,13 @@ abstract class _DashboardSummaryNonJukirEntity
   @override
   int get totalOpDigital;
   @override
-  int get totalOpNonDigital;
+  int get totalOpNonDigital; // baru
+  @override
+  int get totalBertarif;
+  @override
+  int get totalNonTarif;
+  @override
+  int get totalTarifTidakDiketahui;
   @override
   int get totalOpFree;
   @override
@@ -525,6 +627,8 @@ abstract class _DashboardSummaryNonJukirEntity
   OpCategoryEntity get digital;
   @override
   OpCategoryEntity get nonDigital;
+  @override
+  DetailEntity get detail;
   @override
   double get persentaseDigital;
   @override
@@ -1179,5 +1283,262 @@ abstract class _OpCategoryEntity implements OpCategoryEntity {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$OpCategoryEntityImplCopyWith<_$OpCategoryEntityImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$DetailEntity {
+  int get totalEdc => throw _privateConstructorUsedError;
+  int get totalRompiQris => throw _privateConstructorUsedError;
+  int get totalCctvCounting => throw _privateConstructorUsedError;
+  int get totalTs => throw _privateConstructorUsedError;
+  int get totalBebasParkir => throw _privateConstructorUsedError;
+  int get totalNonDigital => throw _privateConstructorUsedError;
+
+  /// Create a copy of DetailEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $DetailEntityCopyWith<DetailEntity> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DetailEntityCopyWith<$Res> {
+  factory $DetailEntityCopyWith(
+    DetailEntity value,
+    $Res Function(DetailEntity) then,
+  ) = _$DetailEntityCopyWithImpl<$Res, DetailEntity>;
+  @useResult
+  $Res call({
+    int totalEdc,
+    int totalRompiQris,
+    int totalCctvCounting,
+    int totalTs,
+    int totalBebasParkir,
+    int totalNonDigital,
+  });
+}
+
+/// @nodoc
+class _$DetailEntityCopyWithImpl<$Res, $Val extends DetailEntity>
+    implements $DetailEntityCopyWith<$Res> {
+  _$DetailEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of DetailEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalEdc = null,
+    Object? totalRompiQris = null,
+    Object? totalCctvCounting = null,
+    Object? totalTs = null,
+    Object? totalBebasParkir = null,
+    Object? totalNonDigital = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            totalEdc: null == totalEdc
+                ? _value.totalEdc
+                : totalEdc // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalRompiQris: null == totalRompiQris
+                ? _value.totalRompiQris
+                : totalRompiQris // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalCctvCounting: null == totalCctvCounting
+                ? _value.totalCctvCounting
+                : totalCctvCounting // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTs: null == totalTs
+                ? _value.totalTs
+                : totalTs // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalBebasParkir: null == totalBebasParkir
+                ? _value.totalBebasParkir
+                : totalBebasParkir // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalNonDigital: null == totalNonDigital
+                ? _value.totalNonDigital
+                : totalNonDigital // ignore: cast_nullable_to_non_nullable
+                      as int,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$DetailEntityImplCopyWith<$Res>
+    implements $DetailEntityCopyWith<$Res> {
+  factory _$$DetailEntityImplCopyWith(
+    _$DetailEntityImpl value,
+    $Res Function(_$DetailEntityImpl) then,
+  ) = __$$DetailEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    int totalEdc,
+    int totalRompiQris,
+    int totalCctvCounting,
+    int totalTs,
+    int totalBebasParkir,
+    int totalNonDigital,
+  });
+}
+
+/// @nodoc
+class __$$DetailEntityImplCopyWithImpl<$Res>
+    extends _$DetailEntityCopyWithImpl<$Res, _$DetailEntityImpl>
+    implements _$$DetailEntityImplCopyWith<$Res> {
+  __$$DetailEntityImplCopyWithImpl(
+    _$DetailEntityImpl _value,
+    $Res Function(_$DetailEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of DetailEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalEdc = null,
+    Object? totalRompiQris = null,
+    Object? totalCctvCounting = null,
+    Object? totalTs = null,
+    Object? totalBebasParkir = null,
+    Object? totalNonDigital = null,
+  }) {
+    return _then(
+      _$DetailEntityImpl(
+        totalEdc: null == totalEdc
+            ? _value.totalEdc
+            : totalEdc // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalRompiQris: null == totalRompiQris
+            ? _value.totalRompiQris
+            : totalRompiQris // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalCctvCounting: null == totalCctvCounting
+            ? _value.totalCctvCounting
+            : totalCctvCounting // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTs: null == totalTs
+            ? _value.totalTs
+            : totalTs // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalBebasParkir: null == totalBebasParkir
+            ? _value.totalBebasParkir
+            : totalBebasParkir // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalNonDigital: null == totalNonDigital
+            ? _value.totalNonDigital
+            : totalNonDigital // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$DetailEntityImpl implements _DetailEntity {
+  const _$DetailEntityImpl({
+    required this.totalEdc,
+    required this.totalRompiQris,
+    required this.totalCctvCounting,
+    required this.totalTs,
+    required this.totalBebasParkir,
+    required this.totalNonDigital,
+  });
+
+  @override
+  final int totalEdc;
+  @override
+  final int totalRompiQris;
+  @override
+  final int totalCctvCounting;
+  @override
+  final int totalTs;
+  @override
+  final int totalBebasParkir;
+  @override
+  final int totalNonDigital;
+
+  @override
+  String toString() {
+    return 'DetailEntity(totalEdc: $totalEdc, totalRompiQris: $totalRompiQris, totalCctvCounting: $totalCctvCounting, totalTs: $totalTs, totalBebasParkir: $totalBebasParkir, totalNonDigital: $totalNonDigital)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DetailEntityImpl &&
+            (identical(other.totalEdc, totalEdc) ||
+                other.totalEdc == totalEdc) &&
+            (identical(other.totalRompiQris, totalRompiQris) ||
+                other.totalRompiQris == totalRompiQris) &&
+            (identical(other.totalCctvCounting, totalCctvCounting) ||
+                other.totalCctvCounting == totalCctvCounting) &&
+            (identical(other.totalTs, totalTs) || other.totalTs == totalTs) &&
+            (identical(other.totalBebasParkir, totalBebasParkir) ||
+                other.totalBebasParkir == totalBebasParkir) &&
+            (identical(other.totalNonDigital, totalNonDigital) ||
+                other.totalNonDigital == totalNonDigital));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    totalEdc,
+    totalRompiQris,
+    totalCctvCounting,
+    totalTs,
+    totalBebasParkir,
+    totalNonDigital,
+  );
+
+  /// Create a copy of DetailEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DetailEntityImplCopyWith<_$DetailEntityImpl> get copyWith =>
+      __$$DetailEntityImplCopyWithImpl<_$DetailEntityImpl>(this, _$identity);
+}
+
+abstract class _DetailEntity implements DetailEntity {
+  const factory _DetailEntity({
+    required final int totalEdc,
+    required final int totalRompiQris,
+    required final int totalCctvCounting,
+    required final int totalTs,
+    required final int totalBebasParkir,
+    required final int totalNonDigital,
+  }) = _$DetailEntityImpl;
+
+  @override
+  int get totalEdc;
+  @override
+  int get totalRompiQris;
+  @override
+  int get totalCctvCounting;
+  @override
+  int get totalTs;
+  @override
+  int get totalBebasParkir;
+  @override
+  int get totalNonDigital;
+
+  /// Create a copy of DetailEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DetailEntityImplCopyWith<_$DetailEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

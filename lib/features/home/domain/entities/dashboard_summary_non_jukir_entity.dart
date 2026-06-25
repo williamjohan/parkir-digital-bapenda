@@ -8,16 +8,29 @@ class DashboardSummaryNonJukirEntity with _$DashboardSummaryNonJukirEntity {
     required int totalOp,
     required int totalOpDigital,
     required int totalOpNonDigital,
+
+    // baru
+    required int totalBertarif,
+    required int totalNonTarif,
+    required int totalTarifTidakDiketahui,
+
     required int totalOpFree,
     required int totalOpNonFree,
+
     required int jumlahMotorHariIni,
     required int jumlahMobilHariIni,
+
     required double totalNominalHariIni,
     required double totalNominalBersihUntukWajibPajak,
     required double totalNominalBersihUntukBapenda,
+
     required List<SofParkirResultEntity> sofParkirResults,
+
     required OpCategoryEntity digital,
     required OpCategoryEntity nonDigital,
+
+    required DetailEntity detail,
+
     required double persentaseDigital,
     required double persentaseNonDigital,
   }) = _DashboardSummaryNonJukirEntity;
@@ -49,4 +62,16 @@ class OpCategoryEntity with _$OpCategoryEntity {
     required double persentaseNonTarif,
     required double persentaseTidakDiketahui,
   }) = _OpCategoryEntity;
+}
+
+@freezed
+class DetailEntity with _$DetailEntity {
+  const factory DetailEntity({
+    required int totalEdc,
+    required int totalRompiQris,
+    required int totalCctvCounting,
+    required int totalTs,
+    required int totalBebasParkir,
+    required int totalNonDigital,
+  }) = _DetailEntity;
 }

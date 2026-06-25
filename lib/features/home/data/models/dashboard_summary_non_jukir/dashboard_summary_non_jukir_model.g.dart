@@ -38,6 +38,9 @@ _$$DashboardSummaryNonJukirModelImplFromJson(
   persentaseDigital: (json['persentaseDigital'] as num?)?.toDouble() ?? 0.0,
   persentaseNonDigital:
       (json['persentaseNonDigital'] as num?)?.toDouble() ?? 0.0,
+  detail: json['detail'] == null
+      ? const DetailModel()
+      : DetailModel.fromJson(json['detail'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$$DashboardSummaryNonJukirModelImplToJson(
@@ -60,6 +63,7 @@ Map<String, dynamic> _$$DashboardSummaryNonJukirModelImplToJson(
   'nonDigital': instance.nonDigital,
   'persentaseDigital': instance.persentaseDigital,
   'persentaseNonDigital': instance.persentaseNonDigital,
+  'detail': instance.detail,
 };
 
 _$SofParkirResultModelImpl _$$SofParkirResultModelImplFromJson(
@@ -120,3 +124,23 @@ Map<String, dynamic> _$$OpCategoryModelImplToJson(
   'persentaseNonTarif': instance.persentaseNonTarif,
   'persentaseTidakDiketahui': instance.persentaseTidakDiketahui,
 };
+
+_$DetailModelImpl _$$DetailModelImplFromJson(Map<String, dynamic> json) =>
+    _$DetailModelImpl(
+      totalEdc: (json['totalEdc'] as num?)?.toInt() ?? 0,
+      totalRompiQris: (json['totalRompiQris'] as num?)?.toInt() ?? 0,
+      totalCctvCounting: (json['totalCctvCounting'] as num?)?.toInt() ?? 0,
+      totalTs: (json['totalTs'] as num?)?.toInt() ?? 0,
+      totalBebasParkir: (json['totalBebasParkir'] as num?)?.toInt() ?? 0,
+      totalNonDigital: (json['totalNonDigital'] as num?)?.toInt() ?? 0,
+    );
+
+Map<String, dynamic> _$$DetailModelImplToJson(_$DetailModelImpl instance) =>
+    <String, dynamic>{
+      'totalEdc': instance.totalEdc,
+      'totalRompiQris': instance.totalRompiQris,
+      'totalCctvCounting': instance.totalCctvCounting,
+      'totalTs': instance.totalTs,
+      'totalBebasParkir': instance.totalBebasParkir,
+      'totalNonDigital': instance.totalNonDigital,
+    };

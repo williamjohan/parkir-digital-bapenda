@@ -131,6 +131,9 @@ class HomeCubit extends Cubit<HomeState> {
               totalOp: 0,
               totalOpDigital: 0,
               totalOpNonDigital: 0,
+              totalBertarif: 0,
+              totalNonTarif: 0,
+              totalTarifTidakDiketahui: 0,
               digital: const OpCategoryEntity(
                 total: 0,
                 totalBertarif: 0,
@@ -149,6 +152,14 @@ class HomeCubit extends Cubit<HomeState> {
                 persentaseBertarif: 0,
                 persentaseNonTarif: 0,
                 persentaseTidakDiketahui: 0,
+              ),
+              detail: const DetailEntity(
+                totalEdc: 0,
+                totalRompiQris: 0,
+                totalCctvCounting: 0,
+                totalTs: 0,
+                totalBebasParkir: 0,
+                totalNonDigital: 0,
               ),
 
               persentaseDigital: 0,
@@ -177,6 +188,10 @@ class HomeCubit extends Cubit<HomeState> {
               persentaseDigital: summary.persentaseDigital,
               persentaseNonDigital: summary.persentaseNonDigital,
               sofParkirResults: summary.sofParkirResults,
+              totalBertarif: summary.totalBertarif,
+              totalNonTarif: summary.totalNonTarif,
+              totalTarifTidakDiketahui: summary.totalTarifTidakDiketahui,
+              detail: summary.detail,
             ),
           );
         }

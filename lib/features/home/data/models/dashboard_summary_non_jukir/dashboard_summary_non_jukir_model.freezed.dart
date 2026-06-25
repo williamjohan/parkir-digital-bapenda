@@ -42,6 +42,7 @@ mixin _$DashboardSummaryNonJukirModel {
   OpCategoryModel get nonDigital => throw _privateConstructorUsedError;
   double get persentaseDigital => throw _privateConstructorUsedError;
   double get persentaseNonDigital => throw _privateConstructorUsedError;
+  DetailModel get detail => throw _privateConstructorUsedError;
 
   /// Serializes this DashboardSummaryNonJukirModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -81,10 +82,12 @@ abstract class $DashboardSummaryNonJukirModelCopyWith<$Res> {
     OpCategoryModel nonDigital,
     double persentaseDigital,
     double persentaseNonDigital,
+    DetailModel detail,
   });
 
   $OpCategoryModelCopyWith<$Res> get digital;
   $OpCategoryModelCopyWith<$Res> get nonDigital;
+  $DetailModelCopyWith<$Res> get detail;
 }
 
 /// @nodoc
@@ -121,6 +124,7 @@ class _$DashboardSummaryNonJukirModelCopyWithImpl<
     Object? nonDigital = null,
     Object? persentaseDigital = null,
     Object? persentaseNonDigital = null,
+    Object? detail = null,
   }) {
     return _then(
       _value.copyWith(
@@ -190,6 +194,10 @@ class _$DashboardSummaryNonJukirModelCopyWithImpl<
                 ? _value.persentaseNonDigital
                 : persentaseNonDigital // ignore: cast_nullable_to_non_nullable
                       as double,
+            detail: null == detail
+                ? _value.detail
+                : detail // ignore: cast_nullable_to_non_nullable
+                      as DetailModel,
           )
           as $Val,
     );
@@ -212,6 +220,16 @@ class _$DashboardSummaryNonJukirModelCopyWithImpl<
   $OpCategoryModelCopyWith<$Res> get nonDigital {
     return $OpCategoryModelCopyWith<$Res>(_value.nonDigital, (value) {
       return _then(_value.copyWith(nonDigital: value) as $Val);
+    });
+  }
+
+  /// Create a copy of DashboardSummaryNonJukirModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $DetailModelCopyWith<$Res> get detail {
+    return $DetailModelCopyWith<$Res>(_value.detail, (value) {
+      return _then(_value.copyWith(detail: value) as $Val);
     });
   }
 }
@@ -242,12 +260,15 @@ abstract class _$$DashboardSummaryNonJukirModelImplCopyWith<$Res>
     OpCategoryModel nonDigital,
     double persentaseDigital,
     double persentaseNonDigital,
+    DetailModel detail,
   });
 
   @override
   $OpCategoryModelCopyWith<$Res> get digital;
   @override
   $OpCategoryModelCopyWith<$Res> get nonDigital;
+  @override
+  $DetailModelCopyWith<$Res> get detail;
 }
 
 /// @nodoc
@@ -284,6 +305,7 @@ class __$$DashboardSummaryNonJukirModelImplCopyWithImpl<$Res>
     Object? nonDigital = null,
     Object? persentaseDigital = null,
     Object? persentaseNonDigital = null,
+    Object? detail = null,
   }) {
     return _then(
       _$DashboardSummaryNonJukirModelImpl(
@@ -352,6 +374,10 @@ class __$$DashboardSummaryNonJukirModelImplCopyWithImpl<$Res>
             ? _value.persentaseNonDigital
             : persentaseNonDigital // ignore: cast_nullable_to_non_nullable
                   as double,
+        detail: null == detail
+            ? _value.detail
+            : detail // ignore: cast_nullable_to_non_nullable
+                  as DetailModel,
       ),
     );
   }
@@ -378,6 +404,7 @@ class _$DashboardSummaryNonJukirModelImpl
     this.nonDigital = const OpCategoryModel(),
     this.persentaseDigital = 0.0,
     this.persentaseNonDigital = 0.0,
+    this.detail = const DetailModel(),
   }) : _sofParkirResults = sofParkirResults;
 
   factory _$DashboardSummaryNonJukirModelImpl.fromJson(
@@ -439,10 +466,13 @@ class _$DashboardSummaryNonJukirModelImpl
   @override
   @JsonKey()
   final double persentaseNonDigital;
+  @override
+  @JsonKey()
+  final DetailModel detail;
 
   @override
   String toString() {
-    return 'DashboardSummaryNonJukirModel(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults, digital: $digital, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital)';
+    return 'DashboardSummaryNonJukirModel(totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, jumlahMotorHariIni: $jumlahMotorHariIni, jumlahMobilHariIni: $jumlahMobilHariIni, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, totalNominalHariIni: $totalNominalHariIni, totalNominalBersihUntukWajibPajak: $totalNominalBersihUntukWajibPajak, totalNominalBersihUntukBapenda: $totalNominalBersihUntukBapenda, sofParkirResults: $sofParkirResults, digital: $digital, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, detail: $detail)';
   }
 
   @override
@@ -492,7 +522,8 @@ class _$DashboardSummaryNonJukirModelImpl
             (identical(other.persentaseDigital, persentaseDigital) ||
                 other.persentaseDigital == persentaseDigital) &&
             (identical(other.persentaseNonDigital, persentaseNonDigital) ||
-                other.persentaseNonDigital == persentaseNonDigital));
+                other.persentaseNonDigital == persentaseNonDigital) &&
+            (identical(other.detail, detail) || other.detail == detail));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -515,6 +546,7 @@ class _$DashboardSummaryNonJukirModelImpl
     nonDigital,
     persentaseDigital,
     persentaseNonDigital,
+    detail,
   );
 
   /// Create a copy of DashboardSummaryNonJukirModel
@@ -555,6 +587,7 @@ abstract class _DashboardSummaryNonJukirModel
     final OpCategoryModel nonDigital,
     final double persentaseDigital,
     final double persentaseNonDigital,
+    final DetailModel detail,
   }) = _$DashboardSummaryNonJukirModelImpl;
 
   factory _DashboardSummaryNonJukirModel.fromJson(Map<String, dynamic> json) =
@@ -592,6 +625,8 @@ abstract class _DashboardSummaryNonJukirModel
   double get persentaseDigital;
   @override
   double get persentaseNonDigital;
+  @override
+  DetailModel get detail;
 
   /// Create a copy of DashboardSummaryNonJukirModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1295,5 +1330,287 @@ abstract class _OpCategoryModel implements OpCategoryModel {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$OpCategoryModelImplCopyWith<_$OpCategoryModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DetailModel _$DetailModelFromJson(Map<String, dynamic> json) {
+  return _DetailModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DetailModel {
+  int get totalEdc => throw _privateConstructorUsedError;
+  int get totalRompiQris => throw _privateConstructorUsedError;
+  int get totalCctvCounting => throw _privateConstructorUsedError;
+  int get totalTs => throw _privateConstructorUsedError;
+  int get totalBebasParkir => throw _privateConstructorUsedError;
+  int get totalNonDigital => throw _privateConstructorUsedError;
+
+  /// Serializes this DetailModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of DetailModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $DetailModelCopyWith<DetailModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DetailModelCopyWith<$Res> {
+  factory $DetailModelCopyWith(
+    DetailModel value,
+    $Res Function(DetailModel) then,
+  ) = _$DetailModelCopyWithImpl<$Res, DetailModel>;
+  @useResult
+  $Res call({
+    int totalEdc,
+    int totalRompiQris,
+    int totalCctvCounting,
+    int totalTs,
+    int totalBebasParkir,
+    int totalNonDigital,
+  });
+}
+
+/// @nodoc
+class _$DetailModelCopyWithImpl<$Res, $Val extends DetailModel>
+    implements $DetailModelCopyWith<$Res> {
+  _$DetailModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of DetailModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalEdc = null,
+    Object? totalRompiQris = null,
+    Object? totalCctvCounting = null,
+    Object? totalTs = null,
+    Object? totalBebasParkir = null,
+    Object? totalNonDigital = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            totalEdc: null == totalEdc
+                ? _value.totalEdc
+                : totalEdc // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalRompiQris: null == totalRompiQris
+                ? _value.totalRompiQris
+                : totalRompiQris // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalCctvCounting: null == totalCctvCounting
+                ? _value.totalCctvCounting
+                : totalCctvCounting // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTs: null == totalTs
+                ? _value.totalTs
+                : totalTs // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalBebasParkir: null == totalBebasParkir
+                ? _value.totalBebasParkir
+                : totalBebasParkir // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalNonDigital: null == totalNonDigital
+                ? _value.totalNonDigital
+                : totalNonDigital // ignore: cast_nullable_to_non_nullable
+                      as int,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$DetailModelImplCopyWith<$Res>
+    implements $DetailModelCopyWith<$Res> {
+  factory _$$DetailModelImplCopyWith(
+    _$DetailModelImpl value,
+    $Res Function(_$DetailModelImpl) then,
+  ) = __$$DetailModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    int totalEdc,
+    int totalRompiQris,
+    int totalCctvCounting,
+    int totalTs,
+    int totalBebasParkir,
+    int totalNonDigital,
+  });
+}
+
+/// @nodoc
+class __$$DetailModelImplCopyWithImpl<$Res>
+    extends _$DetailModelCopyWithImpl<$Res, _$DetailModelImpl>
+    implements _$$DetailModelImplCopyWith<$Res> {
+  __$$DetailModelImplCopyWithImpl(
+    _$DetailModelImpl _value,
+    $Res Function(_$DetailModelImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of DetailModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalEdc = null,
+    Object? totalRompiQris = null,
+    Object? totalCctvCounting = null,
+    Object? totalTs = null,
+    Object? totalBebasParkir = null,
+    Object? totalNonDigital = null,
+  }) {
+    return _then(
+      _$DetailModelImpl(
+        totalEdc: null == totalEdc
+            ? _value.totalEdc
+            : totalEdc // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalRompiQris: null == totalRompiQris
+            ? _value.totalRompiQris
+            : totalRompiQris // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalCctvCounting: null == totalCctvCounting
+            ? _value.totalCctvCounting
+            : totalCctvCounting // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTs: null == totalTs
+            ? _value.totalTs
+            : totalTs // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalBebasParkir: null == totalBebasParkir
+            ? _value.totalBebasParkir
+            : totalBebasParkir // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalNonDigital: null == totalNonDigital
+            ? _value.totalNonDigital
+            : totalNonDigital // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DetailModelImpl implements _DetailModel {
+  const _$DetailModelImpl({
+    this.totalEdc = 0,
+    this.totalRompiQris = 0,
+    this.totalCctvCounting = 0,
+    this.totalTs = 0,
+    this.totalBebasParkir = 0,
+    this.totalNonDigital = 0,
+  });
+
+  factory _$DetailModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DetailModelImplFromJson(json);
+
+  @override
+  @JsonKey()
+  final int totalEdc;
+  @override
+  @JsonKey()
+  final int totalRompiQris;
+  @override
+  @JsonKey()
+  final int totalCctvCounting;
+  @override
+  @JsonKey()
+  final int totalTs;
+  @override
+  @JsonKey()
+  final int totalBebasParkir;
+  @override
+  @JsonKey()
+  final int totalNonDigital;
+
+  @override
+  String toString() {
+    return 'DetailModel(totalEdc: $totalEdc, totalRompiQris: $totalRompiQris, totalCctvCounting: $totalCctvCounting, totalTs: $totalTs, totalBebasParkir: $totalBebasParkir, totalNonDigital: $totalNonDigital)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DetailModelImpl &&
+            (identical(other.totalEdc, totalEdc) ||
+                other.totalEdc == totalEdc) &&
+            (identical(other.totalRompiQris, totalRompiQris) ||
+                other.totalRompiQris == totalRompiQris) &&
+            (identical(other.totalCctvCounting, totalCctvCounting) ||
+                other.totalCctvCounting == totalCctvCounting) &&
+            (identical(other.totalTs, totalTs) || other.totalTs == totalTs) &&
+            (identical(other.totalBebasParkir, totalBebasParkir) ||
+                other.totalBebasParkir == totalBebasParkir) &&
+            (identical(other.totalNonDigital, totalNonDigital) ||
+                other.totalNonDigital == totalNonDigital));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    totalEdc,
+    totalRompiQris,
+    totalCctvCounting,
+    totalTs,
+    totalBebasParkir,
+    totalNonDigital,
+  );
+
+  /// Create a copy of DetailModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DetailModelImplCopyWith<_$DetailModelImpl> get copyWith =>
+      __$$DetailModelImplCopyWithImpl<_$DetailModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DetailModelImplToJson(this);
+  }
+}
+
+abstract class _DetailModel implements DetailModel {
+  const factory _DetailModel({
+    final int totalEdc,
+    final int totalRompiQris,
+    final int totalCctvCounting,
+    final int totalTs,
+    final int totalBebasParkir,
+    final int totalNonDigital,
+  }) = _$DetailModelImpl;
+
+  factory _DetailModel.fromJson(Map<String, dynamic> json) =
+      _$DetailModelImpl.fromJson;
+
+  @override
+  int get totalEdc;
+  @override
+  int get totalRompiQris;
+  @override
+  int get totalCctvCounting;
+  @override
+  int get totalTs;
+  @override
+  int get totalBebasParkir;
+  @override
+  int get totalNonDigital;
+
+  /// Create a copy of DetailModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DetailModelImplCopyWith<_$DetailModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
