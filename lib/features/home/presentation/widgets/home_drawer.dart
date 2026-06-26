@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/constants/feature_flag.dart';
@@ -12,7 +11,6 @@ import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
-import '../cubit/home/home_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isFree;
@@ -90,16 +88,16 @@ class HomeDrawer extends StatelessWidget {
                         extra: {'isFree': true},
                       );
                     } else {
-                      final result = await context.pushNamed(
+                      context.pushNamed(
                         AppRoutes.searchObjekPajak,
-                        extra: {'role': RoleLoginDigitalParkir.bapenda},
+                        extra: {'role': role},
                       );
 
-                      if (result != null) {
-                        await context.read<HomeCubit>().changeObjekPajak(
-                          result as Map<String, dynamic>,
-                        );
-                      }
+                      // if (result != null) {
+                      //   await context.read<HomeCubit>().changeObjekPajak(
+                      //     result as Map<String, dynamic>,
+                      //   );
+                      // }
                     }
                   },
                 ),
@@ -108,7 +106,7 @@ class HomeDrawer extends StatelessWidget {
                   currentRole: role,
                   child: ListTile(
                     leading: const Icon(
-                      Icons.account_balance_wallet_outlined,
+                      Icons.money,
                       color: AppColors.textPrimary,
                     ),
                     title: const Text(

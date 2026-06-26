@@ -110,6 +110,8 @@ import '../../features/payment/data/datasources/qris_signalr_datasource.dart'
     as _i57;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
     as _i265;
+import '../../features/payment/data/repositories/qris_rompi_repository_impl.dart'
+    as _i809;
 import '../../features/payment/domain/repositories/i_payment_repository.dart'
     as _i1004;
 import '../../features/payment/domain/repositories/qris_rompi_repository.dart'
@@ -267,9 +269,6 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i751.GetQrisRompiUseCase>(
-    () => _i751.GetQrisRompiUseCase(gh<_i24.QrisRompiRepository>()),
-  );
   gh.lazySingleton<_i11.ISummaryRemoteDataSource>(
     () => _i11.SummaryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -306,12 +305,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i196.DataJukirDatasource>(
     () => _i196.DataJukirDatasourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i502.ITransactionHistoryRepository>(
-    () => _i19.TransactionHistoryRepositoryImpl(
-      gh<_i896.ITransactionHistoryRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
   gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
     () => _i247.PaymentRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -336,25 +329,24 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i77.GetRecentTransactionsUseCase>(
-    () => _i77.GetRecentTransactionsUseCase(
-      gh<_i896.ITransactionHistoryRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
-  gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
-    () => _i732.GetTransactionHistoryUseCase(
-      gh<_i502.ITransactionHistoryRepository>(),
-    ),
-  );
   gh.lazySingleton<_i717.DataJukirRepository>(
     () => _i527.DataJukirRepositoryImpl(gh<_i196.DataJukirDatasource>()),
   );
   gh.lazySingleton<_i534.RealisasiRepository>(
     () => _i407.RealisasiRepositoryImpl(gh<_i135.RealisasiRemoteDataSource>()),
   );
+  gh.lazySingleton<_i24.QrisRompiRepository>(
+    () => _i809.QrisRompiRepositoryImpl(gh<_i949.QrisRompiDatasource>()),
+  );
   gh.lazySingleton<_i280.IUpdateRepository>(
     () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
+  );
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(
+      gh<_i59.ITarifRemoteDataSource>(),
+      gh<_i11.ISummaryRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
   );
   gh.factory<_i506.CheckUpdateUseCase>(
     () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
@@ -364,13 +356,19 @@ _i174.GetIt init(
       gh<_i367.DetailRealisasiOpRemoteDataSource>(),
     ),
   );
-  gh.lazySingleton<_i274.IHomeRepository>(
-    () => _i76.HomeRepositoryImpl(
-      gh<_i59.ITarifRemoteDataSource>(),
-      gh<_i11.ISummaryRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
-      gh<_i654.DatabaseHelper2>(),
+  gh.lazySingleton<_i304.GetDashboardSummaryNonJukirRangeUseCase>(
+    () => _i304.GetDashboardSummaryNonJukirRangeUseCase(
+      gh<_i274.IHomeRepository>(),
     ),
+  );
+  gh.lazySingleton<_i348.GetDashboardSummaryNonJukirUseCase>(
+    () => _i348.GetDashboardSummaryNonJukirUseCase(gh<_i274.IHomeRepository>()),
+  );
+  gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
+    () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
+  );
+  gh.lazySingleton<_i770.SyncTarifUseCase>(
+    () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
   );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
@@ -392,6 +390,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i254.GetDataJukirUseCase>(
     () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),
+  );
+  gh.lazySingleton<_i751.GetQrisRompiUseCase>(
+    () => _i751.GetQrisRompiUseCase(gh<_i24.QrisRompiRepository>()),
   );
   gh.factory<_i1020.CheckUpdateCubit>(
     () => _i1020.CheckUpdateCubit(gh<_i506.CheckUpdateUseCase>()),
@@ -417,6 +418,16 @@ _i174.GetIt init(
   gh.lazySingleton<_i965.GetProfileUseCase>(
     () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
   );
+  gh.lazySingleton<_i502.ITransactionHistoryRepository>(
+    () => _i19.TransactionHistoryRepositoryImpl(
+      gh<_i896.ITransactionHistoryRemoteDataSource>(),
+    ),
+  );
+  gh.factory<_i376.PendapatanDigitalCubit>(
+    () => _i376.PendapatanDigitalCubit(
+      gh<_i304.GetDashboardSummaryNonJukirRangeUseCase>(),
+    ),
+  );
   gh.lazySingleton<_i185.GetSummaryDashboardOpUsecase>(
     () => _i185.GetSummaryDashboardOpUsecase(gh<_i260.DashboardOpRepository>()),
   );
@@ -432,10 +443,14 @@ _i174.GetIt init(
       gh<_i57.QrisSignalRDatasource>(),
     ),
   );
-  gh.factory<_i753.TransactionHistoryCubit>(
-    () => _i753.TransactionHistoryCubit(
-      gh<_i732.GetTransactionHistoryUseCase>(),
-      gh<_i1042.ISecureStorageManager>(),
+  gh.lazySingleton<_i77.GetRecentTransactionsUseCase>(
+    () => _i77.GetRecentTransactionsUseCase(
+      gh<_i502.ITransactionHistoryRepository>(),
+    ),
+  );
+  gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
+    () => _i732.GetTransactionHistoryUseCase(
+      gh<_i502.ITransactionHistoryRepository>(),
     ),
   );
   gh.lazySingleton<_i212.GetLocalQrisUseCase>(
@@ -443,20 +458,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i383.SyncQrisUseCase>(
     () => _i383.SyncQrisUseCase(gh<_i215.IQrisRepository>()),
-  );
-  gh.lazySingleton<_i304.GetDashboardSummaryNonJukirRangeUseCase>(
-    () => _i304.GetDashboardSummaryNonJukirRangeUseCase(
-      gh<_i274.IHomeRepository>(),
-    ),
-  );
-  gh.lazySingleton<_i348.GetDashboardSummaryNonJukirUseCase>(
-    () => _i348.GetDashboardSummaryNonJukirUseCase(gh<_i274.IHomeRepository>()),
-  );
-  gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
-    () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
-  );
-  gh.lazySingleton<_i770.SyncTarifUseCase>(
-    () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
   );
   gh.factory<_i1069.RealisasiCubit>(
     () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
@@ -494,11 +495,6 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.factory<_i376.PendapatanDigitalCubit>(
-    () => _i376.PendapatanDigitalCubit(
-      gh<_i304.GetDashboardSummaryNonJukirRangeUseCase>(),
-    ),
-  );
   gh.factory<_i273.HomeCubit>(
     () => _i273.HomeCubit(
       gh<_i421.GetHybridDashboardSummaryUseCase>(),
@@ -511,6 +507,15 @@ _i174.GetIt init(
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(gh<_i212.GetLocalQrisUseCase>()),
+  );
+  gh.factory<_i616.TransactionCubit>(
+    () => _i616.TransactionCubit(gh<_i212.GetLocalQrisUseCase>()),
+  );
+  gh.factory<_i753.TransactionHistoryCubit>(
+    () => _i753.TransactionHistoryCubit(
+      gh<_i732.GetTransactionHistoryUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
   );
   gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(
     () => _i512.SaveParkingTransactionUseCase(
@@ -531,12 +536,6 @@ _i174.GetIt init(
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
-  );
-  gh.factory<_i616.TransactionCubit>(
-    () => _i616.TransactionCubit(
-      gh<_i212.GetLocalQrisUseCase>(),
-      gh<_i254.GetDataJukirUseCase>(),
-    ),
   );
   gh.factory<_i877.ParkingTransactionCubit>(
     () => _i877.ParkingTransactionCubit(

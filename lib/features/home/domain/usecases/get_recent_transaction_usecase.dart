@@ -1,45 +1,48 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
-import '../../../../core/utils/app_logger.dart'; // Pastikan ada logger
-import '../../../transaction_history/data/datasources/transaction_history_remote_datasource.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../transaction_history/domain/repositories/i_transaction_history_repository.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
-import '../../../transaction_history/data/models/history_response_data_model.dart';
 
 @lazySingleton
 class GetRecentTransactionsUseCase {
-  final ITransactionHistoryRemoteDataSource _remoteDataSource;
-  final ISecureStorageManager _secureStorage;
-
-  GetRecentTransactionsUseCase(this._remoteDataSource, this._secureStorage);
+  final ITransactionHistoryRepository _repository;
+  GetRecentTransactionsUseCase(this._repository);
 
   Future<Either<Failure, List<HistoryItemModel>>> execute({
     required int limit,
+    required String nop,
   }) async {
     try {
-      final profile = await _secureStorage.getJukirProfile();
-      if (profile == null) {
-        return const Right([]);
-      }
+      if (nop.isEmpty) return const Right([]);
 
-      final String nop = profile['nop']?.toString() ?? '';
       final now = DateTime.now();
       final startDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
       final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
-      final HistoryResponseData apiResult = await _remoteDataSource.getHistory(
+
+      final result = await _repository.getHistory(
         nop: nop,
         startDate: startDate,
         endDate: endDate,
-        limit: limit,
       );
-      final List<HistoryItemModel> rawData = apiResult.detail;
 
-      AppLogger.debug('✅ [Audit] Murni dari API: ${rawData.length} item');
+      return result.fold(
+        (failure) {
+          AppLogger.error(
+            '🚨 [Error] GetRecentTransactionsUseCase: ${failure.message}',
+          );
+          return Left(failure);
+        },
+        (historyData) {
+          final List<HistoryItemModel> rawData = historyData.detail;
+          AppLogger.debug('✅ [Audit] Murni dari API: ${rawData.length} item');
 
-      return Right(rawData.take(limit).toList());
+          return Right(rawData.take(limit).toList());
+        },
+      );
     } catch (e) {
-      AppLogger.error('🚨 [Error] GetRecentTransactionsUseCase: $e');
+      AppLogger.error('🚨 [Fatal Error] GetRecentTransactionsUseCase: $e');
       return Left(ServerFailure(e.toString()));
     }
   }

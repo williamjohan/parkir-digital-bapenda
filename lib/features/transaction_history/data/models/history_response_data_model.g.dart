@@ -1,4 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 part of 'history_response_data_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
 
 HistoryResponseData _$HistoryResponseDataFromJson(Map<String, dynamic> json) =>
     HistoryResponseData(

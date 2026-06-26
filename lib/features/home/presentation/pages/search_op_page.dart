@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,8 +8,10 @@ import '../../../../core/design_system/components/chip_indicator/pb_radius_type.
 import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../cubit/home/home_cubit.dart';
 import '../cubit/search_op/search_op_cubit.dart';
 import '../cubit/search_op/search_op_state.dart';
 import '../widgets/search_op_widget.dart';
@@ -148,10 +149,15 @@ class _SearchOpPageState extends State<SearchOpPage> {
                           borderRadius: BorderRadius.circular(16),
                           onTap: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
-                            context.pushNamed(
-                              AppRoutes.dashboardObjekPajak,
-                              extra: {'item': item},
-                            );
+                            locator<HomeCubit>().changeObjekPajak(item);
+                            if (widget.role == RoleLoginDigitalParkir.wp) {
+                              Navigator.pop(context);
+                            } else {
+                              context.pushNamed(
+                                AppRoutes.dashboardObjekPajak,
+                                extra: {'item': item},
+                              );
+                            }
                           },
                           child: Container(
                             padding: const EdgeInsets.all(16),

@@ -5,7 +5,6 @@ import 'package:parkir_digital_bapenda/features/home/data/datasources/summary_re
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/database_helper.dart';
-import '../../../../core/storage/database_helper_2.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../domain/repositories/i_home_repository.dart';
@@ -18,13 +17,11 @@ class HomeRepositoryImpl implements IHomeRepository {
   final ITarifRemoteDataSource _tarifRemoteDS;
   final ISummaryRemoteDataSource _summaryRemoteDS;
   final ISecureStorageManager _secureStorage;
-  final DatabaseHelper2 _databaseHelper;
 
   HomeRepositoryImpl(
     this._tarifRemoteDS,
     this._summaryRemoteDS,
     this._secureStorage,
-    this._databaseHelper,
   );
 
   @override

@@ -92,7 +92,10 @@ class HomeCubit extends Cubit<HomeState> {
       },
     );
 
-    final recentResult = await _getRecentTransactionsUseCase.execute(limit: 5);
+    final recentResult = await _getRecentTransactionsUseCase.execute(
+      limit: 5,
+      nop: state.nop,
+    );
 
     recentResult.fold((_) {}, (transactions) {
       if (!isClosed) {

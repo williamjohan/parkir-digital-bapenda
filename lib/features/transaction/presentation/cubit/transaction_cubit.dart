@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/home/domain/entities/data_jukir_entity.dart';
-import '../../domain/usecases/get_data_jukir_usecase.dart';
 import '../../domain/usecases/get_local_qris_usecase.dart';
 import 'transaction_state.dart';
 import '../../../home/data/models/tarif_model.dart';
@@ -9,10 +8,9 @@ import '../../../home/data/models/tarif_model.dart';
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
   final GetLocalQrisUseCase _getLocalQrisUseCase;
-  final GetDataJukirUseCase _getDataJukirUseCase;
+  // final GetDataJukirUseCase _getDataJukirUseCase;
 
-  TransactionCubit(this._getLocalQrisUseCase, this._getDataJukirUseCase)
-    : super(const TransactionState());
+  TransactionCubit(this._getLocalQrisUseCase) : super(const TransactionState());
 
   Future<void> init({required bool isFree, required bool isDemoMode}) async {
     if (!isClosed) {

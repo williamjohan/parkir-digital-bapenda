@@ -1,4 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 part of 'detail_realisasi_op_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
 
 _$DetailRealisasiOpResponseImpl _$$DetailRealisasiOpResponseImplFromJson(
   Map<String, dynamic> json,

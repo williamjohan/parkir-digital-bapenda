@@ -1,4 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 part of 'data_jukir_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
 
 DataJukirModel _$DataJukirModelFromJson(Map<String, dynamic> json) =>
     DataJukirModel(

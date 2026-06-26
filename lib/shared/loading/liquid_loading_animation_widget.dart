@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-
 import '../../core/constants/app_asset_constant.dart';
 import '../../core/design_system/tokens/app_colors.dart';
 
@@ -10,8 +9,8 @@ class LiquidLoadingWidget extends StatefulWidget {
 
   const LiquidLoadingWidget({
     super.key,
-    this.size = 120, // Ukuran default
-    this.durationSeconds = 3.0, // Lama waktu mengisi sampai penuh
+    this.size = 120,
+    this.durationSeconds = 3.0,
   });
 
   @override
@@ -28,12 +27,12 @@ class _LiquidLoadingWidgetState extends State<LiquidLoadingWidget>
     super.initState();
     _waveController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000), // Kecepatan ombak
-    )..repeat(); // Ulang terus selamanya
+      duration: const Duration(milliseconds: 1000),
+    )..repeat();
     _fillController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: (widget.durationSeconds * 1000).toInt()),
-    )..repeat(); // Ulang pengisian dari kosong ke penuh
+    )..repeat();
   }
 
   @override
