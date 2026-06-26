@@ -11,8 +11,9 @@ extension PbChipTypeExtension on PbChipType {
       case PbChipType.warning:
         return AppColors.warning.withValues(alpha: 0.1);
       case PbChipType.error:
-      case PbChipType.info:
         return AppColors.error.withValues(alpha: 0.1);
+      case PbChipType.info:
+        return AppColors.info.withValues(alpha: 0.1);
       case PbChipType.idle:
         return AppColors.disabled.withValues(alpha: 0.1);
     }
@@ -25,8 +26,9 @@ extension PbChipTypeExtension on PbChipType {
       case PbChipType.warning:
         return AppColors.warning;
       case PbChipType.error:
-      case PbChipType.info:
         return AppColors.error;
+      case PbChipType.info:
+        return AppColors.info;
       case PbChipType.idle:
         return AppColors.disabled;
     }

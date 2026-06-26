@@ -136,12 +136,14 @@ class _SearchOpPageState extends State<SearchOpPage> {
                       separatorBuilder: (_, __) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final item = state.filteredNopList[index];
-                        final chipType = getDigitalType(item);
+
                         final isDigital = (item['is_digital'] ?? 0) == 1;
-                        // final isNonDigital =
+                        final isFree = (item['pungut_tarif'] ?? 0) == 1;
+                        final chipType = isFree
+                            ? getTarifType(item)
+                            : getDigitalType(item);
                         //     item['is_digital'] == false &&
                         //     item['pungut_tarif'] == 2;
-                        // final isFree = (item['pungut_tari f'] ?? 0) == 1;
 
                         return InkWell(
                           borderRadius: BorderRadius.circular(16),
@@ -250,12 +252,16 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                           spacing: 8,
                                           runSpacing: 4,
                                           children: [
-                                            PbChipIndicator(
-                                              labelText: getDigitalLabel(item),
-                                              type: getDigitalType(item),
-                                              radius: PbRadiusType.full,
-                                            ),
-                                            if (!isDigital)
+                                            if (isDigital || !isFree)
+                                              PbChipIndicator(
+                                                labelText: getDigitalLabel(
+                                                  item,
+                                                ),
+                                                type: getDigitalType(item),
+                                                radius: PbRadiusType.full,
+                                              ),
+                                            // disini
+                                            if (isFree)
                                               PbChipIndicator(
                                                 labelText: getTarifLabel(item),
                                                 type: getTarifType(item),
@@ -346,12 +352,12 @@ class _SearchOpPageState extends State<SearchOpPage> {
 
 String getDigitalLabel(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
-  return isDigital == 1 ? 'Digitalisasi' : 'Belum Digitalisasi';
+  return isDigital == 1 ? 'Digitalisasi' : 'Proses Digitalisasi';
 }
 
 PbChipType getDigitalType(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
-  return isDigital == 1 ? PbChipType.success : PbChipType.error;
+  return isDigital == 1 ? PbChipType.success : PbChipType.warning;
 }
 
 String getTarifLabel(Map<String, dynamic> item) {
@@ -362,5 +368,5 @@ String getTarifLabel(Map<String, dynamic> item) {
 
 PbChipType getTarifType(Map<String, dynamic> item) {
   final pungutTarif = item['pungut_tarif'] ?? 1;
-  return pungutTarif == 1 ? PbChipType.success : PbChipType.warning;
+  return pungutTarif == 1 ? PbChipType.info : PbChipType.success;
 }
