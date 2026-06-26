@@ -108,7 +108,7 @@ class HomeDrawer extends StatelessWidget {
                   currentRole: role,
                   child: ListTile(
                     leading: const Icon(
-                      Icons.money,
+                      Icons.account_balance_wallet_outlined,
                       color: AppColors.textPrimary,
                     ),
                     title: const Text(
