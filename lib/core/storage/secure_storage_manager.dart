@@ -17,9 +17,9 @@ abstract class ISecureStorageManager {
   Future<void> saveDashboardAnchor(String jsonString);
   Future<String?> getDashboardAnchor();
   Future<void> clearDashboardAnchor();
-  Future<void> saveDeviceId(String deviceId);
-  Future<String?> getDeviceId();
-  Future<void> clearDeviceId();
+  Future<void> saveDeviceUUID(String deviceId);
+  Future<String?> getDeviceUUID();
+  Future<void> clearDeviceUUID();
   Future<void> savePrinterMacAddress(String macAdress);
   Future<String?> getPrinterMacAddress();
   Future<void> clearPrinterMacAddress();
@@ -50,8 +50,6 @@ abstract class ISecureStorageManager {
   Future<String?> getAndClearLogoutReason();
   Future<void> saveIsJukir(bool value);
   Future<bool> getIsJukir();
-  Future<void> saveUuidStatic(String value);
-  Future<String?> getUuidStatic();
   Future<void> saveRoleId(int roleId);
   Future<int?> getRoleId();
   Future<void> clearRoleId();
@@ -74,7 +72,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyPassword = 'SAVED_PASSWORD';
   static const String _keyLogoutReason = 'LOGOUT_REASON';
   static const String _keyIsJukir = 'IS_JUKIR';
-  static const String _keyUuidStatic = 'UUID_STATIC';
   static const String _keyRoleId = 'ROLE_LOGIN_ID';
 
   @override
@@ -158,17 +155,17 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   }
 
   @override
-  Future<void> saveDeviceId(String deviceId) async {
+  Future<void> saveDeviceUUID(String deviceId) async {
     await _storage.write(key: _keyDeviceId, value: deviceId);
   }
 
   @override
-  Future<String?> getDeviceId() async {
+  Future<String?> getDeviceUUID() async {
     return await _storage.read(key: _keyDeviceId);
   }
 
   @override
-  Future<void> clearDeviceId() async {
+  Future<void> clearDeviceUUID() async {
     await _storage.delete(key: _keyDeviceId);
   }
 
@@ -273,11 +270,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     final password = await _storage.read(key: _keyPassword);
 
     if (username != null) {
-      return {
-        'username': username,
-        'password':
-            password ?? '', // Jika password dihapus, kembalikan string kosong
-      };
+      return {'username': username, 'password': password ?? ''};
     }
     return null;
   }
@@ -310,16 +303,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   Future<bool> getIsJukir() async {
     final value = await _storage.read(key: _keyIsJukir);
     return value == 'true';
-  }
-
-  @override
-  Future<void> saveUuidStatic(String value) async {
-    await _storage.write(key: _keyUuidStatic, value: value);
-  }
-
-  @override
-  Future<String?> getUuidStatic() async {
-    return await _storage.read(key: _keyUuidStatic);
   }
 
   @override

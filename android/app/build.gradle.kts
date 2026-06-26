@@ -31,12 +31,12 @@ android {
     productFlavors {
         create("prod") {
             dimension = "env"
-            resValue("string", "app_name", "TS Park Bapenda")
+            resValue("string", "app_name", "TS Park Jukir")
         }
         create("demo") {
             dimension = "env"
             applicationIdSuffix = ".demo"
-            resValue("string", "app_name", "TS Park Bapenda (DEMO)")
+            resValue("string", "app_name", "TS Park Bapenda")
         }
     }
 

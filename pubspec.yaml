@@ -4,7 +4,7 @@ publish_to: "none"
 
 # versionName: 1.0.0 (Yang dilihat User)
 # buildNumber: 1     (Yang dibaca sistem OTA)
-version: 1.1.1+8
+version: 1.1.1+9
 
 environment:
   sdk: ^3.9.2 # Pastikan versi SDK ini sesuai dengan instalasi lokalmu
@@ -93,7 +93,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/iconlogo/LOGO-TS-PARKIR-REV.png"
+  image_path: "assets/iconlogo/PNG-REVISI-I.png"
 
 flutter_native_splash:
   color: "#FFFFFF"

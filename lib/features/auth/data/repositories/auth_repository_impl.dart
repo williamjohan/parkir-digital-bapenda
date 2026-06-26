@@ -36,9 +36,8 @@ class AuthRepositoryImpl implements IAuthRepository {
           await _secureStorage.saveRefreshToken(response.refreshToken);
         }
         await _secureStorage.saveRoleId(response.roleLoginId);
-        await _secureStorage.saveUuidStatic(response.uuidStatic);
         if (response.roleLoginId != 3 && response.uuidStatic.isNotEmpty) {
-          await _secureStorage.saveDeviceId(response.uuidStatic);
+          await _secureStorage.saveDeviceUUID(response.uuidStatic);
         }
         if (response.nopList.isNotEmpty) {
           _simpanNopSecaraParalel(response.nopList);
@@ -78,7 +77,7 @@ class AuthRepositoryImpl implements IAuthRepository {
   Future<Either<Failure, Unit>> logout() async {
     try {
       await _secureStorage.clearAllTokens();
-      await _secureStorage.clearDeviceId();
+      await _secureStorage.clearDeviceUUID();
       await _databaseHelper.clearNopList();
 
       return const Right(unit);
