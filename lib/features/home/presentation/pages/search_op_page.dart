@@ -149,9 +149,10 @@ class _SearchOpPageState extends State<SearchOpPage> {
                           borderRadius: BorderRadius.circular(16),
                           onTap: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
-                            locator<HomeCubit>().changeObjekPajak(item);
+
                             if (widget.role == RoleLoginDigitalParkir.wp) {
                               Navigator.pop(context);
+                              locator<HomeCubit>().changeObjekPajak(item);
                             } else {
                               context.pushNamed(
                                 AppRoutes.dashboardObjekPajak,
