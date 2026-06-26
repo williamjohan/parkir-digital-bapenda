@@ -1,5 +1,3 @@
-// lib/core/storage/database_helper.dart
-
 import 'package:injectable/injectable.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,7 +9,6 @@ class DatabaseHelper2 {
   static Database? _database;
 
   static const String dbName = 'surabaya_tax.db';
-  // 🚀 1. NAIKKAN VERSI: Dari 2 menjadi 3
   static const int dbVersion = 3;
 
   static const String tableNopList = 'nop_list';
@@ -55,9 +52,7 @@ class DatabaseHelper2 {
 
   /// 🚀 3. FUNGSI MIGRASI: Dijalankan untuk User lama yang melakukan update aplikasi
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Jika user berasal dari versi 1 dan update ke versi 2 (atau lebih)
     if (oldVersion < 3) {
-      // Injeksi kolom baru ke tabel yang sudah ada tanpa menghapus data mereka
       await db.execute('''
         ALTER TABLE $tableNopList 
         ADD COLUMN uptb INTEGER NOT NULL DEFAULT 0;
@@ -67,7 +62,6 @@ class DatabaseHelper2 {
         ADD COLUMN nmLurah TEXT NOT NULL;
       ''');
     }
-    // Jika nanti ada versi 3, tambahkan: if (oldVersion < 3) { ... }
   }
 
   /// Hapus seluruh NOP lama lalu insert yang baru
@@ -79,8 +73,6 @@ class DatabaseHelper2 {
     batch.delete(tableNopList);
 
     for (final item in nopList) {
-      // 🚀 THE CASTING FIX: Menangani data dari Mapper dengan sangat aman
-      // Jika dari mapper sudah int, pakai langsung. Jika masih bool, konversi.
       final isDigitalVal = item['is_digital'];
       final int isDigitalInt = (isDigitalVal is bool)
           ? (isDigitalVal ? 1 : 0)

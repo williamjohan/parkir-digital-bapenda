@@ -27,8 +27,6 @@ class UpdateRemoteDataSourceImpl implements IUpdateRemoteDataSource {
         },
       ),
     );
-
-    // 🚀 TAMBAHAN: Cek jika response kosong
     if (response.data == null || response.data.toString().isEmpty) {
       throw Exception("Server mengembalikan data kosong.");
     }
@@ -40,8 +38,6 @@ class UpdateRemoteDataSourceImpl implements IUpdateRemoteDataSource {
       );
       return jsonDecode(cleanJson);
     }
-
-    // Pastikan data adalah Map sebelum dikembalikan
     if (response.data is Map<String, dynamic>) {
       return response.data;
     }

@@ -8,8 +8,6 @@ enum PungutTarifParkir {
   final String description;
 
   const PungutTarifParkir(this.value, this.description);
-
-  // Helper untuk parsing dari JSON/API dengan aman
   static PungutTarifParkir fromInt(int value) {
     return PungutTarifParkir.values.firstWhere(
       (e) => e.value == value,
@@ -38,7 +36,6 @@ enum JenisKendaraanId {
   }
 }
 
-//Mewakili Role id dari BackEnd
 enum RoleLoginDigitalParkir {
   jukir(-1, "Jukir"),
   wp(1, "Wp"),

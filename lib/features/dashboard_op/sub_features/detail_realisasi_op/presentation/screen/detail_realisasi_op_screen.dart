@@ -34,7 +34,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
               builder: (context, state) {
                 return Column(
                   children: [
-                    //  1. HEADER FILTER DINAMIS
                     FilterHeaderWidget(
                       selectedYear: state.selectedYear,
                       canIncrement: state.canIncrementYear,
@@ -49,8 +48,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
                         _showYearBottomSheet(context, state);
                       },
                     ),
-
-                    // 🚀 2. BODY CONTENT DINAMIS (Loading/Error/Empty/Data)
                     Expanded(child: _buildBodyContent(context, state)),
                   ],
                 );
@@ -62,10 +59,7 @@ class DetailRealisasiOpPage extends StatelessWidget {
     );
   }
 
-  // ─── PENGATUR LOGIKA TAMPILAN ───────────────────────────────────────────────
-
   Widget _buildBodyContent(BuildContext context, DetailRealisasiOpState state) {
-    // KONDISI 2: Error Server / Jaringan
     if (state.errorMessage != null) {
       return Center(
         child: Padding(
@@ -87,7 +81,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
     }
 
     final data = state.data;
-    // KONDISI 3: Data Kosong
     if (data == null || data.realisasiPerBulan.isEmpty) {
       return const Center(
         child: Text(
@@ -96,8 +89,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
         ),
       );
     }
-
-    // KONDISI 4: Data Sukses (Real Fetch)
     final String formatTotal = CurrencyFormatter.toIdr(
       data.totalNominal.toInt(),
     );
@@ -108,7 +99,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: [
-          // TotalSummaryCard(tahun: strTahun, totalNominal: formatTotal),
           FooterTotalCard(tahun: strTahun, totalNominal: formatTotal),
           const SizedBox(height: 16),
 
@@ -131,8 +121,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
     );
   }
 
-  // ─── BOTTOM SHEET 2 TAHUN TERAKHIR ──────────────────────────────────────────
-
   void _showYearBottomSheet(
     BuildContext context,
     DetailRealisasiOpState state,
@@ -141,8 +129,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
       2,
       (index) => state.currentYear - index,
     );
-
-    //  Menggunakan komponen Design System Anda
     PbBasicBottomSheet.show(
       context: context,
       title: 'Pilih Tahun',
@@ -160,7 +146,6 @@ class DetailRealisasiOpPage extends StatelessWidget {
               title: Text(
                 year.toString(),
                 textAlign: TextAlign.center,
-                // Gunakan AppTypography milik tim Anda
                 style: AppTypography.bodySemiBold.copyWith(
                   color: isSelected ? AppColors.primary : AppColors.textPrimary,
                 ),

@@ -16,7 +16,6 @@ abstract class RegisterModule {
     final dio = Dio(
       BaseOptions(
         baseUrl: EnvConfig.baseUrl,
-        // [STRATEGI 1: Extended Timeouts] - Adaptasi untuk upload foto & sinyal jalanan
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 45),
@@ -26,8 +25,6 @@ abstract class RegisterModule {
         },
       ),
     );
-
-    // [STRATEGI 3: Selective SSL Bypass & Prioritas IPv4]
     dio.httpClientAdapter = IOHttpClientAdapter(
       createHttpClient: () {
         final client = HttpClient();
@@ -49,8 +46,6 @@ abstract class RegisterModule {
         return client;
       },
     );
-
-    // [STRATEGI 2: Smart Retry Interceptor]
     dio.interceptors.add(
       RetryInterceptor(
         dio: dio,
@@ -61,15 +56,10 @@ abstract class RegisterModule {
           Duration(seconds: 5),
           Duration(seconds: 10),
         ],
-        // Hanya mengulang jika error berupa timeout atau koneksi putus (bukan error 400/500 dari backend)
         retryableExtraStatuses: {status408RequestTimeout},
       ),
     );
-
-    // 1. Masukkan AuthInterceptor (Satpam Token) kita
     dio.interceptors.add(authInterceptor);
-
-    // 2. Masukkan LogInterceptor standar
     dio.interceptors.add(
       LogInterceptor(
         requestHeader: true,
@@ -79,10 +69,6 @@ abstract class RegisterModule {
         error: true,
       ),
     );
-
-    // [STRATEGI 4: Network Inspector khusus Debug]
-    // Catatan: Jika Anda ingin pakai Chucker, pastikan package chucker_flutter sudah di-install.
-    // Jika tidak ingin pakai sekarang, bisa di-comment dulu blok ini.
 
     if (kDebugMode) {
       dio.interceptors.add(ChuckerDioInterceptor());

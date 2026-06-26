@@ -40,7 +40,6 @@ class CardTotalPendapatan extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // === 1. HEADER & TANGGAL ===
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -86,7 +85,6 @@ class CardTotalPendapatan extends StatelessWidget {
           if (isShowHariIni)
             Text("Hari ini", style: AppTypography.bodySemiBold),
           if (!isShowHariIni) SizedBox(height: 8),
-          // === 2. HERO METRIC (KOTOR) ===
           Text(
             "Pendapatan Kotor",
             style: AppTypography.caption.copyWith(
@@ -103,15 +101,10 @@ class CardTotalPendapatan extends StatelessWidget {
           ),
 
           const SizedBox(height: 16),
-
-          // === 3. FINANCIAL DIVIDER ===
           const Divider(height: 1, color: AppColors.border),
           const SizedBox(height: 16),
-
-          // === 4. BOTTOM ANALYTICS (PAJAK & BERSIH) ===
           Row(
             children: [
-              // Kolom Pajak (Kiri)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,12 +135,8 @@ class CardTotalPendapatan extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Garis Pemisah Vertikal
               Container(width: 1, height: 30, color: AppColors.border),
               const SizedBox(width: 16),
-
-              // Kolom Bersih (Kanan)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

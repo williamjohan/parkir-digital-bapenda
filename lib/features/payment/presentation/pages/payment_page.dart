@@ -58,8 +58,6 @@ class _PaymentPageState extends State<PaymentPage> {
                 child: CircularProgressIndicator(color: AppColors.primary),
               );
             }
-
-            // ─── 1. JALUR JUKIR LOKAL ───
             if (state is PaymentLocalQrisReady) {
               return PaymentLocalQrisView(
                 kategoriKendaraan: widget.args.kategoriKendaraan,
@@ -73,8 +71,6 @@ class _PaymentPageState extends State<PaymentPage> {
                 ),
               );
             }
-
-            // ─── 2. JALUR DEMO BAPENDA ───
             if (state is PaymentDemoQrisReady) {
               return PaymentLocalQrisView(
                 kategoriKendaraan: '${widget.args.kategoriKendaraan} (Demo)',
@@ -86,8 +82,6 @@ class _PaymentPageState extends State<PaymentPage> {
                 ),
               );
             }
-
-            // ─── ERROR HANDLER ───
             if (state is PaymentLocalQrisError) {
               return _QrisErrorView(
                 message: state.message,
@@ -107,8 +101,6 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 }
-
-// ─── ERROR VIEW ───────────────────────────────────────────────────────────────
 
 class _QrisErrorView extends StatelessWidget {
   final String message;

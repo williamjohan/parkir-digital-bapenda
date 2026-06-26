@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'dashboard_op_response_model.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 _$DashboardOpResponseModelImpl _$$DashboardOpResponseModelImplFromJson(
   Map<String, dynamic> json,

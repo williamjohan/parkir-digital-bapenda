@@ -41,7 +41,6 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🚀 Kolom 1: Ikon
               const Padding(
                 padding: EdgeInsets.only(
                   top: 2.0,
@@ -54,8 +53,6 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-
-              // 🚀 Kolom 2: Teks Bersusun (Riwayat + Hari ini)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,8 +66,6 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // 🚀 Kolom 3: Tombol Aksi
               InkWell(
                 onTap: onLihatSemua,
                 child: Row(
@@ -205,8 +200,6 @@ class _RiwayatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final isMotor = item.jenisKendaraan.toLowerCase() == 'motor';
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

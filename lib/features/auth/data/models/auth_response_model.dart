@@ -1,5 +1,3 @@
-// lib/features/auth/data/models/auth_response_model.dart
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_response_model.freezed.dart';

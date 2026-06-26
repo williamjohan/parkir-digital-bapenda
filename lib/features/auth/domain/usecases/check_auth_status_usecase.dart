@@ -1,5 +1,3 @@
-// lib/features/auth/domain/usecases/check_auth_status_usecase.dart
-
 import 'package:injectable/injectable.dart';
 import '../repositories/i_auth_repository.dart';
 

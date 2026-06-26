@@ -1,5 +1,3 @@
-// lib/features/transaction/widgets/botsheet_tarif_widget.dart
-
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
@@ -55,7 +53,6 @@ class BottomSheetTarifParkir extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // --- Handle Bar ---
           Container(
             width: 40,
             height: 4,
@@ -68,19 +65,15 @@ class BottomSheetTarifParkir extends StatelessWidget {
 
           Text("Pilih Tarif Parkir", style: AppTypography.heading5),
           const SizedBox(height: 16),
-
-          // --- Scrollable List ---
           ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: screenHeight * 0.4, // Maksimal 40% dari tinggi layar
             ),
-            // 🚀 UX FIX 1: Bungkus ListView dengan Scrollbar
             child: Scrollbar(
               radius: const Radius.circular(8),
               thickness: 4,
               child: ListView.separated(
                 shrinkWrap: true,
-                // 🚀 UX FIX 2: Bouncing effect agar list terasa interaktif/hidup
                 physics: const BouncingScrollPhysics(),
                 itemCount: tarifList.length,
                 separatorBuilder: (_, __) =>

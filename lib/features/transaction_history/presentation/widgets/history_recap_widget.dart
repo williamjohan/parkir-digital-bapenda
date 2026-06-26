@@ -13,8 +13,6 @@ class HistoryRecapWidget extends StatelessWidget {
   final String nominalPajak;
   final String totalBersih;
   final bool isFree;
-
-  // Parameter Baru
   final bool isRealisasiAvailable;
   final int realisasiDigital;
   final int realisasiNonDigital;
@@ -54,18 +52,13 @@ class HistoryRecapWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // === HEADER: JUDUL ===
           Text(title.toUpperCase(), style: AppTypography.caption),
           const SizedBox(height: 12),
 
           if (!isFree) ...[
-            // ==========================================
-            // BARIS 1: FINANSIAL (3 KOLOM SAMA RATA)
-            // ==========================================
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- KOLOM 1: KOTOR ---
                 Expanded(
                   child: _buildFinancialColumn(
                     label: "Kotor",
@@ -75,8 +68,6 @@ class HistoryRecapWidget extends StatelessWidget {
                 ),
 
                 _buildVerticalDivider(),
-
-                // --- KOLOM 2: PAJAK ---
                 Expanded(
                   child: _buildFinancialColumn(
                     label: "Pajak ($persentasePajak%)",
@@ -86,8 +77,6 @@ class HistoryRecapWidget extends StatelessWidget {
                 ),
 
                 _buildVerticalDivider(),
-
-                // --- KOLOM 3: BERSIH ---
                 Expanded(
                   child: _buildFinancialColumn(
                     label: "Bersih",
@@ -97,17 +86,11 @@ class HistoryRecapWidget extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Garis Pemisah Horizontal setelah Finansial
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Divider(height: 1),
             ),
           ],
-
-          // ==========================================
-          // BARIS BARU: REALISASI (DIGITAL VS NON-DIGITAL)
-          // ==========================================
           if (isRealisasiAvailable) ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,10 +110,6 @@ class HistoryRecapWidget extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
-          // ==========================================
-          // BARIS 2: METRIK KENDARAAN (2 KOLOM SAMA RATA)
-          // ==========================================
-          // if (isRealisasiAvailable == false)
           Row(
             children: [
               Expanded(
@@ -156,7 +135,6 @@ class HistoryRecapWidget extends StatelessWidget {
     );
   }
 
-  // 🚀 HELPER: Komponen Kolom Finansial Anti-Gencet
   Widget _buildFinancialColumn({
     required String label,
     required String value,
@@ -188,7 +166,6 @@ class HistoryRecapWidget extends StatelessWidget {
     );
   }
 
-  // 🚀 HELPER: Garis Vertikal Pemisah
   Widget _buildVerticalDivider() {
     return Container(
       width: 1,

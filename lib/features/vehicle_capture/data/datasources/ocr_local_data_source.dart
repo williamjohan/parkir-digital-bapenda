@@ -11,7 +11,6 @@ abstract class IOcrLocalDataSource {
 class OcrLocalDataSourceImpl implements IOcrLocalDataSource {
   @override
   Future<String> recognizeText(String imagePath) async {
-    // Inisialisasi di luar try agar bisa diakses oleh blok finally
     final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
 
     try {
@@ -63,9 +62,6 @@ class OcrLocalDataSourceImpl implements IOcrLocalDataSource {
         message: 'Gagal mengekstrak teks menggunakan ML Kit.',
       );
     } finally {
-      // [PERBAIKAN ARSITEKTUR MEMORI]
-      // Blok finally ini HARGA MATI. textRecognizer akan selalu ditutup
-      // meskipun teks kosong (return '') atau terjadi error (catch).
       await textRecognizer.close();
       AppLogger.info(
         'ML Kit TextRecognizer berhasil ditutup dan memori dibersihkan.',

@@ -17,13 +17,10 @@ class DetailRealisasiOpRepositoryImpl implements DetailRealisasiOpRepository {
     required int tahun,
   }) async {
     try {
-      // Sementara langsung hit API (fetch remote saja sesuai instruksi)
       final model = await _remoteDataSource.getSummaryRealisasi(
         nop: nop,
         tahun: tahun,
       );
-
-      // Mapping Model ke Entity
       return Right(model.toEntity());
     } catch (e) {
       return Left(e.toString());

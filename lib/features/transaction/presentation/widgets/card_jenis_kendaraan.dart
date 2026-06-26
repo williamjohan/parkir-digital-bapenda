@@ -20,8 +20,6 @@ class CardJenisKendaraan extends StatelessWidget {
     required this.op,
     required this.alamat,
   });
-
-  // Icon kendaraan berdasarkan label
   IconData _iconFor(String jenis) {
     final j = jenis.toLowerCase();
     if (j.contains('motor')) return Icons.two_wheeler_rounded;
@@ -98,7 +96,6 @@ class CardJenisKendaraan extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Header ──────────────────────────────────────────────────────
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -139,8 +136,6 @@ class CardJenisKendaraan extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // ── Grid Pilihan ─────────────────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: tarifList.isEmpty
@@ -169,8 +164,6 @@ class CardJenisKendaraan extends StatelessWidget {
                         },
                       ),
               ),
-
-              // ── Selected Indicator ───────────────────────────────────────────
               if (selectedTarif != null) ...[
                 Divider(height: 1, color: AppColors.border),
                 Padding(
@@ -211,8 +204,6 @@ class CardJenisKendaraan extends StatelessWidget {
   }
 }
 
-// ─── CHIP KENDARAAN ───────────────────────────────────────────────────────────
-
 class _VehicleChip extends StatelessWidget {
   final TarifModel tarif;
   final bool isSelected;
@@ -240,15 +231,6 @@ class _VehicleChip extends StatelessWidget {
             color: isSelected ? AppColors.primary : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
-          // boxShadow: isSelected
-          //     ? [
-          //         BoxShadow(
-          //           color: AppColors.primary.withValues(alpha: 0.25),
-          //           blurRadius: 8,
-          //           offset: const Offset(0, 3),
-          //         ),
-          //       ]
-          //     : [],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -286,8 +268,6 @@ class _VehicleChip extends StatelessWidget {
     );
   }
 }
-
-// ─── EMPTY STATE ──────────────────────────────────────────────────────────────
 
 class _EmptyVehicleState extends StatelessWidget {
   @override

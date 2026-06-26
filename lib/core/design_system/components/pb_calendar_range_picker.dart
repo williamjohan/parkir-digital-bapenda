@@ -35,8 +35,6 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
   DateTime? _endDate;
 
   final List<String> _weekDays = ['S', 'S', 'R', 'K', 'J', 'S', 'M'];
-
-  // [ENHANCE]: Ambil tanggal hari ini (dinormalkan ke jam 00:00:00 untuk perbandingan presisi)
   late final DateTime _today;
 
   @override
@@ -94,8 +92,6 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
       1,
     );
     final int firstDayOffset = (firstDayOfMonth.weekday - 1) % 7;
-
-    // [ENHANCE]: Cek apakah bulan yang tampil adalah bulan saat ini
     final bool isCurrentMonth =
         _currentMonth.year == _today.year &&
         _currentMonth.month == _today.month;
@@ -108,7 +104,6 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // --- HEADER BULAN & TAHUN ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -135,8 +130,6 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
               ],
             ),
             const SizedBox(height: 16),
-
-            // --- NAMA HARI ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: _weekDays
@@ -156,15 +149,11 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
                   .toList(),
             ),
             const SizedBox(height: 8),
-
-            // --- GRID TANGGAL ---
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
-                // 🚀 [PERBAIKAN 1]: Mengubah dari 1.2 menjadi 1.0 (Persegi)
-                // Ini membuat kotak tanggal lebih tinggi dan area sentuh vertikalnya jauh lebih besar.
                 childAspectRatio: 1.0,
               ),
               itemCount: daysInMonth + firstDayOffset,
@@ -211,9 +200,6 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
                 }
 
                 return GestureDetector(
-                  // 🚀 [PERBAIKAN 2]: THE MAGIC WAND!
-                  // Ini memaksa seluruh kotak (meskipun transparan) untuk menerima klik.
-                  // Jukir tidak perlu lagi meng-klik tepat di atas font angkanya.
                   behavior: HitTestBehavior.opaque,
                   onTap: isFuture ? null : () => _handleDayTap(date),
                   child: Container(
@@ -235,8 +221,6 @@ class _PbCalendarRangePickerState extends State<PbCalendarRangePicker> {
               },
             ),
             const SizedBox(height: 24),
-
-            // --- TOMBOL BATAL & OKE ---
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

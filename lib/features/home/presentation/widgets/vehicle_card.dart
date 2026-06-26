@@ -3,7 +3,6 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
 class VehicleCard extends StatelessWidget {
-  // <--- Public Class
   final String title;
   final IconData icon;
   final VoidCallback onTap;

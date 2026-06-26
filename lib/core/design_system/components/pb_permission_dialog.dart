@@ -1,5 +1,3 @@
-// lib/core/design_system/components/pb_permission_dialog.dart
-
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../tokens/app_colors.dart';
@@ -77,7 +75,6 @@ class PbPermissionDialog extends StatelessWidget {
                 Expanded(
                   child: PbPrimaryButton(
                     text: 'Pengaturan',
-                    // Membuka setting HP bawaan Android/iOS
                     onPressed: () {
                       Navigator.of(context).pop();
                       openAppSettings();

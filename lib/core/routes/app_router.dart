@@ -12,6 +12,8 @@ import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
+import '../../features/realisasi/presentation/cubit/realisasi_cubit.dart';
+import '../../features/realisasi/presentation/screens/realisasi_screen.dart';
 import '../../features/transaction/presentation/page/transaction_page.dart';
 import '../../features/transaction/presentation/cubit/transaction_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/cubit/transaction_history_cubit.dart';
@@ -90,18 +92,6 @@ class AppRouter {
             child: const HomePage(),
           ),
         ),
-        // GoRoute(
-        //   path: AppRoutes.searchObjekPajak,
-        //   name: AppRoutes.searchObjekPajak,
-        //   builder: (context, state) {
-        //     final role = state.extra as RoleLoginDigitalParkir;
-
-        //     return BlocProvider(
-        //       create: (_) => locator<SearchOpCubit>(),
-        //       child: SearchOpPage(role: role),
-        //     );
-        //   },
-        // ),
         GoRoute(
           path: AppRoutes.searchObjekPajak,
           name: AppRoutes.searchObjekPajak,
@@ -112,7 +102,6 @@ class AppRouter {
             final opType = extra?['opType'] as SearchOpType?;
 
             if (role == null) {
-              // fallback biar nggak crash — sesuaikan dengan kebutuhanmu
               return const Scaffold(
                 body: Center(child: Text('Role tidak ditemukan')),
               );
@@ -146,6 +135,17 @@ class AppRouter {
                   locator<DashboardOpCubit>()
                     ..getSummaryDashboardOp(item['nop']),
               child: DashboardOpScreen(item: item),
+            );
+          },
+        ),
+
+        GoRoute(
+          path: AppRoutes.realisasiSeluruhOP,
+          name: AppRoutes.realisasiSeluruhOP,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (_) => locator<RealisasiCubit>()..init(),
+              child: const RealisasiScreen(),
             );
           },
         ),

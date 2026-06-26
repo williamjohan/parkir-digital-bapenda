@@ -1,13 +1,4 @@
-// coverage:ignore-file
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
-
 part of 'dashboard_op_response_model.dart';
-
-// **************************************************************************
-// FreezedGenerator
-// **************************************************************************
 
 T _$identity<T>(T value) => value;
 
@@ -81,10 +72,7 @@ class _$DashboardOpResponseModelCopyWithImpl<
 >
     implements $DashboardOpResponseModelCopyWith<$Res> {
   _$DashboardOpResponseModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
   final $Val _value;
-  // ignore: unused_field
   final $Res Function($Val) _then;
 
   /// Create a copy of DashboardOpResponseModel
@@ -336,7 +324,6 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
   @override
   List<RiwayatPendapatanModel> get riwayatList {
     if (_riwayatList is EqualUnmodifiableListView) return _riwayatList;
-    // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_riwayatList);
   }
 
@@ -344,7 +331,6 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
   @override
   List<SofModel> get sofList {
     if (_sofList is EqualUnmodifiableListView) return _sofList;
-    // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_sofList);
   }
 
@@ -519,10 +505,7 @@ class _$RealisasiTahunIniModelCopyWithImpl<
 >
     implements $RealisasiTahunIniModelCopyWith<$Res> {
   _$RealisasiTahunIniModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
   final $Val _value;
-  // ignore: unused_field
   final $Res Function($Val) _then;
 
   /// Create a copy of RealisasiTahunIniModel
@@ -726,10 +709,7 @@ class _$RiwayatPendapatanModelCopyWithImpl<
 >
     implements $RiwayatPendapatanModelCopyWith<$Res> {
   _$RiwayatPendapatanModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
   final $Val _value;
-  // ignore: unused_field
   final $Res Function($Val) _then;
 
   /// Create a copy of RiwayatPendapatanModel
@@ -943,10 +923,7 @@ abstract class $SofModelCopyWith<$Res> {
 class _$SofModelCopyWithImpl<$Res, $Val extends SofModel>
     implements $SofModelCopyWith<$Res> {
   _$SofModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
   final $Val _value;
-  // ignore: unused_field
   final $Res Function($Val) _then;
 
   /// Create a copy of SofModel

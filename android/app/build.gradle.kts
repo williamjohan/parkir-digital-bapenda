@@ -26,18 +26,13 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-
-    // 🚀 THE FACTORY ENGINE (FLAVORS) - KOTLIN DSL SYNTAX
     flavorDimensions += "env"
 
     productFlavors {
-        // 1. JALUR PRODUKSI (LIVE)
         create("prod") {
             dimension = "env"
             resValue("string", "app_name", "TS Park Bapenda")
         }
-        
-        // 2. JALUR DEMO (PRESENTASI PIMPINAN)
         create("demo") {
             dimension = "env"
             applicationIdSuffix = ".demo"

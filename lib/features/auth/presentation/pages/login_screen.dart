@@ -1,5 +1,3 @@
-// lib/features/auth/presentation/pages/login_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
@@ -13,21 +11,18 @@ import '../cubit/login/login_state.dart';
 import '../widgets/login_background_widget.dart';
 import '../widgets/login_form_sheet_widget.dart';
 
-// 1. WRAPPER UTAMA: Bertugas Inject LoginCubit (Lokal) ke dalam Widget Tree
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // [PERUBAHAN 1]: Kita hanya menyediakan LoginCubit (Sang Prajurit) di halaman ini
       create: (context) => locator<LoginCubit>(),
       child: const _LoginScreenContent(),
     );
   }
 }
 
-// 2. KONTEN UI: Logic Animasi & Form
 class _LoginScreenContent extends StatefulWidget {
   const _LoginScreenContent();
 
@@ -49,8 +44,6 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
 
   Future<void> _loadInitialData() async {
     final storage = locator<ISecureStorageManager>();
-
-    // 1. Cek Alasan Logout untuk Modal Dialog
     final logoutReason = await storage.getAndClearLogoutReason();
     if (logoutReason == 'DEVICE_MISMATCH') {
       _showInfoDialog(
@@ -63,8 +56,6 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
         'Sesi bulanan Anda telah berakhir demi menjaga keamanan. Silakan masuk kembali untuk mulai bekerja.',
       );
     }
-
-    // 2. Load Sticky Credentials (Username & Password)
     final creds = await storage.getCredentials();
     if (creds != null) {
       setState(() {
@@ -74,7 +65,6 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
     }
   }
 
-  //Modal Dialog
   void _showInfoDialog(String title, String message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       PbShowDialog.show(
@@ -163,7 +153,6 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                         usernameController: _usernameController,
                         passwordController: _passwordController,
                         onClose: () => _toggleForm(false),
-                        // 🚀 [ENHANCEMENT]: Terima status rememberMe dari form
                         onLogin: (bool isRememberMe) {
                           context.read<LoginCubit>().loginSubmited(
                             _usernameController.text,

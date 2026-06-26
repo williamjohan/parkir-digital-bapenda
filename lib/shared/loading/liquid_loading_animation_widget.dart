@@ -26,14 +26,10 @@ class _LiquidLoadingWidgetState extends State<LiquidLoadingWidget>
   @override
   void initState() {
     super.initState();
-
-    // 1. Controller untuk Gerakan Gelombang (Kiri-Kanan)
     _waveController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000), // Kecepatan ombak
     )..repeat(); // Ulang terus selamanya
-
-    // 2. Controller untuk Tinggi Air (Bawah ke Atas)
     _fillController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: (widget.durationSeconds * 1000).toInt()),
@@ -54,27 +50,16 @@ class _LiquidLoadingWidgetState extends State<LiquidLoadingWidget>
       height: widget.size,
       child: Stack(
         children: [
-          // ===============================================
-          // LAYER 1: BACKGROUND (LOGO KOSONG / ABU-ABU)
-          // ===============================================
-          // Ini adalah "Wadah" yang diam
           Image.asset(
             AppAssetImages.logosurabayasiloute,
             width: widget.size,
             height: widget.size,
-            // color: Colors.grey.withValues(alpha: 1), // Warna wadah pudar
             fit: BoxFit.contain,
           ),
-
-          // ===============================================
-          // LAYER 2: FOREGROUND (AIR ORANYE)
-          // ===============================================
-          // Ini adalah logo oranye yang kita potong (Clip) bentuk ombak
           AnimatedBuilder(
             animation: Listenable.merge([_waveController, _fillController]),
             builder: (context, child) {
               return ClipPath(
-                // Jurus Rahasia: Custom Clipper untuk bikin bentuk ombak
                 clipper: WaveClipper(
                   wavePhase: _waveController.value, // Posisi gerak ombak
                   fillLevel:
@@ -96,9 +81,6 @@ class _LiquidLoadingWidgetState extends State<LiquidLoadingWidget>
   }
 }
 
-// ==========================================================
-// RUMUS MATEMATIKA OMBAK (JANGAN PUSING, INI TEMPLATE AJA)
-// ==========================================================
 class WaveClipper extends CustomClipper<Path> {
   final double wavePhase; // 0.0 - 1.0 (Gerakan horizontal)
   final double fillLevel; // 0.0 - 1.0 (Ketinggian air)
@@ -108,20 +90,11 @@ class WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final Path path = Path();
-
-    // Konfigurasi Ombak
-    // Semakin tinggi fillLevel, ombak semakin tenang (biar pas penuh gak jelek)
     final double waveHeight = (1 - fillLevel) * 10.0; // Tinggi gejolak ombak
     const double waveFrequency = 2.0; // Berapa banyak gundukan
-
-    // Titik Y dasar air (Bergerak dari bawah ke atas)
-    // fillLevel 0 = size.height (Bawah)
-    // fillLevel 1 = 0 (Atas)
     final double baseHeight = size.height * (1 - fillLevel);
 
     path.moveTo(0, baseHeight);
-
-    // Loop menggambar garis sinus (Gelombang) dari kiri ke kanan
     for (double i = 0.0; i < size.width; i++) {
       path.lineTo(
         i,
@@ -133,8 +106,6 @@ class WaveClipper extends CustomClipper<Path> {
                 waveHeight,
       );
     }
-
-    // Tutup path ke bawah agar jadi area tertutup
     path.lineTo(size.width, size.height); // Pojok Kanan Bawah
     path.lineTo(0, size.height); // Pojok Kiri Bawah
     path.close();
@@ -144,7 +115,6 @@ class WaveClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(WaveClipper oldClipper) {
-    // Render ulang setiap ada perubahan animasi
     return wavePhase != oldClipper.wavePhase ||
         fillLevel != oldClipper.fillLevel;
   }

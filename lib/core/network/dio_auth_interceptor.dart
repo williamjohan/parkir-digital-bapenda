@@ -1,5 +1,3 @@
-// lib/core/network/dio_auth_interceptor.dart
-
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../storage/secure_storage_manager.dart';
@@ -40,10 +38,7 @@ class DioAuthInterceptor extends Interceptor {
       }
 
       try {
-        // [PERBAIKAN ARSITEKTUR]: Gunakan EnvConfig.baseUrl agar instance Dio baru ini tidak buta arah
         final refreshDio = Dio(BaseOptions(baseUrl: EnvConfig.baseUrl));
-
-        // [PERBAIKAN]: Gunakan konstanta dari ApiEndpoints
         final response = await refreshDio.post(
           ApiEndpoints.refreshToken,
           data: {'refreshToken': refreshToken},

@@ -1,5 +1,3 @@
-// lib/features/init/presentation/pages/splash_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +19,6 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    // Trigger pengecekan otomatis saat halaman pertama kali dirender
     context.read<InitCubit>().checkDeviceReadiness();
   }
 
@@ -31,9 +28,7 @@ class _SplashPageState extends State<SplashPage> {
       backgroundColor: Colors.white,
       body: BlocConsumer<InitCubit, InitState>(
         listener: (context, state) {
-          // Listener khusus untuk aksi satu kali (navigasi, snackbar)
           if (state is InitSuccess) {
-            // Logika Smart Gatekeeper
             if (state.isLoggedIn) {
               context.go(AppRoutes.home); // Punya token? Langsung Home!
             } else {
@@ -48,7 +43,6 @@ class _SplashPageState extends State<SplashPage> {
               height: double.infinity, // Pastikan mengambil tinggi penuh layar
               child: Stack(
                 children: [
-                  // --- BLOK LOGO (Tengah Absolut) ---
                   Align(
                     alignment: Alignment.center,
                     child: Column(
@@ -61,7 +55,6 @@ class _SplashPageState extends State<SplashPage> {
                           height: 200,
                           fit: BoxFit.contain,
                         ),
-                        // const SizedBox(height: 16),
                         Text(
                           'Parkir Digital\nBapenda',
                           textAlign: TextAlign.center,
@@ -72,12 +65,9 @@ class _SplashPageState extends State<SplashPage> {
                       ],
                     ),
                   ),
-
-                  // --- BLOK STATUS (Mentok Bawah) ---
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
-                      // Jarak aman dari dasar layar (aman untuk layar notch/home indicator)
                       padding: const EdgeInsets.only(
                         bottom: 48.0,
                         left: 24.0,
@@ -99,7 +89,6 @@ class _SplashPageState extends State<SplashPage> {
                               ),
                             ),
                           ] else if (state is InitError) ...[
-                            // Mitigasi Risiko: Jika perangkat gagal memenuhi syarat
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(

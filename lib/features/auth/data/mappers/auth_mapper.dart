@@ -1,7 +1,3 @@
-// Catatan William
-// Mapper ini digunakan untuk mengconvert DTO
-// AUTH response ke Sqlite
-
 import '../models/auth_response_model.dart';
 
 class AuthMapper {

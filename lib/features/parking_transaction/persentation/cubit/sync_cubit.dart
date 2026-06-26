@@ -11,12 +11,9 @@ class SyncCubit extends Cubit<SyncState> {
 
   /// Fungsi ini bisa dipanggil kapan saja (setelah tap bayar, pull to refresh, dll)
   Future<void> syncDataBackground() async {
-    // [ANTI-SPAM]: Jika pasukan penyapu sedang bekerja, jangan kirim pasukan baru!
     if (state is SyncInProgress) return;
 
     emit(SyncInProgress());
-
-    // Eksekusi Sang Final Boss
     final result = await _syncUseCase.execute();
 
     result.fold(
@@ -25,8 +22,6 @@ class SyncCubit extends Cubit<SyncState> {
       },
       (syncedCount) {
         if (!isClosed) emit(SyncSuccess(syncedCount));
-
-        // Kembalikan ke Initial setelah 2 detik agar bisa di-trigger ulang nanti
         Future.delayed(const Duration(seconds: 2), () {
           if (!isClosed) emit(SyncInitial());
         });

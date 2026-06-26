@@ -1,5 +1,3 @@
-// lib/features/transaction_history/presentation/pages/transaction_history_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
@@ -65,18 +63,14 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     ];
 
     if (start == end) {
-      // Jika pilih 1 hari yang bukan hari ini
       return "REKAP ${start.day} ${months[start.month - 1]} ${start.year}";
     }
 
     if (start.month == end.month && start.year == end.year) {
-      // Jika rentang di bulan dan tahun yang sama (Contoh: 1 - 12 Jun 2026)
       return "REKAP ${start.day} - ${end.day} ${months[end.month - 1]} ${end.year}";
     } else if (start.year == end.year) {
-      // Jika beda bulan tapi tahun sama (Contoh: 28 Mei - 2 Jun 2026)
       return "REKAP ${start.day} ${months[start.month - 1]} - ${end.day} ${months[end.month - 1]} ${end.year}";
     } else {
-      // Jika melintas ganti tahun
       return "REKAP ${start.day} ${months[start.month - 1]} ${start.year} - ${end.day} ${months[end.month - 1]} ${end.year}";
     }
   }
@@ -102,10 +96,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       _endDate,
       widget.nop ?? '',
     );
-
-    // 🚀 SCROLL LISTENER BARU YANG LEBIH CERDAS
     _scrollController.addListener(() {
-      // Angka 180 adalah perkiraan tinggi HistoryRecapWidget
       if (_scrollController.offset > 180 && !_isScrolledPastRecap) {
         setState(() => _isScrolledPastRecap = true);
       } else if (_scrollController.offset <= 180 && _isScrolledPastRecap) {
@@ -159,7 +150,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               ),
               body: Column(
                 children: [
-                  // 🔹 FILTER TANGGAL (TETAP STATIS DI ATAS)
                   RangeFilterWidget(
                     onApply:
                         ({
@@ -181,12 +171,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                           );
                         },
                   ),
-
-                  // 🔹 FILTER KATEGORI (TETAP STATIS DI ATAS)
                   if (state is TransactionHistoryLoaded && widget.nop != null)
                     _buildFilterSection(state),
-
-                  // 🔹 SCROLL AREA DENGAN MAGIC STACK OVERLAY
                   Expanded(child: _buildScrollContent(state)),
                 ],
               ),
@@ -253,7 +239,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     );
   }
 
-  // 🚀 MAGIC LAYER DIMULAI DI SINI
   Widget _buildScrollContent(TransactionHistoryState state) {
     if (state is TransactionHistoryError) {
       return Center(child: Text(state.message));
@@ -263,9 +248,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
       return Stack(
         children: [
-          // ==========================================
-          // LAYER 1: BASE SCROLL VIEW (BACKGROUND)
-          // ==========================================
           RefreshIndicator(
             onRefresh: () => context
                 .read<TransactionHistoryCubit>()
@@ -274,17 +256,10 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                //  REKAP NORMAL: Akan ter-scroll ke atas secara alami
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 8),
-                    // Masukkan ke dalam parameter child
                     child: (() {
-                      //TODO disini juga perlu adjustment
-                      // Pastikan double
-                      // final int persentase = 10;
-
-                      // 2. Return Widget-nya
                       return HistoryRecapWidget(
                         title: _getDynamicRecapTitle(),
                         roda2: state.roda2.toString(),
@@ -301,8 +276,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                     })(),
                   ),
                 ),
-
-                // 🔹 LIST TRANSAKSI
                 data.isEmpty
                     ? SliverFillRemaining(
                         hasScrollBody: false,
@@ -322,7 +295,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             ignoring: !_showOverlayRecap,
             child: GestureDetector(
               onTap: () {
-                // Jika user klik di area gelap (di luar recap), tutup recap-nya
                 setState(() => _showOverlayRecap = false);
               },
               child: AnimatedContainer(
@@ -337,9 +309,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               ),
             ),
           ),
-          // ==========================================
-          // LAYER 2: THE FLOATING RECAP OVERLAY (SLIDE DOWN)
-          // ==========================================
           AnimatedPositioned(
             duration: const Duration(milliseconds: 350),
             curve: Curves.easeOutBack, // Animasi memantul elegan
@@ -350,7 +319,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             right: 0,
             child: GestureDetector(
               onVerticalDragEnd: (details) {
-                // Bisa di-swipe ke atas untuk menutup
                 if (details.primaryVelocity! < 0) {
                   setState(() => _showOverlayRecap = false);
                 }
@@ -358,10 +326,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               child: Column(
                 children: [
                   (() {
-                    //TODO untuk persentase pajak nya perlu adjustment
-                    //dari endpoint sendiri.
-                    // final int persentase = 10;
-
                     return HistoryRecapWidget(
                       title: _getDynamicRecapTitle(),
                       roda2: state.roda2.toString(),
@@ -375,7 +339,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                       isFree: widget.isFree,
                     );
                   })(),
-                  // Tombol Panah Atas (Tutup)
                   GestureDetector(
                     onTap: () => setState(() => _showOverlayRecap = false),
                     child: Container(
@@ -402,14 +365,9 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               ),
             ),
           ),
-
-          // ==========================================
-          // LAYER 3: HANDLE TOMBOL PANAH BAWAH
-          // ==========================================
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            // Muncul HANYA jika sudah discroll melewati rekap DAN overlay sedang ditutup
             top: (_isScrolledPastRecap && !_showOverlayRecap) ? 0 : -50,
             left: 0,
             right: 0,

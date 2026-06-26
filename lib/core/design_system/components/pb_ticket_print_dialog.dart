@@ -119,8 +119,6 @@ class PbTicketPrintDialog {
                 onClosed();
               }
             },
-
-            // TOMBOL CETAK / HUBUNGKAN PRINTER ---
             printPressed: () async {
               if (!isPrinterReady) {
                 context.push(AppRoutes.printerSetting);

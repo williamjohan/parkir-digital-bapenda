@@ -19,7 +19,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$DashboardSummaryNonJukirEntity {
   int get totalOp => throw _privateConstructorUsedError;
   int get totalOpDigital => throw _privateConstructorUsedError;
-  int get totalOpNonDigital => throw _privateConstructorUsedError; // baru
+  int get totalOpNonDigital => throw _privateConstructorUsedError;
   int get totalBertarif => throw _privateConstructorUsedError;
   int get totalNonTarif => throw _privateConstructorUsedError;
   int get totalTarifTidakDiketahui => throw _privateConstructorUsedError;
@@ -459,7 +459,6 @@ class _$DashboardSummaryNonJukirEntityImpl
   final int totalOpDigital;
   @override
   final int totalOpNonDigital;
-  // baru
   @override
   final int totalBertarif;
   @override
@@ -633,7 +632,7 @@ abstract class _DashboardSummaryNonJukirEntity
   @override
   int get totalOpDigital;
   @override
-  int get totalOpNonDigital; // baru
+  int get totalOpNonDigital;
   @override
   int get totalBertarif;
   @override

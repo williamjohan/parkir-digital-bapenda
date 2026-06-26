@@ -1,5 +1,3 @@
-// lib/features/home/presentation/widgets/mode_plat.dart
-
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';

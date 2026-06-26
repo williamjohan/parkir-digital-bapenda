@@ -1,5 +1,3 @@
-// lib/features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart
-
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';

@@ -9,7 +9,6 @@ abstract class Failure extends Equatable {
   List<Object> get props => [message];
 }
 
-// Representasi dari Exception di atas untuk dikonsumsi UI
 class ServerFailure extends Failure {
   const ServerFailure(super.message);
 }

@@ -102,7 +102,6 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
         try {
           return DateFormat('yyyy-MM-dd').format(DateTime.parse(date.trim()));
         } catch (_) {
-          // Kalau gagal parse, anggap sudah benar atau kirim apa adanya
           return date.trim();
         }
       }

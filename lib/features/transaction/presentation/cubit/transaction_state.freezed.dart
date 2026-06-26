@@ -21,8 +21,7 @@ mixin _$TransactionState {
   List<TarifModel> get tarifList => throw _privateConstructorUsedError;
   TarifModel? get selectedTarif => throw _privateConstructorUsedError;
   bool get isFree => throw _privateConstructorUsedError;
-  Map<String, String> get qrisMap =>
-      throw _privateConstructorUsedError; // 💡 Legacy/Future properties (Dipertahankan agar UI lama tidak error)
+  Map<String, String> get qrisMap => throw _privateConstructorUsedError;
   DataJukirStatus get dataJukirStatus => throw _privateConstructorUsedError;
   List<DataJukirEntity> get dataJukirList => throw _privateConstructorUsedError;
   DataJukirEntity? get selectedJukir => throw _privateConstructorUsedError;
@@ -276,7 +275,6 @@ class _$TransactionStateImpl extends _TransactionState {
     return EqualUnmodifiableMapView(_qrisMap);
   }
 
-  // 💡 Legacy/Future properties (Dipertahankan agar UI lama tidak error)
   @override
   @JsonKey()
   final DataJukirStatus dataJukirStatus;
@@ -374,7 +372,7 @@ abstract class _TransactionState extends TransactionState {
   @override
   bool get isFree;
   @override
-  Map<String, String> get qrisMap; // 💡 Legacy/Future properties (Dipertahankan agar UI lama tidak error)
+  Map<String, String> get qrisMap;
   @override
   DataJukirStatus get dataJukirStatus;
   @override

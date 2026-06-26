@@ -61,8 +61,6 @@ class CardRekapJenisPembayaranOp extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // 🚀 Kolom 3: Tombol Aksi
               InkWell(
                 onTap: onLihatSemua,
                 child: Row(

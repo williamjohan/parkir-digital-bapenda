@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'qris_model.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 QrisModel _$QrisModelFromJson(Map<String, dynamic> json) => QrisModel(
   kodeQris: json['kodeQris'] as String,

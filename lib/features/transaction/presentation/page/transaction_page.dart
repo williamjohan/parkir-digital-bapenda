@@ -33,15 +33,11 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   late Future<Map<String, dynamic>?> _profileFuture;
-
-  // Karena kita dari FAB, itemOP pasti null, sehingga _requiresJukir = false.
   bool get _requiresJukir => widget.itemOP != null;
 
   @override
   void initState() {
     super.initState();
-
-    // 🚀 INIT CUBIT DENGAN KONTEKS DEMO
     context.read<TransactionCubit>().init(
       isFree: widget.isFree,
       isDemoMode: widget.isDemoMode,
@@ -52,8 +48,6 @@ class _TransactionPageState extends State<TransactionPage> {
 
   void _navigateToPayment(TransactionState state) {
     final selected = state.selectedTarif!;
-
-    // 🚀 OPER BOLA KE PAYMENT PAGE BESERTA STATUS DEMO-NYA
     final args = PaymentPageArgs(
       jenisKendaraanId: selected.id,
       kategoriKendaraan: selected.jenisTarif,
@@ -152,7 +146,6 @@ class _TransactionPageState extends State<TransactionPage> {
                                 text: widget.isFree
                                     ? 'Simpan Parkir Gratis'
                                     : 'Lanjut Pembayaran',
-                                // 🚀 VALIDASI TOMBOL: Karena _requiresJukir false, hanya cek kendaraan
                                 onPressed: state.isValid(_requiresJukir)
                                     ? () => context
                                           .read<TransactionCubit>()

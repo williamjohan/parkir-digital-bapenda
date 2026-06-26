@@ -1,4 +1,3 @@
-// lib/features/vehicle_capture/data/repositories/ocr_repository_impl.dart
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
@@ -29,7 +28,6 @@ class OcrRepositoryImpl implements IOcrRepository {
     } on OcrException catch (e) {
       return Left(OcrFailure(e.message));
     } catch (e) {
-      // Tangkap error tidak terduga lainnya (misal: file tidak ditemukan, dll)
       return const Left(
         OcrFailure('Terjadi kesalahan sistem saat membaca gambar.'),
       );

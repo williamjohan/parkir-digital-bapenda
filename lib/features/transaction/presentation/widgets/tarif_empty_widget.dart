@@ -10,7 +10,6 @@ class TarifEmptyWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min, // ✅ penting
         children: [
-          // Image.asset("assets/images/surabaya_background.png"),
           Icon(Icons.no_transfer_outlined, size: 80, color: AppColors.textHint),
 
           const SizedBox(height: 24),

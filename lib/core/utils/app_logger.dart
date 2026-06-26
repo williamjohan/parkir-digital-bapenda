@@ -1,5 +1,3 @@
-// lib/core/utils/app_logger.dart
-
 import 'package:logger/logger.dart';
 
 class AppLogger {

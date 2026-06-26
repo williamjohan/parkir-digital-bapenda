@@ -29,7 +29,6 @@ class _CardQrisWidgetState extends State<CardQrisWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // padding: EdgeInsets.all(60),
       padding: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -45,13 +44,11 @@ class _CardQrisWidgetState extends State<CardQrisWidget> {
               children: [
                 Image.asset(
                   "assets/images/qris_logo.png",
-                  // width: 100,
                   height: 30,
                   fit: BoxFit.fill,
                 ),
                 Image.asset(
                   "assets/images/gpn_logo.png",
-                  // width: 30,
                   height: 30,
                   fit: BoxFit.fill,
                 ),
@@ -60,12 +57,7 @@ class _CardQrisWidgetState extends State<CardQrisWidget> {
           ),
           Container(
             margin: EdgeInsets.only(top: 10, right: 20, left: 20),
-            // padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              // borderRadius: BorderRadius.circular(20),
-              // border: Border.all(color: AppColors.warning, width: 0.5),
-            ),
+            decoration: BoxDecoration(color: Colors.white),
             child: Image.memory(
               width: 300,
               height: 300,

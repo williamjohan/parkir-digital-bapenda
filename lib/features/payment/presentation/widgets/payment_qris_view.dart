@@ -1,5 +1,3 @@
-// lib/features/payment/presentation/widgets/payment_qris_view.dart
-
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';

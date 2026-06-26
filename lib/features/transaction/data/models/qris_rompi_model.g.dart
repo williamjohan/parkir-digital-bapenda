@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'qris_rompi_model.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 QrisRompiModel _$QrisRompiModelFromJson(Map<String, dynamic> json) =>
     QrisRompiModel(

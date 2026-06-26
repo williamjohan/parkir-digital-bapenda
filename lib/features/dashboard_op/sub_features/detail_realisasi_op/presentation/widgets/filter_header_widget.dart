@@ -33,14 +33,11 @@ class FilterHeaderWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // ⬅️ Panah Kiri (Sekarang Dinamis!)
             _NavButton(
               icon: Icons.chevron_left,
               onTap: canDecrement ? onDecrementYear : () {},
               isActive: canDecrement,
             ),
-
-            // 📅 Teks Tahun (Rata Tengah)
             Expanded(
               child: GestureDetector(
                 onTap: onTapTahun,
@@ -69,8 +66,6 @@ class FilterHeaderWidget extends StatelessWidget {
                 ),
               ),
             ),
-
-            // ➡️ Panah Kanan (Dinamis)
             _NavButton(
               icon: Icons.chevron_right,
               onTap: canIncrement ? onIncrementYear : () {},

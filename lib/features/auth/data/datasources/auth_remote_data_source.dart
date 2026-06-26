@@ -1,4 +1,3 @@
-// lib/features/auth/data/datasources/auth_remote_data_source.dart
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
@@ -12,7 +11,6 @@ import '../models/auth_response_model.dart';
 
 abstract class IAuthRemoteDataSource {
   Future<AuthResponseModel> login(String username, String password);
-  // BARU
   Future<bool> checkDeviceUuid();
 }
 
@@ -71,7 +69,6 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      // Cek apakah ini murni karena salah password/username
       final int statusCode = e.response?.statusCode ?? 500;
       if (statusCode == 401 || statusCode == 404 || statusCode == 400) {
         final String? backendMessage = e.response?.data?['message'];
@@ -79,8 +76,6 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
           message: backendMessage ?? 'Username atau password Jukir salah.',
         );
       }
-
-      // Jika bukan masalah password (misal: Internet Mati atau Error 500),
       throw DioErrorHandler.handle(e);
     } catch (e, stackTrace) {
       if (e is AuthException) rethrow;

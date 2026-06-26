@@ -10,7 +10,6 @@ import '../../../../core/routes/app_routes.dart';
 import '../cubit/home/home_cubit.dart';
 
 class DashboardWidget extends StatelessWidget {
-  // <--- Public Class
   final double totalPendapatan;
   final int totalTransaksi;
   final int motorCount;

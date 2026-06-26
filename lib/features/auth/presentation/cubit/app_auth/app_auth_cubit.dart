@@ -1,5 +1,3 @@
-// lib/features/auth/presentation/cubit/app_auth/app_auth_cubit.dart
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
@@ -34,9 +32,6 @@ class AppAuthCubit extends Cubit<AppAuthState> {
     }
 
     try {
-      // =====================================================
-      // 1. CEK TOKEN
-      // =====================================================
       final hasValidToken = await _checkAuthStatus();
 
       AppLogger.debug(">>> [AppAuthCubit] Hasil cek token: $hasValidToken");
@@ -45,10 +40,6 @@ class AppAuthCubit extends Cubit<AppAuthState> {
         emit(AppUnauthenticated());
         return;
       }
-
-      // =====================================================
-      // 2. CEK UUID PERANGKAT
-      // =====================================================
       AppLogger.debug(">>> [AppAuthCubit] Memverifikasi UUID perangkat...");
 
       final isDeviceValid = await _checkDeviceUuid();
@@ -69,10 +60,6 @@ class AppAuthCubit extends Cubit<AppAuthState> {
         emit(AppUnauthenticated());
         return;
       }
-
-      // =====================================================
-      // 3. SINKRONISASI PROFIL
-      // =====================================================
       AppLogger.debug(">>> [AppAuthCubit] UUID valid, sinkronisasi profil...");
 
       final profileResult = await _getProfile();

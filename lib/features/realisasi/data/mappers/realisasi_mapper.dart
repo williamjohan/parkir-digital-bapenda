@@ -17,7 +17,6 @@ extension RealisasiPajakModelMapper on RealisasiModel {
   }
 }
 
-// Helper untuk mapping List
 extension RealisasiPajakListMapper on List<RealisasiModel> {
   List<RealisasiEntity> toEntityList() {
     return map((model) => model.toEntity()).toList();

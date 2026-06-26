@@ -50,7 +50,6 @@ class _SearchOpPageState extends State<SearchOpPage> {
   void _onSearchChanged(String value) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () {
-      // Hanya eksekusi pencarian jika user berhenti mengetik selama 400ms
       context.read<SearchOpCubit>().searchNopAlamat(value);
     });
   }
@@ -174,7 +173,6 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                 children: [
                                   Container(
                                     width: 4,
-                                    // height: 72,
                                     decoration: BoxDecoration(
                                       color: chipType.foregroundColor,
                                       borderRadius: BorderRadius.circular(100),
@@ -348,8 +346,6 @@ class _SearchOpPageState extends State<SearchOpPage> {
   }
 }
 
-// ─── PERBAIKAN FUNGSI HELPER ──────────────────────────────────────────────────
-
 String getDigitalLabel(Map<String, dynamic> item) {
   final isDigital = item['is_digital'] ?? 0;
   return isDigital == 1 ? 'Digitalisasi' : 'Proses Digitalisasi';
@@ -362,7 +358,6 @@ PbChipType getDigitalType(Map<String, dynamic> item) {
 
 String getTarifLabel(Map<String, dynamic> item) {
   final pungutTarif = item['pungut_tarif'] ?? 1;
-  // 🚀 LOGIKA SUDAH DIBERSIHKAN
   return pungutTarif == 1 ? 'Gratis' : 'Berbayar';
 }
 

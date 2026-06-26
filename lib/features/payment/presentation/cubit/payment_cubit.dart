@@ -10,17 +10,12 @@ class PaymentCubit extends Cubit<PaymentState> {
   final GetLocalQrisUseCase _getLocalQrisUseCase;
 
   PaymentCubit(this._getLocalQrisUseCase) : super(PaymentInitial());
-
-  // 🚀 FUNGSI UTAMA: Penentu Jalur
   Future<void> loadQris({
     required int jenisKendaraanId,
     required bool isDemoMode,
   }) async {
-    print('DEBUG: isDemoMode = $isDemoMode, kendaraanId = $jenisKendaraanId');
     if (isClosed) return;
     emit(PaymentLocalQrisLoading());
-
-    // ─── JALUR 1: BAPENDA (QR STATIS DARI KONSTANTA) ───
     if (isDemoMode) {
       final qrisString = QrisDemoConstants.getQrisByVehicleType(
         jenisKendaraanId,
@@ -28,8 +23,6 @@ class PaymentCubit extends Cubit<PaymentState> {
       if (!isClosed) emit(PaymentDemoQrisReady(qrisString));
       return;
     }
-
-    // ─── JALUR 2: JUKIR (QR DARI SQLITE LOKAL) ───
     final result = await _getLocalQrisUseCase.execute();
     if (isClosed) return;
 

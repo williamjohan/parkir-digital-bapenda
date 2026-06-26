@@ -27,7 +27,6 @@ class HeaderDashboardOp extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        // 1. Menggunakan Gradasi agar terlihat mewah & tidak flat
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -43,7 +42,6 @@ class HeaderDashboardOp extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // 2. Dekorasi lingkaran transparan ala kartu premium
           Positioned(
             right: -50,
             top: -50,
@@ -60,8 +58,6 @@ class HeaderDashboardOp extends StatelessWidget {
               backgroundColor: AppColors.textPrimary.withValues(alpha: 0.04),
             ),
           ),
-
-          // Konten Utama
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
             child: Column(
@@ -152,7 +148,6 @@ class HeaderDashboardOp extends StatelessWidget {
                 /// Baris Potongan Pajak & Pendapatan Bersih (Desain Asimetris)
                 Row(
                   children: [
-                    // Kartu Pajak (Kombinasi Gelap Transparan tipis)
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.all(14),
@@ -189,8 +184,6 @@ class HeaderDashboardOp extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-
-                    // Kartu Bersih (Dibuat Pop-Out Putih Solid ala Glassmorphism terbalik)
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.all(14),

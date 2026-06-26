@@ -1,5 +1,3 @@
-// lib/core/design_system/components/bapenda_text_field.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../tokens/app_colors.dart';

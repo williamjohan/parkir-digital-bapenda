@@ -284,7 +284,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
 
   @override
   Future<void> clearPasswordOnly() async {
-    // HANYA hapus password, username dibiarkan lengket
     await _storage.delete(key: _keyPassword);
   }
 
@@ -297,7 +296,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   Future<String?> getAndClearLogoutReason() async {
     final reason = await _storage.read(key: _keyLogoutReason);
     if (reason != null) {
-      // Langsung hapus setelah dibaca agar modal tidak muncul terus-menerus
       await _storage.delete(key: _keyLogoutReason);
     }
     return reason;

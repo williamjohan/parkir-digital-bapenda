@@ -1,5 +1,3 @@
-// lib/features/auth/presentation/cubit/login/login_state.dart
-
 import 'package:equatable/equatable.dart';
 
 abstract class LoginState extends Equatable {

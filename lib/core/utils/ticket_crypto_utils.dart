@@ -1,5 +1,3 @@
-// lib/core/utils/ticket_crypto_utils.dart
-
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
@@ -11,10 +9,7 @@ class TicketCryptoUtils {
     required String orderId,
     required String deviceId,
   }) {
-    // 1. Gabungkan dengan separator sesuai C#
     final raw = '$orderId[PISAH]$deviceId';
-
-    // 2. Persiapkan Key (SHA256) & IV (MD5)
     final keyBytes = Uint8List.fromList(
       sha256.convert(utf8.encode('pisah-key-untuk-semua-bahasa')).bytes,
     );
@@ -23,8 +18,6 @@ class TicketCryptoUtils {
     );
 
     final data = Uint8List.fromList(utf8.encode(raw));
-
-    // 3. Proses Enkripsi AES-CBC dengan PKCS7
     final cipher = PaddedBlockCipherImpl(
       PKCS7Padding(),
       CBCBlockCipher(AESEngine()),
@@ -39,8 +32,6 @@ class TicketCryptoUtils {
     );
 
     final encryptedBytes = cipher.process(data);
-
-    // 4. Base64 URL-safe conversion
     return base64Encode(
       encryptedBytes,
     ).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');

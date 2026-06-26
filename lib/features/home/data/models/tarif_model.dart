@@ -3,8 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'tarif_model.g.dart';
 
-// Fungsi global untuk memaksa konversi ke double agar build_runner tidak error
-// jika backend mengirim int (misal: 500 alih-alih 500.0)
 double _toDouble(dynamic value) => (value ?? 0).toDouble();
 
 @JsonSerializable()

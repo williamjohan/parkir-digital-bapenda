@@ -1,5 +1,3 @@
-// lib/features/auth/data/datasources/profile_remote_data_source.dart
-
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
@@ -34,7 +32,6 @@ class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
         final beData = responseData['data'];
 
         try {
-          // 🚀 PASANG CCTV PARSING: Jika mati di sini, berarti UserModel tidak cocok dengan JSON Bapenda!
           AppLogger.info(
             ">>> [Profile DS] Mencoba parsing JSON ke UserModel...",
           );
@@ -61,7 +58,6 @@ class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      // 🚀 CCTV NETWORK: Menangkap murni penolakan server (misal 401 atau 404)
       AppLogger.error(
         ">>> [Profile DS] DIO ERROR: ${e.response?.statusCode} - ${e.message}",
         e,
