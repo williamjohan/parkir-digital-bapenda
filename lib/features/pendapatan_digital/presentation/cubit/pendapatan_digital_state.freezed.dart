@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$PendapatanDigitalState {
   bool get isLoading => throw _privateConstructorUsedError;
+  bool get isFilterLoading => throw _privateConstructorUsedError;
   DashboardSummaryNonJukirEntity? get summary =>
       throw _privateConstructorUsedError;
   String? get tglAwal => throw _privateConstructorUsedError;
@@ -40,6 +41,7 @@ abstract class $PendapatanDigitalStateCopyWith<$Res> {
   @useResult
   $Res call({
     bool isLoading,
+    bool isFilterLoading,
     DashboardSummaryNonJukirEntity? summary,
     String? tglAwal,
     String? tglAkhir,
@@ -68,6 +70,7 @@ class _$PendapatanDigitalStateCopyWithImpl<
   @override
   $Res call({
     Object? isLoading = null,
+    Object? isFilterLoading = null,
     Object? summary = freezed,
     Object? tglAwal = freezed,
     Object? tglAkhir = freezed,
@@ -78,6 +81,10 @@ class _$PendapatanDigitalStateCopyWithImpl<
             isLoading: null == isLoading
                 ? _value.isLoading
                 : isLoading // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isFilterLoading: null == isFilterLoading
+                ? _value.isFilterLoading
+                : isFilterLoading // ignore: cast_nullable_to_non_nullable
                       as bool,
             summary: freezed == summary
                 ? _value.summary
@@ -128,6 +135,7 @@ abstract class _$$PendapatanDigitalStateImplCopyWith<$Res>
   @useResult
   $Res call({
     bool isLoading,
+    bool isFilterLoading,
     DashboardSummaryNonJukirEntity? summary,
     String? tglAwal,
     String? tglAkhir,
@@ -154,6 +162,7 @@ class __$$PendapatanDigitalStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? isLoading = null,
+    Object? isFilterLoading = null,
     Object? summary = freezed,
     Object? tglAwal = freezed,
     Object? tglAkhir = freezed,
@@ -164,6 +173,10 @@ class __$$PendapatanDigitalStateImplCopyWithImpl<$Res>
         isLoading: null == isLoading
             ? _value.isLoading
             : isLoading // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isFilterLoading: null == isFilterLoading
+            ? _value.isFilterLoading
+            : isFilterLoading // ignore: cast_nullable_to_non_nullable
                   as bool,
         summary: freezed == summary
             ? _value.summary
@@ -191,6 +204,7 @@ class __$$PendapatanDigitalStateImplCopyWithImpl<$Res>
 class _$PendapatanDigitalStateImpl implements _PendapatanDigitalState {
   const _$PendapatanDigitalStateImpl({
     this.isLoading = false,
+    this.isFilterLoading = false,
     this.summary,
     this.tglAwal,
     this.tglAkhir,
@@ -200,6 +214,9 @@ class _$PendapatanDigitalStateImpl implements _PendapatanDigitalState {
   @override
   @JsonKey()
   final bool isLoading;
+  @override
+  @JsonKey()
+  final bool isFilterLoading;
   @override
   final DashboardSummaryNonJukirEntity? summary;
   @override
@@ -211,7 +228,7 @@ class _$PendapatanDigitalStateImpl implements _PendapatanDigitalState {
 
   @override
   String toString() {
-    return 'PendapatanDigitalState(isLoading: $isLoading, summary: $summary, tglAwal: $tglAwal, tglAkhir: $tglAkhir, errorMessage: $errorMessage)';
+    return 'PendapatanDigitalState(isLoading: $isLoading, isFilterLoading: $isFilterLoading, summary: $summary, tglAwal: $tglAwal, tglAkhir: $tglAkhir, errorMessage: $errorMessage)';
   }
 
   @override
@@ -221,6 +238,8 @@ class _$PendapatanDigitalStateImpl implements _PendapatanDigitalState {
             other is _$PendapatanDigitalStateImpl &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
+            (identical(other.isFilterLoading, isFilterLoading) ||
+                other.isFilterLoading == isFilterLoading) &&
             (identical(other.summary, summary) || other.summary == summary) &&
             (identical(other.tglAwal, tglAwal) || other.tglAwal == tglAwal) &&
             (identical(other.tglAkhir, tglAkhir) ||
@@ -233,6 +252,7 @@ class _$PendapatanDigitalStateImpl implements _PendapatanDigitalState {
   int get hashCode => Object.hash(
     runtimeType,
     isLoading,
+    isFilterLoading,
     summary,
     tglAwal,
     tglAkhir,
@@ -255,6 +275,7 @@ class _$PendapatanDigitalStateImpl implements _PendapatanDigitalState {
 abstract class _PendapatanDigitalState implements PendapatanDigitalState {
   const factory _PendapatanDigitalState({
     final bool isLoading,
+    final bool isFilterLoading,
     final DashboardSummaryNonJukirEntity? summary,
     final String? tglAwal,
     final String? tglAkhir,
@@ -263,6 +284,8 @@ abstract class _PendapatanDigitalState implements PendapatanDigitalState {
 
   @override
   bool get isLoading;
+  @override
+  bool get isFilterLoading;
   @override
   DashboardSummaryNonJukirEntity? get summary;
   @override

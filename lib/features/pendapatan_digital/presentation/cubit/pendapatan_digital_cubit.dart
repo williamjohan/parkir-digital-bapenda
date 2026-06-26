@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-
 import '../../../home/domain/usecases/get_dashboard_summary_non_jukir_range_usecase.dart';
 import 'pendapatan_digital_state.dart';
 
@@ -13,7 +12,15 @@ class PendapatanDigitalCubit extends Cubit<PendapatanDigitalState> {
   Future<void> getSummary({String? tglAwal, String? tglAkhir}) async {
     if (isClosed) return;
 
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    final isFirstLoad = state.summary == null;
+
+    emit(
+      state.copyWith(
+        isLoading: isFirstLoad,
+        isFilterLoading: !isFirstLoad,
+        errorMessage: null,
+      ),
+    );
 
     final result = await _useCase.execute(tglAwal: tglAwal, tglAkhir: tglAkhir);
 
@@ -21,16 +28,19 @@ class PendapatanDigitalCubit extends Cubit<PendapatanDigitalState> {
 
     result.fold(
       (failure) {
-        if (isClosed) return;
-
-        emit(state.copyWith(isLoading: false, errorMessage: failure.message));
-      },
-      (data) {
-        if (isClosed) return;
-
         emit(
           state.copyWith(
             isLoading: false,
+            isFilterLoading: false,
+            errorMessage: failure.message,
+          ),
+        );
+      },
+      (data) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isFilterLoading: false,
             summary: data,
             tglAwal: tglAwal,
             tglAkhir: tglAkhir,

@@ -8,6 +8,7 @@ part 'pendapatan_digital_state.freezed.dart';
 class PendapatanDigitalState with _$PendapatanDigitalState {
   const factory PendapatanDigitalState({
     @Default(false) bool isLoading,
+    @Default(false) bool isFilterLoading,
     DashboardSummaryNonJukirEntity? summary,
     String? tglAwal,
     String? tglAkhir,
