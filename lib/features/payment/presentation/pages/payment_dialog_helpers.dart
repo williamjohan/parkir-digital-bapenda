@@ -1,4 +1,3 @@
-// lib/features/payment/presentation/widgets/payment_dialog_helpers.dart
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../../../../core/constants/app_asset_constant.dart';
@@ -44,7 +43,6 @@ class PaymentDialogHelpers {
       barrierDismissible: false,
       barrierColor: Colors.black54,
       builder: (context) {
-        // 🚀 THE FIX: KUNCI TOMBOL KEMBALI HP SELAMA ANIMASI LOTTIE JALAN!
         return PopScope(
           canPop: false,
           child: Dialog(

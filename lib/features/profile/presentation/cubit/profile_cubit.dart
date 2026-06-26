@@ -27,7 +27,6 @@ class ProfileCubit extends Cubit<ProfileState> {
         );
         await _fetchFromApi();
       } else {
-        // Cek Local Storage dulu
         final jukirProfile = await _secureStorage.getJukirProfile();
 
         if (jukirProfile != null) {
@@ -35,7 +34,6 @@ class ProfileCubit extends Cubit<ProfileState> {
           final userModel = UserModel.fromJson(jukirProfile);
           emit(ProfileLoaded(userModel));
         } else {
-          // Jika lokal kosong, jangan langsung error! Otomatis tembak API.
           AppLogger.debug(
             '>>> [ProfileCubit] Lokal kosong (Cache Miss), otomatis mengambil dari API...',
           );

@@ -1,5 +1,3 @@
-// lib/features/home/presentation/widgets/last_activity_widget.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
@@ -83,7 +81,6 @@ class LastActivityWidget extends StatelessWidget {
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // 🚀 1. ICON KENDARAAN (Kecil, Bulat & Elegan)
                     Container(
                       padding: const EdgeInsets.all(10), // Ukuran proporsional
                       decoration: BoxDecoration(
@@ -98,8 +95,6 @@ class LastActivityWidget extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-
-                    // 🚀 2. INFORMASI PLAT & JENIS
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,8 +118,6 @@ class LastActivityWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-
-                    // 🚀 3. TANGGAL & NOMINAL
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -142,7 +135,6 @@ class LastActivityWidget extends StatelessWidget {
                         Text(
                           item.formattedNominal,
                           style: AppTypography.bodySemiBold.copyWith(
-                            // 🚀 Warna Dinamis: Hijau jika Gratis, Hitam/Primary jika Bayar
                             color: item.isFreeTransaction
                                 ? Colors.green
                                 : AppColors.primaryDark,

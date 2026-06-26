@@ -14,10 +14,7 @@ class AppLoadingWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 1. ANIMASI LIQUID (Paling Terang)
           LiquidLoadingWidget(size: size, durationSeconds: 2.5),
-
-          // 2. TEKS PESAN
           if (message != null) ...[
             const SizedBox(height: 16),
             Text(

@@ -19,8 +19,6 @@ class PbPreviewTicketWidget extends StatelessWidget {
   final VoidCallback? printPressed;
   final String orderId;
   final String deviceId;
-
-  // 🚀 JADIKAN DEFAULT TRUE (Mencegah crash jika dipanggil dari layar jadul)
   final bool isPrinterReady;
 
   const PbPreviewTicketWidget({
@@ -93,10 +91,7 @@ class PbPreviewTicketWidget extends StatelessWidget {
             TextSpan(
               style: const TextStyle(fontSize: 14, color: Colors.black87),
               children: [
-                // 1. Tipe Kendaraan (Contoh: Motor)
                 TextSpan(text: tipeKendaraan),
-
-                // 2. Plat Nomor (Hanya muncul jika string tidak kosong)
                 if (noKendaraan.isNotEmpty) ...[
                   const TextSpan(
                     text: '  •  ',
@@ -104,8 +99,6 @@ class PbPreviewTicketWidget extends StatelessWidget {
                   ),
                   TextSpan(text: noKendaraan),
                 ],
-
-                // 3. Tarif / Gratis
                 const TextSpan(
                   text: '  •  ',
                   style: TextStyle(color: Colors.grey),
@@ -114,7 +107,6 @@ class PbPreviewTicketWidget extends StatelessWidget {
                   text: _formattedTarif,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    // Sentuhan UX: Hijau jika Gratis, Hitam jika Bayar
                     color: (tarifParkir == 0 || isFree)
                         ? Colors.green.shade700
                         : Colors.black,
@@ -157,17 +149,13 @@ class PbPreviewTicketWidget extends StatelessWidget {
                 child: PbPrimaryButton(text: "OK", onPressed: okPressed),
               ),
               const SizedBox(width: 8),
-
-              // 🚀 LOGIKA TOMBOL DINAMIS: CEK PRINTER READY ATAU TIDAK
               Expanded(
                 child: isPrinterReady
-                    // JIKA READY: Tampilkan Tombol Cetak Biru Biasa
                     ? PbPrimaryButton(
                         text: "Cetak",
                         iconRight: Icons.print,
                         onPressed: printPressed,
                       )
-                    // JIKA BELUM SETTING: Tampilkan Tombol Merah "Hubungkan"
                     : ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red.shade600,

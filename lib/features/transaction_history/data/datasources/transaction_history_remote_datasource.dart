@@ -37,16 +37,10 @@ class TransactionHistoryRemoteDataSourceImpl
 
     final formData = FormData.fromMap({
       'nop': nop,
-      // 'petugasId': petugasId.toString(),
-      // 'shift': shift,
       'tglAwal': startIso,
       'tglAkhir': endIso,
       'limit': limit?.toString() ?? '',
     });
-
-    // ==========================================================
-    // 🔍 [LOG X-RAY] CEK PAYLOAD HISTORY
-    // ==========================================================
     AppLogger.debug('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓');
     AppLogger.debug('┃ 🔍 MENGIRIM GET HISTORY KE /laporan-pendapatan');
     AppLogger.debug('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫');
@@ -54,7 +48,6 @@ class TransactionHistoryRemoteDataSourceImpl
       AppLogger.debug('┃ 🔑 ${field.key} : ${field.value}');
     }
     AppLogger.debug('┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛');
-    // ==========================================================
 
     try {
       final response = await _dio.post(
@@ -68,14 +61,6 @@ class TransactionHistoryRemoteDataSourceImpl
         final data = responseData['data'];
 
         return HistoryResponseData.fromJson(data);
-        // final List<dynamic> detailList = data?['detail'] ?? [];
-
-        // return detailList
-        //     .map((json) => HistoryItemModel.fromJson(json))
-        //     .toList();
-
-        // final List<dynamic> dataList = responseData['data'] ?? [];
-        // return dataList.map((json) => HistoryItemModel.fromJson(json)).toList();
       } else {
         throw Exception(responseData['message'] ?? 'Gagal mengambil riwayat');
       }

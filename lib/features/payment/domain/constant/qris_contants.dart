@@ -1,10 +1,5 @@
-// lib/core/constants/qris_constants.dart
-
 class QrisDemoConstants {
-  // Private constructor mencegah class ini di-instantiate (di-new)
   QrisDemoConstants._();
-
-  // Meta Data Demo
   static const String nopId = "01828";
   static const String obyekPajak = "P. BU RUDY";
   static const String shift = "01";

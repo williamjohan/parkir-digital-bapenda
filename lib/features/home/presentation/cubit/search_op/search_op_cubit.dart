@@ -10,15 +10,11 @@ class SearchOpCubit extends Cubit<SearchOpState> {
 
   SearchOpCubit(this.databaseHelper) : super(const SearchOpState());
 
-  // ─── 1. FETCHING DATA ────────────────────────────────────────────────────────
-
   Future<void> getNopList() async {
     emit(state.copyWith(isLoading: true));
 
     try {
       final result = await databaseHelper.getNopList();
-
-      //  ISI KEDUANYA SAAT PERTAMA KALI
       emit(
         state.copyWith(
           isLoading: false,
@@ -50,8 +46,6 @@ class SearchOpCubit extends Cubit<SearchOpState> {
           result = await databaseHelper.getNopListByTarif('2');
           break;
       }
-
-      //  ISI KEDUANYA SAAT GANTI KATEGORI
       emit(
         state.copyWith(
           isLoading: false,
@@ -64,16 +58,11 @@ class SearchOpCubit extends Cubit<SearchOpState> {
     }
   }
 
-  // ─── 2. SEARCHING DATA ───────────────────────────────────────────────────────
-
   void searchNop(String keyword) {
     if (keyword.trim().isEmpty) {
-      // KEMBALIKAN KE MASTER DATA JIKA KEYWORD KOSONG
       emit(state.copyWith(filteredNopList: state.nopList));
       return;
     }
-
-    //  FILTER DARI MASTER DATA (state.nopList), BUKAN DARI FILTERED!
     final filtered = state.nopList.where((item) {
       final nop = (item['nop'] ?? '').toString().toLowerCase();
       final namaLokasi = (item['nama_op'] ?? '').toString().toLowerCase();
@@ -81,8 +70,6 @@ class SearchOpCubit extends Cubit<SearchOpState> {
       return nop.contains(keyword.toLowerCase()) ||
           namaLokasi.contains(keyword.toLowerCase());
     }).toList();
-
-    //  SIMPAN HASILNYA HANYA KE DISPLAY DATA
     emit(state.copyWith(filteredNopList: filtered));
   }
 
@@ -91,8 +78,6 @@ class SearchOpCubit extends Cubit<SearchOpState> {
       emit(state.copyWith(filteredNopList: state.nopList));
       return;
     }
-
-    // Sama, filter dari Master Data
     final filtered = state.nopList.where((item) {
       final nop = (item['nop'] ?? '').toString().toLowerCase();
       final namaLokasi = (item['nama_op'] ?? '').toString().toLowerCase();

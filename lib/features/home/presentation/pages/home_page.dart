@@ -31,7 +31,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Track apakah ini pertama kali load
   bool _isFirstLoad = true;
 
   @override
@@ -40,7 +39,6 @@ class _HomePageState extends State<HomePage> {
     _loadData();
   }
 
-  // Method untuk load data
   Future<void> _loadData() async {
     await context.read<HomeCubit>().initialize();
     if (_isFirstLoad) {
@@ -55,22 +53,15 @@ class _HomePageState extends State<HomePage> {
 
       child: MultiBlocListener(
         listeners: [
-          // 🔹 1. Listener untuk HomeCubit (Bawaan Anda)
           BlocListener<HomeCubit, HomeState>(
             listenWhen: (previous, current) =>
                 previous.actionTimestamp != current.actionTimestamp,
-            listener: (context, state) async {
-              // Kosongkan atau isi jika ada action khusus (misal Snackbar)
-            },
+            listener: (context, state) async {},
           ),
-
-          // 🔹 2. Listener untuk CheckUpdateCubit (Penjegal Force Update)
           BlocListener<CheckUpdateCubit, CheckUpdateState>(
             listener: (context, state) {
               if (state is CheckUpdateAvailable) {
-                // Jika update bersifat URGENT (Wajib)
                 if (state.update.isForceUpdate) {
-                  // Munculkan dialog paksa yang tidak bisa ditutup!
                   ForceUpdateDialog.show(context, state.update);
                 }
               }
@@ -89,15 +80,12 @@ class _HomePageState extends State<HomePage> {
                   drawer: HomeDrawer(isFree: state.isFree, role: state.role),
                   body: Stack(
                     children: [
-                      // 1. BACKGROUND GRADIENT
                       Container(
                         height: 300,
                         decoration: const BoxDecoration(
                           gradient: AppColors.headerGradient,
                         ),
                       ),
-
-                      // 2. ORNAMEN
                       Positioned(
                         top: 5,
                         right: -20,
@@ -148,13 +136,11 @@ class _HomePageState extends State<HomePage> {
                                         child: SingleChildScrollView(
                                           physics:
                                               const AlwaysScrollableScrollPhysics(),
-                                          //Padding dipindah ke dalam ScrollView agar batas atas-bawah scroll terasa luas
                                           padding: const EdgeInsets.all(16),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              // WIDGET OP YANG AKTIF
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir.wp,
@@ -197,8 +183,6 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
-
-                                              // WIDGET KARTU TOTAL PENDAPATAN
                                               PbPermissionGate(
                                                 allowedRoles: [
                                                   RoleLoginDigitalParkir.jukir,
@@ -229,8 +213,6 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
-
-                                              // WIDGET CARD TOTAL OP
                                               PbPermissionGate(
                                                 allowedRoles: [
                                                   RoleLoginDigitalParkir
@@ -293,8 +275,6 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
-
-                                              // WIDGET VOLUME JUMLAH KENDARAAN
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir.jukir,
@@ -317,8 +297,6 @@ class _HomePageState extends State<HomePage> {
                                                       ),
                                                 ),
                                               ),
-
-                                              // WIDGET RECENT ACTIVITY
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir.jukir,
@@ -336,8 +314,6 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
-
-                                              // WIDGET REKAP JENIS PEMBAYARAN BAPENDA
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir
@@ -383,8 +359,6 @@ class _HomePageState extends State<HomePage> {
                                       RoleLoginDigitalParkir.bapenda,
                                 },
                               );
-
-                              // kalau transaksi sukses
                               if (result == true) {
                                 _loadData(); // reload data home
                               }

@@ -23,8 +23,6 @@ class ParkingTransactionRemoteDataSourceImpl
     required Map<String, dynamic> jukirProfile,
   }) async {
     final isFree = transaction.status == 'FREE_OFFLINE';
-
-    // --- 1. PENANGANAN FOTO ---
     MultipartFile? multipartImage;
     if (transaction.fotoKendaraan != null &&
         transaction.fotoKendaraan!.trim().isNotEmpty) {
@@ -36,8 +34,6 @@ class ParkingTransactionRemoteDataSourceImpl
         );
       }
     }
-
-    // --- 3. PENANGANAN PETUGAS ID ---
     final dynamic rawPetugasId = jukirProfile['idUser'];
     final int safePetugasId = (rawPetugasId is int)
         ? rawPetugasId
@@ -48,15 +44,9 @@ class ParkingTransactionRemoteDataSourceImpl
       final parsedDate = DateTime.parse(transaction.waktuTransaksi);
       safeDate = parsedDate.toIso8601String().split('.').first;
     } catch (_) {}
-
-    // ==========================================
-    //  4. GENERATE / AMBIL DEVICE ID DARI UTILS
-    // ==========================================
     final String secureDeviceId = await DeviceIdUtils.getSecureDeviceId(
       _secureStorage,
     );
-
-    // --- 5. RAKIT PAYLOAD ---
     final formData = FormData.fromMap({
       'orderId': transaction.idTransaksiLokal,
       'jenisTarif': transaction.kategoriKendaraan.toUpperCase(),
@@ -85,15 +75,11 @@ class ParkingTransactionRemoteDataSourceImpl
       'jenisParkir': 'IN',
       'modePlat': transaction.modePlat,
     });
-
-    // --- 6. INJEKSI FOTO ---
     if (multipartImage != null) {
       formData.files.add(MapEntry('fotoNopol', multipartImage));
     } else {
       formData.fields.add(const MapEntry('fotoNopol', ''));
     }
-
-    // --- [LOG X-RAY] TAMPILKAN PAYLOAD ---
     AppLogger.debug(
       '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓',
     );

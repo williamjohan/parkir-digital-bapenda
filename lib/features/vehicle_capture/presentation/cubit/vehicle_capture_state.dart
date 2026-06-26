@@ -1,5 +1,3 @@
-// lib/features/vehicle_capture/presentation/cubit/vehicle_capture_state.dart
-
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/license_plate.dart';
 

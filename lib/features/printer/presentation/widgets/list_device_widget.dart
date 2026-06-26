@@ -1,5 +1,3 @@
-// lib/features/printer/presentation/widgets/list_device_widget.dart
-
 import 'package:app_settings/app_settings.dart' as external_settings;
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +7,6 @@ class ListDeviceWidget extends StatelessWidget {
   final List<BluetoothDevice> devices;
   final BluetoothDevice? connectedDevice;
   final bool isLoading;
-  // 🚀 onRefresh kita hapus karena tidak pakai RefreshIndicator lagi
   final Function(BluetoothDevice) onConnect;
 
   const ListDeviceWidget({
@@ -22,7 +19,6 @@ class ListDeviceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🚀 Langsung return isi list tanpa RefreshIndicator
     return devices.isEmpty
         ? SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -66,7 +62,6 @@ class ListDeviceWidget extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    // ... (Isi _buildEmptyState persis sama seperti sebelumnya) ...
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(

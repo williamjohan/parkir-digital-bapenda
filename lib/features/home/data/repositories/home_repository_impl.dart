@@ -30,13 +30,8 @@ class HomeRepositoryImpl implements IHomeRepository {
   @override
   Future<Either<Failure, void>> syncTarif() async {
     try {
-      //  PINTU MASUK: Ambil dari API
       final tarifList = await _tarifRemoteDS.getTarif();
-
-      // Konversi List Model ke JSON String
       final jsonString = jsonEncode(tarifList.map((e) => e.toJson()).toList());
-
-      //  SIMPAN KE BRANKAS: Menjamin data masuk ke SecureStorage
       await _secureStorage.saveMasterTarif(jsonString);
 
       return const Right(null);
@@ -52,23 +47,15 @@ class HomeRepositoryImpl implements IHomeRepository {
     required String nop,
   }) async {
     DashboardSummaryModel anchor;
-
-    // --- FASE 1: Ambil JANGKAR (Server atau Cache) ---
     try {
       anchor = await _summaryRemoteDS.getDashboardSummary(nop: nop);
-
-      // Backup ke Brankas jika sewaktu-waktu offline
-      // Gunakan fungsi SAVE dan kirimkan string JSON-nya
       await _secureStorage.saveDashboardAnchor(jsonEncode(anchor.toJson()));
     } catch (e) {
-      // Jika Offline/Gagal Server, bongkar Brankas Preference.
-      // Gunakan fungsi GET untuk membaca brankas
       final savedAnchor = await _secureStorage.getDashboardAnchor();
 
       if (savedAnchor != null) {
         anchor = DashboardSummaryModel.fromJson(jsonDecode(savedAnchor));
       } else {
-        // Fallback mutlak jika baru instal dan langsung offline
         anchor = const DashboardSummaryModel(
           jumlahMotorHariIni: 0,
           jumlahMobilHariIni: 0,
@@ -78,13 +65,9 @@ class HomeRepositoryImpl implements IHomeRepository {
         );
       }
     }
-
-    // --- FASE 2: Ambil DELTA (Antrian SQLite Offline) ---
     try {
       final pendingData = await DatabaseHelper.instance
           .getUnsyncedDailySummary();
-
-      // --- FASE 3: THE HYBRID FORMULA (Jangkar + Delta) ---
       final hybridModel = DashboardSummaryModel(
         jumlahMotorHariIni:
             anchor.jumlahMotorHariIni + (pendingData['motor']?.toInt() ?? 0),
@@ -100,7 +83,6 @@ class HomeRepositoryImpl implements IHomeRepository {
 
       return Right(hybridModel);
     } catch (e) {
-      // Jika SQLite bermasalah, tetap tampilkan data server sebagai penyelamat
       return Right(anchor);
     }
   }

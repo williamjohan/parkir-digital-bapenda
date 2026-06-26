@@ -4,7 +4,6 @@ class FileUtils {
   /// Menghasilkan nama file yang seragam dan unik untuk transaksi parkir.
   /// Contoh output: "trx_L1234AB_1710574829384"
   static String generateTransactionFileName(String nopol) {
-    // Hilangkan spasi pada nopol agar aman untuk nama file
     final cleanNopol = nopol.replaceAll(' ', '').toUpperCase();
     final timestamp = DateTime.now().millisecondsSinceEpoch;
 

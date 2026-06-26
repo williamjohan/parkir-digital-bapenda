@@ -16,14 +16,12 @@ class QrisRemoteDataSourceImpl implements IQrisRemoteDataSource {
   @override
   Future<List<QrisRompiModel>> getQrisRompi() async {
     try {
-      // 🚀 Sesuai konfirmasi: Menggunakan murni GET
       final response = await _dio.get('/api/mobile/parking/get-qris-rompi');
 
       if (response.statusCode == 200 && response.data['isSuccess'] == true) {
         final List<dynamic> dataList = response.data['data'] ?? [];
         return dataList.map((json) => QrisRompiModel.fromJson(json)).toList();
       } else {
-        // 🚀 Menggunakan format ServerException Anda
         throw ServerException(
           statusCode: response.statusCode ?? 500,
           message: response.data['message'] ?? 'Gagal mengambil data QRIS',

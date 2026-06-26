@@ -16,8 +16,6 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   PrinterCubit(this._printerService, this._secureStorage)
     : super(PrinterInitial());
-
-  // 1. Memindai perangkat Bluetooth di sekitar/yang sudah dipair
   Future<void> scanDevices() async {
     final currentState = state;
 
@@ -30,7 +28,6 @@ class PrinterCubit extends Cubit<PrinterState> {
         ),
       );
     } else {
-      // Jika ini murni pertama kali buka halaman, baru pakai PrinterLoading murni
       emit(PrinterLoading());
     }
 
@@ -51,8 +48,6 @@ class PrinterCubit extends Cubit<PrinterState> {
     } catch (e) {
       if (isClosed) return;
       emit(PrinterError('Gagal memindai perangkat Bluetooth.'));
-
-      // Kembalikan ke state sebelumnya jika gagal
       if (currentState is PrinterLoaded) {
         emit(
           PrinterLoaded(
@@ -65,7 +60,6 @@ class PrinterCubit extends Cubit<PrinterState> {
     }
   }
 
-  // 2. Konek ke Printer yang dipilih Jukir
   Future<void> connectDevice(BluetoothDevice device) async {
     final currentState = state;
     if (currentState is! PrinterLoaded) return;
@@ -101,14 +95,11 @@ class PrinterCubit extends Cubit<PrinterState> {
     }
   }
 
-  // 3. Putuskan koneksi
   Future<void> disconnect() async {
     final currentState = state;
     if (currentState is! PrinterLoaded) return;
 
     await _printerService.disconnect();
-
-    // 🚀 HAPUS MAC ADDRESS DARI BRANKAS AGAR AUTO-PRINT BERHENTI!
     await _secureStorage.clearPrinterMacAddress();
 
     if (isClosed) return;
@@ -116,7 +107,6 @@ class PrinterCubit extends Cubit<PrinterState> {
     emit(PrinterLoaded(devices: currentState.devices, connectedDevice: null));
   }
 
-  // 4. Print Karcis
   Future<bool> printReceipt(
     HistoryItemModel transaction,
     String deviceId,
@@ -131,7 +121,6 @@ class PrinterCubit extends Cubit<PrinterState> {
     return success;
   }
 
-  // 5. Auto connect & Silent Print
   Future<bool> autoConnectAndPrint(
     HistoryItemModel transaction,
     String deviceId,
@@ -177,8 +166,6 @@ class PrinterCubit extends Cubit<PrinterState> {
         );
         return false;
       }
-
-      // 4. Lakukan Silent Connect
       final connectSuccess = await _printerService.connect(targetDevice);
       if (!connectSuccess) {
         AppLogger.error(
@@ -186,8 +173,6 @@ class PrinterCubit extends Cubit<PrinterState> {
         );
         return false;
       }
-
-      // 5. Jika sukses nyambung, langsung tembak Karcis!
       AppLogger.debug("🖨️ [Auto-Print] Konek Siluman Sukses! Mencetak...");
       return await _printerService.printReceipt(transaction, deviceId, profile);
     } catch (e) {

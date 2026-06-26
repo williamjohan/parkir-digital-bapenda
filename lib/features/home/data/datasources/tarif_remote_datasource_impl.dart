@@ -22,7 +22,6 @@ class TarifRemoteDataSourceImpl implements ITarifRemoteDataSource {
         final List<dynamic> dataList = response.data['data'];
         return dataList.map((json) => TarifModel.fromJson(json)).toList();
       } else {
-        // Melempar ServerException lengkap dengan statusCode dari body API
         throw ServerException(
           statusCode: response.data['statusCode'] ?? response.statusCode ?? 500,
           message: response.data['message'] ?? 'Gagal mengambil data tarif',
@@ -32,7 +31,6 @@ class TarifRemoteDataSourceImpl implements ITarifRemoteDataSource {
       throw DioErrorHandler.handle(e);
     } catch (e, stackTrace) {
       AppLogger.error('Internal Error di Tarif DataSource', e, stackTrace);
-      // Fallback untuk error parsing JSON atau lainnya
       throw ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal saat memproses tarif}',

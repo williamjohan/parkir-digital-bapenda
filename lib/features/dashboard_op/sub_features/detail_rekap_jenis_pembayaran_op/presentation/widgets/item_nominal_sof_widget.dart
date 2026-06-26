@@ -38,9 +38,7 @@ class ItemNominalSofWidget extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
           ),
-          // const SizedBox(height: 8),
           Text(CurrencyFormatter.toIdr(nominal), style: AppTypography.heading4),
-          // const SizedBox(height: 4),
           Row(
             children: [
               Icon(

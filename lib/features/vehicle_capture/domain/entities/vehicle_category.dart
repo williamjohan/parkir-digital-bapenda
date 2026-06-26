@@ -1,4 +1,3 @@
-// Misal ini adalah enum Anda
 enum VehicleCategory { motor, mobil }
 
 extension VehicleCategoryExtension on VehicleCategory {

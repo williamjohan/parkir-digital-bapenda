@@ -47,7 +47,6 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           fontFamily: 'Poppins',
           pageTransitionsTheme: const PageTransitionsTheme(
-            // [PERBAIKAN]: Wajib tambahkan deklarasi tipe Map ini secara eksplisit!
             builders: <TargetPlatform, PageTransitionsBuilder>{
               TargetPlatform.android: PbSlidePageTransitionsBuilder(),
               TargetPlatform.iOS: PbSlidePageTransitionsBuilder(),

@@ -1,5 +1,3 @@
-// lib/features/parking_transaction/presentation/cubit/parking_transaction_state.dart
-
 import 'package:equatable/equatable.dart';
 import '../../data/models/local_transaction_model.dart';
 

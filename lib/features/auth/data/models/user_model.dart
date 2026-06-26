@@ -1,14 +1,8 @@
-// lib/features/auth/data/models/user_model.dart
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
-// --- [TAMENG ANTI-PELURU BE] ---
-// Fungsi ini akan memaksa apapun (int, double, null) menjadi String yang aman.
 String _toString(dynamic value) => value?.toString() ?? '';
-
-// Fungsi ini akan memaksa apapun (String, null) menjadi Integer yang aman.
 int _toInt(dynamic value) {
   if (value == null) return 0;
   if (value is int) return value;
@@ -16,7 +10,6 @@ int _toInt(dynamic value) {
   if (value is String) return int.tryParse(value) ?? 0;
   return 0;
 }
-// ------------------------------
 
 @JsonSerializable()
 class UserModel {

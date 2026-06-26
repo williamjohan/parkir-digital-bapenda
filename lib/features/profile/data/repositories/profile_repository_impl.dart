@@ -1,5 +1,3 @@
-// lib/features/profile/data/repositories/profile_repository_impl.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
@@ -20,8 +18,6 @@ class ProfileRepositoryImpl implements IProfileRepository {
   Future<Either<Failure, UserModel>> getProfile() async {
     try {
       final userModel = await _remoteDataSource.getProfile();
-
-      //setelah difetch dari endpoint di save ke secure storage.
       await _secureStorage.saveJukirProfile(
         idUserStorage: userModel.idUser.toString(),
         namaUserStorage: userModel.namaUser,

@@ -34,19 +34,14 @@ class ParkingTransactionRepositoryImpl
     String? longitude,
   }) async {
     try {
-      // 1. Buka Brankas
       final jukirProfile = await _secureStorage.getJukirProfile();
       if (jukirProfile == null) {
         return const Left(
           CacheFailure('Data Jukir tidak ditemukan. Silakan relogin.'),
         );
       }
-
-      // 2. Integrasi logika tarif Bapenda
       final dynamic rawPungutTarif = jukirProfile['pungutTarif'];
       final bool isFree = rawPungutTarif == 1 || rawPungutTarif == '1';
-
-      // 3. Simpan ke SQLite dulu (offline-first)
       final transaction = await _localDataSource.saveNewTransaction(
         platNomor: platNomor,
         jenisTarif: jenisTarif,

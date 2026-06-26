@@ -1,5 +1,3 @@
-// lib/features/init/domain/repositories/i_device_check_repository.dart
-
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failure.dart';
 

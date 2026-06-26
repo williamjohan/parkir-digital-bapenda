@@ -18,15 +18,11 @@ class TransactionState with _$TransactionState {
     TarifModel? selectedTarif,
     @Default(false) bool isFree,
     @Default({}) Map<String, String> qrisMap,
-
-    // 💡 Legacy/Future properties (Dipertahankan agar UI lama tidak error)
     @Default(DataJukirStatus.initial) DataJukirStatus dataJukirStatus,
     @Default([]) List<DataJukirEntity> dataJukirList,
     DataJukirEntity? selectedJukir,
     String? errorMessage,
   }) = _TransactionState;
-
-  // 🚀 VALIDASI CERDAS: Karena dari FAB, requiresJukir pasti false.
   bool isValid(bool requiresJukir) {
     if (requiresJukir) {
       return selectedTarif != null && selectedJukir != null;

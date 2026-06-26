@@ -14,21 +14,14 @@ class TransactionCubit extends Cubit<TransactionState> {
   TransactionCubit(this._getLocalQrisUseCase, this._getDataJukirUseCase)
     : super(const TransactionState());
 
-  // ─── INIT (DUAL FLOW ENTRY POINT) ────────────────────────────────────────────
-
   Future<void> init({required bool isFree, required bool isDemoMode}) async {
     if (!isClosed) {
       emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
     }
-
-    // 🚀 JALUR 1: BAPENDA FAB (DEMO MODE)
-    // Langsung injeksi data statis, bypass pencarian SQLite
     if (isDemoMode) {
       _injectFallbackVehicles();
       return;
     }
-
-    // 🚀 JALUR 2: JUKIR FAB (LOKAL)
     final result = await _getLocalQrisUseCase.execute();
     if (isClosed) return;
 
@@ -105,8 +98,6 @@ class TransactionCubit extends Cubit<TransactionState> {
     }
   }
 
-  // (Legacy function: Tetap ada agar tidak error jika UI memanggilnya,
-  // meskipun tidak dipakai karena Search OP dimatikan)
   void selectJukir(DataJukirEntity jukir) {
     if (!isClosed) {
       emit(

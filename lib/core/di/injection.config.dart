@@ -141,6 +141,10 @@ import '../../features/realisasi/data/repositories/realisasi_repository_impl.dar
     as _i407;
 import '../../features/realisasi/domain/repositories/realisasi_repository.dart'
     as _i534;
+import '../../features/realisasi/domain/usecases/get_realisasi_seluruh_op.dart'
+    as _i425;
+import '../../features/realisasi/presentation/cubit/realisasi_cubit.dart'
+    as _i1069;
 import '../../features/transaction/data/datasources/qris_remote_data_source.dart'
     as _i502;
 import '../../features/transaction/data/repositories/data_jukir_repository_impl.dart'
@@ -419,6 +423,9 @@ _i174.GetIt init(
   gh.factory<_i60.DetailRealisasiOpCubit>(
     () => _i60.DetailRealisasiOpCubit(gh<_i1012.GetDetailRealisasiOpUseCase>()),
   );
+  gh.factory<_i425.GetRealisasiSeluruhOpUseCase>(
+    () => _i425.GetRealisasiSeluruhOpUseCase(gh<_i534.RealisasiRepository>()),
+  );
   gh.lazySingleton<_i1004.IPaymentRepository>(
     () => _i265.PaymentRepositoryImpl(
       gh<_i247.IPaymentRemoteDataSource>(),
@@ -437,6 +444,11 @@ _i174.GetIt init(
   gh.lazySingleton<_i383.SyncQrisUseCase>(
     () => _i383.SyncQrisUseCase(gh<_i215.IQrisRepository>()),
   );
+  gh.lazySingleton<_i304.GetDashboardSummaryNonJukirRangeUseCase>(
+    () => _i304.GetDashboardSummaryNonJukirRangeUseCase(
+      gh<_i274.IHomeRepository>(),
+    ),
+  );
   gh.lazySingleton<_i348.GetDashboardSummaryNonJukirUseCase>(
     () => _i348.GetDashboardSummaryNonJukirUseCase(gh<_i274.IHomeRepository>()),
   );
@@ -446,10 +458,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i770.SyncTarifUseCase>(
     () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
   );
-  gh.lazySingleton<_i304.GetDashboardSummaryNonJukirRangeUseCase>(
-    () => _i304.GetDashboardSummaryNonJukirRangeUseCase(
-      gh<_i274.IHomeRepository>(),
-    ),
+  gh.factory<_i1069.RealisasiCubit>(
+    () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
   );
   gh.factory<_i154.DashboardOpCubit>(
     () => _i154.DashboardOpCubit(gh<_i185.GetSummaryDashboardOpUsecase>()),

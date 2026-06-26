@@ -1,5 +1,3 @@
-// lib/core/design_system/components/pb_status_snackbar.dart
-
 import 'package:flutter/material.dart';
 import '../tokens/app_colors.dart';
 import '../tokens/app_typography.dart';
@@ -22,7 +20,6 @@ class PbStatusSnackbar {
       backgroundColor = AppColors.error;
       iconData = customIcon ?? Icons.error_outline;
     } else if (isInfo) {
-      // Warna Biru (Info) atau gunakan warna token AppColors Anda jika ada
       backgroundColor = Colors.blue.shade600;
       iconData =
           customIcon ??
@@ -34,14 +31,12 @@ class PbStatusSnackbar {
 
     overlayEntry = OverlayEntry(
       builder: (context) {
-        // TweenAnimationBuilder untuk efek animasi turun (drop-down) dan fade-in
         return TweenAnimationBuilder<double>(
           tween: Tween(begin: 0.0, end: 1.0),
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutBack, // Animasi membal yang elegan
           builder: (context, value, child) {
             return Positioned(
-              // Jarak dari atas layar ditambah margin agar tidak tertutup notch/status bar
               top: MediaQuery.of(context).padding.top + (16 * value),
               left: 24,
               right: 24,
@@ -88,11 +83,7 @@ class PbStatusSnackbar {
         );
       },
     );
-
-    // Memasukkan widget ke lapisan paling atas (Overlay)
     overlayState.insert(overlayEntry);
-
-    // Menghapus otomatis setelah durasi habis
     Future.delayed(duration, () {
       if (overlayEntry.mounted) {
         overlayEntry.remove();

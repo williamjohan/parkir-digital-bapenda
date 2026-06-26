@@ -1,4 +1,3 @@
-// lib/features/home/presentation/widgets/home_drawer.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,12 +26,11 @@ class HomeDrawer extends StatelessWidget {
       backgroundColor: AppColors.surface,
       child: Column(
         children: [
-          // --- HEADER DRAWER (DINAMIS DARI BRANKAS) ---
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(
-              top: 60,
-              bottom: 30,
+              top: 40,
+              bottom: 13,
               left: 24,
               right: 24,
             ),
@@ -52,15 +50,10 @@ class HomeDrawer extends StatelessWidget {
                 FutureBuilder<PackageInfo>(
                   future: PackageInfo.fromPlatform(),
                   builder: (context, snapshot) {
-                    // Beri nilai default saat Future masih berstatus 'loading'
                     String versionText = "Version ...";
 
                     if (snapshot.hasData) {
-                      // Mengambil atribut "version" (misal: 1.0.0) dari pubspec.yaml
                       versionText = "Version ${snapshot.data!.version}";
-
-                      // 💡 Opsional: Jika Anda juga ingin memunculkan Build Number (misal 1.0.0+2)
-                      // versionText = "Version ${snapshot.data!.version}+${snapshot.data!.buildNumber}";
                     }
 
                     return Text(
@@ -74,8 +67,6 @@ class HomeDrawer extends StatelessWidget {
               ],
             ),
           ),
-
-          // --- ITEM MENU ---
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -112,25 +103,10 @@ class HomeDrawer extends StatelessWidget {
                     }
                   },
                 ),
-                if (role == RoleLoginDigitalParkir.bapenda) ...[
-                  // ListTile(
-                  //   leading: const Icon(
-                  //     Icons.history,
-                  //     color: AppColors.textPrimary,
-                  //   ),
-                  //   title: const Text(
-                  //     'Transaksi & Realisasi',
-                  //     style: AppTypography.bodyRegular,
-                  //   ),
-                  //   onTap: () {
-                  //     Navigator.pop(context); // Tutup drawer
-                  //     context.pushNamed(
-                  //       AppRoutes.history,
-                  //       extra: {'isFree': false},
-                  //     );
-                  //   },
-                  // ),
-                  ListTile(
+                PbPermissionGate(
+                  allowedRoles: [RoleLoginDigitalParkir.bapenda],
+                  currentRole: role,
+                  child: ListTile(
                     leading: const Icon(
                       Icons.money,
                       color: AppColors.textPrimary,
@@ -144,7 +120,7 @@ class HomeDrawer extends StatelessWidget {
                       context.push(AppRoutes.pendapatanDigital);
                     },
                   ),
-                ],
+                ),
 
                 PbPermissionGate(
                   allowedRoles: [RoleLoginDigitalParkir.bapenda],
@@ -158,26 +134,10 @@ class HomeDrawer extends StatelessWidget {
                       'Realisasi',
                       style: AppTypography.bodyRegular,
                     ),
-                    onTap: () async {
+
+                    onTap: () {
                       Navigator.pop(context);
-
-                      if (role == RoleLoginDigitalParkir.jukir) {
-                        context.pushNamed(
-                          AppRoutes.history,
-                          extra: {'isFree': true},
-                        );
-                      } else {
-                        final result = await context.pushNamed(
-                          AppRoutes.searchObjekPajak,
-                          extra: {'role': RoleLoginDigitalParkir.bapenda},
-                        );
-
-                        if (result != null) {
-                          await context.read<HomeCubit>().changeObjekPajak(
-                            result as Map<String, dynamic>,
-                          );
-                        }
-                      }
+                      context.pushNamed(AppRoutes.realisasiSeluruhOP);
                     },
                   ),
                 ),
@@ -207,7 +167,6 @@ class HomeDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.pop(context); // Tutup drawer
-                      // context.push(AppRoutes.printerSetting);
                       context.goNamed(AppRoutes.printerSetting);
                     },
                   ),
@@ -230,8 +189,6 @@ class HomeDrawer extends StatelessWidget {
               ],
             ),
           ),
-
-          // --- LOGOUT BUTTON ---
           const Divider(height: 1),
           ListTile(
             contentPadding: const EdgeInsets.symmetric(

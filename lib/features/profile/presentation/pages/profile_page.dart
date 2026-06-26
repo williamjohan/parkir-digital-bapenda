@@ -44,15 +44,12 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () => context.pop(),
           ),
         ),
-
-        //  1. TOMBOL BAWAH DIPINDAHKAN KE SINI AGAR AMAN DARI SCROLL
         bottomNavigationBar: Container(
           color: AppColors.background, // Samakan dengan background
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // === TOMBOL LOGOUT ===
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -94,22 +91,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 12),
-              // === VERSION APP ===
               Center(
                 child: FutureBuilder<PackageInfo>(
                   future: PackageInfo.fromPlatform(),
                   builder: (context, snapshot) {
-                    // Nilai sementara saat sedang mengambil data dari Native
                     String versionText = 'Version ...';
 
                     if (snapshot.hasData) {
-                      // Mengambil versi langsung dari pubspec.yaml
                       versionText = 'Version ${snapshot.data!.version}';
                     }
 
                     return Text(
                       versionText,
-                      // const digeser ke dalam Text Style
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     );
                   },
@@ -118,8 +111,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ),
-
-        //  2. KONTEN UTAMA
         body: BlocBuilder<ProfileCubit, ProfileState>(
           bloc: _profileCubit,
           builder: (context, state) {
@@ -163,7 +154,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // === HEADER PROFIL ===
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -180,7 +170,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               color: AppColors.primary,
                             ),
                           ),
-                          // Avatar & Nama
                           const SizedBox(height: 16),
                           Text(
                             user.namaUser,
@@ -189,18 +178,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
-                          //TODO : perbaiki ini next (panggil NIK)
-
-                          // Text(
-                          //   'ID: ${user.idUser}',
-                          //   style: AppTypography.bodySmall.copyWith(
-                          //     color: AppColors.textSecondary,
-                          //   ),
-                          // ),
                         ],
                       ),
                       const SizedBox(height: 20),
-                      // === CARD IDENTITAS ===
                       Card(
                         color: AppColors.surface,
                         elevation: 0,
@@ -218,7 +198,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Text('Identitas', style: AppTypography.heading3),
                               const SizedBox(height: 12),
-                              // Info Identitas
                               _buildInfoRow(
                                 label: 'NOP (Nomor Objek Pajak)',
                                 value: user.nop,
@@ -273,89 +252,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-
-                      // // === CARD LOKASI & GATE === (Di-hidden sementara)
-                      // // const SizedBox(height: 16),
-                      // Card(
-                      //   color: AppColors.surface,
-                      //   elevation: 0,
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(12),
-                      //     side: const BorderSide(
-                      //       color: AppColors.border,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(16),
-                      //     child: Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         Text(
-                      //           'Lokasi & Gate',
-                      //           style: AppTypography.heading3,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Lokasi',
-                      //           value: user.namaLokasi,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Kode Gate',
-                      //           value: user.kodeGate,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Nama Gate',
-                      //           value: user.namaGate,
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      // const SizedBox(height: 20),
-
-                      // // === CARD PERANGKAT & SHIFT ===
-                      // Card(
-                      //   color: AppColors.surface,
-                      //   elevation: 0,
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(12),
-                      //     side: const BorderSide(
-                      //       color: AppColors.border,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(16),
-                      //     child: Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         Text(
-                      //           'Perangkat & Shift',
-                      //           style: AppTypography.heading3,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'ID Perangkat',
-                      //           value: user.idDevice,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Shift',
-                      //           value: user.shift.isEmpty
-                      //               ? '-'
-                      //               : 'Shift ${user.shift}',
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Pungut Tarif',
-                      //           value: user.pungutTarif == 1
-                      //               ? 'Gratis'
-                      //               : 'Berbayar',
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),

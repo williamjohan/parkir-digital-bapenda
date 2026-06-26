@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'history_item_model.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 HistoryItemModel _$HistoryItemModelFromJson(Map<String, dynamic> json) =>
     HistoryItemModel(

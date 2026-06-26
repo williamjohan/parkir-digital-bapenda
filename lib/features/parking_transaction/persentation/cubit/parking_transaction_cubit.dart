@@ -1,5 +1,3 @@
-// lib/features/parking_transaction/presentation/cubit/parking_transaction_cubit.dart
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
@@ -32,8 +30,6 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
     emit(ParkingTransactionLoading());
 
     final profile = await _secureStorage.getJukirProfile() ?? {};
-
-    // 1. Eksekusi UseCase
     final result = await _saveUseCase.execute(
       platNomor: platNomor,
       jenisTarif: jenisTarif,
@@ -42,8 +38,6 @@ class ParkingTransactionCubit extends Cubit<ParkingTransactionState> {
       modePlat: modePlat,
       rawImagePath: imagePath,
     );
-
-    // 2. Tangani hasil
     result.fold(
       (failure) {
         if (!isClosed) {

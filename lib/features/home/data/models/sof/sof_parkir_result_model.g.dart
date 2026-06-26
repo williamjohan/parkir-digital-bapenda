@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'sof_parkir_result_model.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 SofParkirResultModel _$SofParkirResultModelFromJson(
   Map<String, dynamic> json,

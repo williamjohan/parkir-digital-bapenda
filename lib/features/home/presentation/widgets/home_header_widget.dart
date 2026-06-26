@@ -60,22 +60,10 @@ class HomeHeaderWidget extends StatelessWidget {
                   ),
                 ),
               ],
-              // if (isJukir == false) ...[
-              //   SizedBox(height: 8),
-              //   PbPrimaryButton(
-              //     text: "Cari objek pajak...",
-              //     variant: PbButtonVariant.outlinedSecondaryLight,
-              //     size: PbButtonSize.small,
-              //     iconRight: Icons.search,
-              //     onPressed: onPressed,
-              //   ),
-              // ],
             ],
           ),
         ),
         SizedBox(width: 16),
-
-        // tombol menu
         Builder(
           builder: (context) => Container(
             decoration: BoxDecoration(

@@ -24,12 +24,9 @@ class PbPermissionGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Jika role saat ini ada di dalam daftar yang diizinkan, tampilkan!
     if (allowedRoles.contains(currentRole)) {
       return child;
     }
-
-    // Jika tidak diizinkan, render widget pengganti (default-nya hilang/SizedBox.shrink)
     return replacement;
   }
 }

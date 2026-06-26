@@ -8,7 +8,6 @@ import '../../../../../core/design_system/tokens/app_typography.dart';
 
 /// Widget yang menampilkan QRIS (Statis/Dinamis/File) + aksi download ke galeri.
 class PaymentLocalQrisView extends StatefulWidget {
-  // 🚀 PERUBAHAN: Bukan lagi String path, melainkan langsung menerima Widget QR
   final Widget qrWidget;
   final String kategoriKendaraan;
 
@@ -23,11 +22,8 @@ class PaymentLocalQrisView extends StatefulWidget {
 }
 
 class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
-  // 🚀 Key untuk membungkus _QrisCard agar bisa di-capture jadi gambar
   final GlobalKey _qrisCardKey = GlobalKey();
   bool _isDownloading = false;
-  // 🚀 Flag khusus untuk menyembunyikan icon download saat proses capture,
-  // supaya icon tidak ikut nampang di hasil gambar yang disimpan.
   bool _isCapturing = false;
 
   Future<void> _downloadQris() async {
@@ -35,8 +31,6 @@ class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
     setState(() => _isDownloading = true);
 
     try {
-      // 1. Sembunyikan icon download dulu, lalu tunggu 1 frame
-      //    supaya perubahan UI benar-benar ter-render sebelum di-capture.
       setState(() => _isCapturing = true);
       await WidgetsBinding.instance.endOfFrame;
 
@@ -47,12 +41,8 @@ class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
       if (boundary == null) {
         throw Exception('Gagal menemukan tampilan QRIS');
       }
-
-      // 2. Capture jadi image dengan pixelRatio lebih tinggi untuk kualitas bagus
       final image = await boundary.toImage(pixelRatio: 3.0);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-
-      // 3. Tampilkan kembali icon download segera setelah capture selesai
       if (mounted) setState(() => _isCapturing = false);
 
       if (byteData == null) {
@@ -60,8 +50,6 @@ class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
       }
 
       final Uint8List pngBytes = byteData.buffer.asUint8List();
-
-      // 4. Cek & minta akses galeri (gal handle permission internally)
       final hasAccess = await Gal.hasAccess();
       if (!hasAccess) {
         final granted = await Gal.requestAccess();
@@ -69,8 +57,6 @@ class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
           throw Exception('Akses galeri ditolak');
         }
       }
-
-      // 5. Simpan ke galeri dengan nama file yang jelas
       final fileName =
           'QRIS_${widget.kategoriKendaraan.replaceAll(' ', '_')}_${DateTime.now().millisecondsSinceEpoch}';
 
@@ -111,7 +97,6 @@ class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
         children: [
           _InfoBadge(label: 'Jenis Kendaraan', value: widget.kategoriKendaraan),
           const SizedBox(height: 24),
-          // 🚀 Bungkus _QrisCard dengan RepaintBoundary agar bisa di-screenshot
           RepaintBoundary(
             key: _qrisCardKey,
             child: _QrisCard(
@@ -157,8 +142,6 @@ class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
     );
   }
 }
-
-// ─── SUB-WIDGET ───────────────────────────────────────────────────────────────
 
 class _InfoBadge extends StatelessWidget {
   final String label;
@@ -270,7 +253,6 @@ class _QrisCard extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              // 🚀 Tampilkan Widget QR di sini (ukurannya akan dikunci dari PaymentPage)
               child: qrWidget,
             ),
           ),
@@ -293,9 +275,6 @@ class _QrisCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 6),
-                // 🚀 Tombol download QRIS sebagai gambar ke galeri.
-                // Disembunyikan total saat isCapturing=true agar tidak ikut
-                // muncul di hasil gambar yang disimpan ke galeri.
                 isCapturing
                     ? const SizedBox.shrink()
                     : InkWell(

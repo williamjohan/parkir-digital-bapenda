@@ -1,5 +1,3 @@
-// lib/core/errors/exceptions.dart
-
 /// Base class untuk semua custom exception di aplikasi Bapenda.
 /// Wajib memiliki [message] agar UI selalu punya pesan untuk ditampilkan.
 abstract class AppException implements Exception {

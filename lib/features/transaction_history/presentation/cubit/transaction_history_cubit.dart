@@ -1,4 +1,3 @@
-// lib/features/transaction_history/presentation/cubit/transaction_history_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
@@ -54,14 +53,10 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           endDate: end,
           selectedKategori: 'SEMUA',
           selectedMode: -1,
-
-          // Data Rekap Asli (Semua Transaksi)
           roda2: data.roda2,
           roda4: data.roda4,
           totalTransaksi: data.jumlahTransaksi,
           totalPendapatan: data.totalPendapatan,
-
-          //  INJEKSI DATA FINANSIAL KE STATE
           totalPajak: data.totalPendapatanBapenda,
           totalBersih: data.totalPendapatanWajibPajak,
           persentasePajak: data.detail.isNotEmpty
@@ -80,8 +75,6 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
     final newKategori = kategori ?? currentState.selectedKategori;
     final newMode = mode ?? currentState.selectedMode;
-
-    // 1. Eksekusi Filter
     final filteredData = currentState.allTransactions.where((trx) {
       bool passKategori = true;
       if (newKategori != 'SEMUA') {
@@ -96,9 +89,6 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
       return passKategori && passMode;
     }).toList();
-
-    //  2. REKALKULASI REKAPITULASI (Dinamic Recap)
-    // Agar angka di Header mengikuti hasil filter yang ada di layar
     int filterRoda2 = 0;
     int filterRoda4 = 0;
     int filterKotor = 0;
@@ -122,8 +112,6 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           filteredTransactions: filteredData,
           selectedKategori: newKategori,
           selectedMode: newMode,
-
-          // 🚀 TIMPA DATA REKAP DENGAN HASIL FILTER
           roda2: filterRoda2,
           roda4: filterRoda4,
           totalTransaksi: filteredData.length,

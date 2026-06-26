@@ -65,8 +65,6 @@ class QrisSignalRDatasource {
       AppLogger.debug('⏰ [SignalR] QRIS_TIMEOUT — args: $arguments');
       _statusController?.add("TIMEOUT");
     });
-
-    // Error handles BE problem (Filter False Alarm tetap dipertahankan)
     _connection?.on("QRIS_ERROR", (arguments) {
       AppLogger.debug('❌ [SignalR] QRIS_ERROR — args: $arguments');
       try {

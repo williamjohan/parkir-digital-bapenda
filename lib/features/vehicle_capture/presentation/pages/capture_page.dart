@@ -1,5 +1,3 @@
-// lib/features/vehicle_capture/presentation/pages/capture_page.dart
-
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +10,6 @@ import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../cubit/vehicle_capture_cubit.dart';
 import '../cubit/vehicle_capture_state.dart';
-// Note: Jika Anda masih butuh overlay guide kotak kamera, Anda bisa memasukkannya tanpa logic kategori
-// import '../widgets/vehicle_overlay_guide.dart';
 
 class CapturePage extends StatefulWidget {
   const CapturePage({super.key}); // 🚀 SUDAH BERSIH DARI PARAMETER BISNIS!
@@ -61,7 +57,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // 🚀 BLOC LISTENER TRANSAKSI DIHAPUS TOTAL! HANYA TERSISA BLOC CONSUMER UNTUK KAMERA.
     return BlocConsumer<VehicleCaptureCubit, VehicleCaptureState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) async {
@@ -189,8 +184,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                               ],
                             ),
                           ),
-
-                          // AREA BAWAH: FORM & BUTTON
                           Container(
                             padding: const EdgeInsets.all(24),
                             decoration: const BoxDecoration(
@@ -261,8 +254,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                                       );
                                                       return;
                                                     }
-
-                                                    // 🚀 KEMBALIKAN DATA KE TRANSACTION PAGE!
                                                     Navigator.pop(context, {
                                                       'platNomor': plat,
                                                       'imagePath': state

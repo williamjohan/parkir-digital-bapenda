@@ -1,5 +1,3 @@
-// lib/features/home/data/models/dashboard_summary_non_jukir_model.dart
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'dashboard_summary_non_jukir_model.freezed.dart';

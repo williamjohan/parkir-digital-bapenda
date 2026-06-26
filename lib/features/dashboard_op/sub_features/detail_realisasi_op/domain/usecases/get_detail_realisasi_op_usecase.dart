@@ -9,8 +9,6 @@ class GetDetailRealisasiOpUseCase {
   final DetailRealisasiOpRepository _repository;
 
   GetDetailRealisasiOpUseCase(this._repository);
-
-  // Menggunakan method call() agar bisa dipanggil layaknya function
   Future<Either<String, DetailRealisasiOpEntity>> call({
     required String nop,
     required int tahun,

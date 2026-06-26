@@ -27,8 +27,6 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
     _startDownload();
   }
 
-  // ================= MONITORING =================
-
   void _startMonitoring() {
     _connectivitySub?.cancel();
     _stuckTimer?.cancel();
@@ -51,8 +49,6 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
       }
     });
   }
-
-  // ================= DOWNLOAD =================
 
   void _startDownload() {
     _otaSub?.cancel();
@@ -109,8 +105,6 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
     }
   }
 
-  // ================= ERROR & RETRY =================
-
   void _emitError(String message) {
     if (_isRetrying) return;
 
@@ -141,8 +135,6 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
     _startMonitoring();
     _startDownload();
   }
-
-  // ================= CLEANUP =================
 
   void _disposeMonitoring() {
     _otaSub?.cancel();

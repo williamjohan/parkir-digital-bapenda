@@ -37,8 +37,6 @@ class QrisRepositoryImpl implements IQrisRepository {
       if (qrisPathsMap.isNotEmpty) {
         await _secureStorage.saveQrisImagePaths(jsonEncode(qrisPathsMap));
       }
-
-      // Unit adalah representasi void/berhasil di dartz
       return const Right(unit);
     } catch (e) {
       if (e is ServerException) {

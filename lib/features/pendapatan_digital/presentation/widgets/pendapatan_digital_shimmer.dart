@@ -12,14 +12,9 @@ class PendapatanDigitalShimmer extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Filter
             const ShimmerBox(height: 48, borderRadius: 12),
 
             const SizedBox(height: 16),
-
-            // ===========================
-            // Card Total Pendapatan
-            // ===========================
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -73,10 +68,6 @@ class PendapatanDigitalShimmer extends StatelessWidget {
             ),
 
             const SizedBox(height: 16),
-
-            // ===========================
-            // Rekap Kendaraan
-            // ===========================
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -113,10 +104,6 @@ class PendapatanDigitalShimmer extends StatelessWidget {
             ),
 
             const SizedBox(height: 16),
-
-            // ===========================
-            // Rekap Metode Pembayaran
-            // ===========================
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(

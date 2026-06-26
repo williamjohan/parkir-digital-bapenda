@@ -29,10 +29,6 @@ class HomeCubit extends Cubit<HomeState> {
     this._databaseHelper,
   ) : super(const HomeState());
 
-  // ==========================================================
-  // INITIALIZE
-  // ==========================================================
-
   Future<void> initialize() async {
     emit(state.copyWith(status: HomeStatus.loading));
 
@@ -52,13 +48,8 @@ class HomeCubit extends Cubit<HomeState> {
     final token = await _secureStorage.getAccessToken();
     if (token == null || token.isEmpty) {
       AppLogger.warning('Token is null or empty, attempting refresh...');
-      // await _refreshTokenManually();
     }
   }
-
-  // ==========================================================
-  // DASHBOARD
-  // ==========================================================
 
   Future<void> loadDashboardData() async {
     emit(state.copyWith(status: HomeStatus.loading));
@@ -206,22 +197,13 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  // ==========================================================
-  // PROFILE
-  // ==========================================================
-
   Future<void> _loadProfileInfo() async {
-    //  1. AMBIL ROLE DARI SECURE STORAGE
     final roleId = await _secureStorage.getRoleId() ?? 0;
     final userRole = RoleLoginDigitalParkir.fromInt(roleId);
-
-    //  2. SIMPAN ROLE KE STATE AGAR UI BISA BACA
     emit(state.copyWith(role: userRole));
 
     final profile = await _secureStorage.getJukirProfile();
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
-
-    // 3. LOGIKA JUKIR (Single NOP)
     if (userRole == RoleLoginDigitalParkir.jukir) {
       emit(
         state.copyWith(
@@ -233,16 +215,12 @@ class HomeCubit extends Cubit<HomeState> {
       );
       return;
     }
-
-    //  4. LOGIKA BAPENDA / WP (Multiple NOP)
     final nopList = await _databaseHelper.getNopList();
 
     if (nopList.isEmpty) {
       emit(state.copyWith(namaJukir: namaUser)); // NOP Kosong
       return;
     }
-
-    // Ambil NOP pertama sebagai default
     final firstNop = nopList.first;
 
     emit(
@@ -254,9 +232,6 @@ class HomeCubit extends Cubit<HomeState> {
       ),
     );
   }
-  // ==========================================================
-  // CHANGE OBJEK PAJAK
-  // ==========================================================
 
   Future<void> changeObjekPajak(Map<String, dynamic> item) async {
     emit(

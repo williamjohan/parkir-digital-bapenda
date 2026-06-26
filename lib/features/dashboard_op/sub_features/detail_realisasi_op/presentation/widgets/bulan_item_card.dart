@@ -21,7 +21,6 @@ class BulanItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🚀 LOGIKA PRESENTASI DI SINI
     final bool hasBoth = nominalNonDigital > 0 && nominalDigital > 0;
     final bool onlyDigital = nominalNonDigital == 0 && nominalDigital > 0;
 
@@ -35,7 +34,6 @@ class BulanItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ─── HEADER (Bulan & SSPD) ───
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -58,8 +56,6 @@ class BulanItemCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Divider(height: 1, color: AppColors.border),
           ),
-
-          // ─── KONTEN DINAMIS BERDASARKAN LOGIKA ───
           if (hasBoth) ...[
             _buildNominalRow('Realisasi Non digital', nominalNonDigital),
             const SizedBox(height: 8),
@@ -69,7 +65,6 @@ class BulanItemCard extends StatelessWidget {
               child: Divider(
                 height: 1,
                 color: AppColors.border,
-                // style: BorderStyle.solid,
               ), // Bisa pakai dash line jika ada
             ),
             _buildNominalRow('Total $bulan', totalNominal, isTotal: true),
@@ -80,7 +75,6 @@ class BulanItemCard extends StatelessWidget {
               isTotal: true,
             ),
           ] else ...[
-            // Kondisi Default / Hanya Non-Digital
             _buildNominalRow('Realisasi', totalNominal, isTotal: true),
           ],
         ],
@@ -88,7 +82,6 @@ class BulanItemCard extends StatelessWidget {
     );
   }
 
-  // ─── HELPER WIDGET UNTUK BARIS ───
   Widget _buildNominalRow(String label, double value, {bool isTotal = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

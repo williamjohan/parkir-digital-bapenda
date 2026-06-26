@@ -92,7 +92,6 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
                                 mobilCount:
                                     state.summary?.jumlahMobilHariIni ?? 0,
                               ),
-                              // SizedBox(height: 16),
                               CardRekapJenisPembayaranWidget(
                                 isShowPembaruanTerakhir: false,
                                 data: state.summary?.sofParkirResults ?? [],

@@ -67,7 +67,6 @@ class UpdatePage extends StatelessWidget {
     );
   }
 
-  // TAMPILAN JIKA APLIKASI SUDAH TERBARU
   Widget _buildUpToDate(BuildContext context, CheckUpdateUpToDate state) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -88,14 +87,11 @@ class UpdatePage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            // 🚀 Mengambil versionName dari state
             "Aplikasi Bapenda Anda sudah menggunakan versi terbaru (${state.versionName}).",
             style: AppTypography.bodyRegular,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
-
-          // 🚀 KARTU CHANGELOG VERSI SAAT INI
           const Text("Catatan Rilis Saat Ini:", style: AppTypography.heading5),
           const SizedBox(height: 8),
           Expanded(
@@ -109,7 +105,6 @@ class UpdatePage extends StatelessWidget {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Text(
-                  // 🚀 Mengambil changelog dari state
                   state.changelog,
                   style: AppTypography.bodyRegular.copyWith(height: 1.6),
                 ),

@@ -8,8 +8,6 @@ class DashboardSummaryNonJukirEntity with _$DashboardSummaryNonJukirEntity {
     required int totalOp,
     required int totalOpDigital,
     required int totalOpNonDigital,
-
-    // baru
     required int totalBertarif,
     required int totalNonTarif,
     required int totalTarifTidakDiketahui,

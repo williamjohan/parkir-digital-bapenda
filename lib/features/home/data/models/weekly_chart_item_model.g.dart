@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'weekly_chart_item_model.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 WeeklyChartItemModel _$WeeklyChartItemModelFromJson(
   Map<String, dynamic> json,

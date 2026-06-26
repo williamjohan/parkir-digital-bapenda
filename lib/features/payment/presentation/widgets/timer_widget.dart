@@ -1,4 +1,3 @@
-// lib/features/payment/presentation/widgets/timer_widget.dart
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -22,7 +21,6 @@ class _TimerWidgetState extends State<TimerWidget> {
   @override
   void initState() {
     super.initState();
-    // Set target waktu kedaluwarsa (Sekarang + Durasi)
     _endTime = DateTime.now().add(Duration(minutes: widget.durasi));
     _sisaWaktu = widget.durasi * 60;
     _startTimer();
@@ -30,7 +28,6 @@ class _TimerWidgetState extends State<TimerWidget> {
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-      // 🚀 ASYNC SAFETY: Cegah error jika widget mati
       if (!mounted) {
         t.cancel();
         return;
@@ -39,7 +36,6 @@ class _TimerWidgetState extends State<TimerWidget> {
       final now = DateTime.now();
       if (now.isBefore(_endTime)) {
         setState(() {
-          // Hitung selisih waktu secara absolut
           _sisaWaktu = _endTime.difference(now).inSeconds;
         });
       } else {
@@ -54,7 +50,6 @@ class _TimerWidgetState extends State<TimerWidget> {
   String _formatWaktu(int detik) {
     final menit = detik ~/ 60;
     final sisaDetik = detik % 60;
-    // Format detik agar selalu 2 digit (contoh: 05, bukan 5)
     final formattedDetik = sisaDetik.toString().padLeft(2, '0');
     return "$menit menit : $formattedDetik detik";
   }

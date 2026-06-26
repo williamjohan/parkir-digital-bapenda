@@ -39,7 +39,6 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // === HEADER KARTU ===
           Row(
             children: [
               Container(
@@ -55,16 +54,12 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-
-              // 🚀 EXPANDED: Mendorong tanggal ke ujung kanan & mencegah teks judul tumpah
               const Expanded(
                 child: Text(
                   "Rekap Metode Pembayaran",
                   style: AppTypography.bodySemiBold,
                 ),
               ),
-
-              // 🚀 WIDGET SYSDATE DI KANAN
               if (isShowPembaruanTerakhir)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -86,7 +81,6 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          // Format: 19 Jun 2026, 14:45
                           DateFormat(
                             'dd MMM yyyy, HH:mm',
                           ).format(DateTime.now()),
@@ -104,8 +98,6 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
           const SizedBox(height: 16),
           const Divider(height: 1),
           const SizedBox(height: 16),
-
-          // === LIST DATA ===
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -118,7 +110,6 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // 1. NAMA METODE PEMBAYARAN (SOF)
                   Expanded(
                     flex: 3,
                     child: Row(
@@ -152,8 +143,6 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
                   ),
 
                   const SizedBox(width: 8),
-
-                  // 2. BADGE STATISTIK MOTOR
                   Expanded(
                     flex: 4,
                     child: _ItemKendaraanBadge(
@@ -165,8 +154,6 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
                   ),
 
                   const SizedBox(width: 8),
-
-                  // 3. BADGE STATISTIK MOBIL
                   Expanded(
                     flex: 4,
                     child: _ItemKendaraanBadge(
@@ -186,7 +173,6 @@ class CardRekapJenisPembayaranWidget extends StatelessWidget {
   }
 }
 
-// === WIDGET ANAK KHUSUS (THE BADGE) ===
 class _ItemKendaraanBadge extends StatelessWidget {
   final double total;
   final int jumlahKendaraan;
@@ -202,7 +188,6 @@ class _ItemKendaraanBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Cek apakah transaksinya 0. Jika 0, kita redupkan warnanya agar mata fokus ke data yang aktif.
     final bool isZero = total == 0 && jumlahKendaraan == 0;
 
     final Color displayColor = isZero ? Colors.grey.shade400 : accentColor;
@@ -224,7 +209,6 @@ class _ItemKendaraanBadge extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Nominal Uang
           Text(
             CurrencyFormatter.toIdr(total),
             style: TextStyle(
@@ -236,7 +220,6 @@ class _ItemKendaraanBadge extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
-          // Jumlah & Ikon
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,

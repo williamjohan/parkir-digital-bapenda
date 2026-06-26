@@ -19,13 +19,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final DateTime endDate;
   final String selectedKategori;
   final int selectedMode;
-  // final Map<String, dynamic> jukirProfile;
   final int roda2;
   final int roda4;
   final int totalTransaksi;
   final int totalPendapatan;
-
-  // 🚀 [BARU] 3 FIELD FINANSIAL DINAMIS
   final double totalPajak;
   final double totalBersih;
   final int persentasePajak;
@@ -37,12 +34,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     required this.endDate,
     this.selectedKategori = 'SEMUA',
     this.selectedMode = -1,
-    // required this.jukirProfile,
     required this.roda2,
     required this.roda4,
     required this.totalTransaksi,
     required this.totalPendapatan,
-    // 🚀 WAJIB DIISI
     required this.totalPajak,
     required this.totalBersih,
     required this.persentasePajak,
@@ -55,12 +50,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     DateTime? endDate,
     String? selectedKategori,
     int? selectedMode,
-    // Map<String, dynamic>? jukirProfile,
     int? roda2,
     int? roda4,
     int? totalTransaksi,
     int? totalPendapatan,
-    // 🚀 WAJIB DIISI
     double? totalPajak,
     double? totalBersih,
     int? persentasePajak,
@@ -72,12 +65,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       endDate: endDate ?? this.endDate,
       selectedKategori: selectedKategori ?? this.selectedKategori,
       selectedMode: selectedMode ?? this.selectedMode,
-      // jukirProfile: jukirProfile ?? this.jukirProfile,
       roda2: roda2 ?? this.roda2,
       roda4: roda4 ?? this.roda4,
       totalTransaksi: totalTransaksi ?? this.totalTransaksi,
       totalPendapatan: totalPendapatan ?? this.totalPendapatan,
-      // 🚀 MAPPING BARU
       totalPajak: totalPajak ?? this.totalPajak,
       totalBersih: totalBersih ?? this.totalBersih,
       persentasePajak: persentasePajak ?? this.persentasePajak,
@@ -92,12 +83,10 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     endDate,
     selectedKategori,
     selectedMode,
-    // jukirProfile,
     roda2,
     roda4,
     totalTransaksi,
     totalPendapatan,
-    // 🚀 REGISTRASI PROPS AGAR UI ME-REBUILD
     totalPajak,
     totalBersih,
     persentasePajak,

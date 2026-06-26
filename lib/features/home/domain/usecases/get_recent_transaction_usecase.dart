@@ -27,17 +27,12 @@ class GetRecentTransactionsUseCase {
       final now = DateTime.now();
       final startDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
       final endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
-
-      // 1. Ambil data MURNI dari API
       final HistoryResponseData apiResult = await _remoteDataSource.getHistory(
         nop: nop,
         startDate: startDate,
         endDate: endDate,
         limit: limit,
       );
-
-      // 2. Tidak ada merging, tidak ada deduplikasi.
-      // Langsung kembalikan apa yang diberikan API.
       final List<HistoryItemModel> rawData = apiResult.detail;
 
       AppLogger.debug('✅ [Audit] Murni dari API: ${rawData.length} item');

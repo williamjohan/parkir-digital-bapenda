@@ -22,16 +22,12 @@ class TransactionHistoryRepositoryImpl
     required String nop,
   }) async {
     try {
-      // 2. Hit API (Remote) - Tanpa limit (biarkan Backend yang handle semua data)
       final apiResult = await _remoteDataSource.getHistory(
         nop: nop,
         startDate: startDate,
         endDate: endDate,
         limit: null,
       );
-
-      // 3. Kembalikan data murni dari API
-      // Backend sudah menghitung summary (roda2, roda4, total), kita tinggal pakai.
       return Right(apiResult);
     } catch (e) {
       if (e is ServerException) {

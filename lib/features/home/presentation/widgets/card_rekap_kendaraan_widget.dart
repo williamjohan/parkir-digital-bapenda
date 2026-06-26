@@ -35,7 +35,6 @@ class CardRekapKendaraanWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // === HEADER KARTU ===
           Row(
             children: [
               Container(
@@ -58,11 +57,8 @@ class CardRekapKendaraanWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-
-          // === METRIK KENDARAAN ===
           Row(
             children: [
-              // 1. RODA DUA (MOTOR)
               Expanded(
                 child: _MetricItem(
                   title: "Roda 2",
@@ -73,8 +69,6 @@ class CardRekapKendaraanWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-
-              // 2. RODA EMPAT (MOBIL)
               Expanded(
                 child: _MetricItem(
                   title: "Roda 4",
@@ -85,8 +79,6 @@ class CardRekapKendaraanWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-
-              // 3. TOTAL SEMUA KENDARAAN
               Expanded(
                 child: _MetricItem(
                   title: "Total",
@@ -106,7 +98,6 @@ class CardRekapKendaraanWidget extends StatelessWidget {
   }
 }
 
-// === WIDGET ANAK KHUSUS (METRIC BOX) ===
 class _MetricItem extends StatelessWidget {
   final String title;
   final String value;

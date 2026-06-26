@@ -60,9 +60,7 @@ class ForceUpdateDialog extends StatelessWidget {
               PbPrimaryButton(
                 text: "Update Sekarang",
                 onPressed: () {
-                  // Tutup dialog force update ini...
                   Navigator.of(context).pop();
-                  // ...lalu buka dialog progress download yang sesungguhnya!
                   UpdateProgressDialog.show(
                     context,
                     update.downloadUrl,

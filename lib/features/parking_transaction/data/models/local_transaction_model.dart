@@ -1,5 +1,3 @@
-// lib/features/parking_transaction/data/models/local_transaction_model.dart
-
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../transaction_history/data/models/history_item_model.dart';

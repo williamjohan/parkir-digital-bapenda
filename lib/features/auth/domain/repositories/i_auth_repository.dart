@@ -1,5 +1,3 @@
-// lib/features/auth/domain/repositories/i_auth_repository.dart
-
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failure.dart';
 
@@ -13,7 +11,5 @@ abstract class IAuthRepository {
 
   /// Mengecek apakah sesi Jukir masih aktif di HP ini
   Future<bool> checkAuthStatus();
-
-  // cek uuid
   Future<bool> checkDeviceUuid();
 }

@@ -21,7 +21,6 @@ class PbBasicBottomSheet {
       builder: (context) {
         return Container(
           width: double.infinity,
-          // padding: const EdgeInsets.all(24),
           padding: normalPadding
               ? const EdgeInsets.all(24)
               : EdgeInsets.only(
@@ -37,7 +36,6 @@ class PbBasicBottomSheet {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Drag Handle
               Container(
                 width: MediaQuery.of(context).size.width * 0.2,
                 height: 4,

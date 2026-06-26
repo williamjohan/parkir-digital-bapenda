@@ -18,19 +18,13 @@ class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
           currentYear: DateTime.now().year,
         ),
       );
-
-  //  2. ENTRY POINT (Dipanggil dari UI/Router saat halaman pertama kali dibuka)
   void init(String nop) {
     _currentNop = nop;
-
-    // Langsung fetch data tahun berjalan saat halaman terbuka
     if (!isClosed) {
       emit(state.copyWith(isLoading: true, errorMessage: null));
     }
     _fetchDataForYear(state.selectedYear);
   }
-
-  // ─── FUNGSI TRIGGER DARI UI ──────────────────────────────────────────────────
 
   void decrementYear() {
     if (!state.canDecrementYear) return;
@@ -50,12 +44,8 @@ class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
     _changeYear(year);
   }
 
-  // ─── LOGIC DEBOUNCING ────────────────────────────────────────────────────────
-
   void _changeYear(int targetYear) {
     if (!isClosed) {
-      // Kosongkan data lama agar UI tidak menampilkan data tahun sebelumnya
-      // sambil menunggu API selesai merespons
       emit(
         state.copyWith(
           selectedYear: targetYear,
@@ -75,8 +65,6 @@ class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
     });
   }
 
-  // ─── FETCHING DATA DARI REPOSITORY ───────────────────────────────────────────
-
   Future<void> _fetchDataForYear(int year) async {
     if (isClosed) return;
     if (_currentNop.isEmpty) {
@@ -89,16 +77,12 @@ class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
       );
       return;
     }
-
-    //  3. TEMBAK API VIA REPOSITORY
     final result = await _getDetailRealisasiOpUseCase(
       nop: _currentNop,
       tahun: year,
     );
 
     if (isClosed) return;
-
-    //  4. HANDLE RESPONSE (DARTZ EITHER)
     result.fold(
       (failureMessage) {
         emit(state.copyWith(isLoading: false, errorMessage: failureMessage));
@@ -108,8 +92,6 @@ class DetailRealisasiOpCubit extends Cubit<DetailRealisasiOpState> {
       },
     );
   }
-
-  // ─── PEMBERSIHAN MEMORI ──────────────────────────────────────────────────────
 
   @override
   Future<void> close() {

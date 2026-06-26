@@ -5,13 +5,8 @@ import '../../data/models/history_item_model.dart';
 
 class HistoryCardWidget extends StatelessWidget {
   final HistoryItemModel item;
-  // final VoidCallback onPreviewTap;
 
-  const HistoryCardWidget({
-    super.key,
-    required this.item,
-    // required this.onPreviewTap,
-  });
+  const HistoryCardWidget({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +28,6 @@ class HistoryCardWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- HEADER: Tanggal & Badge ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -69,8 +63,6 @@ class HistoryCardWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-
-            // --- BODY: Kendaraan, Plat, dan Nominal ---
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
