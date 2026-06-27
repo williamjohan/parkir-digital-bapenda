@@ -117,10 +117,11 @@ class AppRouter {
           path: AppRoutes.pendapatanDigital,
           name: AppRoutes.pendapatanDigital,
           builder: (context, state) {
+            final namaUPTB = state.extra as String? ?? '';
             return BlocProvider(
               create: (context) =>
                   locator<PendapatanDigitalCubit>()..getSummary(),
-              child: PendapatanDigitalScreen(),
+              child: PendapatanDigitalScreen(namaUPTB: namaUPTB),
             );
           },
         ),
@@ -143,9 +144,10 @@ class AppRouter {
           path: AppRoutes.realisasiSeluruhOP,
           name: AppRoutes.realisasiSeluruhOP,
           builder: (context, state) {
+            final namaUPTB = state.extra as String? ?? '';
             return BlocProvider(
               create: (_) => locator<RealisasiCubit>()..init(),
-              child: const RealisasiScreen(),
+              child: RealisasiScreen(namaUPTB: namaUPTB),
             );
           },
         ),

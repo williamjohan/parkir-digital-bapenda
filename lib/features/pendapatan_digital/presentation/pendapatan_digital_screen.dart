@@ -12,7 +12,8 @@ import '../../home/presentation/widgets/card_total_pendapatan.dart';
 import 'cubit/pendapatan_digital_state.dart';
 
 class PendapatanDigitalScreen extends StatefulWidget {
-  const PendapatanDigitalScreen({super.key});
+  final String? namaUPTB;
+  const PendapatanDigitalScreen({super.key, this.namaUPTB});
 
   @override
   State<PendapatanDigitalScreen> createState() =>
@@ -28,7 +29,12 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
           isLoading: state.isFilterLoading,
           child: Scaffold(
             appBar: AppBar(
-              title: Text('Pendapatan Digital', style: AppTypography.heading5),
+              title: Text(
+                widget.namaUPTB != null
+                    ? 'Pendapatan Digital'
+                    : 'Pendapatan Digital ${widget.namaUPTB}',
+                style: AppTypography.heading5,
+              ),
               centerTitle: true,
               backgroundColor: AppColors.surface,
               elevation: 0,

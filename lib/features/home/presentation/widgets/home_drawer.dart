@@ -15,8 +15,14 @@ import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 class HomeDrawer extends StatelessWidget {
   final bool isFree;
   final RoleLoginDigitalParkir role;
+  final String? namaUPTB;
 
-  const HomeDrawer({super.key, required this.isFree, required this.role});
+  const HomeDrawer({
+    super.key,
+    required this.isFree,
+    required this.role,
+    this.namaUPTB,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -92,12 +98,6 @@ class HomeDrawer extends StatelessWidget {
                         AppRoutes.searchObjekPajak,
                         extra: {'role': role},
                       );
-
-                      // if (result != null) {
-                      //   await context.read<HomeCubit>().changeObjekPajak(
-                      //     result as Map<String, dynamic>,
-                      //   );
-                      // }
                     }
                   },
                 ),
@@ -115,7 +115,10 @@ class HomeDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.pop(context); // Tutup drawer
-                      context.push(AppRoutes.pendapatanDigital);
+                      context.push(
+                        AppRoutes.pendapatanDigital,
+                        extra: namaUPTB,
+                      );
                     },
                   ),
                 ),
@@ -135,7 +138,10 @@ class HomeDrawer extends StatelessWidget {
 
                     onTap: () {
                       Navigator.pop(context);
-                      context.pushNamed(AppRoutes.realisasiSeluruhOP);
+                      context.pushNamed(
+                        AppRoutes.realisasiSeluruhOP,
+                        extra: namaUPTB,
+                      );
                     },
                   ),
                 ),

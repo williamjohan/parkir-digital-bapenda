@@ -77,7 +77,11 @@ class _HomePageState extends State<HomePage> {
                 bottom: true,
                 child: Scaffold(
                   backgroundColor: AppColors.background,
-                  drawer: HomeDrawer(isFree: state.isFree, role: state.role),
+                  drawer: HomeDrawer(
+                    isFree: state.isFree,
+                    role: state.role,
+                    namaUPTB: state.namaJukirFormatted,
+                  ),
                   body: Stack(
                     children: [
                       Container(

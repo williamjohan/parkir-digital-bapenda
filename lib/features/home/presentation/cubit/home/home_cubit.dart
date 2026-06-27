@@ -33,6 +33,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(status: HomeStatus.loading));
 
     await _loadProfileInfo();
+    formatUserName();
 
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboardData();
@@ -246,5 +247,24 @@ class HomeCubit extends Cubit<HomeState> {
     );
 
     await loadDashboardData();
+  }
+
+  void formatUserName() {
+    final userName = state.namaJukir;
+    final upper = userName.toUpperCase();
+
+    String formattedName;
+
+    if (upper.contains('UPTB')) {
+      final number = RegExp(r'UPTB(\d+)').firstMatch(upper)?.group(1);
+
+      formattedName = number != null ? 'UPTB-$number' : 'UPTB';
+    } else if (upper.startsWith('PD')) {
+      formattedName = userName.substring(2);
+    } else {
+      formattedName = userName;
+    }
+    AppLogger.debug("isi namaJukirFormatted : $formattedName");
+    emit(state.copyWith(namaJukirFormatted: formattedName));
   }
 }

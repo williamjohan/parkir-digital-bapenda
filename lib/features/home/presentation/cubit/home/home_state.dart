@@ -29,7 +29,7 @@ class HomeState with _$HomeState {
     @Default("") String namaLokasi,
     @Default("") String namaJukir,
     @Default("") String namaOp,
-
+    @Default("") String namaJukirFormatted,
     @Default(0) int totalOp,
     @Default(0) int totalOpDigital,
     @Default(0) int totalOpNonDigital,

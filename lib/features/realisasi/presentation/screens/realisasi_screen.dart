@@ -11,7 +11,8 @@ import '../widgets/realisasi_bulan_card.dart';
 import '../widgets/realisasi_summary_card.dart';
 
 class RealisasiScreen extends StatelessWidget {
-  const RealisasiScreen({super.key});
+  final String? namaUPTB;
+  const RealisasiScreen({super.key, this.namaUPTB});
 
   @override
   Widget build(BuildContext context) {
