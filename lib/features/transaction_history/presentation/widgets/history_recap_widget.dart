@@ -13,9 +13,6 @@ class HistoryRecapWidget extends StatelessWidget {
   final String nominalPajak;
   final String totalBersih;
   final bool isFree;
-  final bool isRealisasiAvailable;
-  final int realisasiDigital;
-  final int realisasiNonDigital;
 
   const HistoryRecapWidget({
     super.key,
@@ -27,9 +24,6 @@ class HistoryRecapWidget extends StatelessWidget {
     required this.nominalPajak,
     required this.totalBersih,
     this.isFree = true,
-    this.isRealisasiAvailable = false, // Default false jika tidak dikirim
-    this.realisasiDigital = 0,
-    this.realisasiNonDigital = 0,
   });
 
   @override
@@ -90,25 +84,6 @@ class HistoryRecapWidget extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Divider(height: 1),
             ),
-          ],
-          if (isRealisasiAvailable) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildFinancialColumn(
-                  label: "Realisasi Digital",
-                  value: CurrencyFormatter.toIdr(realisasiDigital),
-                  valueColor: AppColors.primary,
-                ),
-                _buildVerticalDivider(),
-                _buildFinancialColumn(
-                  label: "Realisasi Non-Digital",
-                  value: CurrencyFormatter.toIdr(realisasiNonDigital),
-                  valueColor: AppColors.primary,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
           ],
           Row(
             children: [

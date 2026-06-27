@@ -267,7 +267,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         persentasePajak: state.persentasePajak.toString(),
                         nominalPajak: state.totalPajak.toString(),
                         totalBersih: state.totalBersih.toString(),
-                        isRealisasiAvailable: widget.nop == null,
 
                         isFree: widget.isFree,
                       );

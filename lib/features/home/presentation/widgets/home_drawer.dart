@@ -85,7 +85,7 @@ class HomeDrawer extends StatelessWidget {
                     if (role == RoleLoginDigitalParkir.jukir) {
                       context.pushNamed(
                         AppRoutes.history,
-                        extra: {'isFree': true},
+                        extra: {'isFree': false},
                       );
                     } else {
                       context.pushNamed(
