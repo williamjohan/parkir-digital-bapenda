@@ -30,7 +30,7 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                widget.namaUPTB != null
+                widget.namaUPTB == null
                     ? 'Pendapatan Digital'
                     : 'Pendapatan Digital ${widget.namaUPTB}',
                 style: AppTypography.heading5,

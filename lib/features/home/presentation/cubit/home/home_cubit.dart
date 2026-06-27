@@ -255,15 +255,20 @@ class HomeCubit extends Cubit<HomeState> {
 
     String formattedName;
 
-    if (upper.contains('UPTB')) {
-      final number = RegExp(r'UPTB(\d+)').firstMatch(upper)?.group(1);
-
-      formattedName = number != null ? 'UPTB-$number' : 'UPTB';
-    } else if (upper.startsWith('PD')) {
+    // Prioritas pertama
+    final uptbMatch = RegExp(r'UPTB(\d+)').firstMatch(upper);
+    if (uptbMatch != null) {
+      formattedName = 'UPTB-${uptbMatch.group(1)}';
+    }
+    // Prioritas kedua
+    else if (upper.startsWith('PD')) {
       formattedName = userName.substring(2);
-    } else {
+    }
+    // Default
+    else {
       formattedName = userName;
     }
+
     AppLogger.debug("isi namaJukirFormatted : $formattedName");
     emit(state.copyWith(namaJukirFormatted: formattedName));
   }

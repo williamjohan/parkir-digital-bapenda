@@ -23,7 +23,12 @@ class RealisasiScreen extends StatelessWidget {
           child: Scaffold(
             backgroundColor: const Color(0xFFFAFAFA),
             appBar: AppBar(
-              title: Text('Realisasi Pajak', style: AppTypography.heading5),
+              title: Text(
+                namaUPTB == null
+                    ? 'Realisasi Pajak'
+                    : 'Realisasi Pajak $namaUPTB',
+                style: AppTypography.heading5,
+              ),
               centerTitle: true,
               backgroundColor: AppColors.surface,
               elevation: 0,
