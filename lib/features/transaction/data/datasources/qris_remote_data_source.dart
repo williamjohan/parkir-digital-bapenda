@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
 import '../../../../core/errors/exception.dart';
 import '../models/qris_rompi_model.dart';
 
@@ -16,7 +17,8 @@ class QrisRemoteDataSourceImpl implements IQrisRemoteDataSource {
   @override
   Future<List<QrisRompiModel>> getQrisRompi() async {
     try {
-      final response = await _dio.get('/api/mobile/parking/get-qris-rompi');
+      // final response = await _dio.get('/api/mobile/parking/get-qris-rompi');
+      final response = await _dio.get(ApiEndpoints.qrisRompiDev);
 
       if (response.statusCode == 200 && response.data['isSuccess'] == true) {
         final List<dynamic> dataList = response.data['data'] ?? [];

@@ -13,6 +13,7 @@ DataJukirModel _$DataJukirModelFromJson(Map<String, dynamic> json) =>
       idDevice: json['idDevice'] as String? ?? '',
       nopFormatted: json['nopFormatted'] as String? ?? '',
       namaPetugas: json['namaPetugas'] as String? ?? '',
+      shift: json['shift'] as String? ?? '',
     );
 
 Map<String, dynamic> _$DataJukirModelToJson(DataJukirModel instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$DataJukirModelToJson(DataJukirModel instance) =>
       'idDevice': instance.idDevice,
       'nopFormatted': instance.nopFormatted,
       'namaPetugas': instance.namaPetugas,
+      'shift': instance.shift,
     };

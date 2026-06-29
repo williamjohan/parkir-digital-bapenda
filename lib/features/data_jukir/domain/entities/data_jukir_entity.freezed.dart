@@ -21,6 +21,7 @@ mixin _$DataJukirEntity {
   String get username => throw _privateConstructorUsedError;
   String get deviceId => throw _privateConstructorUsedError;
   String get namaPetugas => throw _privateConstructorUsedError;
+  String get shift => throw _privateConstructorUsedError;
 
   /// Create a copy of DataJukirEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -36,7 +37,13 @@ abstract class $DataJukirEntityCopyWith<$Res> {
     $Res Function(DataJukirEntity) then,
   ) = _$DataJukirEntityCopyWithImpl<$Res, DataJukirEntity>;
   @useResult
-  $Res call({String nop, String username, String deviceId, String namaPetugas});
+  $Res call({
+    String nop,
+    String username,
+    String deviceId,
+    String namaPetugas,
+    String shift,
+  });
 }
 
 /// @nodoc
@@ -58,6 +65,7 @@ class _$DataJukirEntityCopyWithImpl<$Res, $Val extends DataJukirEntity>
     Object? username = null,
     Object? deviceId = null,
     Object? namaPetugas = null,
+    Object? shift = null,
   }) {
     return _then(
       _value.copyWith(
@@ -77,6 +85,10 @@ class _$DataJukirEntityCopyWithImpl<$Res, $Val extends DataJukirEntity>
                 ? _value.namaPetugas
                 : namaPetugas // ignore: cast_nullable_to_non_nullable
                       as String,
+            shift: null == shift
+                ? _value.shift
+                : shift // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -92,7 +104,13 @@ abstract class _$$DataJukirEntityImplCopyWith<$Res>
   ) = __$$DataJukirEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String nop, String username, String deviceId, String namaPetugas});
+  $Res call({
+    String nop,
+    String username,
+    String deviceId,
+    String namaPetugas,
+    String shift,
+  });
 }
 
 /// @nodoc
@@ -113,6 +131,7 @@ class __$$DataJukirEntityImplCopyWithImpl<$Res>
     Object? username = null,
     Object? deviceId = null,
     Object? namaPetugas = null,
+    Object? shift = null,
   }) {
     return _then(
       _$DataJukirEntityImpl(
@@ -132,6 +151,10 @@ class __$$DataJukirEntityImplCopyWithImpl<$Res>
             ? _value.namaPetugas
             : namaPetugas // ignore: cast_nullable_to_non_nullable
                   as String,
+        shift: null == shift
+            ? _value.shift
+            : shift // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -145,6 +168,7 @@ class _$DataJukirEntityImpl implements _DataJukirEntity {
     required this.username,
     required this.deviceId,
     required this.namaPetugas,
+    required this.shift,
   });
 
   @override
@@ -155,10 +179,12 @@ class _$DataJukirEntityImpl implements _DataJukirEntity {
   final String deviceId;
   @override
   final String namaPetugas;
+  @override
+  final String shift;
 
   @override
   String toString() {
-    return 'DataJukirEntity(nop: $nop, username: $username, deviceId: $deviceId, namaPetugas: $namaPetugas)';
+    return 'DataJukirEntity(nop: $nop, username: $username, deviceId: $deviceId, namaPetugas: $namaPetugas, shift: $shift)';
   }
 
   @override
@@ -172,12 +198,13 @@ class _$DataJukirEntityImpl implements _DataJukirEntity {
             (identical(other.deviceId, deviceId) ||
                 other.deviceId == deviceId) &&
             (identical(other.namaPetugas, namaPetugas) ||
-                other.namaPetugas == namaPetugas));
+                other.namaPetugas == namaPetugas) &&
+            (identical(other.shift, shift) || other.shift == shift));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, nop, username, deviceId, namaPetugas);
+      Object.hash(runtimeType, nop, username, deviceId, namaPetugas, shift);
 
   /// Create a copy of DataJukirEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -197,6 +224,7 @@ abstract class _DataJukirEntity implements DataJukirEntity {
     required final String username,
     required final String deviceId,
     required final String namaPetugas,
+    required final String shift,
   }) = _$DataJukirEntityImpl;
 
   @override
@@ -207,6 +235,8 @@ abstract class _DataJukirEntity implements DataJukirEntity {
   String get deviceId;
   @override
   String get namaPetugas;
+  @override
+  String get shift;
 
   /// Create a copy of DataJukirEntity
   /// with the given fields replaced by the non-null parameter values.

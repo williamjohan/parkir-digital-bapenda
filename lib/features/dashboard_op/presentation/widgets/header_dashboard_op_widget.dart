@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 
 import '../../../../core/utils/currency_formatter.dart';
 
 class HeaderDashboardOp extends StatelessWidget {
+  final Map<String, dynamic> item;
+  final int totalPendapatan;
+  final double pajakPercent;
+  final int pendapatanBersih;
+  final bool isDigital;
+  final VoidCallback? onPressedLihatDaftarJukir;
+
   const HeaderDashboardOp({
     super.key,
     required this.item,
@@ -12,13 +20,8 @@ class HeaderDashboardOp extends StatelessWidget {
     required this.pajakPercent,
     required this.pendapatanBersih,
     required this.isDigital,
+    required this.onPressedLihatDaftarJukir,
   });
-
-  final Map<String, dynamic> item;
-  final int totalPendapatan;
-  final double pajakPercent;
-  final int pendapatanBersih;
-  final bool isDigital;
 
   @override
   Widget build(BuildContext context) {
@@ -225,6 +228,12 @@ class HeaderDashboardOp extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+                SizedBox(height: 12),
+                PbPrimaryButton(
+                  text: "Lihat Daftar Jukir",
+                  variant: PbButtonVariant.outlinedSecondaryLight,
+                  onPressed: onPressedLihatDaftarJukir,
                 ),
               ],
             ),

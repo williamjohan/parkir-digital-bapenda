@@ -9,5 +9,6 @@ class DataJukirEntity with _$DataJukirEntity {
     required String username,
     required String deviceId,
     required String namaPetugas,
+    required String shift,
   }) = _DataJukirEntity;
 }

@@ -48,6 +48,12 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                 pendapatanBersih:
                     state.data?.pendapatanHariIniBersihWajibPajak ?? 0,
                 isDigital: state.data?.isDigital ?? false,
+                onPressedLihatDaftarJukir: () {
+                  context.pushNamed(
+                    AppRoutes.dataJukir,
+                    extra: {'item': widget.item},
+                  );
+                },
               ),
               Expanded(
                 child: Padding(

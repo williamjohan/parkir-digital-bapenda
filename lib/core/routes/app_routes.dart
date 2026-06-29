@@ -20,4 +20,6 @@ class AppRoutes {
   static const String pendapatanDigital = '/pendapatan-digital';
   static const String realisasiSeluruhOP =
       '/api/mobile/parking/dashboard-summary-nonjukir-realisasi-dev';
+  static const String daftarNop = '/daftar-nop';
+  static const String dataJukir = '/data-jukir';
 }

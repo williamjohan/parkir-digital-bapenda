@@ -6,9 +6,13 @@ import 'package:parkir_digital_bapenda/features/dashboard_op/domain/entities/das
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/presentation/screen/dashboard_op_screen.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/sub_features/detail_rekap_jenis_pembayaran_op/presentation/detail_rekap_jenis_pembayaran_screen.dart';
+import 'package:parkir_digital_bapenda/features/data_jukir/presentation/cubit/data_jukir_cubit.dart';
+import 'package:parkir_digital_bapenda/features/data_jukir/presentation/screens/data_jukir_screen.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/pendapatan_digital_screen.dart';
+import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart';
+import '../../features/daftar_nop/presentation/screens/daftar_nop_screen.dart';
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
 import '../../features/dashboard_op/sub_features/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
@@ -85,6 +89,14 @@ class AppRouter {
           builder: (context, state) => const LoginScreen(),
         ),
         GoRoute(
+          path: AppRoutes.daftarNop,
+          name: AppRoutes.daftarNop,
+          builder: (context, state) => BlocProvider(
+            create: (_) => locator<DaftarNopCubit>(),
+            child: const DaftarNopScreen(),
+          ),
+        ),
+        GoRoute(
           path: AppRoutes.home,
           name: AppRoutes.home,
           builder: (context, state) => BlocProvider(
@@ -136,6 +148,22 @@ class AppRouter {
                   locator<DashboardOpCubit>()
                     ..getSummaryDashboardOp(item['nop']),
               child: DashboardOpScreen(item: item),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.dataJukir,
+          name: AppRoutes.dataJukir,
+          builder: (context, state) {
+            // final nop = state.extra as String? ?? '';
+
+            final extra = state.extra as Map<String, dynamic>?;
+            final item = extra?['item'] as Map<String, dynamic>;
+
+            return BlocProvider(
+              create: (context) =>
+                  locator<DataJukirCubit>()..getDataJukir(item['nop']),
+              child: DataJukirScreen(item: item),
             );
           },
         ),

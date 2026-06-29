@@ -20,12 +20,16 @@ class DataJukirModel extends Equatable {
   @JsonKey(defaultValue: '')
   final String namaPetugas;
 
+  @JsonKey(defaultValue: '')
+  final String shift;
+
   const DataJukirModel({
     required this.nop,
     required this.username,
     required this.idDevice,
     required this.nopFormatted,
     required this.namaPetugas,
+    required this.shift,
   });
 
   factory DataJukirModel.fromJson(Map<String, dynamic> json) =>
@@ -40,5 +44,6 @@ class DataJukirModel extends Equatable {
     idDevice,
     nopFormatted,
     namaPetugas,
+    shift,
   ];
 }

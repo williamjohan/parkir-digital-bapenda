@@ -1,8 +1,9 @@
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/features/data_jukir/domain/entities/data_jukir_entity.dart';
-import '../../../data_jukir/data/datasources/data_jukir_datasource.dart';
-import '../../../data_jukir/data/mapper/data_jukir_mapper.dart';
+
+import '../../domain/entities/data_jukir_entity.dart';
 import '../../domain/repositories/data_jukir_repository.dart';
+import '../datasources/data_jukir_datasource.dart';
+import '../mapper/data_jukir_mapper.dart';
 
 @LazySingleton(as: DataJukirRepository)
 class DataJukirRepositoryImpl implements DataJukirRepository {

@@ -13,6 +13,7 @@ import '../models/auth_response_model.dart';
 @LazySingleton(as: IAuthRepository)
 class AuthRepositoryImpl implements IAuthRepository {
   final IAuthRemoteDataSource _remoteDataSource;
+
   final ISecureStorageManager _secureStorage;
   final DatabaseHelper2 _databaseHelper;
 

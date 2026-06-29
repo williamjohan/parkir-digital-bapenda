@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/features/home/domain/entities/data_jukir_entity.dart';
+import 'package:parkir_digital_bapenda/features/data_jukir/domain/entities/data_jukir_entity.dart';
 import '../../domain/usecases/get_local_qris_usecase.dart';
 import 'transaction_state.dart';
 import '../../../home/data/models/tarif_model.dart';

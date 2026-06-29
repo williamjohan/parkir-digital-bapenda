@@ -130,4 +130,21 @@ class DatabaseHelper2 {
     await db.close();
     _database = null;
   }
+
+  // tambahan baru untuk halaman unduh daftar nop
+  Future<void> insertNop(Map<String, dynamic> data) async {
+    final db = await database;
+
+    await db.insert(
+      tableNopList,
+      data,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> deleteAllNop() async {
+    final db = await database;
+
+    await db.delete(tableNopList);
+  }
 }

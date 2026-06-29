@@ -35,7 +35,8 @@ class HomeCubit extends Cubit<HomeState> {
     await _loadProfileInfo();
     formatUserName();
 
-    if (state.role == RoleLoginDigitalParkir.jukir) {
+    if (state.role == RoleLoginDigitalParkir.jukir ||
+        state.role == RoleLoginDigitalParkir.wp) {
       await loadDashboardData();
 
       await _syncQrisUseCase.execute();
