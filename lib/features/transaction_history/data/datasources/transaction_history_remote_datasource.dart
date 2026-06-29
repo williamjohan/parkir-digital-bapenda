@@ -39,7 +39,7 @@ class TransactionHistoryRemoteDataSourceImpl
       'nop': nop,
       'tglAwal': startIso,
       'tglAkhir': endIso,
-      'limit': limit?.toString() ?? '',
+      'limit': limit ?? 0,
     });
     AppLogger.debug('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓');
     AppLogger.debug('┃ 🔍 MENGIRIM GET HISTORY KE /laporan-pendapatan');
