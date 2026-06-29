@@ -76,15 +76,20 @@ class HomeDrawer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
                 ListTile(
-                  leading: role == RoleLoginDigitalParkir.bapenda
-                      ? Icon(Icons.store, color: AppColors.textPrimary)
-                      : Icon(Icons.receipt_long, color: AppColors.textPrimary),
-                  title: role == RoleLoginDigitalParkir.bapenda
-                      ? Text('Objek Pajak', style: AppTypography.bodyRegular)
-                      : Text(
-                          'Riwayat Transaksi',
-                          style: AppTypography.bodyRegular,
-                        ),
+                  leading: Icon(
+                    role == RoleLoginDigitalParkir.jukir
+                        ? Icons.receipt_long
+                        : Icons.store,
+                    color: AppColors.textPrimary,
+                  ),
+
+                  title: Text(
+                    role == RoleLoginDigitalParkir.jukir
+                        ? 'Riwayat Transaksi'
+                        : 'Objek Pajak',
+                    style: AppTypography.bodyRegular,
+                  ),
+
                   onTap: () async {
                     Navigator.pop(context);
 

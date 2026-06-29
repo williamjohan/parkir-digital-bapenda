@@ -145,48 +145,48 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              PbPermissionGate(
-                                                allowedRoles: const [
-                                                  RoleLoginDigitalParkir.wp,
-                                                ],
-                                                currentRole: state.role,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        bottom: 16,
-                                                      ),
-                                                  child: CardObjekPajakWidget(
-                                                    nop: state.nop,
-                                                    namaObjekPajak:
-                                                        state.namaOp,
-                                                    alamat: state.namaLokasi,
-                                                    onPressedGantiObjek: () async {
-                                                      final result = await context
-                                                          .pushNamed(
-                                                            AppRoutes
-                                                                .searchObjekPajak,
-                                                            extra: {
-                                                              'role':
-                                                                  state.role,
-                                                            },
-                                                          );
+                                              // PbPermissionGate(
+                                              //   allowedRoles: const [
+                                              //     RoleLoginDigitalParkir.wp,
+                                              //   ],
+                                              //   currentRole: state.role,
+                                              //   child: Padding(
+                                              //     padding:
+                                              //         const EdgeInsets.only(
+                                              //           bottom: 16,
+                                              //         ),
+                                              //     child: CardObjekPajakWidget(
+                                              //       nop: state.nop,
+                                              //       namaObjekPajak:
+                                              //           state.namaOp,
+                                              //       alamat: state.namaLokasi,
+                                              //       onPressedGantiObjek: () async {
+                                              //         final result = await context
+                                              //             .pushNamed(
+                                              //               AppRoutes
+                                              //                   .searchObjekPajak,
+                                              //               extra: {
+                                              //                 'role':
+                                              //                     state.role,
+                                              //               },
+                                              //             );
 
-                                                      if (result != null) {
-                                                        await context
-                                                            .read<HomeCubit>()
-                                                            .changeObjekPajak(
-                                                              result
-                                                                  as Map<
-                                                                    String,
-                                                                    dynamic
-                                                                  >,
-                                                            );
-                                                      }
-                                                    },
-                                                    onPressedLihatDetail: () {},
-                                                  ),
-                                                ),
-                                              ),
+                                              //         if (result != null) {
+                                              //           await context
+                                              //               .read<HomeCubit>()
+                                              //               .changeObjekPajak(
+                                              //                 result
+                                              //                     as Map<
+                                              //                       String,
+                                              //                       dynamic
+                                              //                     >,
+                                              //               );
+                                              //         }
+                                              //       },
+                                              //       onPressedLihatDetail: () {},
+                                              //     ),
+                                              //   ),
+                                              // ),
                                               PbPermissionGate(
                                                 allowedRoles: [
                                                   RoleLoginDigitalParkir.jukir,
@@ -221,6 +221,7 @@ class _HomePageState extends State<HomePage> {
                                                 allowedRoles: [
                                                   RoleLoginDigitalParkir
                                                       .bapenda,
+                                                  RoleLoginDigitalParkir.wp,
                                                 ],
                                                 currentRole: state.role,
                                                 child: Padding(
@@ -304,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir.jukir,
-                                                  RoleLoginDigitalParkir.wp,
+                                                  // RoleLoginDigitalParkir.wp,
                                                 ],
                                                 currentRole: state.role,
                                                 child: Padding(
@@ -322,6 +323,7 @@ class _HomePageState extends State<HomePage> {
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir
                                                       .bapenda,
+                                                  RoleLoginDigitalParkir.wp,
                                                 ],
                                                 currentRole: state.role,
                                                 child:
