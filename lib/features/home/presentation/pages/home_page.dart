@@ -218,6 +218,19 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               ),
                                               PbPermissionGate(
+                                                allowedRoles: const [
+                                                  RoleLoginDigitalParkir.jukir,
+                                                  RoleLoginDigitalParkir
+                                                      .bapenda,
+                                                  RoleLoginDigitalParkir.wp,
+                                                ],
+                                                currentRole: state.role,
+                                                child: CardRekapKendaraanWidget(
+                                                  motorCount: state.motorCount,
+                                                  mobilCount: state.mobilCount,
+                                                ),
+                                              ),
+                                              PbPermissionGate(
                                                 allowedRoles: [
                                                   RoleLoginDigitalParkir
                                                       .bapenda,
@@ -280,28 +293,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
-                                              PbPermissionGate(
-                                                allowedRoles: const [
-                                                  RoleLoginDigitalParkir.jukir,
-                                                  RoleLoginDigitalParkir
-                                                      .bapenda,
-                                                  RoleLoginDigitalParkir.wp,
-                                                ],
-                                                currentRole: state.role,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        bottom: 16,
-                                                      ),
-                                                  child:
-                                                      CardRekapKendaraanWidget(
-                                                        motorCount:
-                                                            state.motorCount,
-                                                        mobilCount:
-                                                            state.mobilCount,
-                                                      ),
-                                                ),
-                                              ),
+
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir.jukir,
