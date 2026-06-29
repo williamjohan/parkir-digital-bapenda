@@ -7,7 +7,6 @@ part 'auth_response_model.g.dart';
 class AuthResponseModel with _$AuthResponseModel {
   const factory AuthResponseModel({
     @Default('') String accessToken,
-    @Default('') String refreshToken,
     @Default('') String nop,
     @Default('') String uuidStatic,
     @Default(0) int roleLoginId,

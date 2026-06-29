@@ -10,7 +10,6 @@ _$AuthResponseModelImpl _$$AuthResponseModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$AuthResponseModelImpl(
   accessToken: json['accessToken'] as String? ?? '',
-  refreshToken: json['refreshToken'] as String? ?? '',
   nop: json['nop'] as String? ?? '',
   uuidStatic: json['uuidStatic'] as String? ?? '',
   roleLoginId: (json['roleLoginId'] as num?)?.toInt() ?? 0,
@@ -26,7 +25,6 @@ Map<String, dynamic> _$$AuthResponseModelImplToJson(
   _$AuthResponseModelImpl instance,
 ) => <String, dynamic>{
   'accessToken': instance.accessToken,
-  'refreshToken': instance.refreshToken,
   'nop': instance.nop,
   'uuidStatic': instance.uuidStatic,
   'roleLoginId': instance.roleLoginId,

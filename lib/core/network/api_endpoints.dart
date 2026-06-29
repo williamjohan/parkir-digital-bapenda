@@ -2,7 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
   static const String login = '/api/mobile/parking/login';
 
-  static const String refreshToken =
+  static const String refreshAccessToken =
       '/api/mobile/parking/generate-access-token';
   static const String logout = '/api/mobile/parking/logout';
   static const String profile = '/api/mobile/parking/profile';
@@ -16,7 +16,6 @@ class ApiEndpoints {
       '/api/mobile/parking/laporan-pendapatan';
   static const String generateQris = '/api/mobile/parking/generate-qris';
   static const String callBack = '/api/mobile/parking/callback-qris';
-
   static const String cekUuid = '/api/mobile/parking/check-device-uuid';
 
   ////////////DEV////////////
@@ -32,11 +31,9 @@ class ApiEndpoints {
       '/api/mobile/parking/laporan-pendapatan-dev';
   static const String dataJukirDev = '/api/mobile/parking/get-data-jukir-dev';
   static const String qrisRompiDev = '/api/mobile/parking/get-qris-rompi-dev';
-
   static const String summaryOpDev = '/api/mobile/parking/get-summary-op-dev';
   static const String summaryRangeDev =
       '/api/mobile/parking/dashboard-summary-nonjukir-range-dev';
-
   static const String summayRealisasiOpDev =
       '/api/mobile/parking/dashboard-summary-nonjukir-realisasi-dev';
   static const String listNopDev = '/api/mobile/parking/nop-list-dev';

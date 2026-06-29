@@ -39,6 +39,7 @@ class HomeCubit extends Cubit<HomeState> {
         state.role == RoleLoginDigitalParkir.wp) {
       await loadDashboardData();
 
+      //TODO atur untuk WP hit endpoint , tarik dan simpan
       await _syncQrisUseCase.execute();
     } else {
       await _ensureValidToken();

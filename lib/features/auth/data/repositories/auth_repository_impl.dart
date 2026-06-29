@@ -32,20 +32,24 @@ class AuthRepositoryImpl implements IAuthRepository {
       final response = await _remoteDataSource.login(username, password);
 
       if (response.accessToken.isNotEmpty) {
+        //  1. HANYA SIMPAN ACCESS TOKEN
         await _secureStorage.saveAccessToken(response.accessToken);
-        if (response.refreshToken.isNotEmpty) {
-          await _secureStorage.saveRefreshToken(response.refreshToken);
-        }
+
+        //  2. SIMPAN ROLE
         await _secureStorage.saveRoleId(response.roleLoginId);
+
+        //  3. VALIDASI & SIMPAN UUID (Mekanisme Single Device)
         if (response.roleLoginId != 3 && response.uuidStatic.isNotEmpty) {
           await _secureStorage.saveDeviceUUID(response.uuidStatic);
         }
+
+        //  4. SIMPAN NOP SECARA PARALEL
         if (response.nopList.isNotEmpty) {
           _simpanNopSecaraParalel(response.nopList);
         }
+
         return const Right(unit);
       }
-
       return const Left(AuthFailure('Token tidak ditemukan dari server.'));
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));

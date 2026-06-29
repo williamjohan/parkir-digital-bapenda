@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../storage/secure_storage_manager.dart';
-import 'api_endpoints.dart';
-import 'env_config.dart';
+import '../utils/app_logger.dart'; // 🚀 Tetap pertahankan CCTV kita
 
 @lazySingleton
 class DioAuthInterceptor extends Interceptor {
@@ -17,6 +16,7 @@ class DioAuthInterceptor extends Interceptor {
   ) async {
     final accessToken = await _storage.getAccessToken();
 
+    // 🚀 TEMPEL: Jika ada token di brankas, tempelkan ke header
     if (accessToken != null && accessToken.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
@@ -29,38 +29,23 @@ class DioAuthInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    // 🚀 TENDANG: Jika Backend membalas dengan 401 (Token Expired / Invalid)
     if (err.response?.statusCode == 401) {
-      final refreshToken = await _storage.getRefreshToken();
+      AppLogger.error(
+        '>>> [AuthInterceptor] 🚨 401 Unauthorized terdeteksi pada: ${err.requestOptions.path}',
+      );
+      AppLogger.warning(
+        '>>> [AuthInterceptor] 🧹 Sesi berakhir! Membersihkan brankas token...',
+      );
 
-      if (refreshToken == null || refreshToken.isEmpty) {
-        await _storage.clearAllTokens();
-        return super.onError(err, handler);
-      }
+      // 1. Catat alasan logout untuk keperluan debugging / tracking
+      await _storage.saveLogoutReason('SESSION_EXPIRED');
 
-      try {
-        final refreshDio = Dio(BaseOptions(baseUrl: EnvConfig.baseUrl));
-        final response = await refreshDio.post(
-          ApiEndpoints.refreshToken,
-          data: {'refreshToken': refreshToken},
-        );
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          final newAccessToken = response.data['data'] as String;
-          await _storage.saveAccessToken(newAccessToken);
-
-          final requestOptions = err.requestOptions;
-          requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
-
-          final retryResponse = await refreshDio.fetch(requestOptions);
-          return handler.resolve(retryResponse);
-        }
-      } catch (e) {
-        await _storage.saveLogoutReason('SESSION_EXPIRED');
-        await _storage.clearAllTokens();
-        return super.onError(err, handler);
-      }
+      // 2. Sapu bersih token agar sistem (AppAuthCubit) tahu sesi sudah mati
+      await _storage.clearAllTokens();
     }
 
+    // Lanjutkan lempar error ke Repository agar ditangkap sebagai ServerException / AuthException
     return super.onError(err, handler);
   }
 }
