@@ -27,6 +27,7 @@ abstract class ISecureStorageManager {
   Future<Map<String, String>?> getLastLocation();
   Future<void> saveJukirProfile({
     required String idUserStorage,
+    required String username,
     required String namaUserStorage,
     required String nopStorage,
     required String alamat,
@@ -211,6 +212,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<void> saveJukirProfile({
     required String idUserStorage,
+    required String username,
     required String namaUserStorage,
     required String nopStorage,
     required String alamat,
@@ -226,6 +228,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   }) async {
     final profileData = {
       'idUser': idUserStorage,
+      'username': username,
       'namaUser': namaUserStorage,
       'nop': nopStorage,
       'pungutTarif': pungutTarif ?? 0,

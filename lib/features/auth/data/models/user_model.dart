@@ -16,6 +16,9 @@ class UserModel {
   @JsonKey(name: 'idUser', fromJson: _toString)
   final String idUser;
 
+  @JsonKey(name: 'username', fromJson: _toString)
+  final String username;
+
   @JsonKey(name: 'namaUser', fromJson: _toString)
   final String namaUser;
 
@@ -55,6 +58,7 @@ class UserModel {
   UserModel({
     required this.idUser,
     required this.namaUser,
+    required this.username,
     required this.nop,
     this.namaObjekPajak = '',
     this.alamat = '',

@@ -22,7 +22,6 @@ AuthResponseModel _$AuthResponseModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AuthResponseModel {
   String get accessToken => throw _privateConstructorUsedError;
-  String get refreshToken => throw _privateConstructorUsedError;
   String get nop => throw _privateConstructorUsedError;
   String get uuidStatic => throw _privateConstructorUsedError;
   int get roleLoginId => throw _privateConstructorUsedError;
@@ -48,7 +47,6 @@ abstract class $AuthResponseModelCopyWith<$Res> {
   @useResult
   $Res call({
     String accessToken,
-    String refreshToken,
     String nop,
     String uuidStatic,
     int roleLoginId,
@@ -73,7 +71,6 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
   @override
   $Res call({
     Object? accessToken = null,
-    Object? refreshToken = null,
     Object? nop = null,
     Object? uuidStatic = null,
     Object? roleLoginId = null,
@@ -85,10 +82,6 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
             accessToken: null == accessToken
                 ? _value.accessToken
                 : accessToken // ignore: cast_nullable_to_non_nullable
-                      as String,
-            refreshToken: null == refreshToken
-                ? _value.refreshToken
-                : refreshToken // ignore: cast_nullable_to_non_nullable
                       as String,
             nop: null == nop
                 ? _value.nop
@@ -127,7 +120,6 @@ abstract class _$$AuthResponseModelImplCopyWith<$Res>
   @useResult
   $Res call({
     String accessToken,
-    String refreshToken,
     String nop,
     String uuidStatic,
     int roleLoginId,
@@ -151,7 +143,6 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? accessToken = null,
-    Object? refreshToken = null,
     Object? nop = null,
     Object? uuidStatic = null,
     Object? roleLoginId = null,
@@ -163,10 +154,6 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
         accessToken: null == accessToken
             ? _value.accessToken
             : accessToken // ignore: cast_nullable_to_non_nullable
-                  as String,
-        refreshToken: null == refreshToken
-            ? _value.refreshToken
-            : refreshToken // ignore: cast_nullable_to_non_nullable
                   as String,
         nop: null == nop
             ? _value.nop
@@ -198,7 +185,6 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
 class _$AuthResponseModelImpl implements _AuthResponseModel {
   const _$AuthResponseModelImpl({
     this.accessToken = '',
-    this.refreshToken = '',
     this.nop = '',
     this.uuidStatic = '',
     this.roleLoginId = 0,
@@ -212,9 +198,6 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
   @override
   @JsonKey()
   final String accessToken;
-  @override
-  @JsonKey()
-  final String refreshToken;
   @override
   @JsonKey()
   final String nop;
@@ -238,7 +221,7 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
 
   @override
   String toString() {
-    return 'AuthResponseModel(accessToken: $accessToken, refreshToken: $refreshToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList)';
+    return 'AuthResponseModel(accessToken: $accessToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList)';
   }
 
   @override
@@ -248,8 +231,6 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
             other is _$AuthResponseModelImpl &&
             (identical(other.accessToken, accessToken) ||
                 other.accessToken == accessToken) &&
-            (identical(other.refreshToken, refreshToken) ||
-                other.refreshToken == refreshToken) &&
             (identical(other.nop, nop) || other.nop == nop) &&
             (identical(other.uuidStatic, uuidStatic) ||
                 other.uuidStatic == uuidStatic) &&
@@ -265,7 +246,6 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
   int get hashCode => Object.hash(
     runtimeType,
     accessToken,
-    refreshToken,
     nop,
     uuidStatic,
     roleLoginId,
@@ -293,7 +273,6 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
 abstract class _AuthResponseModel implements AuthResponseModel {
   const factory _AuthResponseModel({
     final String accessToken,
-    final String refreshToken,
     final String nop,
     final String uuidStatic,
     final int roleLoginId,
@@ -306,8 +285,6 @@ abstract class _AuthResponseModel implements AuthResponseModel {
 
   @override
   String get accessToken;
-  @override
-  String get refreshToken;
   @override
   String get nop;
   @override
