@@ -33,8 +33,8 @@ class HomeDrawer extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(
-              top: 40,
-              bottom: 13,
+              top: 50,
+              bottom: 14,
               left: 24,
               right: 24,
             ),

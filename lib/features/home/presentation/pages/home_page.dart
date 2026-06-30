@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
+import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
@@ -79,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                   drawer: HomeDrawer(
                     isFree: state.isFree,
                     role: state.role,
-                    namaUPTB: state.namaJukirFormatted,
+                    namaUPTB: state.namaJukir.shortName,
                   ),
                   body: Stack(
                     children: [
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 5,
+                        top: -15,
                         right: -20,
                         child: Opacity(
                           opacity: 0.2,
@@ -107,13 +108,13 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                top: 32,
+                                // left: 16,
+                                // right: 16,
+                                // top: 40,
                               ),
                               child: HomeHeaderWidget(
                                 role: state.role,
-                                namaJukir: state.namaJukir,
+                                namaJukir: state.namaJukirFormatted,
                                 nop: state.nop,
                                 namaObjekPajak: state.namaOp,
                                 onPressed: () {},
