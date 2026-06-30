@@ -6,11 +6,9 @@ part 'data_jukir_state.freezed.dart';
 
 @freezed
 class DataJukirState with _$DataJukirState {
-  const factory DataJukirState.initial() = _Initial;
-
-  const factory DataJukirState.loading() = _Loading;
-
-  const factory DataJukirState.success(List<DataJukirEntity> data) = _Success;
-
-  const factory DataJukirState.error(String message) = _Error;
+  const factory DataJukirState({
+    @Default(false) bool isLoading,
+    @Default(<DataJukirEntity>[]) List<DataJukirEntity> data,
+    String? errorMessage,
+  }) = _DataJukirState;
 }

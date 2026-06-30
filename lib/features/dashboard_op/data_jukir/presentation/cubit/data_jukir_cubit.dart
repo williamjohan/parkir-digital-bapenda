@@ -7,22 +7,21 @@ import 'data_jukir_state.dart';
 class DataJukirCubit extends Cubit<DataJukirState> {
   final GetDataJukirUseCase _getDataJukirUseCase;
 
-  DataJukirCubit(this._getDataJukirUseCase)
-    : super(const DataJukirState.initial());
+  DataJukirCubit(this._getDataJukirUseCase) : super(const DataJukirState());
 
   Future<void> getDataJukir(String nop) async {
-    emit(const DataJukirState.loading());
+    emit(state.copyWith(isLoading: true, errorMessage: null));
 
     try {
       final result = await _getDataJukirUseCase(nop);
 
-      emit(DataJukirState.success(result));
+      emit(state.copyWith(isLoading: false, data: result));
     } catch (e) {
-      emit(DataJukirState.error(e.toString()));
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 
   void reset() {
-    emit(const DataJukirState.initial());
+    emit(const DataJukirState());
   }
 }

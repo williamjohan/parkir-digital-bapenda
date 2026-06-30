@@ -61,6 +61,7 @@ dependencies:
   pretty_qr_code: ^3.6.0
   flutter_image_compress: ^2.4.0
   saver_gallery: ^4.1.1
+  skeletonizer: ^2.1.3
 
   # --- Utilities & Helpers ---
   flutter_dotenv: ^6.0.0

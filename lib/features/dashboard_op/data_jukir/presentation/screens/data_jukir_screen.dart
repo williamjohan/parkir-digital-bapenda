@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../cubit/data_jukir_cubit.dart';
@@ -29,43 +30,28 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
       ),
       body: BlocBuilder<DataJukirCubit, DataJukirState>(
         builder: (context, state) {
-          return state.when(
-            initial: () => const SizedBox(),
-
-            // loading: () => const DataJukirShimmer(),
-            loading: () => const CircularProgressIndicator(),
-
-            error: (message) => Center(child: Text(message)),
-
-            success: (data) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Column(
-                  children: [
-                    // DataJukirSummaryCard(
-                    //   totalJukir: data.length,
-                    // ),
-
-                    // Padding(
-                    //   padding: const EdgeInsets.all(16),
-                    //   child: DataJukirSearch(
-                    //     onChanged: ...
-                    //   ),
-                    // ),
-                    Expanded(
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: data.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
-                        itemBuilder: (_, index) {
-                          return DataJukirCard(entity: data[index]);
-                        },
-                      ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Skeletonizer(
+                    enabled: state.isLoading,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: state.data.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (_, index) {
+                        return DataJukirCard(
+                          entity: state.data[index],
+                          lihatRiwayatOnTap: () {},
+                        );
+                      },
                     ),
-                  ],
+                  ),
                 ),
-              );
-            },
+              ],
+            ),
           );
         },
       ),

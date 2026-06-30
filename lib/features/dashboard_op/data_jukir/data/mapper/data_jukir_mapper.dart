@@ -9,6 +9,9 @@ class DataJukirMapper {
       deviceId: model.idDevice,
       namaPetugas: model.namaPetugas,
       shift: model.shift,
+      // totalPendapatan: model.totalPendapatan,
+      // totalMobil: model.totalMobil,
+      // totalMotor: model.totalMotor,
     );
   }
 }

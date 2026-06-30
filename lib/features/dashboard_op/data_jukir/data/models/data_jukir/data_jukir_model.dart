@@ -23,6 +23,15 @@ class DataJukirModel extends Equatable {
   @JsonKey(defaultValue: '')
   final String shift;
 
+  // @JsonKey(defaultValue: 0)
+  // final int totalPendapatan;
+
+  // @JsonKey(defaultValue: 0)
+  // final int totalMobil;
+
+  // @JsonKey(defaultValue: 0)
+  // final int totalMotor;
+
   const DataJukirModel({
     required this.nop,
     required this.username,
@@ -30,6 +39,9 @@ class DataJukirModel extends Equatable {
     required this.nopFormatted,
     required this.namaPetugas,
     required this.shift,
+    // required this.totalPendapatan,
+    // required this.totalMotor,
+    // required this.totalMobil,
   });
 
   factory DataJukirModel.fromJson(Map<String, dynamic> json) =>
@@ -45,5 +57,8 @@ class DataJukirModel extends Equatable {
     nopFormatted,
     namaPetugas,
     shift,
+    // totalPendapatan,
+    // totalMobil,
+    // totalMotor,
   ];
 }

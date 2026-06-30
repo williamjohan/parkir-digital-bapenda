@@ -10,5 +10,8 @@ class DataJukirEntity with _$DataJukirEntity {
     required String deviceId,
     required String namaPetugas,
     required String shift,
+    // required int totalPendapatan,
+    // required int totalMobil,
+    // required int totalMotor,
   }) = _DataJukirEntity;
 }

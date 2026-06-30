@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_income_summary.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/header_dashboard_op_widget.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../../core/routes/app_routes.dart';
@@ -11,7 +12,6 @@ import '../cubit/dashboard_op_state.dart';
 import '../widgets/card_rekap_jenis_pembayaran_op.dart';
 import '../widgets/card_realisasi_op.dart';
 import '../widgets/card_riwayat_pendapatan.dart';
-import '../widgets/shimmer/dashboard_op_shimmer.dart';
 
 class DashboardOpScreen extends StatefulWidget {
   final Map<String, dynamic> item;
@@ -36,21 +36,21 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
       ),
       body: BlocBuilder<DashboardOpCubit, DashboardOpState>(
         builder: (context, state) {
-          if (state.loading) {
-            return const DashboardOpShimmer();
-          }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              HeaderDashboardOp(
-                item: widget.item,
-                isDigital: state.data?.isDigital ?? false,
-                onPressedLihatDaftarJukir: () {
-                  context.pushNamed(
-                    AppRoutes.dataJukir,
-                    extra: {'item': widget.item},
-                  );
-                },
+              Skeletonizer(
+                enabled: state.loading,
+                child: HeaderDashboardOp(
+                  item: widget.item,
+                  isDigital: state.data?.isDigital ?? false,
+                  onPressedLihatDaftarJukir: () {
+                    context.pushNamed(
+                      AppRoutes.dataJukir,
+                      extra: {'item': widget.item},
+                    );
+                  },
+                ),
               ),
               Expanded(
                 child: Padding(
@@ -59,53 +59,66 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        DashboardIncomeSummary(
-                          totalPendapatan:
-                              state.data?.pendapatanHariIniKotor ?? 0,
-                          pajakPercent: 10,
-                          pendapatanBersih:
-                              state.data?.pendapatanHariIniBersihWajibPajak ??
-                              0,
+                        Skeletonizer(
+                          enabled: state.loading,
+                          child: DashboardIncomeSummary(
+                            totalPendapatan:
+                                state.data?.pendapatanHariIniKotor ?? 0,
+                            pajakPercent: 10,
+                            pendapatanBersih:
+                                state.data?.pendapatanHariIniBersihWajibPajak ??
+                                0,
+                          ),
                         ),
-                        CardRiwayatPendapatanOp(
-                          totalMotor: state.data?.totalTransaksiRodaDua ?? 0,
-                          totalMobil: state.data?.totalTransaksiRodaEmpat ?? 0,
-                          onLihatSemua: () {
-                            context.pushNamed(
-                              AppRoutes.history,
-                              extra: {
-                                'isFree': false,
-                                'nop': widget.item['nop'],
-                              },
-                            );
-                          },
-                          riwayat: state.data?.riwayatList ?? [],
+                        Skeletonizer(
+                          enabled: state.loading,
+                          child: CardRiwayatPendapatanOp(
+                            totalMotor: state.data?.totalTransaksiRodaDua ?? 0,
+                            totalMobil:
+                                state.data?.totalTransaksiRodaEmpat ?? 0,
+                            onLihatSemua: () {
+                              context.pushNamed(
+                                AppRoutes.history,
+                                extra: {
+                                  'isFree': false,
+                                  'nop': widget.item['nop'],
+                                },
+                              );
+                            },
+                            riwayat: state.data?.riwayatList ?? [],
+                          ),
                         ),
                         SizedBox(height: 16),
-                        CardRealisasiOp(
-                          nonDigital:
-                              state.data?.realisasiTahunIni.nonDigital ?? 0,
-                          digital: state.data?.realisasiTahunIni.digital ?? 0,
-                          totalRealisasi:
-                              state.data?.realisasiTahunIni.realisasi ?? 0,
-                          onLihatSemua: () {
-                            String currentNop = widget.item['nop'];
-                            context.pushNamed(
-                              AppRoutes.detailRealisasiObjekPajak,
-                              extra: currentNop,
-                            );
-                          },
+                        Skeletonizer(
+                          enabled: state.loading,
+                          child: CardRealisasiOp(
+                            nonDigital:
+                                state.data?.realisasiTahunIni.nonDigital ?? 0,
+                            digital: state.data?.realisasiTahunIni.digital ?? 0,
+                            totalRealisasi:
+                                state.data?.realisasiTahunIni.realisasi ?? 0,
+                            onLihatSemua: () {
+                              String currentNop = widget.item['nop'];
+                              context.pushNamed(
+                                AppRoutes.detailRealisasiObjekPajak,
+                                extra: currentNop,
+                              );
+                            },
+                          ),
                         ),
                         if (state.data?.isDigital == true) ...[
                           SizedBox(height: 16),
-                          CardRekapJenisPembayaranOp(
-                            items: state.data?.sofList ?? [],
-                            onLihatSemua: () {
-                              context.pushNamed(
-                                AppRoutes.detailRekapJenisPembayaran,
-                                extra: {'data': state.data?.sofList ?? []},
-                              );
-                            },
+                          Skeletonizer(
+                            enabled: state.loading,
+                            child: CardRekapJenisPembayaranOp(
+                              items: state.data?.sofList ?? [],
+                              onLihatSemua: () {
+                                context.pushNamed(
+                                  AppRoutes.detailRekapJenisPembayaran,
+                                  extra: {'data': state.data?.sofList ?? []},
+                                );
+                              },
+                            ),
                           ),
                         ],
                         SizedBox(height: 16),
