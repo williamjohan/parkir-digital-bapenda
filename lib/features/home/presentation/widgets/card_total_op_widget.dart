@@ -266,14 +266,20 @@ class CardTotalOpWidget extends StatelessWidget {
                     color: bgColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(icon, color: iconColor, size: 24),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Icon(icon, color: iconColor, size: 24),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: AppTypography.bodySemiBold),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(title, style: AppTypography.bodySemiBold),
+                      ),
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
@@ -285,9 +291,12 @@ class CardTotalOpWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 8),
-                Text(
-                  NumberFormatter.format(total.toString()),
-                  style: AppTypography.heading2,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    NumberFormatter.format(total.toString()),
+                    style: AppTypography.heading2,
+                  ),
                 ),
               ],
             ),
