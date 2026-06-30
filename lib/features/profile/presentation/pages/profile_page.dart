@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _profileCubit = locator<ProfileCubit>();
-    _profileCubit.loadProfile(); // Load profile saat page terbuka
+    _profileCubit.loadProfile();
   }
 
   @override
@@ -45,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         bottomNavigationBar: Container(
-          color: AppColors.background, // Samakan dengan background
+          color: AppColors.background,
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -111,8 +113,21 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ),
-        body: BlocBuilder<ProfileCubit, ProfileState>(
+        // --- PERUBAHAN UTAMA DI SINI ---
+        body: BlocConsumer<ProfileCubit, ProfileState>(
           bloc: _profileCubit,
+          listener: (context, state) {
+            // Jika refresh gagal tapi masih ada data lama, munculkan SnackBar
+            if (state is ProfileRefreshError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Gagal memperbarui profil: ${state.message}'),
+                  backgroundColor: AppColors.error,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
           builder: (context, state) {
             if (state is ProfileLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -145,78 +160,101 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             }
 
-            if (state is ProfileLoaded) {
-              final user = state.user;
+            // Gabungkan kondisi untuk menampilkan UI Profil
+            if (state is ProfileLoaded || state is ProfileRefreshError) {
+              // Ambil data user dari state yang sesuai
+              final user = state is ProfileLoaded
+                  ? state.user
+                  : (state as ProfileRefreshError).oldUser;
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.primary.withValues(alpha: 0.2),
+              final photoPath = state is ProfileLoaded
+                  ? state.photoPath
+                  : (state as ProfileRefreshError).oldPhotoPath;
+
+              return RefreshIndicator(
+                onRefresh: () => _profileCubit.refreshProfile(),
+                // Tambahkan AlwaysScrollableScrollPhysics agar selalu bisa ditarik
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.primary.withValues(alpha: 0.2),
+                                image:
+                                    (photoPath != null && photoPath.isNotEmpty)
+                                    ? DecorationImage(
+                                        image: FileImage(File(photoPath)),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                              ),
+                              child: const Icon(
+                                Icons.person,
+                                size: 40,
+                                color: AppColors.primary,
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.person,
-                              size: 40,
-                              color: AppColors.primary,
+                            const SizedBox(height: 16),
+                            Text(
+                              user.namaUser, // Menggunakan variabel 'user' yang sudah difilter
+                              style: AppTypography.heading3,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Card(
+                          color: AppColors.surface,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: const BorderSide(
+                              color: AppColors.border,
+                              width: 1,
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            user.namaUser,
-                            style: AppTypography.heading3,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Card(
-                        color: AppColors.surface,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: const BorderSide(
-                            color: AppColors.border,
-                            width: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Identitas',
+                                  style: AppTypography.heading3,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildInfoRow(
+                                  label: 'NOP (Nomor Objek Pajak)',
+                                  value: user.nop,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildInfoRow(
+                                  label: 'Nama Objek Pajak',
+                                  value: user.namaObjekPajak,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildInfoRow(
+                                  label: 'Alamat',
+                                  value: user.alamat,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Identitas', style: AppTypography.heading3),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'NOP (Nomor Objek Pajak)',
-                                value: user.nop,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Nama Objek Pajak',
-                                value: user.namaObjekPajak,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Alamat',
-                                value: user.alamat,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );

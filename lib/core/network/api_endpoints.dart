@@ -21,6 +21,7 @@ class ApiEndpoints {
   ////////////DEV////////////
   static const String loginDev = '/api/mobile/parking/login-dev';
   static const String profileDev = '/api/mobile/parking/profile-dev';
+  static const String profilePhoto = '/api/mobile/parking/profile-picture';
   static const String dashboardSummaryDev =
       '/api/mobile/parking/dashboard-summary-dev';
   static const String dashboardSummaryNonJukirDev =

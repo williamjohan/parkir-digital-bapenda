@@ -26,7 +26,7 @@ class QrisRepositoryImpl implements IQrisRepository {
         final jenisKendaraan = JenisKendaraanId.fromInt(item.jenisKendaraanId);
 
         if (jenisKendaraan != JenisKendaraanId.tidakDiketahui) {
-          final filePath = await QrisImageHelper.saveQrisBase64ToFile(
+          final filePath = await Base64ImageHelper.saveQrisBase64ToFile(
             jenisKendaraanId: item.jenisKendaraanId,
             base64String: item.qrisImageBase64,
           );

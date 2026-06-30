@@ -1,25 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
 import '../../../../../core/storage/secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
 import '../../../domain/usecases/check_auth_status_usecase.dart';
 import '../../../domain/usecases/check_device_uuid_usecase.dart';
 import '../../../domain/usecases/logout_usecase.dart';
-import '../../../../profile/domain/usecases/get_profile_usecase.dart'; // [TAMBAHAN]: Import UseCase Profile
 import 'app_auth_state.dart';
 
 @lazySingleton
 class AppAuthCubit extends Cubit<AppAuthState> {
   final CheckAuthStatusUseCase _checkAuthStatus;
   final LogoutUseCase _logout;
-  final GetProfileUseCase _getProfile;
+  final ProfileUseCase _profileUseCase;
   final CheckDeviceUuidUseCase _checkDeviceUuid;
 
   AppAuthCubit(
     this._checkAuthStatus,
     this._logout,
-    this._getProfile,
+    this._profileUseCase,
     this._checkDeviceUuid,
   ) : super(AppAuthInitial());
 
@@ -62,7 +62,7 @@ class AppAuthCubit extends Cubit<AppAuthState> {
       }
       AppLogger.debug(">>> [AppAuthCubit] UUID valid, sinkronisasi profil...");
 
-      final profileResult = await _getProfile();
+      final profileResult = await _profileUseCase.getProfileInfo();
 
       await profileResult.fold(
         (failure) async {
