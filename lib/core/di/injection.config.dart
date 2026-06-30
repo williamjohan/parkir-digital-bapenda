@@ -152,8 +152,7 @@ import '../../features/profile/data/repositories/profile_repository_impl.dart'
     as _i334;
 import '../../features/profile/domain/repositories/i_profile_repository.dart'
     as _i879;
-import '../../features/profile/domain/usecases/get_profile_usecase.dart'
-    as _i965;
+import '../../features/profile/domain/usecases/profile_usecase.dart' as _i996;
 import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
 import '../../features/realisasi/data/datasources/realisasi_remote_datasource.dart'
     as _i135;
@@ -448,8 +447,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i835.GetDataJukirUseCase>(
     () => _i835.GetDataJukirUseCase(gh<_i565.DataJukirRepository>()),
   );
-  gh.lazySingleton<_i965.GetProfileUseCase>(
-    () => _i965.GetProfileUseCase(gh<_i879.IProfileRepository>()),
+  gh.lazySingleton<_i996.ProfileUseCase>(
+    () => _i996.ProfileUseCase(gh<_i879.IProfileRepository>()),
   );
   gh.lazySingleton<_i502.ITransactionHistoryRepository>(
     () => _i19.TransactionHistoryRepositoryImpl(
@@ -481,6 +480,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i644.GetSummaryDashboardOpUsecase>(
     () => _i644.GetSummaryDashboardOpUsecase(gh<_i23.DashboardOpRepository>()),
+  );
+  gh.factory<_i36.ProfileCubit>(
+    () => _i36.ProfileCubit(gh<_i996.ProfileUseCase>()),
   );
   gh.factory<_i402.DataJukirCubit>(
     () => _i402.DataJukirCubit(gh<_i254.GetDataJukirUseCase>()),
@@ -527,24 +529,8 @@ _i174.GetIt init(
     () => _i808.AppAuthCubit(
       gh<_i52.CheckAuthStatusUseCase>(),
       gh<_i48.LogoutUseCase>(),
-      gh<_i965.GetProfileUseCase>(),
+      gh<_i996.ProfileUseCase>(),
       gh<_i127.CheckDeviceUuidUseCase>(),
-    ),
-  );
-  gh.factory<_i36.ProfileCubit>(
-    () => _i36.ProfileCubit(
-      gh<_i965.GetProfileUseCase>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
-  gh.factory<_i273.HomeCubit>(
-    () => _i273.HomeCubit(
-      gh<_i421.GetHybridDashboardSummaryUseCase>(),
-      gh<_i77.GetRecentTransactionsUseCase>(),
-      gh<_i348.GetDashboardSummaryNonJukirUseCase>(),
-      gh<_i1042.ISecureStorageManager>(),
-      gh<_i383.SyncQrisUseCase>(),
-      gh<_i654.DatabaseHelper2>(),
     ),
   );
   gh.factory<_i513.PaymentCubit>(
@@ -557,6 +543,17 @@ _i174.GetIt init(
     () => _i753.TransactionHistoryCubit(
       gh<_i732.GetTransactionHistoryUseCase>(),
       gh<_i1042.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i273.HomeCubit>(
+    () => _i273.HomeCubit(
+      gh<_i421.GetHybridDashboardSummaryUseCase>(),
+      gh<_i77.GetRecentTransactionsUseCase>(),
+      gh<_i348.GetDashboardSummaryNonJukirUseCase>(),
+      gh<_i1042.ISecureStorageManager>(),
+      gh<_i383.SyncQrisUseCase>(),
+      gh<_i654.DatabaseHelper2>(),
+      gh<_i996.ProfileUseCase>(),
     ),
   );
   gh.lazySingleton<_i512.SaveParkingTransactionUseCase>(

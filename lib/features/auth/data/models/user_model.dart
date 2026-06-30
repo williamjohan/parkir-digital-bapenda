@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../domain/entities/user_entity.dart';
+
 part 'user_model.g.dart';
 
 String _toString(dynamic value) => value?.toString() ?? '';
@@ -76,4 +78,25 @@ class UserModel {
       _$UserModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
+}
+
+extension UserModelExt on UserModel {
+  UserEntity toEntity() {
+    return UserEntity(
+      idUser: idUser,
+      namaUser: namaUser,
+      username: username,
+      nop: nop,
+      pungutTarif: pungutTarif,
+      pungutTarifDescription: pungutTarifDescription,
+      namaObjekPajak: namaObjekPajak,
+      idDevice: idDevice,
+      lokasiId: lokasiId,
+      namaLokasi: namaLokasi,
+      kodeGate: kodeGate,
+      namaGate: namaGate,
+      shift: shift,
+      alamat: alamat,
+    );
+  }
 }

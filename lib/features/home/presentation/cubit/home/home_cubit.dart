@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/home/domain/usecases/get_dashboard_summary_non_jukir_usecase.dart';
+import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
 import '../../../../../core/enums/app_enums.dart';
 import '../../../../../core/storage/database_helper_2.dart';
 import '../../../../../core/storage/secure_storage_manager.dart';
@@ -18,6 +19,7 @@ class HomeCubit extends Cubit<HomeState> {
   final GetDashboardSummaryNonJukirUseCase _getDashboardSummaryNonJukirUseCase;
   final ISecureStorageManager _secureStorage;
   final SyncQrisUseCase _syncQrisUseCase;
+  final ProfileUseCase _profileUseCase;
   final DatabaseHelper2 _databaseHelper;
 
   HomeCubit(
@@ -27,12 +29,14 @@ class HomeCubit extends Cubit<HomeState> {
     this._secureStorage,
     this._syncQrisUseCase,
     this._databaseHelper,
+    this._profileUseCase,
   ) : super(const HomeState());
 
   Future<void> initialize() async {
     emit(state.copyWith(status: HomeStatus.loading));
 
     await _loadProfileInfo();
+    await _profileUseCase.getProfilePicturePath();
     formatUserName();
 
     if (state.role == RoleLoginDigitalParkir.jukir) {
@@ -222,7 +226,7 @@ class HomeCubit extends Cubit<HomeState> {
     final nopList = await _databaseHelper.getNopList();
 
     if (nopList.isEmpty) {
-      emit(state.copyWith(namaJukir: namaUser)); // NOP Kosong
+      emit(state.copyWith(namaJukir: namaUser));
       return;
     }
     final firstNop = nopList.first;

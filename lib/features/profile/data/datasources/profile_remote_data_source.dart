@@ -5,9 +5,11 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../auth/data/models/user_model.dart';
+import '../../../transaction/data/models/profile_photo_response_model.dart';
 
 abstract class IProfileRemoteDataSource {
   Future<UserModel> getProfile();
+  Future<ProfilePhotoResponseModel> getProfilePhoto();
 }
 
 @LazySingleton(as: IProfileRemoteDataSource)
@@ -73,6 +75,43 @@ class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal saat memproses profil.',
+      );
+    }
+  }
+
+  @override
+  Future<ProfilePhotoResponseModel> getProfilePhoto() async {
+    try {
+      AppLogger.info('>>> [GET FOTO PROFIL] Memulai request...');
+
+      final response = await _dio.get(ApiEndpoints.profilePhoto);
+
+      final responseData = response.data;
+
+      // 🛡️ SECURITY & INTEGRITY CHECK
+      if (responseData['isSuccess'] == true &&
+          responseData['statusCode'] == 200) {
+        // Log disamarkan agar terminal tidak lag karena base64 yang sangat panjang
+        AppLogger.info('>>> [GET FOTO PROFIL] Sukses! Menerima data Base64.');
+
+        // Kembalikan dalam bentuk Model
+        return ProfilePhotoResponseModel.fromJson(responseData['data'] ?? {});
+      }
+
+      throw ServerException(
+        statusCode: responseData['statusCode'] ?? 500,
+        message:
+            responseData['message'] ??
+            'Terjadi kesalahan saat memuat foto profil',
+      );
+    } on DioException catch (e) {
+      AppLogger.error('>>> [DIO ERROR GET FOTO PROFIL] ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('>>> [INTERNAL ERROR GET FOTO PROFIL]', e, stackTrace);
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal saat memproses foto profil',
       );
     }
   }

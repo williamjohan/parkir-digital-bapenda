@@ -54,6 +54,9 @@ abstract class ISecureStorageManager {
   Future<void> saveRoleId(int roleId);
   Future<int?> getRoleId();
   Future<void> clearRoleId();
+  Future<void> saveProfilePicture(String pathImage);
+  Future<String?> getProfilePicture();
+  Future<void> clearProfilePicture();
 }
 
 @LazySingleton(as: ISecureStorageManager)
@@ -74,6 +77,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyLogoutReason = 'LOGOUT_REASON';
   static const String _keyIsJukir = 'IS_JUKIR';
   static const String _keyRoleId = 'ROLE_LOGIN_ID';
+  static const String _keyProfilePicture = 'PROFILE_PICTURE';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -325,5 +329,20 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<void> clearRoleId() async {
     await _storage.delete(key: _keyRoleId);
+  }
+
+  @override
+  Future<void> saveProfilePicture(String pathImage) async {
+    await _storage.write(key: _keyProfilePicture, value: pathImage);
+  }
+
+  @override
+  Future<String?> getProfilePicture() async {
+    return await _storage.read(key: _keyProfilePicture);
+  }
+
+  @override
+  Future<void> clearProfilePicture() async {
+    await _storage.delete(key: _keyProfilePicture);
   }
 }

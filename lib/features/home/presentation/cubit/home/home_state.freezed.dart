@@ -38,6 +38,7 @@ mixin _$HomeState {
   String get namaJukir => throw _privateConstructorUsedError;
   String get namaOp => throw _privateConstructorUsedError;
   String get namaJukirFormatted => throw _privateConstructorUsedError;
+  String get profilePicturePath => throw _privateConstructorUsedError;
   int get totalOp => throw _privateConstructorUsedError;
   int get totalOpDigital => throw _privateConstructorUsedError;
   int get totalOpNonDigital => throw _privateConstructorUsedError;
@@ -85,6 +86,7 @@ abstract class $HomeStateCopyWith<$Res> {
     String namaJukir,
     String namaOp,
     String namaJukirFormatted,
+    String profilePicturePath,
     int totalOp,
     int totalOpDigital,
     int totalOpNonDigital,
@@ -140,6 +142,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? namaJukir = null,
     Object? namaOp = null,
     Object? namaJukirFormatted = null,
+    Object? profilePicturePath = null,
     Object? totalOp = null,
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
@@ -228,6 +231,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
             namaJukirFormatted: null == namaJukirFormatted
                 ? _value.namaJukirFormatted
                 : namaJukirFormatted // ignore: cast_nullable_to_non_nullable
+                      as String,
+            profilePicturePath: null == profilePicturePath
+                ? _value.profilePicturePath
+                : profilePicturePath // ignore: cast_nullable_to_non_nullable
                       as String,
             totalOp: null == totalOp
                 ? _value.totalOp
@@ -359,6 +366,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     String namaJukir,
     String namaOp,
     String namaJukirFormatted,
+    String profilePicturePath,
     int totalOp,
     int totalOpDigital,
     int totalOpNonDigital,
@@ -417,6 +425,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? namaJukir = null,
     Object? namaOp = null,
     Object? namaJukirFormatted = null,
+    Object? profilePicturePath = null,
     Object? totalOp = null,
     Object? totalOpDigital = null,
     Object? totalOpNonDigital = null,
@@ -506,6 +515,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.namaJukirFormatted
             : namaJukirFormatted // ignore: cast_nullable_to_non_nullable
                   as String,
+        profilePicturePath: null == profilePicturePath
+            ? _value.profilePicturePath
+            : profilePicturePath // ignore: cast_nullable_to_non_nullable
+                  as String,
         totalOp: null == totalOp
             ? _value.totalOp
             : totalOp // ignore: cast_nullable_to_non_nullable
@@ -589,6 +602,7 @@ class _$HomeStateImpl implements _HomeState {
     this.namaJukir = "",
     this.namaOp = "",
     this.namaJukirFormatted = "",
+    this.profilePicturePath = "",
     this.totalOp = 0,
     this.totalOpDigital = 0,
     this.totalOpNonDigital = 0,
@@ -700,6 +714,9 @@ class _$HomeStateImpl implements _HomeState {
   final String namaJukirFormatted;
   @override
   @JsonKey()
+  final String profilePicturePath;
+  @override
+  @JsonKey()
   final int totalOp;
   @override
   @JsonKey()
@@ -750,7 +767,7 @@ class _$HomeStateImpl implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role)';
+    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role)';
   }
 
   @override
@@ -797,6 +814,8 @@ class _$HomeStateImpl implements _HomeState {
             (identical(other.namaOp, namaOp) || other.namaOp == namaOp) &&
             (identical(other.namaJukirFormatted, namaJukirFormatted) ||
                 other.namaJukirFormatted == namaJukirFormatted) &&
+            (identical(other.profilePicturePath, profilePicturePath) ||
+                other.profilePicturePath == profilePicturePath) &&
             (identical(other.totalOp, totalOp) || other.totalOp == totalOp) &&
             (identical(other.totalOpDigital, totalOpDigital) ||
                 other.totalOpDigital == totalOpDigital) &&
@@ -849,6 +868,7 @@ class _$HomeStateImpl implements _HomeState {
     namaJukir,
     namaOp,
     namaJukirFormatted,
+    profilePicturePath,
     totalOp,
     totalOpDigital,
     totalOpNonDigital,
@@ -894,6 +914,7 @@ abstract class _HomeState implements HomeState {
     final String namaJukir,
     final String namaOp,
     final String namaJukirFormatted,
+    final String profilePicturePath,
     final int totalOp,
     final int totalOpDigital,
     final int totalOpNonDigital,
@@ -946,6 +967,8 @@ abstract class _HomeState implements HomeState {
   String get namaOp;
   @override
   String get namaJukirFormatted;
+  @override
+  String get profilePicturePath;
   @override
   int get totalOp;
   @override
