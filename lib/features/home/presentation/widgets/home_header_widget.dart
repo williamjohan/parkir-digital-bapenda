@@ -21,11 +21,9 @@ class HomeHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      // Padding ini sudah cukup, tindakan Anda men-comment padding di HomePage sudah benar!
       padding: const EdgeInsets.only(left: 16, right: 16, top: 29),
       child: SizedBox(
-        height:
-            85, // 🔥 KUNCI: Set tinggi fixed di sini (Silakan sesuaikan angkanya dengan desain figma, misal 80, 85, atau 90)
+        height: 85,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment
