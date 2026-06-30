@@ -198,11 +198,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                       )
                                     : null,
                               ),
-                              child: const Icon(
-                                Icons.person,
-                                size: 40,
-                                color: AppColors.primary,
-                              ),
+                              child: (photoPath == null || photoPath.isEmpty)
+                                  ? const Icon(
+                                      Icons.person,
+                                      size: 40,
+                                      color: AppColors.primary,
+                                    )
+                                  : null,
                             ),
                             const SizedBox(height: 16),
                             Text(

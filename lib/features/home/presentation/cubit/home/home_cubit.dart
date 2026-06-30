@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/home/domain/usecases/get_dashboard_summary_non_jukir_usecase.dart';
 import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
 import '../../../../../core/enums/app_enums.dart';
@@ -36,12 +37,12 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(status: HomeStatus.loading));
 
     await _loadProfileInfo();
-    await _profileUseCase.getProfilePicturePath();
+
     formatUserName();
 
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboardData();
-
+      await _profileUseCase.getProfilePicturePath();
       await _syncQrisUseCase.execute();
     } else {
       await _ensureValidToken();
@@ -212,10 +213,12 @@ class HomeCubit extends Cubit<HomeState> {
 
     final profile = await _secureStorage.getJukirProfile();
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
+
+    final namaUserShort = namaUser.shortName;
     if (userRole == RoleLoginDigitalParkir.jukir) {
       emit(
         state.copyWith(
-          namaJukir: namaUser,
+          namaJukir: namaUserShort,
           nop: profile?['nop']?.toString() ?? '',
           namaOp: profile?['namaObjekPajak']?.toString() ?? '',
           namaLokasi: profile?['alamat']?.toString() ?? '',

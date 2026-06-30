@@ -177,3 +177,15 @@ class ProfileRepositoryImpl implements IProfileRepository {
     }
   }
 }
+
+// NASI GORENG
+// Lauk(DTO) , Sayur(DTO) , Nasi(DTO) 
+// Lauk Datasrouce ( endpointA)
+// Sayur Datasrouce ( endpointA)
+// Nasi Datasrouce ( endpointB)
+
+// Repository = DTO tadi sudah dilempar utk menjadi entitas
+
+// karena UI entity NASI GORENG
+
+// UI , boleh mengakses repository?

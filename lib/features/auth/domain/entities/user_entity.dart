@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 class UserEntity extends Equatable {
-  final String idUser; // Sekarang String (sesuai UserModel)
+  final String idUser;
   final String namaUser;
   final String username;
   final String nop;
   final int pungutTarif;
   final String pungutTarifDescription;
   final String namaObjekPajak;
-  final int lokasiId; // Sekarang int (sesuai UserModel)
+  final int lokasiId;
   final String namaLokasi;
   final String kodeGate;
   final String namaGate;
