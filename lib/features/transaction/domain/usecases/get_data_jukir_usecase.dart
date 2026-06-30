@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/features/data_jukir/domain/entities/data_jukir_entity.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/domain/entities/data_jukir_entity.dart';
 import '../repositories/data_jukir_repository.dart';
 
 @lazySingleton
