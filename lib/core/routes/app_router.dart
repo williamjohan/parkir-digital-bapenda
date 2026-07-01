@@ -18,6 +18,7 @@ import '../../features/daftar_nop/presentation/screens/daftar_nop_screen.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
+import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart';
 import '../../features/jadwal/presentation/screens/jadwal_screen.dart';
 import '../../features/realisasi/presentation/cubit/realisasi_cubit.dart';
 import '../../features/realisasi/presentation/screens/realisasi_screen.dart';
@@ -231,14 +232,10 @@ class AppRouter {
           path: AppRoutes.jadwalKehadiran,
           name: AppRoutes.jadwalKehadiran,
           builder: (context, state) {
-            return const JadwalScreen();
-
-            /* // 🛠️ TODO (Fase Integrasi State Management):
             return BlocProvider(
               create: (_) => locator<JadwalCubit>(),
               child: const JadwalScreen(),
             );
-            */
           },
         ),
         GoRoute(
