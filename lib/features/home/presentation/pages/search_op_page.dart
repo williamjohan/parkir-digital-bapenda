@@ -42,7 +42,7 @@ class _SearchOpPageState extends State<SearchOpPage> {
   @override
   void dispose() {
     searchController.dispose();
-    _debounce?.cancel(); // 🚀 Bersihkan memory timer saat halaman ditutup
+    _debounce?.cancel(); //
     super.dispose();
   }
 

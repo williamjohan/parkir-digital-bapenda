@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/qris_image_helper.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
@@ -38,6 +39,11 @@ class ProfileRepositoryImpl implements IProfileRepository {
   Future<Either<Failure, String>> getProfilePicturePath({
     bool forceRefresh = false,
   }) async {
+    final roleId = await _secureStorage.getRoleId() ?? 0;
+    final userRole = RoleLoginDigitalParkir.fromInt(roleId);
+    if (userRole != RoleLoginDigitalParkir.jukir) {
+      return const Right('');
+    }
     if (!forceRefresh) {
       final localResult = await _getLocalProfilePicturePaths();
 

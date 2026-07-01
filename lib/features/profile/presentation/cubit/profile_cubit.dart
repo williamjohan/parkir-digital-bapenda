@@ -69,7 +69,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
-  // Fungsi helper untuk UI (RefreshIndicator)
   Future<void> refreshProfile() async {
     await loadProfile(forceRefresh: true);
   }
