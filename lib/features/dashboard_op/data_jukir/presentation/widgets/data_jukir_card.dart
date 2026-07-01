@@ -5,7 +5,7 @@ import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../../domain/entities/data_jukir_entity.dart';
 
-class DataJukirCard extends StatelessWidget {
+class DataJukirCard extends StatefulWidget {
   final DataJukirEntity entity;
   final VoidCallback? lihatRiwayatOnTap;
 
@@ -16,7 +16,21 @@ class DataJukirCard extends StatelessWidget {
   });
 
   @override
+  State<DataJukirCard> createState() => _DataJukirCardState();
+}
+
+class _DataJukirCardState extends State<DataJukirCard> {
+  bool isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
+    final jukirList = widget.entity.usernameList;
+    final bool showExpandButton = jukirList.length > 3;
+    final List<UsernameEntity> visibleJukirList =
+        (showExpandButton && !isExpanded)
+        ? jukirList.take(3).toList()
+        : jukirList;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -30,103 +44,57 @@ class DataJukirCard extends StatelessWidget {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // BAGIAN ATAS: Informasi Shift, Riwayat, dan Rekap Pendapatan
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
-                  radius: 32,
-                  backgroundColor: Color(0xFFE9F2FF),
-                  child: Icon(Icons.person, color: AppColors.primary, size: 34),
-                ),
-
-                const SizedBox(width: 16),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              entity.namaPetugas,
-                              style: AppTypography.heading6,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Text(
-                              "Shift ${entity.shift}",
-                              style: AppTypography.bodySmall.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-
-                      Text(
-                        "username : ${entity.username}",
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-
-                      Text(
-                        "password : ${entity.username}",
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-            child: Column(
-              children: [
-                // const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                       child: Text(
-                        "Rekap Pendapatan",
-                        style: AppTypography.bodyRegular.copyWith(
-                          fontWeight: FontWeight.w700,
+                        "Shift ${widget.entity.shift}",
+                        style: AppTypography.bodySmall.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton.icon(
-                        onPressed: lihatRiwayatOnTap,
-                        icon: const Icon(Icons.history, size: 18),
-                        label: const Text("Lihat Riwayat"),
+                    TextButton.icon(
+                      onPressed: widget.lihatRiwayatOnTap,
+                      icon: const Icon(Icons.history, size: 18),
+                      label: const Text("Lihat Riwayat"),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ),
                   ],
                 ),
+
+                const SizedBox(height: 16),
+
+                Text(
+                  "Rekap Pendapatan",
+                  style: AppTypography.bodyRegular.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
 
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -142,8 +110,7 @@ class DataJukirCard extends StatelessWidget {
                       Expanded(
                         child: _SummaryItem(
                           title: "Pendapatan",
-                          // value: entity.totalPendapatan,
-                          value: 0,
+                          value: widget.entity.totalNominal,
                           icon: Icons.payments_outlined,
                           isKendaraan: false,
                         ),
@@ -151,16 +118,14 @@ class DataJukirCard extends StatelessWidget {
                       Expanded(
                         child: _SummaryItem(
                           title: "Motor",
-                          // value: entity.totalMotor,
-                          value: 0,
+                          value: widget.entity.totalMotorHariIni,
                           icon: Icons.two_wheeler,
                         ),
                       ),
                       Expanded(
                         child: _SummaryItem(
                           title: "Mobil",
-                          // value: entity.totalMobil,
-                          value: 0,
+                          value: widget.entity.totalMobilHariIni,
                           icon: Icons.directions_car,
                         ),
                       ),
@@ -170,48 +135,103 @@ class DataJukirCard extends StatelessWidget {
               ],
             ),
           ),
+
+          const Divider(height: 1, thickness: 1, color: Color(0xFFF0F0F0)),
+
+          // BAGIAN BAWAH: List Jukir
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Daftar Jukir",
+                  style: AppTypography.bodyRegular.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Menampilkan list jukir (terbatas 3 atau semua tergantung isExpanded)
+                ...visibleJukirList.map(
+                  (jukir) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _JukirItem(jukir: jukir),
+                  ),
+                ),
+
+                // Tombol "Lihat Lebih Banyak / Sedikit" jika data lebih dari 3
+                if (showExpandButton)
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isExpanded = !isExpanded;
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        isExpanded
+                            ? "Lihat Lebih Sedikit"
+                            : "Lihat Lebih Banyak",
+                        style: AppTypography.bodySmall.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _InfoItem extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
+class _JukirItem extends StatelessWidget {
+  final UsernameEntity jukir;
 
-  const _InfoItem({
-    required this.title,
-    required this.value,
-    required this.icon,
-  });
+  const _JukirItem({required this.jukir});
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: AppColors.primary, size: 20),
-
+        const CircleAvatar(
+          radius: 24,
+          backgroundColor: Color(0xFFE9F2FF),
+          child: Icon(Icons.person, color: AppColors.primary, size: 24),
+        ),
         const SizedBox(width: 12),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title,
+                jukir.namaPetugas,
+                style: AppTypography.bodyRegular.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                "username : ${jukir.username}",
                 style: AppTypography.bodySmall.copyWith(
                   color: AppColors.textSecondary,
                 ),
               ),
-
-              const SizedBox(height: 4),
-
+              const SizedBox(height: 2),
               Text(
-                value,
-                style: AppTypography.bodyRegular.copyWith(
-                  fontWeight: FontWeight.w600,
+                "password : ${jukir.username}",
+                style: AppTypography.bodySmall.copyWith(
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],

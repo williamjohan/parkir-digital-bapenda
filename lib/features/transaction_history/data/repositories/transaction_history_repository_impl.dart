@@ -18,6 +18,7 @@ class TransactionHistoryRepositoryImpl
     required DateTime startDate,
     required DateTime endDate,
     required String nop,
+    String? idDevice,
   }) async {
     try {
       final apiResult = await _remoteDataSource.getHistory(
@@ -25,6 +26,7 @@ class TransactionHistoryRepositoryImpl
         startDate: startDate,
         endDate: endDate,
         limit: null,
+        idDevice: idDevice,
       );
       return Right(apiResult);
     } catch (e) {
