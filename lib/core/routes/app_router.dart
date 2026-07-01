@@ -36,8 +36,6 @@ import '../../features/printer/presentation/screen/printer_settings_page.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/update/presentation/pages/update_page.dart';
-import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart';
-import '../../features/vehicle_capture/presentation/pages/capture_page.dart';
 import '../di/injection.dart';
 import '../enums/app_enums.dart';
 import 'app_routes.dart';
@@ -201,14 +199,6 @@ class AppRouter {
             final data = extra?['data'] as List<SofEntity>;
             return DetailRekapJenisPembayaranScreen(data: data);
           },
-        ),
-        GoRoute(
-          path: AppRoutes.capture,
-          name: AppRoutes.capture,
-          builder: (context, state) => BlocProvider(
-            create: (_) => locator<VehicleCaptureCubit>(),
-            child: const CapturePage(),
-          ),
         ),
 
         GoRoute(

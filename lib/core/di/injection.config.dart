@@ -202,16 +202,6 @@ import '../../features/update/domain/usecases/check_update_usecase.dart'
     as _i506;
 import '../../features/update/presentation/cubit/check_update_cubit.dart'
     as _i1020;
-import '../../features/vehicle_capture/data/datasources/ocr_local_data_source.dart'
-    as _i437;
-import '../../features/vehicle_capture/data/repositories/ocr_repository_impl.dart'
-    as _i419;
-import '../../features/vehicle_capture/domain/repositories/i_ocr_repository.dart'
-    as _i734;
-import '../../features/vehicle_capture/domain/usecases/extract_license_plate_usecase.dart'
-    as _i342;
-import '../../features/vehicle_capture/presentation/cubit/vehicle_capture_cubit.dart'
-    as _i731;
 import '../network/dio_auth_interceptor.dart' as _i817;
 import '../network/network_cubit.dart' as _i11;
 import '../services/image/i_image_service.dart' as _i37;
@@ -247,35 +237,20 @@ _i174.GetIt init(
     () => _i232.CheckDeviceReadinessUseCase(gh<_i515.IDeviceCheckRepository>()),
   );
   gh.lazySingleton<_i37.IImageService>(() => _i81.ImageServiceImpl());
-  gh.lazySingleton<_i437.IOcrLocalDataSource>(
-    () => _i437.OcrLocalDataSourceImpl(),
-  );
   gh.lazySingleton<_i1003.IPrinterService>(
     () => _i291.BluetoothPrinterServiceImpl(),
   );
   gh.lazySingleton<_i1042.ISecureStorageManager>(
     () => _i1042.SecureStorageManagerImpl(),
   );
-  gh.lazySingleton<_i734.IOcrRepository>(
-    () => _i419.OcrRepositoryImpl(gh<_i437.IOcrLocalDataSource>()),
-  );
   gh.lazySingleton<_i988.IAppLocationService>(
     () => _i35.AppLocationServiceImpl(gh<_i1042.ISecureStorageManager>()),
-  );
-  gh.lazySingleton<_i342.ExtractLicensePlateUseCase>(
-    () => _i342.ExtractLicensePlateUseCase(gh<_i734.IOcrRepository>()),
   );
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
   );
   gh.lazySingleton<_i11.NetworkCubit>(
     () => _i11.NetworkCubit(gh<_i895.Connectivity>()),
-  );
-  gh.factory<_i731.VehicleCaptureCubit>(
-    () => _i731.VehicleCaptureCubit(
-      gh<_i342.ExtractLicensePlateUseCase>(),
-      gh<_i37.IImageService>(),
-    ),
   );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
