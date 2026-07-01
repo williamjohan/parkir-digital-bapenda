@@ -229,6 +229,7 @@ class AppRouter {
             final initialDate = extra?['initialDate'] as DateTime?;
             final isFree = extra?['isFree'] as bool? ?? false;
             final nop = extra?['nop'] as String?;
+            final idDevice = extra?['idDevice'] as String;
 
             return BlocProvider(
               create: (_) => locator<TransactionHistoryCubit>(),
@@ -236,6 +237,7 @@ class AppRouter {
                 initialDate: initialDate,
                 isFree: isFree,
                 nop: nop,
+                idDevice: idDevice,
               ),
             );
           },

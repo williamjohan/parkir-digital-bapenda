@@ -12,6 +12,7 @@ abstract class ITransactionHistoryRemoteDataSource {
     required DateTime startDate,
     required DateTime endDate,
     int? limit,
+    String? idDevice,
   });
 }
 
@@ -28,6 +29,7 @@ class TransactionHistoryRemoteDataSourceImpl
     required DateTime startDate,
     required DateTime endDate,
     int? limit,
+    String? idDevice,
   }) async {
     final String startIso =
         "${startDate.toUtc().toIso8601String().substring(0, 23)}Z";
@@ -40,6 +42,7 @@ class TransactionHistoryRemoteDataSourceImpl
       'tglAwal': startIso,
       'tglAkhir': endIso,
       'limit': limit ?? 0,
+      'idDevice': idDevice,
     });
     AppLogger.debug('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓');
     AppLogger.debug('┃ 🔍 MENGIRIM GET HISTORY KE /laporan-pendapatan');

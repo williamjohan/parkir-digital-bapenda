@@ -5,7 +5,7 @@ import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../../domain/entities/data_jukir_entity.dart';
 
-class DataJukirCard extends StatelessWidget {
+class DataJukirCard extends StatefulWidget {
   final DataJukirEntity entity;
   final VoidCallback? lihatRiwayatOnTap;
 
@@ -16,7 +16,21 @@ class DataJukirCard extends StatelessWidget {
   });
 
   @override
+  State<DataJukirCard> createState() => _DataJukirCardState();
+}
+
+class _DataJukirCardState extends State<DataJukirCard> {
+  bool isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
+    final jukirList = widget.entity.usernameList;
+    final bool showExpandButton = jukirList.length > 3;
+    final List<UsernameEntity> visibleJukirList =
+        (showExpandButton && !isExpanded)
+        ? jukirList.take(3).toList()
+        : jukirList;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -51,7 +65,7 @@ class DataJukirCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Text(
-                        "Shift ${entity.shift}",
+                        "Shift ${widget.entity.shift}",
                         style: AppTypography.bodySmall.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
@@ -59,7 +73,7 @@ class DataJukirCard extends StatelessWidget {
                       ),
                     ),
                     TextButton.icon(
-                      onPressed: lihatRiwayatOnTap,
+                      onPressed: widget.lihatRiwayatOnTap,
                       icon: const Icon(Icons.history, size: 18),
                       label: const Text("Lihat Riwayat"),
                       style: TextButton.styleFrom(
@@ -96,8 +110,7 @@ class DataJukirCard extends StatelessWidget {
                       Expanded(
                         child: _SummaryItem(
                           title: "Pendapatan",
-                          value: entity
-                              .totalNominal, // Menggunakan totalNominal dari entitas
+                          value: widget.entity.totalNominal,
                           icon: Icons.payments_outlined,
                           isKendaraan: false,
                         ),
@@ -105,16 +118,14 @@ class DataJukirCard extends StatelessWidget {
                       Expanded(
                         child: _SummaryItem(
                           title: "Motor",
-                          value: entity
-                              .totalMotorHariIni, // Menggunakan total motor dari entitas
+                          value: widget.entity.totalMotorHariIni,
                           icon: Icons.two_wheeler,
                         ),
                       ),
                       Expanded(
                         child: _SummaryItem(
                           title: "Mobil",
-                          value: entity
-                              .totalMobilHariIni, // Menggunakan total mobil dari entitas
+                          value: widget.entity.totalMobilHariIni,
                           icon: Icons.directions_car,
                         ),
                       ),
@@ -141,13 +152,39 @@ class DataJukirCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Looping data jukir dari usernameList
-                ...entity.usernameList.map(
+                // Menampilkan list jukir (terbatas 3 atau semua tergantung isExpanded)
+                ...visibleJukirList.map(
                   (jukir) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: _JukirItem(jukir: jukir),
                   ),
                 ),
+
+                // Tombol "Lihat Lebih Banyak / Sedikit" jika data lebih dari 3
+                if (showExpandButton)
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isExpanded = !isExpanded;
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        isExpanded
+                            ? "Lihat Lebih Sedikit"
+                            : "Lihat Lebih Banyak",
+                        style: AppTypography.bodySmall.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -192,7 +229,7 @@ class _JukirItem extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                "password : ${jukir.username}", // Sesuai dengan source awal
+                "password : ${jukir.username}",
                 style: AppTypography.bodySmall.copyWith(
                   color: AppColors.textSecondary,
                 ),

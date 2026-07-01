@@ -14,11 +14,13 @@ class GetTransactionHistoryUseCase {
     required DateTime startDate,
     required DateTime endDate,
     required String nop,
+    String? idDevice,
   }) {
     return _repository.getHistory(
       startDate: startDate,
       endDate: endDate,
       nop: nop,
+      idDevice: idDevice,
     );
   }
 }

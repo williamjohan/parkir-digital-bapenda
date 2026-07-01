@@ -13,7 +13,12 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     : super(TransactionHistoryInitial());
 
   /// [REMOTE FILTER]: Tembak API Bapenda berdasarkan rentang tanggal
-  Future<void> fetchHistory(DateTime start, DateTime end, String nop) async {
+  Future<void> fetchHistory(
+    DateTime start,
+    DateTime end,
+    String nop,
+    String idDevice,
+  ) async {
     final difference = end.difference(start).inDays.abs();
     if (difference > 30) {
       if (!isClosed) {
@@ -39,6 +44,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       startDate: start,
       endDate: end,
       nop: finalNop,
+      idDevice: idDevice,
     );
 
     if (isClosed) return;

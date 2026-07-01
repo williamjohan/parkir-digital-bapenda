@@ -14,12 +14,14 @@ class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
   final bool isFree;
   final String? nop;
+  final String? idDevice;
 
   const TransactionHistoryPage({
     super.key,
     this.initialDate,
     required this.isFree,
     this.nop,
+    this.idDevice,
   });
 
   @override
@@ -93,6 +95,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       _startDate,
       _endDate,
       widget.nop ?? '',
+      widget.idDevice ?? '',
     );
     _scrollController.addListener(() {
       if (_scrollController.offset > 180 && !_isScrolledPastRecap) {
@@ -166,6 +169,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                             start,
                             end,
                             widget.nop ?? '',
+                            widget.idDevice ?? '',
                           );
                         },
                   ),
@@ -247,9 +251,13 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       return Stack(
         children: [
           RefreshIndicator(
-            onRefresh: () => context
-                .read<TransactionHistoryCubit>()
-                .fetchHistory(_startDate, _endDate, widget.nop ?? ''),
+            onRefresh: () =>
+                context.read<TransactionHistoryCubit>().fetchHistory(
+                  _startDate,
+                  _endDate,
+                  widget.nop ?? '',
+                  widget.idDevice ?? '',
+                ),
             child: CustomScrollView(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),

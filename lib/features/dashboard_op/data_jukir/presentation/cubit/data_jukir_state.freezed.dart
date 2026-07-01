@@ -19,6 +19,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$DataJukirState {
   bool get isLoading => throw _privateConstructorUsedError;
   List<DataJukirEntity> get data => throw _privateConstructorUsedError;
+  List<DataJukirEntity> get dataFake => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
 
   /// Create a copy of DataJukirState
@@ -35,7 +36,12 @@ abstract class $DataJukirStateCopyWith<$Res> {
     $Res Function(DataJukirState) then,
   ) = _$DataJukirStateCopyWithImpl<$Res, DataJukirState>;
   @useResult
-  $Res call({bool isLoading, List<DataJukirEntity> data, String? errorMessage});
+  $Res call({
+    bool isLoading,
+    List<DataJukirEntity> data,
+    List<DataJukirEntity> dataFake,
+    String? errorMessage,
+  });
 }
 
 /// @nodoc
@@ -55,6 +61,7 @@ class _$DataJukirStateCopyWithImpl<$Res, $Val extends DataJukirState>
   $Res call({
     Object? isLoading = null,
     Object? data = null,
+    Object? dataFake = null,
     Object? errorMessage = freezed,
   }) {
     return _then(
@@ -66,6 +73,10 @@ class _$DataJukirStateCopyWithImpl<$Res, $Val extends DataJukirState>
             data: null == data
                 ? _value.data
                 : data // ignore: cast_nullable_to_non_nullable
+                      as List<DataJukirEntity>,
+            dataFake: null == dataFake
+                ? _value.dataFake
+                : dataFake // ignore: cast_nullable_to_non_nullable
                       as List<DataJukirEntity>,
             errorMessage: freezed == errorMessage
                 ? _value.errorMessage
@@ -86,7 +97,12 @@ abstract class _$$DataJukirStateImplCopyWith<$Res>
   ) = __$$DataJukirStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isLoading, List<DataJukirEntity> data, String? errorMessage});
+  $Res call({
+    bool isLoading,
+    List<DataJukirEntity> data,
+    List<DataJukirEntity> dataFake,
+    String? errorMessage,
+  });
 }
 
 /// @nodoc
@@ -105,6 +121,7 @@ class __$$DataJukirStateImplCopyWithImpl<$Res>
   $Res call({
     Object? isLoading = null,
     Object? data = null,
+    Object? dataFake = null,
     Object? errorMessage = freezed,
   }) {
     return _then(
@@ -116,6 +133,10 @@ class __$$DataJukirStateImplCopyWithImpl<$Res>
         data: null == data
             ? _value._data
             : data // ignore: cast_nullable_to_non_nullable
+                  as List<DataJukirEntity>,
+        dataFake: null == dataFake
+            ? _value._dataFake
+            : dataFake // ignore: cast_nullable_to_non_nullable
                   as List<DataJukirEntity>,
         errorMessage: freezed == errorMessage
             ? _value.errorMessage
@@ -132,8 +153,10 @@ class _$DataJukirStateImpl implements _DataJukirState {
   const _$DataJukirStateImpl({
     this.isLoading = false,
     final List<DataJukirEntity> data = const <DataJukirEntity>[],
+    final List<DataJukirEntity> dataFake = const <DataJukirEntity>[],
     this.errorMessage,
-  }) : _data = data;
+  }) : _data = data,
+       _dataFake = dataFake;
 
   @override
   @JsonKey()
@@ -147,12 +170,21 @@ class _$DataJukirStateImpl implements _DataJukirState {
     return EqualUnmodifiableListView(_data);
   }
 
+  final List<DataJukirEntity> _dataFake;
+  @override
+  @JsonKey()
+  List<DataJukirEntity> get dataFake {
+    if (_dataFake is EqualUnmodifiableListView) return _dataFake;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_dataFake);
+  }
+
   @override
   final String? errorMessage;
 
   @override
   String toString() {
-    return 'DataJukirState(isLoading: $isLoading, data: $data, errorMessage: $errorMessage)';
+    return 'DataJukirState(isLoading: $isLoading, data: $data, dataFake: $dataFake, errorMessage: $errorMessage)';
   }
 
   @override
@@ -163,6 +195,7 @@ class _$DataJukirStateImpl implements _DataJukirState {
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             const DeepCollectionEquality().equals(other._data, _data) &&
+            const DeepCollectionEquality().equals(other._dataFake, _dataFake) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
@@ -172,6 +205,7 @@ class _$DataJukirStateImpl implements _DataJukirState {
     runtimeType,
     isLoading,
     const DeepCollectionEquality().hash(_data),
+    const DeepCollectionEquality().hash(_dataFake),
     errorMessage,
   );
 
@@ -191,6 +225,7 @@ abstract class _DataJukirState implements DataJukirState {
   const factory _DataJukirState({
     final bool isLoading,
     final List<DataJukirEntity> data,
+    final List<DataJukirEntity> dataFake,
     final String? errorMessage,
   }) = _$DataJukirStateImpl;
 
@@ -198,6 +233,8 @@ abstract class _DataJukirState implements DataJukirState {
   bool get isLoading;
   @override
   List<DataJukirEntity> get data;
+  @override
+  List<DataJukirEntity> get dataFake;
   @override
   String? get errorMessage;
 
