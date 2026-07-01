@@ -1,40 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-
-enum LaporanKategori {
-  jukirTidakAda,
-  jukirTidakSesuaiIdentitas,
-  pembayaranTunai,
-  lainnya;
-
-  String get label {
-    switch (this) {
-      case LaporanKategori.jukirTidakAda:
-        return "Jukir Tidak Ada";
-      case LaporanKategori.jukirTidakSesuaiIdentitas:
-        return "Jukir Tidak Menggunakan Alat Pembayaran Resmi dari Bapenda";
-      case LaporanKategori.pembayaranTunai:
-        return "Pembayaran Menggunakan Tunai";
-      case LaporanKategori.lainnya:
-        return "Lainnya";
-    }
-  }
-}
-
-class LaporanFormResult {
-  final LaporanKategori kategori;
-  final String keterangan;
-  final File? photo;
-
-  const LaporanFormResult({
-    required this.kategori,
-    required this.keterangan,
-    this.photo,
-  });
-}
+import '../cubit/pengawasan_cubit.dart';
+import '../cubit/pengawasan_state.dart';
 
 class LaporanFormScreen extends StatefulWidget {
   // final void Function(LaporanFormResult result) onSubmit;
@@ -50,7 +22,6 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
   final _keteranganController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
-  LaporanKategori? _kategori;
   File? _photo;
 
   @override
@@ -76,22 +47,17 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
-    if (_kategori == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Pilih kategori laporan terlebih dahulu")),
-      );
+    if (_photo == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Foto wajib diunggah")));
       return;
     }
 
-    // widget.onSubmit(
-    //   LaporanFormResult(
-    //     kategori: _kategori!,
-    //     keterangan: _keteranganController.text.trim(),
-    //     photo: _photo,
-    //   ),
-    // );
-
-    Navigator.of(context).pop();
+    context.read<PengawasanCubit>().addPengawasanDummy(
+      keterangan: _keteranganController.text.trim(),
+      foto: _photo!,
+    );
   }
 
   @override
@@ -114,12 +80,12 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _buildSectionCard(
-              title: "Kategori Laporan",
-              icon: Icons.report_gmailerrorred_rounded,
-              child: _buildKategoriDropdown(),
-            ),
-            const SizedBox(height: 16),
+            // _buildSectionCard(
+            //   title: "Kategori Laporan",
+            //   icon: Icons.report_gmailerrorred_rounded,
+            //   child: _buildKategoriDropdown(),
+            // ),
+            // const SizedBox(height: 16),
             _buildSectionCard(
               title: "Keterangan",
               icon: Icons.notes_rounded,
@@ -169,82 +135,34 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
               child: _buildPhotoPicker(),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  elevation: 0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.send_rounded, size: 18),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Kirim Laporan",
-                      style: AppTypography.bodySemiBold.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            BlocConsumer<PengawasanCubit, PengawasanState>(
+              listener: (context, state) {
+                if (state.isSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Laporan berhasil dikirim')),
+                  );
+
+                  Navigator.pop(context);
+                }
+
+                if (state.errorMessage != null) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+                }
+              },
+              builder: (context, state) {
+                return PbPrimaryButton(
+                  text: "Kirim Laporan",
+                  isLoading: state.isLoading,
+                  onPressed: state.isLoading ? null : _submit,
+                );
+              },
             ),
             const SizedBox(height: 16),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildKategoriDropdown() {
-    return DropdownButtonFormField<LaporanKategori>(
-      initialValue: _kategori,
-      isExpanded: true,
-      decoration: InputDecoration(
-        hintText: "Pilih kategori",
-        hintStyle: AppTypography.bodySmall.copyWith(
-          color: Colors.grey.shade400,
-        ),
-        filled: true,
-        fillColor: Colors.grey.shade50,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade200),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade200),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 12,
-        ),
-      ),
-      items: LaporanKategori.values
-          .map(
-            (k) => DropdownMenuItem(
-              value: k,
-              child: Text(
-                k.label,
-                style: AppTypography.bodySmall,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          )
-          .toList(),
-      onChanged: (v) => setState(() => _kategori = v),
     );
   }
 

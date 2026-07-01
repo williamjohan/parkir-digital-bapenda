@@ -29,6 +29,20 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     }
   }
 
+  Future<void> addPengawasanDummy({
+    required String keterangan,
+    required File foto,
+  }) async {
+    final entity = PengawasanEntity(
+      name: '',
+      description: keterangan,
+      foto: foto.path,
+      kategoriLaporan: const KategoriLaporanEntity(id: '1', name: 'Dummy'),
+    );
+
+    await addPengawasan(entity, foto);
+  }
+
   void reset() {
     emit(const PengawasanState());
   }
