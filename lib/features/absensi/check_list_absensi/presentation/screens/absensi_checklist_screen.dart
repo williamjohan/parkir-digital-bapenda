@@ -1,39 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import '../../data/models/absensi_model.dart';
 import '../widgets/instrument_toggle_widget.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
+// Sesuaikan path import ini dengan struktur folder project kamu.
+import '../../domain/entities/absensi_checkin_entity.dart';
+import '../cubit/absensi_checkin_cubit.dart';
+import '../cubit/absensi_checkin_state.dart';
+
 enum ShiftFormType { checkIn, checkOut }
 
-class ShiftFormResult {
-  final AbsensiCheckListModel checklist;
-  final File? photo;
-  final double? latitude;
-  final double? longitude;
-
-  const ShiftFormResult({
-    required this.checklist,
-    this.photo,
-    this.latitude,
-    this.longitude,
-  });
-}
+/// TODO: GANTI id ini sesuai master data alat/instrumen dari backend.
+/// Ini cuma placeholder supaya kode bisa jalan dulu.
+const Map<String, int> kInstrumentIds = {'EDC': 1, 'QRIS': 2, 'TSpark': 3};
 
 class ShiftFormScreen extends StatefulWidget {
   final ShiftFormType type;
-  final void Function(ShiftFormResult result) onSubmit;
 
-  const ShiftFormScreen({
-    super.key,
-    required this.type,
-    required this.onSubmit,
-  });
+  const ShiftFormScreen({super.key, required this.type});
 
   @override
   State<ShiftFormScreen> createState() => _ShiftFormScreenState();
@@ -153,6 +143,16 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
     }
   }
 
+  // ---- helper baca state cubit sesuai mode (checkIn / checkOut) ----
+  bool _loadingFor(AbsensiCheckInState state) =>
+      _isCheckIn ? state.isCheckInLoading : state.isCheckOutLoading;
+
+  bool _successFor(AbsensiCheckInState state) =>
+      _isCheckIn ? state.isCheckInSuccess : state.isCheckOutSuccess;
+
+  String? _errorFor(AbsensiCheckInState state) =>
+      _isCheckIn ? state.checkInErrorMessage : state.checkOutErrorMessage;
+
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
@@ -170,127 +170,184 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
       return;
     }
 
-    widget.onSubmit(
-      ShiftFormResult(
-        checklist: AbsensiCheckListModel(
-          edc: _edc,
-          qrisRompi: _qris,
-          tsPark: _tsPark,
-          totalMotor: int.tryParse(_motorController.text) ?? 0,
-          totalMobil: int.tryParse(_mobilController.text) ?? 0,
-        ),
-        photo: _photo,
-        latitude: _position!.latitude,
-        longitude: _position!.longitude,
-      ),
-    );
+    final detailAlat = <AlatEntity>[
+      if (_edc) AlatEntity(id: kInstrumentIds['EDC']!),
+      if (_qris) AlatEntity(id: kInstrumentIds['QRIS']!),
+      if (_tsPark) AlatEntity(id: kInstrumentIds['TSpark']!),
+    ];
 
-    Navigator.of(context).pop();
+    final jumlahMobil = double.tryParse(_mobilController.text) ?? 0;
+    final jumlahMotor = double.tryParse(_motorController.text) ?? 0;
+    final lat = _position!.latitude.toString();
+    final lng = _position!.longitude.toString();
+
+    final cubit = context.read<AbsensiCheckInCubit>();
+
+    if (_isCheckIn) {
+      final entity = CheckInEntity(
+        jumlahMobil: jumlahMobil,
+        jumlahMotor: jumlahMotor,
+        latitude: lat,
+        longitude: lng,
+        detailAlat: detailAlat,
+      );
+      cubit.checkIn(entity, _photo!);
+    } else {
+      final entity = CheckOutEntity(
+        jumlahMobil: jumlahMobil,
+        jumlahMotor: jumlahMotor,
+        latitude: lat,
+        longitude: lng,
+        detailAlat: detailAlat,
+      );
+      cubit.checkOut(entity, _photo!);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back_ios_rounded, size: 18),
+    return BlocListener<AbsensiCheckInCubit, AbsensiCheckInState>(
+      listenWhen: (prev, curr) =>
+          _successFor(prev) != _successFor(curr) ||
+          _errorFor(prev) != _errorFor(curr),
+      listener: (context, state) {
+        final error = _errorFor(state);
+        if (error != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(error)));
+          return;
+        }
+
+        if (_successFor(state)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                _isCheckIn ? 'Check in berhasil' : 'Check out berhasil',
+              ),
+            ),
+          );
+          // reset supaya kalau screen ini dipakai lagi state-nya bersih
+          context.read<AbsensiCheckInCubit>().reset();
+          Navigator.of(context).pop(true); // true = kasih tau caller sukses
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade50,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 1,
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back_ios_rounded, size: 18),
+          ),
+          title: Text(_title, style: AppTypography.bodySemiBold),
+          centerTitle: true,
         ),
-        title: Text(_title, style: AppTypography.bodySemiBold),
-        centerTitle: true,
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            _buildHeaderCard(),
-            const SizedBox(height: 16),
-            _buildPhotoSection(),
-            const SizedBox(height: 16),
-            _buildSectionCard(
-              title: "Data Kendaraan",
-              icon: Icons.directions_car_rounded,
-              child: Column(
-                children: [
-                  _buildNumberField(
-                    controller: _motorController,
-                    label: "Jumlah Motor",
-                    icon: Icons.two_wheeler_rounded,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildNumberField(
-                    controller: _mobilController,
-                    label: "Jumlah Mobil",
-                    icon: Icons.directions_car_rounded,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildSectionCard(
-              title: "Status Instrumen",
-              icon: Icons.devices_rounded,
-              child: Column(
-                children: [
-                  InstrumentToggleWidget(
-                    label: "EDC",
-                    icon: Icons.credit_card_rounded,
-                    isActive: _edc,
-                    onChanged: (v) => setState(() => _edc = v),
-                  ),
-                  const SizedBox(height: 8),
-                  InstrumentToggleWidget(
-                    label: "QRIS",
-                    icon: Icons.qr_code_2_rounded,
-                    isActive: _qris,
-                    onChanged: (v) => setState(() => _qris = v),
-                  ),
-                  const SizedBox(height: 8),
-                  InstrumentToggleWidget(
-                    label: "TSpark",
-                    icon: Icons.touch_app_rounded,
-                    isActive: _tsPark,
-                    onChanged: (v) => setState(() => _tsPark = v),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  elevation: 0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _buildHeaderCard(),
+              const SizedBox(height: 16),
+              _buildPhotoSection(),
+              const SizedBox(height: 16),
+              _buildSectionCard(
+                title: "Data Kendaraan",
+                icon: Icons.directions_car_rounded,
+                child: Column(
                   children: [
-                    Icon(_headerIcon, size: 18),
-                    const SizedBox(width: 8),
-                    Text(
-                      _submitLabel,
-                      style: AppTypography.bodySemiBold.copyWith(
-                        color: Colors.white,
-                      ),
+                    _buildNumberField(
+                      controller: _motorController,
+                      label: "Jumlah Motor",
+                      icon: Icons.two_wheeler_rounded,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildNumberField(
+                      controller: _mobilController,
+                      label: "Jumlah Mobil",
+                      icon: Icons.directions_car_rounded,
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-          ],
+              const SizedBox(height: 16),
+              _buildSectionCard(
+                title: "Status Instrumen",
+                icon: Icons.devices_rounded,
+                child: Column(
+                  children: [
+                    InstrumentToggleWidget(
+                      label: "EDC",
+                      icon: Icons.credit_card_rounded,
+                      isActive: _edc,
+                      onChanged: (v) => setState(() => _edc = v),
+                    ),
+                    const SizedBox(height: 8),
+                    InstrumentToggleWidget(
+                      label: "QRIS",
+                      icon: Icons.qr_code_2_rounded,
+                      isActive: _qris,
+                      onChanged: (v) => setState(() => _qris = v),
+                    ),
+                    const SizedBox(height: 8),
+                    InstrumentToggleWidget(
+                      label: "TSpark",
+                      icon: Icons.touch_app_rounded,
+                      isActive: _tsPark,
+                      onChanged: (v) => setState(() => _tsPark = v),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              BlocBuilder<AbsensiCheckInCubit, AbsensiCheckInState>(
+                builder: (context, state) {
+                  final loading = _loadingFor(state);
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: loading ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: loading
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.4,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(_headerIcon, size: 18),
+                                const SizedBox(width: 8),
+                                Text(
+                                  _submitLabel,
+                                  style: AppTypography.bodySemiBold.copyWith(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
@@ -529,65 +586,6 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildLocationStatus() {
-    if (_isFetchingLocation) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(
-            width: 14,
-            height: 14,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            "Mendeteksi lokasi...",
-            style: AppTypography.caption.copyWith(color: Colors.grey.shade500),
-          ),
-        ],
-      );
-    }
-
-    if (_locationError != null) {
-      return GestureDetector(
-        onTap: _getCurrentLocation,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline_rounded, size: 14, color: AppColors.error),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                "$_locationError Ketuk untuk coba lagi.",
-                textAlign: TextAlign.center,
-                style: AppTypography.caption.copyWith(color: AppColors.error),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (_position != null) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.location_on_rounded, size: 14, color: AppColors.success),
-          const SizedBox(width: 6),
-          Text(
-            "${_position!.latitude.toStringAsFixed(5)}, ${_position!.longitude.toStringAsFixed(5)}",
-            style: AppTypography.caption.copyWith(
-              color: AppColors.success,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      );
-    }
-
-    return const SizedBox.shrink();
   }
 
   Widget _buildSectionCard({

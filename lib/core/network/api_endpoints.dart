@@ -40,4 +40,10 @@ class ApiEndpoints {
   static const String listNopDev = '/api/mobile/parking/nop-list-dev';
   static const String addPengawasanPelaporanDev =
       '/api/mobile/parking/pengawas-pelaporan';
+  static const String pengawasCheckIn =
+      '/api/mobile/parking/pengawas/check-in';
+  static const String pengawasCheckOut =
+      '/api/mobile/parking/pengawas/check-out';
+  static const String pengawasMasterAlatDigital =
+      '/api/mobile/parking/pengawas-master-alat-digital';
 }

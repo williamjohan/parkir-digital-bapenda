@@ -36,13 +36,13 @@ class _HomeAbsensiTestSectionState extends State<HomeAbsensiTestSection> {
           MaterialPageRoute(
             builder: (_) => ShiftFormScreen(
               type: ShiftFormType.checkIn,
-              onSubmit: (result) {
-                setState(() {
-                  isCheckedIn = true;
-                  checkInTime = DateTime.now();
-                  checkInChecklist = result.checklist;
-                });
-              },
+              // onSubmit: (result) {
+              //   setState(() {
+              //     isCheckedIn = true;
+              //     checkInTime = DateTime.now();
+              //     checkInChecklist = result.checklist;
+              //   });
+              // },
             ),
           ),
         ),
@@ -50,13 +50,13 @@ class _HomeAbsensiTestSectionState extends State<HomeAbsensiTestSection> {
           MaterialPageRoute(
             builder: (_) => ShiftFormScreen(
               type: ShiftFormType.checkOut,
-              onSubmit: (result) {
-                setState(() {
-                  isCheckedOut = true;
-                  checkOutTime = DateTime.now();
-                  checkOutChecklist = result.checklist;
-                });
-              },
+              // onSubmit: (result) {
+              //   setState(() {
+              //     isCheckedOut = true;
+              //     checkOutTime = DateTime.now();
+              //     checkOutChecklist = result.checklist;
+              //   });
+              // },
             ),
           ),
         ),

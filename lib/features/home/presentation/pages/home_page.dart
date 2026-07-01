@@ -4,7 +4,8 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
-import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/home_absensi_test_section.dart';
+import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
+import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/main_absensi_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
@@ -148,12 +149,33 @@ class _HomePageState extends State<HomePage> {
                                                   RoleLoginDigitalParkir.jukir,
                                                 ],
                                                 currentRole: state.role,
-                                                child: const Padding(
-                                                  padding: EdgeInsets.only(
-                                                    bottom: 16,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 16,
+                                                      ),
+                                                  child: MainAbsensiWidget(
+                                                    isCheckedIn: false,
+                                                    isCheckedOut: false,
+                                                    checkInTime: null,
+                                                    checkOutTime: null,
+                                                    checkInChecklist: null,
+                                                    checkOutChecklist: null,
+                                                    onTapCheckIn: () async {
+                                                      await context.push(
+                                                        AppRoutes.absensi,
+                                                        extra: ShiftFormType
+                                                            .checkIn,
+                                                      );
+                                                    },
+                                                    onTapCheckOut: () async {
+                                                      await context.push(
+                                                        AppRoutes.absensi,
+                                                        extra: ShiftFormType
+                                                            .checkOut,
+                                                      );
+                                                    },
                                                   ),
-                                                  child:
-                                                      HomeAbsensiTestSection(),
                                                 ),
                                               ),
                                               PbPermissionGate(
