@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../domain/entities/pengawasan_entity.dart';
+import '../../domain/constants/jenis_pelanggaran_dummy.dart';
 import '../../domain/usecases/pengawasan_usecase.dart';
 import 'pengawasan_state.dart';
 
@@ -11,11 +11,44 @@ class PengawasanCubit extends Cubit<PengawasanState> {
 
   PengawasanCubit(this._addPengawasanUsecase) : super(const PengawasanState());
 
-  Future<void> addPengawasan(PengawasanEntity entity, File buktiFoto) async {
+  void loadJenisPelanggaran() {
+    emit(state.copyWith(jenisPelanggaran: dummyJenisPelanggaran));
+  }
+
+  void setJenisPelanggaran(int jenisPel) {
+    emit(state.copyWith(request: state.request.copyWith(jenisPel: jenisPel)));
+  }
+
+  void setFoto(File foto) {
+    emit(state.copyWith(request: state.request.copyWith(buktiFoto: foto)));
+  }
+
+void removeFoto() {
+    emit(state.copyWith(request: state.request.copyWith(buktiFoto: null)));
+  }
+
+  Future<void> submit(String ketPel) async {
+    final request = state.request.copyWith(ketPel: ketPel.trim());
+
+    if (request.jenisPel == 0) {
+      emit(state.copyWith(errorMessage: 'Jenis pelanggaran wajib dipilih.'));
+      return;
+    }
+
+    if (request.ketPel.isEmpty) {
+      emit(state.copyWith(errorMessage: 'Keterangan wajib diisi.'));
+      return;
+    }
+
+    if (request.buktiFoto == null) {
+      emit(state.copyWith(errorMessage: 'Foto bukti wajib diunggah.'));
+      return;
+    }
+
     emit(state.copyWith(isLoading: true, isSuccess: false, errorMessage: null));
 
     try {
-      await _addPengawasanUsecase(entity, buktiFoto);
+      await _addPengawasanUsecase(request);
 
       emit(state.copyWith(isLoading: false, isSuccess: true));
     } catch (e) {
@@ -28,21 +61,6 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       );
     }
   }
-
-  Future<void> addPengawasanDummy({
-    required String keterangan,
-    required File foto,
-  }) async {
-    final entity = PengawasanEntity(
-      name: '',
-      description: keterangan,
-      foto: foto.path,
-      kategoriLaporan: const KategoriLaporanEntity(id: '1', name: 'Dummy'),
-    );
-
-    await addPengawasan(entity, foto);
-  }
-
   void reset() {
     emit(const PengawasanState());
   }

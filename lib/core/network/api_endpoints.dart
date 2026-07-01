@@ -41,4 +41,5 @@ class ApiEndpoints {
   static const String addPengawasanPelaporanDev =
       '/api/mobile/parking/pengawas-pelaporan';
   static const String jadwalPengawasDev = '/api/mobile/parking/pengawas-jadwal';
+  static const String pengawasPelaporanListDev = '/api/mobile/parking/pengawas-pelaporan-list';
 }

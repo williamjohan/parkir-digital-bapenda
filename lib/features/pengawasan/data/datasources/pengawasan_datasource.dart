@@ -1,14 +1,13 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../../core/errors/exception.dart';
 import '../../../../../../core/utils/app_logger.dart';
 import '../../../../../core/network/api_endpoints.dart';
 import '../../../../../core/network/dio_error_handler.dart';
-import '../models/add_pengawasan_model.dart';
+import '../../domain/entities/request_laporan_pengawasan_entity/request_laporan_pengawasan_entity.dart';
 
 abstract class PengawasanDatasource {
-  Future<void> addPengawasan(AddPengawasanModel model, File buktiFoto);
+  Future<void> addPengawasan(RequestLaporanPengawasanEntity request);
 }
 
 @LazySingleton(as: PengawasanDatasource)
@@ -18,16 +17,16 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
   PengawasanDatasourceImpl(this._dio);
 
   @override
-  Future<void> addPengawasan(AddPengawasanModel model, File buktiFoto) async {
+  Future<void> addPengawasan(RequestLaporanPengawasanEntity request) async {
     try {
       AppLogger.info('Request Add Pengawasan');
 
       final formData = FormData.fromMap({
-        'JenisPel': model.jenisPel,
-        'KetPel': model.ketPel,
+        'JenisPel': request.jenisPel,
+        'KetPel': request.ketPel,
         'BuktiFoto': await MultipartFile.fromFile(
-          buktiFoto.path,
-          filename: buktiFoto.path.split('/').last,
+          request.buktiFoto!.path,
+          filename: request.buktiFoto!.path.split('/').last,
           contentType: DioMediaType('image', 'png'),
         ),
       });

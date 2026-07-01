@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/design_system/tokens/app_typography.dart';
 import '../widgets/card_rekap_laporan.dart';
 
 class LaporanPelanggaranScreen extends StatelessWidget {
@@ -9,8 +9,9 @@ class LaporanPelanggaranScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: Text("Laporan Pelanggaran"),
+        title: Text('Laporan Pelanggaran', style: AppTypography.heading5),
         centerTitle: true,
         backgroundColor: AppColors.surface,
         elevation: 0,
