@@ -14,6 +14,10 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/absensi/check_list_absensi/data/repositories/absensi_repository_impl.dart'
+    as _i482;
+import '../../features/absensi/check_list_absensi/domain/usecases/absensi_usecase.dart'
+    as _i708;
 import '../../features/auth/data/datasources/auth_remote_data_source.dart'
     as _i107;
 import '../../features/auth/data/repositories/auth_repository_impl.dart'
@@ -223,6 +227,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i988.IAppLocationService>(
     () => _i35.AppLocationServiceImpl(gh<_i1042.ISecureStorageManager>()),
+  );
+  gh.lazySingleton<_i708.AbsensiUsecase>(
+    () => _i708.AbsensiUsecase(gh<_i482.AbsensiRepositoryImpl>()),
   );
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
