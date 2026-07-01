@@ -10,7 +10,6 @@ import 'core/di/injection.dart';
 import 'core/network/network_cubit.dart';
 import 'core/routes/app_router.dart';
 import 'features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
-import 'features/parking_transaction/persentation/cubit/sync_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +35,6 @@ class MyApp extends StatelessWidget {
           create: (_) => appAuthCubit..checkStatus(isFromSplash: true),
         ),
 
-        BlocProvider<SyncCubit>(create: (_) => locator<SyncCubit>()),
         BlocProvider<NetworkCubit>(create: (_) => locator<NetworkCubit>()),
       ],
       child: MaterialApp.router(
