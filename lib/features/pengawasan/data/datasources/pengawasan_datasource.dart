@@ -23,32 +23,33 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
       AppLogger.info('Request Add Pengawasan');
 
       final formData = FormData.fromMap({
-        ...model.toJson(),
+        'JenisPel': model.jenisPel,
+        'KetPel': model.ketPel,
         'BuktiFoto': await MultipartFile.fromFile(
           buktiFoto.path,
           filename: buktiFoto.path.split('/').last,
+          contentType: DioMediaType('image', 'png'),
         ),
       });
 
       final response = await _dio.post(
         ApiEndpoints.addPengawasanPelaporanDev,
         data: formData,
-        options: Options(contentType: 'multipart/form-data'),
+        options: Options(contentType: Headers.multipartFormDataContentType),
       );
 
-      final responseData = response.data;
+      AppLogger.info('Response Add Pengawasan: ${response.data}');
 
-      AppLogger.info('Response Add Pengawasan: $responseData');
-
-      if (responseData['isSuccess'] == true &&
-          responseData['statusCode'] == 200) {
-        AppLogger.info('Berhasil menambahkan laporan pengawasan');
+      // Jika HTTP berhasil (200/201/204), anggap sukses
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
         return;
       }
 
       throw ServerException(
-        statusCode: responseData['statusCode'] ?? 500,
-        message: responseData['message'] ?? 'Terjadi kesalahan.',
+        statusCode: response.statusCode ?? 500,
+        message: response.data?['message'] ?? 'Gagal mengirim laporan.',
       );
     } on DioException catch (e) {
       AppLogger.error('>>> [DIO ERROR] ${e.response?.data}');

@@ -324,10 +324,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   floatingActionButton: FeatureFlags.enableCreateOrderFeature
                       ? PbPermissionGate(
-                          allowedRoles: const [
-                            RoleLoginDigitalParkir.jukir,
-                            RoleLoginDigitalParkir.bapenda,
-                          ],
+                          allowedRoles: const [RoleLoginDigitalParkir.pengawas],
                           currentRole: state.role,
                           child: SpeedDial(
                             backgroundColor: AppColors.primary,
