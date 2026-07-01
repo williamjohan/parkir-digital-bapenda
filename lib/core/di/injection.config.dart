@@ -129,6 +129,14 @@ import '../../features/pendapatan_digital/presentation/cubit/pendapatan_digital_
     as _i376;
 import '../../features/pengawasan/data/datasources/pengawasan_datasource.dart'
     as _i926;
+import '../../features/pengawasan/data/repositories/pengawasan_repository_impl.dart'
+    as _i365;
+import '../../features/pengawasan/domain/repositories/i_pengawasan_repository.dart'
+    as _i165;
+import '../../features/pengawasan/domain/usecases/pengawasan_usecase.dart'
+    as _i437;
+import '../../features/pengawasan/presentation/cubit/pengawasan_cubit.dart'
+    as _i527;
 import '../../features/printer/presentation/cubit/printer_cubit.dart' as _i377;
 import '../../features/profile/data/datasources/profile_remote_data_source.dart'
     as _i847;
@@ -376,6 +384,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i254.GetDataJukirUseCase>(
     () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),
   );
+  gh.lazySingleton<_i165.PengawasanRepository>(
+    () => _i365.PengawasanRepositoryImpl(gh<_i926.PengawasanDatasource>()),
+  );
   gh.lazySingleton<_i751.GetQrisRompiUseCase>(
     () => _i751.GetQrisRompiUseCase(gh<_i24.QrisRompiRepository>()),
   );
@@ -453,6 +464,9 @@ _i174.GetIt init(
       gh<_i502.ITransactionHistoryRepository>(),
     ),
   );
+  gh.lazySingleton<_i437.AddPengawasanUsecase>(
+    () => _i437.AddPengawasanUsecase(gh<_i165.PengawasanRepository>()),
+  );
   gh.factory<_i789.DashboardOpCubit>(
     () => _i789.DashboardOpCubit(gh<_i644.GetSummaryDashboardOpUsecase>()),
   );
@@ -481,6 +495,9 @@ _i174.GetIt init(
       gh<_i996.ProfileUseCase>(),
       gh<_i127.CheckDeviceUuidUseCase>(),
     ),
+  );
+  gh.factory<_i527.PengawasanCubit>(
+    () => _i527.PengawasanCubit(gh<_i437.AddPengawasanUsecase>()),
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(gh<_i212.GetLocalQrisUseCase>()),

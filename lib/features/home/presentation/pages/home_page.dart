@@ -4,10 +4,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
-import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
-import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/screens/laporan_form_screen.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/home_absensi_test_section.dart';
-import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/main_absensi_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
@@ -19,7 +16,6 @@ import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
-import '../../../pengawasan/presentation/widgets/card_rekap_laporan.dart';
 import '../../../update/presentation/cubit/check_update_cubit.dart';
 import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
@@ -337,6 +333,11 @@ class _HomePageState extends State<HomePage> {
                                 backgroundColor: Colors.orange,
                                 foregroundColor: Colors.white,
                                 elevation: 3,
+                                onTap: () {
+                                  context.pushNamed(
+                                    AppRoutes.addLaporanPelanggaran,
+                                  );
+                                },
                               ),
                               SpeedDialChild(
                                 child: const Icon(Icons.receipt_long_outlined),
