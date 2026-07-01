@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
-import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/enums/app_enums.dart';
-import '../pages/data_jukir_fake.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
@@ -75,26 +72,8 @@ class HomeHeaderWidget extends StatelessWidget {
                         ),
                       ),
                     ],
+
                     // SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: PbPrimaryButton(
-                            text: "Lihat Data Jukir",
-                            variant: PbButtonVariant.outlinedSecondaryLight,
-                            onPressed: () {
-                              // context.pushNamed(AppRoutes.dataJukir);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const DataJukirScreen2(),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -114,6 +93,12 @@ class HomeHeaderWidget extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          SizedBox(height: 16),
+          PbPrimaryButton(
+            text: "Lihat Data Jukir",
+            variant: PbButtonVariant.outlinedSecondaryLight,
+            onPressed: () {},
           ),
         ],
       ),

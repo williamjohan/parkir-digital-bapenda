@@ -127,6 +127,8 @@ import '../../features/payment/domain/usecases/watch_payment_status_usecase.dart
 import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
 import '../../features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart'
     as _i376;
+import '../../features/pengawasan/data/datasources/pengawasan_datasource.dart'
+    as _i926;
 import '../../features/printer/presentation/cubit/printer_cubit.dart' as _i377;
 import '../../features/profile/data/datasources/profile_remote_data_source.dart'
     as _i847;
@@ -257,6 +259,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i135.RealisasiRemoteDataSource>(
     () => _i135.RealisasiRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i926.PengawasanDatasource>(
+    () => _i926.PengawasanDatasourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i949.QrisRompiDatasource>(
     () => _i949.QrisRompiDatasourceImpl(gh<_i361.Dio>()),

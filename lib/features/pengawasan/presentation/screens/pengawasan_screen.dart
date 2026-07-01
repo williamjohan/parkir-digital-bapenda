@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/design_system/tokens/app_colors.dart';
 import '../widgets/card_rekap_laporan.dart';
 
 class LaporanPelanggaranScreen extends StatelessWidget {
