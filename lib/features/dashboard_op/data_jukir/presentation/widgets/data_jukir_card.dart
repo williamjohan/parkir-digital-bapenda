@@ -48,8 +48,35 @@ class DataJukirCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(entity.namaPetugas, style: AppTypography.heading6),
-
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              entity.namaPetugas,
+                              style: AppTypography.heading6,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Text(
+                              "Shift ${entity.shift}",
+                              style: AppTypography.bodySmall.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 4),
 
                       Text(
@@ -73,41 +100,6 @@ class DataJukirCard extends StatelessWidget {
             ),
           ),
 
-          Divider(height: 1, color: Colors.grey.shade200),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: _InfoItem(
-                    title: "Device ID",
-                    value: entity.deviceId,
-                    icon: Icons.phone_android,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Text(
-                    "Shift ${entity.shift}",
-                    style: AppTypography.bodyRegular.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(height: 1, color: Colors.grey.shade200),
           Padding(
             padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
             child: Column(
@@ -250,17 +242,16 @@ class _SummaryItem extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Icon(icon, size: 18, color: AppColors.primary),
-            ),
-            SizedBox(width: 4),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                title,
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+            Icon(icon, size: 18, color: AppColors.primary),
+            const SizedBox(width: 4),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  title,
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ),
             ),

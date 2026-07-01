@@ -164,36 +164,46 @@ class CardTotalOpWidget extends StatelessWidget {
             onTap: onTapDigital,
             child: Padding(
               padding: const EdgeInsets.only(top: 16),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 2.3,
-                children: [
-                  _miniInstrumentCard(
-                    title: "EDC",
-                    value: jmlEdc,
-                    icon: Icons.credit_card_rounded,
-                  ),
-                  _miniInstrumentCard(
-                    title: "QRIS Rompi",
-                    value: jmlQris,
-                    icon: Icons.qr_code_2_rounded,
-                  ),
-                  _miniInstrumentCard(
-                    title: "CCTV",
-                    value: jmlCctv,
-                    icon: Icons.videocam_rounded,
-                  ),
-                  _miniInstrumentCard(
-                    title: "TS",
-                    value: jmlTs,
-                    icon: Icons.touch_app_rounded,
-                  ),
-                ],
-              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  const spacing = 10.0;
+                  const columns = 2;
+                  final cardWidth = (constraints.maxWidth - spacing) / columns;
+                  const cardHeight = 56.0;
+                  final ratio = cardWidth / cardHeight;
+
+                  return GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: columns,
+                    mainAxisSpacing: spacing,
+                    crossAxisSpacing: spacing,
+                    childAspectRatio: ratio,
+                    children: [
+                      _miniInstrumentCard(
+                        title: "EDC",
+                        value: jmlEdc,
+                        icon: Icons.credit_card_rounded,
+                      ),
+                      _miniInstrumentCard(
+                        title: "QRIS Rompi",
+                        value: jmlQris,
+                        icon: Icons.qr_code_2_rounded,
+                      ),
+                      _miniInstrumentCard(
+                        title: "CCTV",
+                        value: jmlCctv,
+                        icon: Icons.videocam_rounded,
+                      ),
+                      _miniInstrumentCard(
+                        title: "TS",
+                        value: jmlTs,
+                        icon: Icons.touch_app_rounded,
+                      ),
+                    ],
+                  );
+                },
+              ), // ← swap ends here
             ),
           ),
           const SizedBox(height: 14),
