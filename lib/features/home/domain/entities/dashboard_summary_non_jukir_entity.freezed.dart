@@ -1776,3 +1776,232 @@ abstract class _BerbayarEntity implements BerbayarEntity {
   _$$BerbayarEntityImplCopyWith<_$BerbayarEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+/// @nodoc
+mixin _$StatusAbsensiHariIniEntity {
+  bool get hasCheckedIn => throw _privateConstructorUsedError;
+  bool get hasCheckedOut => throw _privateConstructorUsedError;
+  AbsensiEntity? get absenMasuk => throw _privateConstructorUsedError;
+  AbsensiEntity? get absenPulang => throw _privateConstructorUsedError;
+
+  /// Create a copy of StatusAbsensiHariIniEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $StatusAbsensiHariIniEntityCopyWith<StatusAbsensiHariIniEntity>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $StatusAbsensiHariIniEntityCopyWith<$Res> {
+  factory $StatusAbsensiHariIniEntityCopyWith(
+    StatusAbsensiHariIniEntity value,
+    $Res Function(StatusAbsensiHariIniEntity) then,
+  ) =
+      _$StatusAbsensiHariIniEntityCopyWithImpl<
+        $Res,
+        StatusAbsensiHariIniEntity
+      >;
+  @useResult
+  $Res call({
+    bool hasCheckedIn,
+    bool hasCheckedOut,
+    AbsensiEntity? absenMasuk,
+    AbsensiEntity? absenPulang,
+  });
+}
+
+/// @nodoc
+class _$StatusAbsensiHariIniEntityCopyWithImpl<
+  $Res,
+  $Val extends StatusAbsensiHariIniEntity
+>
+    implements $StatusAbsensiHariIniEntityCopyWith<$Res> {
+  _$StatusAbsensiHariIniEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of StatusAbsensiHariIniEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? hasCheckedIn = null,
+    Object? hasCheckedOut = null,
+    Object? absenMasuk = freezed,
+    Object? absenPulang = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            hasCheckedIn: null == hasCheckedIn
+                ? _value.hasCheckedIn
+                : hasCheckedIn // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            hasCheckedOut: null == hasCheckedOut
+                ? _value.hasCheckedOut
+                : hasCheckedOut // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            absenMasuk: freezed == absenMasuk
+                ? _value.absenMasuk
+                : absenMasuk // ignore: cast_nullable_to_non_nullable
+                      as AbsensiEntity?,
+            absenPulang: freezed == absenPulang
+                ? _value.absenPulang
+                : absenPulang // ignore: cast_nullable_to_non_nullable
+                      as AbsensiEntity?,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$StatusAbsensiHariIniEntityImplCopyWith<$Res>
+    implements $StatusAbsensiHariIniEntityCopyWith<$Res> {
+  factory _$$StatusAbsensiHariIniEntityImplCopyWith(
+    _$StatusAbsensiHariIniEntityImpl value,
+    $Res Function(_$StatusAbsensiHariIniEntityImpl) then,
+  ) = __$$StatusAbsensiHariIniEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    bool hasCheckedIn,
+    bool hasCheckedOut,
+    AbsensiEntity? absenMasuk,
+    AbsensiEntity? absenPulang,
+  });
+}
+
+/// @nodoc
+class __$$StatusAbsensiHariIniEntityImplCopyWithImpl<$Res>
+    extends
+        _$StatusAbsensiHariIniEntityCopyWithImpl<
+          $Res,
+          _$StatusAbsensiHariIniEntityImpl
+        >
+    implements _$$StatusAbsensiHariIniEntityImplCopyWith<$Res> {
+  __$$StatusAbsensiHariIniEntityImplCopyWithImpl(
+    _$StatusAbsensiHariIniEntityImpl _value,
+    $Res Function(_$StatusAbsensiHariIniEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of StatusAbsensiHariIniEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? hasCheckedIn = null,
+    Object? hasCheckedOut = null,
+    Object? absenMasuk = freezed,
+    Object? absenPulang = freezed,
+  }) {
+    return _then(
+      _$StatusAbsensiHariIniEntityImpl(
+        hasCheckedIn: null == hasCheckedIn
+            ? _value.hasCheckedIn
+            : hasCheckedIn // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        hasCheckedOut: null == hasCheckedOut
+            ? _value.hasCheckedOut
+            : hasCheckedOut // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        absenMasuk: freezed == absenMasuk
+            ? _value.absenMasuk
+            : absenMasuk // ignore: cast_nullable_to_non_nullable
+                  as AbsensiEntity?,
+        absenPulang: freezed == absenPulang
+            ? _value.absenPulang
+            : absenPulang // ignore: cast_nullable_to_non_nullable
+                  as AbsensiEntity?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$StatusAbsensiHariIniEntityImpl implements _StatusAbsensiHariIniEntity {
+  const _$StatusAbsensiHariIniEntityImpl({
+    required this.hasCheckedIn,
+    required this.hasCheckedOut,
+    this.absenMasuk,
+    this.absenPulang,
+  });
+
+  @override
+  final bool hasCheckedIn;
+  @override
+  final bool hasCheckedOut;
+  @override
+  final AbsensiEntity? absenMasuk;
+  @override
+  final AbsensiEntity? absenPulang;
+
+  @override
+  String toString() {
+    return 'StatusAbsensiHariIniEntity(hasCheckedIn: $hasCheckedIn, hasCheckedOut: $hasCheckedOut, absenMasuk: $absenMasuk, absenPulang: $absenPulang)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$StatusAbsensiHariIniEntityImpl &&
+            (identical(other.hasCheckedIn, hasCheckedIn) ||
+                other.hasCheckedIn == hasCheckedIn) &&
+            (identical(other.hasCheckedOut, hasCheckedOut) ||
+                other.hasCheckedOut == hasCheckedOut) &&
+            (identical(other.absenMasuk, absenMasuk) ||
+                other.absenMasuk == absenMasuk) &&
+            (identical(other.absenPulang, absenPulang) ||
+                other.absenPulang == absenPulang));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    hasCheckedIn,
+    hasCheckedOut,
+    absenMasuk,
+    absenPulang,
+  );
+
+  /// Create a copy of StatusAbsensiHariIniEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$StatusAbsensiHariIniEntityImplCopyWith<_$StatusAbsensiHariIniEntityImpl>
+  get copyWith =>
+      __$$StatusAbsensiHariIniEntityImplCopyWithImpl<
+        _$StatusAbsensiHariIniEntityImpl
+      >(this, _$identity);
+}
+
+abstract class _StatusAbsensiHariIniEntity
+    implements StatusAbsensiHariIniEntity {
+  const factory _StatusAbsensiHariIniEntity({
+    required final bool hasCheckedIn,
+    required final bool hasCheckedOut,
+    final AbsensiEntity? absenMasuk,
+    final AbsensiEntity? absenPulang,
+  }) = _$StatusAbsensiHariIniEntityImpl;
+
+  @override
+  bool get hasCheckedIn;
+  @override
+  bool get hasCheckedOut;
+  @override
+  AbsensiEntity? get absenMasuk;
+  @override
+  AbsensiEntity? get absenPulang;
+
+  /// Create a copy of StatusAbsensiHariIniEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$StatusAbsensiHariIniEntityImplCopyWith<_$StatusAbsensiHariIniEntityImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}

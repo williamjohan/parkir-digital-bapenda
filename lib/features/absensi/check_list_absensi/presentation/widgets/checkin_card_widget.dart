@@ -191,13 +191,6 @@ class CheckInCardWidget extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: InstrumentBadgeWidget(
-                  label: "CCTV",
-                  isActive: checklist!.cctv,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: InstrumentBadgeWidget(
                   label: "TSpark",
                   isActive: checklist!.tsPark,
                 ),

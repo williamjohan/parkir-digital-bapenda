@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../absensi/check_list_absensi/domain/entities/absensi_entity.dart';
+
 part 'dashboard_summary_non_jukir_entity.freezed.dart';
 
 @freezed
@@ -83,4 +85,14 @@ class BerbayarEntity with _$BerbayarEntity {
     required int total,
     required double persentase,
   }) = _BerbayarEntity;
+}
+
+@freezed
+class StatusAbsensiHariIniEntity with _$StatusAbsensiHariIniEntity {
+  const factory StatusAbsensiHariIniEntity({
+    required bool hasCheckedIn,
+    required bool hasCheckedOut,
+    AbsensiEntity? absenMasuk,
+    AbsensiEntity? absenPulang,
+  }) = _StatusAbsensiHariIniEntity;
 }

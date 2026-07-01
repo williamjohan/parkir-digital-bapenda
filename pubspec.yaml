@@ -44,6 +44,8 @@ dependencies:
   esc_pos_utils_plus: ^2.0.3
   device_info_plus: ^12.4.0
   connectivity_plus: ^7.1.1
+  image_picker: ^1.1.2
+  geocoding: ^4.0.0
   # flutter_bluetooth_serial: ^0.4.0 # (Legacy/Unused)
 
   # --- OTA Update System ---

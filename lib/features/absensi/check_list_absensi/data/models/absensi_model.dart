@@ -136,7 +136,6 @@ class AbsensiCheckListModel {
     return AbsensiCheckListModel(
       edc: entity.edc,
       qrisRompi: entity.qrisRompi,
-      cctv: entity.cctv,
       tsPark: entity.tsPark,
       totalMotor: entity.totalMotor,
       totalMobil: entity.totalMobil,
@@ -150,7 +149,6 @@ extension AbsensiCheckListModelExt on AbsensiCheckListModel {
     return AbsensiCheckList(
       edc: edc,
       qrisRompi: qrisRompi,
-      cctv: cctv,
       tsPark: tsPark,
       totalMotor: totalMotor,
       totalMobil: totalMobil,
