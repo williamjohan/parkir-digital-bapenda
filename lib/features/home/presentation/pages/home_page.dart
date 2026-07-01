@@ -146,9 +146,11 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
+                                              // CARD ABSENSI
                                               PbPermissionGate(
                                                 allowedRoles: const [
-                                                  RoleLoginDigitalParkir.jukir,
+                                                  RoleLoginDigitalParkir
+                                                      .pengawas,
                                                 ],
                                                 currentRole: state.role,
                                                 child: const Padding(
@@ -159,12 +161,16 @@ class _HomePageState extends State<HomePage> {
                                                       HomeAbsensiTestSection(),
                                                 ),
                                               ),
+
+                                              // CARD TOTAL PENDAPATAN
                                               PbPermissionGate(
                                                 allowedRoles: [
                                                   RoleLoginDigitalParkir.jukir,
                                                   RoleLoginDigitalParkir.wp,
                                                   RoleLoginDigitalParkir
                                                       .bapenda,
+                                                  RoleLoginDigitalParkir
+                                                      .pengawas,
                                                 ],
                                                 currentRole: state.role,
                                                 child: Padding(
@@ -189,12 +195,16 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
+
+                                              // CARD REKAP KENDARAAN
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir.jukir,
                                                   RoleLoginDigitalParkir
                                                       .bapenda,
                                                   RoleLoginDigitalParkir.wp,
+                                                  RoleLoginDigitalParkir
+                                                      .pengawas,
                                                 ],
                                                 currentRole: state.role,
                                                 child: CardRekapKendaraanWidget(
@@ -203,6 +213,8 @@ class _HomePageState extends State<HomePage> {
                                                   laporanPelanggaran: 4,
                                                 ),
                                               ),
+
+                                              // CARD TOTAL OP
                                               PbPermissionGate(
                                                 allowedRoles: [
                                                   RoleLoginDigitalParkir
@@ -267,6 +279,7 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               ),
 
+                                              // CARD LAST ACTIVITY
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir.jukir,
@@ -284,6 +297,8 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
+
+                                              // CARD JENIS PEMBAYARAN
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir
