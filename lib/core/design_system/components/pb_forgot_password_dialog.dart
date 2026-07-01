@@ -86,7 +86,7 @@ class PBForgotPasswordDialog extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      "Harap hubungi bagian IT Bapenda untuk melakukan reset kata sandi Anda.",
+                      "Harap hubungi Bapenda untuk melakukan reset kata sandi Anda.",
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.primary,
                         height: 1.5,
