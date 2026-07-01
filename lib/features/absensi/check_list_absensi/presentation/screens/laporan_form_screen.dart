@@ -15,7 +15,7 @@ enum LaporanKategori {
       case LaporanKategori.jukirTidakAda:
         return "Jukir Tidak Ada";
       case LaporanKategori.jukirTidakSesuaiIdentitas:
-        return "Jukir Tidak Sesuai dengan Identitas Kartu Jukir";
+        return "Jukir Tidak Menggunakan Alat Pembayaran Resmi dari Bapenda";
       case LaporanKategori.pembayaranTunai:
         return "Pembayaran Menggunakan Tunai";
       case LaporanKategori.lainnya:
