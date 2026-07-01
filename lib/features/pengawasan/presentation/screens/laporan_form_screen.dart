@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
@@ -8,6 +9,7 @@ import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/laporan_section_card.dart';
 import '../../../../core/design_system/components/dropdown/pb_dropdown.dart';
 import '../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../../domain/entities/jenis_pelanggaran/jenis_pelanggaran_entity.dart';
 import '../cubit/pengawasan_cubit.dart';
 import '../cubit/pengawasan_state.dart';
@@ -181,11 +183,24 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
           BlocConsumer<PengawasanCubit, PengawasanState>(
             listener: (context, state) {
               if (state.isSuccess) {
+                final selected = state.jenisPelanggaran.firstWhere(
+                  (e) => e.id == state.request.jenisPel,
+                );
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Laporan berhasil dikirim')),
                 );
 
-                Navigator.pop(context);
+                context.pushReplacementNamed(
+                  AppRoutes.detailLaporanPelanggaran,
+                  extra: {
+                    'namaJenisPelanggaran': selected.nama,
+                    'keterangan': _keteranganController.text.trim(),
+                    'foto': state.request.buktiFoto?.path,
+                  },
+                );
+
+                return;
               }
 
               if (state.errorMessage != null) {

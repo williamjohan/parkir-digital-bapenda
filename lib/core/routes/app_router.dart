@@ -12,6 +12,7 @@ import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_o
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/pendapatan_digital_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/cubit/pengawasan_cubit.dart';
+import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/detail_laporan_pengawasan.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/laporan_form_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/pengawasan_screen.dart';
 import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart';
@@ -104,6 +105,19 @@ class AppRouter {
           path: AppRoutes.laporanPelanggaran,
           name: AppRoutes.laporanPelanggaran,
           builder: (context, state) => const LaporanPelanggaranScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.detailLaporanPelanggaran,
+          name: AppRoutes.detailLaporanPelanggaran,
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+
+            return DetailLaporanPengawasanScreen(
+              namaJenisPelanggaran: extra['namaJenisPelanggaran'] as String,
+              keterangan: extra['keterangan'] as String,
+              foto: extra['foto'] as String?,
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.addLaporanPelanggaran,
