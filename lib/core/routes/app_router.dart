@@ -102,11 +102,6 @@ class AppRouter {
         ),
         // pengawas
         GoRoute(
-          path: AppRoutes.laporanPelanggaran,
-          name: AppRoutes.laporanPelanggaran,
-          builder: (context, state) => const LaporanPelanggaranScreen(),
-        ),
-        GoRoute(
           path: AppRoutes.detailLaporanPelanggaran,
           name: AppRoutes.detailLaporanPelanggaran,
           builder: (context, state) {
@@ -118,6 +113,14 @@ class AppRouter {
               foto: extra['foto'] as String?,
             );
           },
+        ),
+        GoRoute(
+          path: AppRoutes.laporanPelanggaran,
+          name: AppRoutes.laporanPelanggaran,
+          builder: (context, state) => BlocProvider(
+            create: (_) => locator<PengawasanCubit>()..getLaporanPengawasan(),
+            child: const LaporanPelanggaranScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.addLaporanPelanggaran,

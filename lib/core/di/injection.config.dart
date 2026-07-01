@@ -487,6 +487,15 @@ _i174.GetIt init(
   gh.lazySingleton<_i437.AddPengawasanUsecase>(
     () => _i437.AddPengawasanUsecase(gh<_i165.PengawasanRepository>()),
   );
+  gh.lazySingleton<_i437.GetLaporanPengawasanUsecase>(
+    () => _i437.GetLaporanPengawasanUsecase(gh<_i165.PengawasanRepository>()),
+  );
+  gh.factory<_i527.PengawasanCubit>(
+    () => _i527.PengawasanCubit(
+      gh<_i437.AddPengawasanUsecase>(),
+      gh<_i437.GetLaporanPengawasanUsecase>(),
+    ),
+  );
   gh.factory<_i789.DashboardOpCubit>(
     () => _i789.DashboardOpCubit(gh<_i644.GetSummaryDashboardOpUsecase>()),
   );
@@ -515,9 +524,6 @@ _i174.GetIt init(
       gh<_i996.ProfileUseCase>(),
       gh<_i127.CheckDeviceUuidUseCase>(),
     ),
-  );
-  gh.factory<_i527.PengawasanCubit>(
-    () => _i527.PengawasanCubit(gh<_i437.AddPengawasanUsecase>()),
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(gh<_i212.GetLocalQrisUseCase>()),

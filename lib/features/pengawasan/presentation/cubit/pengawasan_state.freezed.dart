@@ -20,9 +20,12 @@ mixin _$PengawasanState {
   RequestLaporanPengawasanEntity get request =>
       throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
+  bool get isLoadingLaporan => throw _privateConstructorUsedError;
   bool get isSuccess => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
   List<JenisPelanggaranEntity> get jenisPelanggaran =>
+      throw _privateConstructorUsedError;
+  List<LaporanPengawasanEntity> get laporan =>
       throw _privateConstructorUsedError;
 
   /// Create a copy of PengawasanState
@@ -42,9 +45,11 @@ abstract class $PengawasanStateCopyWith<$Res> {
   $Res call({
     RequestLaporanPengawasanEntity request,
     bool isLoading,
+    bool isLoadingLaporan,
     bool isSuccess,
     String? errorMessage,
     List<JenisPelanggaranEntity> jenisPelanggaran,
+    List<LaporanPengawasanEntity> laporan,
   });
 
   $RequestLaporanPengawasanEntityCopyWith<$Res> get request;
@@ -67,9 +72,11 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
   $Res call({
     Object? request = null,
     Object? isLoading = null,
+    Object? isLoadingLaporan = null,
     Object? isSuccess = null,
     Object? errorMessage = freezed,
     Object? jenisPelanggaran = null,
+    Object? laporan = null,
   }) {
     return _then(
       _value.copyWith(
@@ -80,6 +87,10 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
             isLoading: null == isLoading
                 ? _value.isLoading
                 : isLoading // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isLoadingLaporan: null == isLoadingLaporan
+                ? _value.isLoadingLaporan
+                : isLoadingLaporan // ignore: cast_nullable_to_non_nullable
                       as bool,
             isSuccess: null == isSuccess
                 ? _value.isSuccess
@@ -93,6 +104,10 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
                 ? _value.jenisPelanggaran
                 : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
                       as List<JenisPelanggaranEntity>,
+            laporan: null == laporan
+                ? _value.laporan
+                : laporan // ignore: cast_nullable_to_non_nullable
+                      as List<LaporanPengawasanEntity>,
           )
           as $Val,
     );
@@ -123,9 +138,11 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
   $Res call({
     RequestLaporanPengawasanEntity request,
     bool isLoading,
+    bool isLoadingLaporan,
     bool isSuccess,
     String? errorMessage,
     List<JenisPelanggaranEntity> jenisPelanggaran,
+    List<LaporanPengawasanEntity> laporan,
   });
 
   @override
@@ -148,9 +165,11 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
   $Res call({
     Object? request = null,
     Object? isLoading = null,
+    Object? isLoadingLaporan = null,
     Object? isSuccess = null,
     Object? errorMessage = freezed,
     Object? jenisPelanggaran = null,
+    Object? laporan = null,
   }) {
     return _then(
       _$PengawasanStateImpl(
@@ -161,6 +180,10 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
         isLoading: null == isLoading
             ? _value.isLoading
             : isLoading // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isLoadingLaporan: null == isLoadingLaporan
+            ? _value.isLoadingLaporan
+            : isLoadingLaporan // ignore: cast_nullable_to_non_nullable
                   as bool,
         isSuccess: null == isSuccess
             ? _value.isSuccess
@@ -174,6 +197,10 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
             ? _value._jenisPelanggaran
             : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
                   as List<JenisPelanggaranEntity>,
+        laporan: null == laporan
+            ? _value._laporan
+            : laporan // ignore: cast_nullable_to_non_nullable
+                  as List<LaporanPengawasanEntity>,
       ),
     );
   }
@@ -185,10 +212,13 @@ class _$PengawasanStateImpl implements _PengawasanState {
   const _$PengawasanStateImpl({
     this.request = const RequestLaporanPengawasanEntity(),
     this.isLoading = false,
+    this.isLoadingLaporan = false,
     this.isSuccess = false,
     this.errorMessage,
     final List<JenisPelanggaranEntity> jenisPelanggaran = const [],
-  }) : _jenisPelanggaran = jenisPelanggaran;
+    final List<LaporanPengawasanEntity> laporan = const [],
+  }) : _jenisPelanggaran = jenisPelanggaran,
+       _laporan = laporan;
 
   @override
   @JsonKey()
@@ -196,6 +226,9 @@ class _$PengawasanStateImpl implements _PengawasanState {
   @override
   @JsonKey()
   final bool isLoading;
+  @override
+  @JsonKey()
+  final bool isLoadingLaporan;
   @override
   @JsonKey()
   final bool isSuccess;
@@ -211,9 +244,18 @@ class _$PengawasanStateImpl implements _PengawasanState {
     return EqualUnmodifiableListView(_jenisPelanggaran);
   }
 
+  final List<LaporanPengawasanEntity> _laporan;
+  @override
+  @JsonKey()
+  List<LaporanPengawasanEntity> get laporan {
+    if (_laporan is EqualUnmodifiableListView) return _laporan;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_laporan);
+  }
+
   @override
   String toString() {
-    return 'PengawasanState(request: $request, isLoading: $isLoading, isSuccess: $isSuccess, errorMessage: $errorMessage, jenisPelanggaran: $jenisPelanggaran)';
+    return 'PengawasanState(request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan)';
   }
 
   @override
@@ -224,6 +266,8 @@ class _$PengawasanStateImpl implements _PengawasanState {
             (identical(other.request, request) || other.request == request) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
+            (identical(other.isLoadingLaporan, isLoadingLaporan) ||
+                other.isLoadingLaporan == isLoadingLaporan) &&
             (identical(other.isSuccess, isSuccess) ||
                 other.isSuccess == isSuccess) &&
             (identical(other.errorMessage, errorMessage) ||
@@ -231,7 +275,8 @@ class _$PengawasanStateImpl implements _PengawasanState {
             const DeepCollectionEquality().equals(
               other._jenisPelanggaran,
               _jenisPelanggaran,
-            ));
+            ) &&
+            const DeepCollectionEquality().equals(other._laporan, _laporan));
   }
 
   @override
@@ -239,9 +284,11 @@ class _$PengawasanStateImpl implements _PengawasanState {
     runtimeType,
     request,
     isLoading,
+    isLoadingLaporan,
     isSuccess,
     errorMessage,
     const DeepCollectionEquality().hash(_jenisPelanggaran),
+    const DeepCollectionEquality().hash(_laporan),
   );
 
   /// Create a copy of PengawasanState
@@ -260,9 +307,11 @@ abstract class _PengawasanState implements PengawasanState {
   const factory _PengawasanState({
     final RequestLaporanPengawasanEntity request,
     final bool isLoading,
+    final bool isLoadingLaporan,
     final bool isSuccess,
     final String? errorMessage,
     final List<JenisPelanggaranEntity> jenisPelanggaran,
+    final List<LaporanPengawasanEntity> laporan,
   }) = _$PengawasanStateImpl;
 
   @override
@@ -270,11 +319,15 @@ abstract class _PengawasanState implements PengawasanState {
   @override
   bool get isLoading;
   @override
+  bool get isLoadingLaporan;
+  @override
   bool get isSuccess;
   @override
   String? get errorMessage;
   @override
   List<JenisPelanggaranEntity> get jenisPelanggaran;
+  @override
+  List<LaporanPengawasanEntity> get laporan;
 
   /// Create a copy of PengawasanState
   /// with the given fields replaced by the non-null parameter values.

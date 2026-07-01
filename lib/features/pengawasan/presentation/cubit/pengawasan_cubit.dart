@@ -8,8 +8,9 @@ import 'pengawasan_state.dart';
 @injectable
 class PengawasanCubit extends Cubit<PengawasanState> {
   final AddPengawasanUsecase _addPengawasanUsecase;
+  final GetLaporanPengawasanUsecase _getLaporanPengawasanUsecase;
 
-  PengawasanCubit(this._addPengawasanUsecase) : super(const PengawasanState());
+  PengawasanCubit(this._addPengawasanUsecase, this._getLaporanPengawasanUsecase) : super(const PengawasanState());
 
   void loadJenisPelanggaran() {
     emit(state.copyWith(jenisPelanggaran: dummyJenisPelanggaran));
@@ -61,6 +62,19 @@ void removeFoto() {
       );
     }
   }
+  
+  Future<void> getLaporanPengawasan() async {
+    emit(state.copyWith(isLoadingLaporan: true, errorMessage: null));
+
+    try {
+      final result = await _getLaporanPengawasanUsecase();
+
+      emit(state.copyWith(isLoadingLaporan: false, laporan: result));
+    } catch (e) {
+      emit(state.copyWith(isLoadingLaporan: false, errorMessage: e.toString()));
+    }
+  }
+  
   void reset() {
     emit(const PengawasanState());
   }

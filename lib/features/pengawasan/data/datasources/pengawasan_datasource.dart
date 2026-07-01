@@ -5,8 +5,11 @@ import '../../../../../../core/utils/app_logger.dart';
 import '../../../../../core/network/api_endpoints.dart';
 import '../../../../../core/network/dio_error_handler.dart';
 import '../../domain/entities/request_laporan_pengawasan_entity/request_laporan_pengawasan_entity.dart';
+import '../models/laporan_pengawasan/laporan_pengawasan_model.dart';
 
 abstract class PengawasanDatasource {
+   Future<List<LaporanPengawasanModel>> getLaporanPengawasan();
+   
   Future<void> addPengawasan(RequestLaporanPengawasanEntity request);
 }
 
@@ -15,6 +18,54 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
   final Dio _dio;
 
   PengawasanDatasourceImpl(this._dio);
+
+  @override
+  Future<List<LaporanPengawasanModel>> getLaporanPengawasan() async {
+    try {
+      AppLogger.info('Request Get Laporan Pengawasan');
+
+      final response = await _dio.get(
+        ApiEndpoints.pengawasLaporanList,
+      );
+
+      AppLogger.info(
+        'Response Get Laporan Pengawasan: ${response.data}',
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(
+          statusCode: response.statusCode ?? 500,
+          message:
+              response.data?['message'] ??
+              'Gagal mengambil data laporan.',
+        );
+      }
+
+      final List<dynamic> data = response.data['data'];
+
+      return data
+          .map(
+            (e) => LaporanPengawasanModel.fromJson(
+              e as Map<String, dynamic>,
+            ),
+          )
+          .toList();
+    } on DioException catch (e) {
+      AppLogger.error('>>> [DIO ERROR] ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Internal Error Get Laporan Pengawasan',
+        e,
+        stackTrace,
+      );
+
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal.',
+      );
+    }
+  }
 
   @override
   Future<void> addPengawasan(RequestLaporanPengawasanEntity request) async {
