@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
@@ -18,7 +19,7 @@ import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
-import '../../../pengawasan/main_pengawasan/presentation/widgets/card_rekap_laporan.dart';
+import '../../../pengawasan/presentation/widgets/card_rekap_laporan.dart';
 import '../../../update/presentation/cubit/check_update_cubit.dart';
 import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
@@ -310,7 +311,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-
                   floatingActionButton: FeatureFlags.enableCreateOrderFeature
                       ? PbPermissionGate(
                           allowedRoles: const [
@@ -318,22 +318,39 @@ class _HomePageState extends State<HomePage> {
                             RoleLoginDigitalParkir.bapenda,
                           ],
                           currentRole: state.role,
-                          child: FloatingActionButton(
+                          child: SpeedDial(
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
-                            shape: const CircleBorder(),
-                            onPressed: () async {
-                              await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => LaporanFormScreen(
-                                    onSubmit: (result) {
-                                      // TODO: sambungin ke cubit/usecase laporan
-                                    },
-                                  ),
+                            icon: Icons.add,
+                            activeIcon: Icons.close,
+                            spacing: 14,
+                            spaceBetweenChildren: 14,
+                            children: [
+                              SpeedDialChild(
+                                child: const Icon(Icons.report_outlined),
+                                label: 'Buat Laporan',
+                                labelStyle: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
                                 ),
-                              );
-                            },
-                            child: const Icon(Icons.add),
+                                labelBackgroundColor: Colors.white,
+                                backgroundColor: Colors.orange,
+                                foregroundColor: Colors.white,
+                                elevation: 3,
+                              ),
+                              SpeedDialChild(
+                                child: const Icon(Icons.receipt_long_outlined),
+                                label: 'Buat Transaksi',
+                                labelStyle: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                                labelBackgroundColor: Colors.white,
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                elevation: 3,
+                              ),
+                            ],
                           ),
                         )
                       : null,
