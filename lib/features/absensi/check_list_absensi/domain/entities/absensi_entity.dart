@@ -22,7 +22,6 @@ class AbsensiEntity extends Equatable {
 class AbsensiCheckList extends Equatable {
   final bool edc;
   final bool qrisRompi;
-  final bool cctv;
   final bool tsPark;
   final int totalMotor;
   final int totalMobil;
@@ -30,19 +29,11 @@ class AbsensiCheckList extends Equatable {
   const AbsensiCheckList({
     required this.edc,
     required this.qrisRompi,
-    required this.cctv,
     required this.tsPark,
     required this.totalMotor,
     required this.totalMobil,
   });
 
   @override
-  List<Object?> get props => [
-    edc,
-    qrisRompi,
-    cctv,
-    tsPark,
-    totalMotor,
-    totalMobil,
-  ];
+  List<Object?> get props => [edc, qrisRompi, tsPark, totalMotor, totalMobil];
 }
