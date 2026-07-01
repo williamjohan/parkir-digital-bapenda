@@ -40,6 +40,7 @@ enum RoleLoginDigitalParkir {
   jukir(-1, "Jukir"),
   wp(1, "Wp"),
   bapenda(2, "Bapenda"),
+  pengawas(3, "Pengawas"),
   tidakDiketahui(0, "Tidak Diketahui");
 
   final int value;
