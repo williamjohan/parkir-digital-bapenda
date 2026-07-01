@@ -11,6 +11,7 @@ import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presenta
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/pendapatan_digital_screen.dart';
+import 'package:parkir_digital_bapenda/features/pengawasan/main_pengawasan/presentation/screens/pengawasan_screen.dart';
 import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart';
 import '../../features/daftar_nop/presentation/screens/daftar_nop_screen.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
@@ -93,6 +94,12 @@ class AppRouter {
             create: (_) => locator<DaftarNopCubit>(),
             child: const DaftarNopScreen(),
           ),
+        ),
+        // pengawas
+        GoRoute(
+          path: AppRoutes.laporanPelanggaran,
+          name: AppRoutes.laporanPelanggaran,
+          builder: (context, state) => const LaporanPelanggaranScreen(),
         ),
         GoRoute(
           path: AppRoutes.home,

@@ -17,6 +17,7 @@ import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../pengawasan/main_pengawasan/presentation/widgets/card_rekap_laporan.dart';
 import '../../../update/presentation/cubit/check_update_cubit.dart';
 import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
@@ -144,48 +145,6 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              // PbPermissionGate(
-                                              //   allowedRoles: const [
-                                              //     RoleLoginDigitalParkir.wp,
-                                              //   ],
-                                              //   currentRole: state.role,
-                                              //   child: Padding(
-                                              //     padding:
-                                              //         const EdgeInsets.only(
-                                              //           bottom: 16,
-                                              //         ),
-                                              //     child: CardObjekPajakWidget(
-                                              //       nop: state.nop,
-                                              //       namaObjekPajak:
-                                              //           state.namaOp,
-                                              //       alamat: state.namaLokasi,
-                                              //       onPressedGantiObjek: () async {
-                                              //         final result = await context
-                                              //             .pushNamed(
-                                              //               AppRoutes
-                                              //                   .searchObjekPajak,
-                                              //               extra: {
-                                              //                 'role':
-                                              //                     state.role,
-                                              //               },
-                                              //             );
-
-                                              //         if (result != null) {
-                                              //           await context
-                                              //               .read<HomeCubit>()
-                                              //               .changeObjekPajak(
-                                              //                 result
-                                              //                     as Map<
-                                              //                       String,
-                                              //                       dynamic
-                                              //                     >,
-                                              //               );
-                                              //         }
-                                              //       },
-                                              //       onPressedLihatDetail: () {},
-                                              //     ),
-                                              //   ),
-                                              // ),
                                               PbPermissionGate(
                                                 allowedRoles: const [
                                                   RoleLoginDigitalParkir.jukir,
@@ -196,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                                                     bottom: 16,
                                                   ),
                                                   child:
-                                                      HomeAbsensiTestSection(), 
+                                                      HomeAbsensiTestSection(),
                                                 ),
                                               ),
                                               PbPermissionGate(
@@ -240,6 +199,7 @@ class _HomePageState extends State<HomePage> {
                                                 child: CardRekapKendaraanWidget(
                                                   motorCount: state.motorCount,
                                                   mobilCount: state.mobilCount,
+                                                  laporanPelanggaran: 10,
                                                 ),
                                               ),
                                               PbPermissionGate(
@@ -336,6 +296,8 @@ class _HomePageState extends State<HomePage> {
                                                           .sofParkirResults,
                                                     ),
                                               ),
+                                              // SizedBox(height: 16),
+                                              // CardRekapLaporan(),
                                             ],
                                           ),
                                         ),
