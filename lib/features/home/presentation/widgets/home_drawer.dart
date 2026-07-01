@@ -179,6 +179,33 @@ class HomeDrawer extends StatelessWidget {
                       context.goNamed(AppRoutes.printerSetting);
                     },
                   ),
+
+                PbPermissionGate(
+                  allowedRoles: const [
+                    RoleLoginDigitalParkir.jukir,
+                    RoleLoginDigitalParkir.bapenda,
+                  ],
+                  currentRole:
+                      role, // Menggunakan variabel 'role' yang disuplai dari State Cubit Anda
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons
+                          .calendar_month_outlined, // Icon kalender yang bersih untuk representasi jadwal
+                      color: AppColors.textPrimary,
+                    ),
+                    title: const Text(
+                      'Jadwal & Kehadiran',
+                      style: AppTypography.bodyRegular,
+                    ),
+                    onTap: () {
+                      // 1. Tutup drawer terlebih dahulu agar tidak menghalangi transisi layar
+                      Navigator.pop(context);
+
+                      // 2. Navigasi ke layar Jadwal menggunakan pushNamed dari GoRouter
+                      context.pushNamed(AppRoutes.jadwalKehadiran);
+                    },
+                  ),
+                ),
                 ListTile(
                   leading: const Icon(
                     Icons.system_update_alt_rounded,

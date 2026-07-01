@@ -20,7 +20,6 @@ class PengawasanEntity extends Equatable {
 class KategoriLaporanEntity extends Equatable {
   final String id;
   final String name;
-
   const KategoriLaporanEntity({required this.id, required this.name});
 
   @override

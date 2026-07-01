@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                                                 child: CardRekapKendaraanWidget(
                                                   motorCount: state.motorCount,
                                                   mobilCount: state.mobilCount,
-                                                  laporanPelanggaran: 10,
+                                                  laporanPelanggaran: 4,
                                                 ),
                                               ),
                                               PbPermissionGate(
