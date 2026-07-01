@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
+import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/enums/app_enums.dart';
+import '../pages/data_jukir_fake.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
@@ -22,73 +26,96 @@ class HomeHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 29),
-      child: SizedBox(
-        height: 85,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment
-              .start, // Atur ke center jika ingin teks berada di tengah area secara vertikal
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment
-                    .center, // Membantu teks tetap seimbang di tengah ruang SizedBox
-                children: [
-                  if (role != RoleLoginDigitalParkir.jukir) ...[
+      child: Column(
+        children: [
+          Row(
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment
+                .start, // Atur ke center jika ingin teks berada di tengah area secara vertikal
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment
+                      .center, // Membantu teks tetap seimbang di tengah ruang SizedBox
+                  children: [
+                    if (role != RoleLoginDigitalParkir.jukir) ...[
+                      Text(
+                        "TS PARK",
+                        style: AppTypography.heading1.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "BAPENDA KOTA SURABAYA",
+                        style: AppTypography.caption.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                     Text(
-                      "TS PARK",
+                      "Hallo, $namaJukir !",
                       style: AppTypography.heading1.copyWith(
                         color: Colors.white,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      "BAPENDA KOTA SURABAYA",
-                      style: AppTypography.caption.copyWith(
-                        color: Colors.white,
+                    if (role == RoleLoginDigitalParkir.jukir) ...[
+                      Text(
+                        "NOP : $nop",
+                        style: AppTypography.bodyRegular.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
+                      Text(
+                        namaObjekPajak ?? '',
+                        style: AppTypography.bodySemiBold.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                    // SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: PbPrimaryButton(
+                            text: "Lihat Data Jukir",
+                            variant: PbButtonVariant.outlinedSecondaryLight,
+                            onPressed: () {
+                              // context.pushNamed(AppRoutes.dataJukir);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const DataJukirScreen2(),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                  Text(
-                    "Hallo, $namaJukir !",
-                    style: AppTypography.heading1.copyWith(color: Colors.white),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              // const SizedBox(width: 16),
+              Builder(
+                builder: (context) => Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
                   ),
-                  if (role == RoleLoginDigitalParkir.jukir) ...[
-                    Text(
-                      "NOP : $nop",
-                      style: AppTypography.bodyRegular.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      namaObjekPajak ?? '',
-                      style: AppTypography.bodySemiBold.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Builder(
-              builder: (context) => Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.white, size: 20),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
+                  child: IconButton(
+                    icon: const Icon(Icons.menu, color: Colors.white, size: 20),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
