@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_forgot_password_dialog.dart';
 
 class LoginFormSheetWidget extends StatefulWidget {
   final VoidCallback onClose;
@@ -113,7 +114,7 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                     ],
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => PBForgotPasswordDialog.show(context),
                     child: const Text(
                       "Lupa Kata Sandi?",
                       style: TextStyle(color: AppColors.primary),
