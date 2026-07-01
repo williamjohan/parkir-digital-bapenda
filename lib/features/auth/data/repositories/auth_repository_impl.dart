@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/database_helper_2.dart';
@@ -13,7 +14,6 @@ import '../models/auth_response_model.dart';
 @LazySingleton(as: IAuthRepository)
 class AuthRepositoryImpl implements IAuthRepository {
   final IAuthRemoteDataSource _remoteDataSource;
-
   final ISecureStorageManager _secureStorage;
   final DatabaseHelper2 _databaseHelper;
 
@@ -39,7 +39,7 @@ class AuthRepositoryImpl implements IAuthRepository {
         await _secureStorage.saveRoleId(response.roleLoginId);
 
         //  3. VALIDASI & SIMPAN UUID (Mekanisme Single Device)
-        if (response.roleLoginId != 3 && response.uuidStatic.isNotEmpty) {
+        if (response.roleLoginId > 3 && response.uuidStatic.isNotEmpty) {
           await _secureStorage.saveDeviceUUID(response.uuidStatic);
         }
 
@@ -98,7 +98,13 @@ class AuthRepositoryImpl implements IAuthRepository {
 
   @override
   Future<bool> checkDeviceUuid() async {
+    final profileRoleId = await _secureStorage.getRoleId();
+
     try {
+      if (profileRoleId == RoleLoginDigitalParkir.pengawas.value) {
+        return true;
+      }
+
       return await _remoteDataSource.checkDeviceUuid();
     } catch (_) {
       return false;

@@ -84,7 +84,8 @@ class HomeDrawer extends StatelessWidget {
                   ),
 
                   title: Text(
-                    role == RoleLoginDigitalParkir.jukir
+                    (role == RoleLoginDigitalParkir.jukir ||
+                            role == RoleLoginDigitalParkir.pengawas)
                         ? 'Riwayat Transaksi'
                         : 'Objek Pajak',
                     style: AppTypography.bodyRegular,
@@ -93,7 +94,8 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () async {
                     Navigator.pop(context);
 
-                    if (role == RoleLoginDigitalParkir.jukir) {
+                    if (role == RoleLoginDigitalParkir.jukir ||
+                        role == RoleLoginDigitalParkir.pengawas) {
                       context.pushNamed(
                         AppRoutes.history,
                         extra: {'isFree': false},
@@ -150,19 +152,28 @@ class HomeDrawer extends StatelessWidget {
                     },
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.person_outline,
-                    color: AppColors.textPrimary,
+
+                PbPermissionGate(
+                  allowedRoles: [
+                    RoleLoginDigitalParkir.bapenda,
+                    RoleLoginDigitalParkir.jukir,
+                    RoleLoginDigitalParkir.wp,
+                  ],
+                  currentRole: role,
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.person_outline,
+                      color: AppColors.textPrimary,
+                    ),
+                    title: const Text(
+                      'Profile',
+                      style: AppTypography.bodyRegular,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context); // Tutup drawer
+                      context.push(AppRoutes.profile);
+                    },
                   ),
-                  title: const Text(
-                    'Profile',
-                    style: AppTypography.bodyRegular,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context); // Tutup drawer
-                    context.push(AppRoutes.profile);
-                  },
                 ),
                 if (FeatureFlags.enablePrinterFeature)
                   ListTile(
@@ -181,10 +192,7 @@ class HomeDrawer extends StatelessWidget {
                   ),
 
                 PbPermissionGate(
-                  allowedRoles: const [
-                    RoleLoginDigitalParkir.jukir,
-                    RoleLoginDigitalParkir.bapenda,
-                  ],
+                  allowedRoles: const [RoleLoginDigitalParkir.pengawas],
                   currentRole:
                       role, // Menggunakan variabel 'role' yang disuplai dari State Cubit Anda
                   child: ListTile(

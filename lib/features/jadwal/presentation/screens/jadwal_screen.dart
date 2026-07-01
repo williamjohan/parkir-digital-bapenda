@@ -1,60 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
-import '../../data/jadwal_dummy_model.dart';
+import '../cubit/jadwal_cubit.dart';
+import '../cubit/jadwal_state.dart';
 import '../widget/jadwal_card_item.dart';
 
-class JadwalScreen extends StatelessWidget {
+class JadwalScreen extends StatefulWidget {
   const JadwalScreen({super.key});
 
-  // Dummy Data 1 Minggu
-  List<JadwalDummyModel> get _generateDummyData {
-    final now = DateTime.now();
-    return [
-      JadwalDummyModel(
-        tanggal: now.subtract(const Duration(days: 2)),
-        hari: 'Senin',
-        checkIn: '05:50',
-        checkOut: '14:05',
-      ),
-      JadwalDummyModel(
-        tanggal: now.subtract(const Duration(days: 1)),
-        hari: 'Selasa',
-        checkIn: '06:10', // Terlambat
-        checkOut: '14:00',
-      ),
-      JadwalDummyModel(
-        tanggal: now,
-        hari: 'Rabu',
-        checkIn: '05:55',
-        checkOut: '--:--', // Belum checkout
-      ),
-      JadwalDummyModel(
-        tanggal: now.add(const Duration(days: 1)),
-        hari: 'Kamis',
-      ),
-      JadwalDummyModel(
-        tanggal: now.add(const Duration(days: 2)),
-        hari: 'Jumat',
-      ),
-      JadwalDummyModel(
-        tanggal: now.add(const Duration(days: 3)),
-        hari: 'Sabtu',
-        isLibur: true,
-        keteranganLibur: '-',
-      ),
-      JadwalDummyModel(
-        tanggal: now.add(const Duration(days: 4)),
-        hari: 'Minggu',
-        isLibur: true,
-        keteranganLibur: '-',
-      ),
-    ];
+  @override
+  State<JadwalScreen> createState() => _JadwalScreenState();
+}
+
+class _JadwalScreenState extends State<JadwalScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<JadwalCubit>().fetchJadwal();
   }
 
   @override
   Widget build(BuildContext context) {
-    final jadwalList = _generateDummyData;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -68,15 +34,102 @@ class JadwalScreen extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: jadwalList.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final jadwal = jadwalList[index];
-          return JadwalCardItem(jadwal: jadwal);
+      body: const JadwalContentView(),
+    );
+  }
+}
+
+// ==========================================
+// 2. WIDGET ANAK (VIEW / CONTENT)
+// Bertugas membaca BLoC dan merender list atau error
+// ==========================================
+class JadwalContentView extends StatelessWidget {
+  const JadwalContentView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        await context.read<JadwalCubit>().fetchJadwal(forceRefresh: true);
+      },
+      child: BlocBuilder<JadwalCubit, JadwalState>(
+        builder: (context, state) {
+          switch (state.status) {
+            case JadwalStatus.initial:
+            case JadwalStatus.loading:
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
+
+            case JadwalStatus.failure:
+              return _buildErrorState(context, state.message);
+
+            case JadwalStatus.success:
+              final jadwalList = state.jadwal ?? [];
+
+              if (jadwalList.isEmpty) {
+                return _buildEmptyState(context);
+              }
+
+              return ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16.0),
+                itemCount: jadwalList.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  // Render per item menggunakan Card yang sudah kita buat
+                  return JadwalCardItem(jadwal: jadwalList[index]);
+                },
+              );
+          }
         },
       ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, String message) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+        const Icon(Icons.cloud_off, size: 64, color: AppColors.disabled),
+        const SizedBox(height: 16),
+        Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 16),
+        ),
+        const SizedBox(height: 24),
+        Center(
+          child: ElevatedButton.icon(
+            onPressed: () => context.read<JadwalCubit>().fetchJadwal(),
+            icon: const Icon(Icons.refresh),
+            label: const Text('Coba Lagi'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+        const Icon(Icons.event_note, size: 64, color: AppColors.disabled),
+        const SizedBox(height: 16),
+        const Text(
+          'Jadwal belum tersedia.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+        ),
+      ],
     );
   }
 }
