@@ -20,4 +20,5 @@ class AppRoutes {
   static const String realisasiSeluruhOP = '/realisasi-seluruh-op';
   static const String daftarNop = '/daftar-nop';
   static const String dataJukir = '/data-jukir';
+  static const String jadwalKehadiran = '/jadwalKehadiran';
 }
