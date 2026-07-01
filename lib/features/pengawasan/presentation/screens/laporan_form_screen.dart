@@ -37,9 +37,9 @@ class LaporanFormResult {
 }
 
 class LaporanFormScreen extends StatefulWidget {
-  final void Function(LaporanFormResult result) onSubmit;
+  // final void Function(LaporanFormResult result) onSubmit;
 
-  const LaporanFormScreen({super.key, required this.onSubmit});
+  const LaporanFormScreen({super.key});
 
   @override
   State<LaporanFormScreen> createState() => _LaporanFormScreenState();
@@ -83,13 +83,13 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
       return;
     }
 
-    widget.onSubmit(
-      LaporanFormResult(
-        kategori: _kategori!,
-        keterangan: _keteranganController.text.trim(),
-        photo: _photo,
-      ),
-    );
+    // widget.onSubmit(
+    //   LaporanFormResult(
+    //     kategori: _kategori!,
+    //     keterangan: _keteranganController.text.trim(),
+    //     photo: _photo,
+    //   ),
+    // );
 
     Navigator.of(context).pop();
   }
