@@ -30,6 +30,8 @@ import '../../features/absensi/check_list_absensi/domain/usecases/absensi_usecas
     as _i708;
 import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_checkin_cubit.dart'
     as _i342;
+import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_cubit.dart'
+    as _i875;
 import '../../features/auth/data/datasources/auth_remote_data_source.dart'
     as _i107;
 import '../../features/auth/data/repositories/auth_repository_impl.dart'
@@ -273,6 +275,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i59.ITarifRemoteDataSource>(
     () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.factory<_i875.AbsensiCubit>(
+    () => _i875.AbsensiCubit(gh<_i708.AbsensiUsecase>()),
   );
   gh.lazySingleton<_i720.AbsensiCheckInDatasource>(
     () => _i720.AbsensiCheckInDatasourceImpl(gh<_i361.Dio>()),
