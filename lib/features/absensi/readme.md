@@ -8,6 +8,9 @@ Deskripsi singkat mengenai fitur Absensi
 
 - main_absensi isinya hanya widgets yang dipakai nanti di dashboard (tidak ada screen)
 - check_list absensi nanti baru ada screen atau pages.
+- Pastikan di UI hanya pakai usecase yang sudah disediakan. ( layer domain )
+- Usahakan Logic pengambilan data harus di repository.
+- Data Dummy kalau bisa dibuat di level datasource dengan nama : /absensi_dummy_datasource.dart
 
 ---
 
@@ -29,6 +32,7 @@ Deskripsi singkat mengenai fitur Absensi
 - Widget : /card_......_absensi.dart
 - Screen : /absensi_checklist_screen.dart
 ---
+
 ## 👥 Maintainer
 
 - William J. Pakpahan
