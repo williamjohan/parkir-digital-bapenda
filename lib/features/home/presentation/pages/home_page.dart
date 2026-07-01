@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
+import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/screens/laporan_form_screen.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/home_absensi_test_section.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/main_absensi_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
@@ -196,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                                                     bottom: 16,
                                                   ),
                                                   child:
-                                                      HomeAbsensiTestSection(), 
+                                                      HomeAbsensiTestSection(),
                                                 ),
                                               ),
                                               PbPermissionGate(
@@ -360,18 +361,15 @@ class _HomePageState extends State<HomePage> {
                             foregroundColor: Colors.white,
                             shape: const CircleBorder(),
                             onPressed: () async {
-                              final result = await context.push(
-                                AppRoutes.transaction,
-                                extra: {
-                                  'isFree': state.isFree,
-                                  'isDemoMode':
-                                      state.role ==
-                                      RoleLoginDigitalParkir.bapenda,
-                                },
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => LaporanFormScreen(
+                                    onSubmit: (result) {
+                                      // TODO: sambungin ke cubit/usecase laporan
+                                    },
+                                  ),
+                                ),
                               );
-                              if (result == true) {
-                                _loadData(); // reload data home
-                              }
                             },
                             child: const Icon(Icons.add),
                           ),
