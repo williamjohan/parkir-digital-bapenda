@@ -30,8 +30,6 @@ import '../../features/absensi/check_list_absensi/domain/usecases/absensi_usecas
     as _i708;
 import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_checkin_cubit.dart'
     as _i342;
-import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_cubit.dart'
-    as _i875;
 import '../../features/auth/data/datasources/auth_remote_data_source.dart'
     as _i107;
 import '../../features/auth/data/repositories/auth_repository_impl.dart'
@@ -87,25 +85,17 @@ import '../../features/dashboard_op/detail_realisasi_op/domain/usecases/get_deta
     as _i709;
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart'
     as _i468;
+import '../../features/home/data/datasources/dashboard_summary_remote_datasource.dart'
+    as _i535;
 import '../../features/home/data/datasources/i_tarif_remote_datasource.dart'
     as _i59;
-import '../../features/home/data/datasources/summary_remote_datasource.dart'
-    as _i11;
 import '../../features/home/data/datasources/tarif_remote_datasource_impl.dart'
     as _i565;
 import '../../features/home/data/repositories/home_repository_impl.dart'
     as _i76;
 import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
-import '../../features/home/domain/usecases/get_dashboard_summary_non_jukir_range_usecase.dart'
-    as _i304;
-import '../../features/home/domain/usecases/get_dashboard_summary_non_jukir_usecase.dart'
-    as _i348;
-import '../../features/home/domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart'
-    as _i421;
-import '../../features/home/domain/usecases/get_recent_transaction_usecase.dart'
-    as _i77;
-import '../../features/home/domain/usecases/sync_tarif_usecase.dart' as _i770;
+import '../../features/home/domain/usecases/home_usecase.dart' as _i207;
 import '../../features/home/presentation/cubit/home/home_cubit.dart' as _i273;
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart'
     as _i655;
@@ -278,14 +268,8 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i11.ISummaryRemoteDataSource>(
-    () => _i11.SummaryRemoteDataSourceImpl(gh<_i361.Dio>()),
-  );
   gh.lazySingleton<_i59.ITarifRemoteDataSource>(
     () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
-  );
-  gh.factory<_i875.AbsensiCubit>(
-    () => _i875.AbsensiCubit(gh<_i708.AbsensiUsecase>()),
   );
   gh.lazySingleton<_i720.AbsensiCheckInDatasource>(
     () => _i720.AbsensiCheckInDatasourceImpl(gh<_i361.Dio>()),
@@ -316,6 +300,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i502.IQrisRemoteDataSource>(
     () => _i502.QrisRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i535.ISummaryRemoteDataSource>(
+    () => _i535.SummaryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.factory<_i377.PrinterCubit>(
     () => _i377.PrinterCubit(
@@ -373,13 +360,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i280.IUpdateRepository>(
     () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
   );
-  gh.lazySingleton<_i274.IHomeRepository>(
-    () => _i76.HomeRepositoryImpl(
-      gh<_i59.ITarifRemoteDataSource>(),
-      gh<_i11.ISummaryRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
   gh.lazySingleton<_i416.DetailRealisasiOpRepository>(
     () => _i886.DetailRealisasiOpRepositoryImpl(
       gh<_i676.DetailRealisasiOpRemoteDataSource>(),
@@ -387,20 +367,6 @@ _i174.GetIt init(
   );
   gh.factory<_i506.CheckUpdateUseCase>(
     () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
-  );
-  gh.lazySingleton<_i304.GetDashboardSummaryNonJukirRangeUseCase>(
-    () => _i304.GetDashboardSummaryNonJukirRangeUseCase(
-      gh<_i274.IHomeRepository>(),
-    ),
-  );
-  gh.lazySingleton<_i348.GetDashboardSummaryNonJukirUseCase>(
-    () => _i348.GetDashboardSummaryNonJukirUseCase(gh<_i274.IHomeRepository>()),
-  );
-  gh.lazySingleton<_i421.GetHybridDashboardSummaryUseCase>(
-    () => _i421.GetHybridDashboardSummaryUseCase(gh<_i274.IHomeRepository>()),
-  );
-  gh.lazySingleton<_i770.SyncTarifUseCase>(
-    () => _i770.SyncTarifUseCase(gh<_i274.IHomeRepository>()),
   );
   gh.lazySingleton<_i717.DataJukirRepository>(
     () => _i527.DataJukirRepositoryImpl(gh<_i920.DataJukirDatasource>()),
@@ -425,6 +391,13 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i165.PengawasanRepository>(
     () => _i365.PengawasanRepositoryImpl(gh<_i926.PengawasanDatasource>()),
+  );
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(
+      gh<_i59.ITarifRemoteDataSource>(),
+      gh<_i535.ISummaryRemoteDataSource>(),
+      gh<_i1042.ISecureStorageManager>(),
+    ),
   );
   gh.lazySingleton<_i751.GetQrisRompiUseCase>(
     () => _i751.GetQrisRompiUseCase(gh<_i24.QrisRompiRepository>()),
@@ -464,11 +437,6 @@ _i174.GetIt init(
       gh<_i896.ITransactionHistoryRemoteDataSource>(),
     ),
   );
-  gh.factory<_i376.PendapatanDigitalCubit>(
-    () => _i376.PendapatanDigitalCubit(
-      gh<_i304.GetDashboardSummaryNonJukirRangeUseCase>(),
-    ),
-  );
   gh.factory<_i468.DetailRealisasiOpCubit>(
     () => _i468.DetailRealisasiOpCubit(gh<_i709.GetDetailRealisasiOpUseCase>()),
   );
@@ -480,6 +448,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i900.CheckOutUsecase>(
     () => _i900.CheckOutUsecase(gh<_i813.AbsensiCheckInRepository>()),
+  );
+  gh.factory<_i367.JadwalCubit>(
+    () => _i367.JadwalCubit(gh<_i853.JadwalUseCase>()),
   );
   gh.factory<_i915.DaftarNopCubit>(
     () => _i915.DaftarNopCubit(
@@ -501,11 +472,6 @@ _i174.GetIt init(
   );
   gh.factory<_i402.DataJukirCubit>(
     () => _i402.DataJukirCubit(gh<_i254.GetDataJukirUseCase>()),
-  );
-  gh.lazySingleton<_i77.GetRecentTransactionsUseCase>(
-    () => _i77.GetRecentTransactionsUseCase(
-      gh<_i502.ITransactionHistoryRepository>(),
-    ),
   );
   gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
     () => _i732.GetTransactionHistoryUseCase(
@@ -559,6 +525,12 @@ _i174.GetIt init(
       gh<_i127.CheckDeviceUuidUseCase>(),
     ),
   );
+  gh.lazySingleton<_i207.HomeUsecase>(
+    () => _i207.HomeUsecase(
+      gh<_i274.IHomeRepository>(),
+      gh<_i502.ITransactionHistoryRepository>(),
+    ),
+  );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(gh<_i212.GetLocalQrisUseCase>()),
   );
@@ -573,14 +545,15 @@ _i174.GetIt init(
   );
   gh.factory<_i273.HomeCubit>(
     () => _i273.HomeCubit(
-      gh<_i421.GetHybridDashboardSummaryUseCase>(),
-      gh<_i77.GetRecentTransactionsUseCase>(),
-      gh<_i348.GetDashboardSummaryNonJukirUseCase>(),
+      gh<_i207.HomeUsecase>(),
       gh<_i1042.ISecureStorageManager>(),
       gh<_i383.SyncQrisUseCase>(),
       gh<_i654.DatabaseHelper2>(),
       gh<_i996.ProfileUseCase>(),
     ),
+  );
+  gh.factory<_i376.PendapatanDigitalCubit>(
+    () => _i376.PendapatanDigitalCubit(gh<_i207.HomeUsecase>()),
   );
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),

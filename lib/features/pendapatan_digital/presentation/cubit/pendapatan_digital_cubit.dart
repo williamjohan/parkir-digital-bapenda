@@ -1,13 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../home/domain/usecases/get_dashboard_summary_non_jukir_range_usecase.dart';
+import 'package:parkir_digital_bapenda/features/home/domain/usecases/home_usecase.dart';
 import 'pendapatan_digital_state.dart';
 
 @injectable
 class PendapatanDigitalCubit extends Cubit<PendapatanDigitalState> {
-  final GetDashboardSummaryNonJukirRangeUseCase _useCase;
+  final HomeUsecase _homeusecase;
 
-  PendapatanDigitalCubit(this._useCase) : super(const PendapatanDigitalState());
+  PendapatanDigitalCubit(this._homeusecase)
+    : super(const PendapatanDigitalState());
 
   Future<void> getSummary({String? tglAwal, String? tglAkhir}) async {
     if (isClosed) return;
@@ -22,7 +23,10 @@ class PendapatanDigitalCubit extends Cubit<PendapatanDigitalState> {
       ),
     );
 
-    final result = await _useCase.execute(tglAwal: tglAwal, tglAkhir: tglAkhir);
+    final result = await _homeusecase.getDashboardSummaryNonJukirRange(
+      tglAwal: tglAwal,
+      tglAkhir: tglAkhir,
+    );
 
     if (isClosed) return;
 

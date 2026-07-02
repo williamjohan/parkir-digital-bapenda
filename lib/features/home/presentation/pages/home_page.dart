@@ -158,12 +158,15 @@ class _HomePageState extends State<HomePage> {
                                                       .pengawas,
                                                 ],
                                                 currentRole: state.role,
-                                                child: const Padding(
-                                                  padding: EdgeInsets.only(
-                                                    bottom: 16,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 16,
+                                                      ),
+                                                  child: MainAbsensiWidget(
+                                                    absensiData:
+                                                        state.checkInOutData,
                                                   ),
-                                                  child:
-                                                      MainAbsensiWidget(),
                                                 ),
                                               ),
 

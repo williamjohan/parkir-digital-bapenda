@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'dashboard_summary_model.g.dart';
+part 'dashboard_summary_jukir_model.g.dart';
 
 double _toDouble(dynamic value) => (value ?? 0).toDouble();
 
 @JsonSerializable()
-class DashboardSummaryModel extends Equatable {
+class DashboardSummaryJukirModel extends Equatable {
   @JsonKey(defaultValue: 0)
   final int jumlahMotorHariIni;
 
@@ -21,7 +21,7 @@ class DashboardSummaryModel extends Equatable {
   @JsonKey(fromJson: _toDouble)
   final double totalNominalBersihUntukBapenda;
 
-  const DashboardSummaryModel({
+  const DashboardSummaryJukirModel({
     required this.jumlahMotorHariIni,
     required this.jumlahMobilHariIni,
     required this.totalNominalHariIni,
@@ -29,10 +29,10 @@ class DashboardSummaryModel extends Equatable {
     required this.totalNominalBersihUntukBapenda,
   });
 
-  factory DashboardSummaryModel.fromJson(Map<String, dynamic> json) =>
-      _$DashboardSummaryModelFromJson(json);
+  factory DashboardSummaryJukirModel.fromJson(Map<String, dynamic> json) =>
+      _$DashboardSummaryJukirModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$DashboardSummaryModelToJson(this);
+  Map<String, dynamic> toJson() => _$DashboardSummaryJukirModelToJson(this);
 
   @override
   List<Object?> get props => [

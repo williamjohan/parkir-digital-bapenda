@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
-import 'package:parkir_digital_bapenda/features/home/domain/usecases/get_dashboard_summary_non_jukir_usecase.dart';
 import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
 import '../../../../../core/enums/app_enums.dart';
 import '../../../../../core/storage/database_helper_2.dart';
@@ -9,24 +8,20 @@ import '../../../../../core/storage/secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
 import '../../../../transaction/domain/usecases/sync_qris_usecase.dart';
 import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
-import '../../../domain/usecases/get_hybrid_dashboard_sumarry_usecase.dart';
-import '../../../domain/usecases/get_recent_transaction_usecase.dart';
+import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
+import '../../../domain/usecases/home_usecase.dart';
 import 'home_state.dart';
 
 @injectable
 class HomeCubit extends Cubit<HomeState> {
-  final GetHybridDashboardSummaryUseCase _getHybridDashboardSummaryUseCase;
-  final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
-  final GetDashboardSummaryNonJukirUseCase _getDashboardSummaryNonJukirUseCase;
+  final HomeUsecase _homeUsecase;
   final ISecureStorageManager _secureStorage;
   final SyncQrisUseCase _syncQrisUseCase;
   final ProfileUseCase _profileUseCase;
   final DatabaseHelper2 _databaseHelper;
 
   HomeCubit(
-    this._getHybridDashboardSummaryUseCase,
-    this._getRecentTransactionsUseCase,
-    this._getDashboardSummaryNonJukirUseCase,
+    this._homeUsecase,
     this._secureStorage,
     this._syncQrisUseCase,
     this._databaseHelper,
@@ -41,9 +36,11 @@ class HomeCubit extends Cubit<HomeState> {
     formatUserName();
 
     if (state.role == RoleLoginDigitalParkir.jukir) {
-      await loadDashboardData();
+      await loadDashboarJukir();
       await _profileUseCase.getProfilePicturePath();
       await _syncQrisUseCase.execute();
+    } else if (state.role == RoleLoginDigitalParkir.pengawas) {
+      _loadDashboardPengawas();
     } else {
       await _ensureValidToken();
       await _loadDashboardNonJukir();
@@ -57,7 +54,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> loadDashboardData() async {
+  Future<void> loadDashboarJukir() async {
     emit(state.copyWith(status: HomeStatus.loading));
 
     final profile = await _secureStorage.getJukirProfile();
@@ -70,11 +67,11 @@ class HomeCubit extends Cubit<HomeState> {
       isFreeStatus = rawPungutTarif == 1 || rawPungutTarif == '1';
     }
 
-    final summaryResult = await _getHybridDashboardSummaryUseCase.execute(
+    final summaryJukirResult = await _homeUsecase.getDashboardSummaryJukir(
       nop: state.nop,
     );
 
-    summaryResult.fold(
+    summaryJukirResult.fold(
       (failure) {
         if (!isClosed) {
           emit(
@@ -98,7 +95,7 @@ class HomeCubit extends Cubit<HomeState> {
       },
     );
 
-    final recentResult = await _getRecentTransactionsUseCase.execute(
+    final recentResult = await _homeUsecase.getRecentTransactions(
       limit: 5,
       nop: state.nop,
     );
@@ -114,8 +111,75 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  Future<void> loadDashboardPengawas() async {
+    final result = await _homeUsecase.getDashboardSummaryPengawas();
+
+    result.fold(
+      (failure) {
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              status: HomeStatus.failure,
+              // Reset shared metrics
+              motorCount: 0,
+              mobilCount: 0,
+              totalPendapatan: 0,
+              totalPajak: 0,
+              totalBersih: 0,
+              // Reset pengawas metrics
+              laporanPelanggaran: 0,
+              checkInOutData: const CheckInOutEntity(
+                idEvent: 0,
+                op: '',
+                nip: '',
+                tglRoster: '',
+                jadwalMasuk: '',
+                jadwalOut: '',
+                status: 0,
+                checkIn: '',
+                checkInString: '',
+                checkInJmlMobil: 0,
+                checkInJmlMotor: 0,
+                checkOut: '',
+                checkOutString: '',
+                checkOutJmlMobil: 0,
+                checkOutJmlMotor: 0,
+                latitude: '',
+                longitude: '',
+              ),
+            ),
+          );
+        }
+      },
+      (summary) {
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              status: HomeStatus.success,
+              // Map shared metrics (harus di-cast ke double jika state Anda minta double)
+              motorCount: summary.data.dashboard.jumlahMotorHariIni,
+              mobilCount: summary.data.dashboard.jumlahMobilHariIni,
+              totalPendapatan: summary.data.dashboard.totalNominalHariIni
+                  .toDouble(),
+              totalPajak: summary.data.dashboard.totalNominalBersihUntukBapenda
+                  .toDouble(),
+              totalBersih: summary
+                  .data
+                  .dashboard
+                  .totalNominalBersihUntukWajibPajak
+                  .toDouble(),
+              // Map pengawas metrics
+              laporanPelanggaran: summary.data.laporanPelanggaran,
+              checkInOutData: summary.data.checkInOut,
+            ),
+          );
+        }
+      },
+    );
+  }
+
   Future<void> _loadDashboardNonJukir() async {
-    final result = await _getDashboardSummaryNonJukirUseCase.execute();
+    final result = await _homeUsecase.getDashboardSummaryNonJukir();
 
     result.fold(
       (failure) {
@@ -253,7 +317,7 @@ class HomeCubit extends Cubit<HomeState> {
       ),
     );
 
-    await loadDashboardData();
+    await loadDashboarJukir();
   }
 
   void formatUserName() {

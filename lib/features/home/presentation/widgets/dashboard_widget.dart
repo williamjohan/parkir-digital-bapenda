@@ -146,7 +146,7 @@ class DashboardWidget extends StatelessWidget {
 
               if (!context.mounted) return;
               if (result == true) {
-                context.read<HomeCubit>().loadDashboardData();
+                context.read<HomeCubit>().loadDashboarJukir();
               }
             },
           ),

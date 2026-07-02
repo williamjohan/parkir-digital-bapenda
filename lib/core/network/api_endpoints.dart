@@ -38,15 +38,18 @@ class ApiEndpoints {
   static const String summayRealisasiOpDev =
       '/api/mobile/parking/dashboard-summary-nonjukir-realisasi-dev';
   static const String listNopDev = '/api/mobile/parking/nop-list-dev';
-  static const String pengawasLaporanList = '/api/mobile/parking/pengawas-pelaporan-list';
+  static const String pengawasLaporanList =
+      '/api/mobile/parking/pengawas-pelaporan-list';
   static const String addPengawasanPelaporanDev =
       '/api/mobile/parking/pengawas-pelaporan';
-  static const String pengawasCheckIn =
-      '/api/mobile/parking/pengawas/check-in';
+  static const String pengawasCheckIn = '/api/mobile/parking/pengawas/check-in';
   static const String pengawasCheckOut =
       '/api/mobile/parking/pengawas/check-out';
   static const String pengawasMasterAlatDigital =
       '/api/mobile/parking/pengawas-master-alat-digital';
   static const String jadwalPengawasDev = '/api/mobile/parking/pengawas-jadwal';
-  static const String pengawasPelaporanListDev = '/api/mobile/parking/pengawas-pelaporan-list';
+  static const String pengawasPelaporanListDev =
+      '/api/mobile/parking/pengawas-pelaporan-list';
+  static const String pengawasDashboardRosterSummaryDev =
+      '/api/mobile/parking/pengawas-roster-summary';
 }

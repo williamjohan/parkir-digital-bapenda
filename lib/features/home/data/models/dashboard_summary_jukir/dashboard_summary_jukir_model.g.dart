@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'dashboard_summary_model.dart';
+part of 'dashboard_summary_jukir_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-DashboardSummaryModel _$DashboardSummaryModelFromJson(
+DashboardSummaryJukirModel _$DashboardSummaryJukirModelFromJson(
   Map<String, dynamic> json,
-) => DashboardSummaryModel(
+) => DashboardSummaryJukirModel(
   jumlahMotorHariIni: (json['jumlahMotorHariIni'] as num?)?.toInt() ?? 0,
   jumlahMobilHariIni: (json['jumlahMobilHariIni'] as num?)?.toInt() ?? 0,
   totalNominalHariIni: _toDouble(json['totalNominalHariIni']),
@@ -20,8 +20,8 @@ DashboardSummaryModel _$DashboardSummaryModelFromJson(
   ),
 );
 
-Map<String, dynamic> _$DashboardSummaryModelToJson(
-  DashboardSummaryModel instance,
+Map<String, dynamic> _$DashboardSummaryJukirModelToJson(
+  DashboardSummaryJukirModel instance,
 ) => <String, dynamic>{
   'jumlahMotorHariIni': instance.jumlahMotorHariIni,
   'jumlahMobilHariIni': instance.jumlahMobilHariIni,

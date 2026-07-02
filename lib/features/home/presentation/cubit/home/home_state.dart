@@ -4,6 +4,7 @@ import '../../../../../core/utils/permission_utils.dart';
 import '../../../../transaction_history/data/models/history_item_model.dart';
 import '../../../data/models/weekly_chart_item_model.dart';
 import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
+import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
 
 part 'home_state.freezed.dart';
 
@@ -83,5 +84,30 @@ class HomeState with _$HomeState {
 
     @Default([]) List<SofParkirResultEntity> sofParkirResults,
     @Default(RoleLoginDigitalParkir.tidakDiketahui) RoleLoginDigitalParkir role,
+
+    //Segment Pengawas
+    @Default(0) int laporanPelanggaran,
+    @Default(
+      CheckInOutEntity(
+        idEvent: 0,
+        op: '',
+        nip: '',
+        tglRoster: '',
+        jadwalMasuk: '',
+        jadwalOut: '',
+        status: 0,
+        checkIn: '',
+        checkInString: '',
+        checkInJmlMobil: 0,
+        checkInJmlMotor: 0,
+        checkOut: '',
+        checkOutString: '',
+        checkOutJmlMobil: 0,
+        checkOutJmlMotor: 0,
+        latitude: '',
+        longitude: '',
+      ),
+    )
+    CheckInOutEntity checkInOutData,
   }) = _HomeState;
 }

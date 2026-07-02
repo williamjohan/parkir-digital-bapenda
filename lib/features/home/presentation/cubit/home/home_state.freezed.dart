@@ -53,7 +53,10 @@ mixin _$HomeState {
   double get persentaseNonDigital => throw _privateConstructorUsedError;
   List<SofParkirResultEntity> get sofParkirResults =>
       throw _privateConstructorUsedError;
-  RoleLoginDigitalParkir get role => throw _privateConstructorUsedError;
+  RoleLoginDigitalParkir get role =>
+      throw _privateConstructorUsedError; //Segment Pengawas
+  int get laporanPelanggaran => throw _privateConstructorUsedError;
+  CheckInOutEntity get checkInOutData => throw _privateConstructorUsedError;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -101,6 +104,8 @@ abstract class $HomeStateCopyWith<$Res> {
     double persentaseNonDigital,
     List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
+    int laporanPelanggaran,
+    CheckInOutEntity checkInOutData,
   });
 
   $OpCategoryEntityCopyWith<$Res> get digital;
@@ -157,6 +162,8 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? persentaseNonDigital = null,
     Object? sofParkirResults = null,
     Object? role = null,
+    Object? laporanPelanggaran = null,
+    Object? checkInOutData = null,
   }) {
     return _then(
       _value.copyWith(
@@ -292,6 +299,14 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.role
                 : role // ignore: cast_nullable_to_non_nullable
                       as RoleLoginDigitalParkir,
+            laporanPelanggaran: null == laporanPelanggaran
+                ? _value.laporanPelanggaran
+                : laporanPelanggaran // ignore: cast_nullable_to_non_nullable
+                      as int,
+            checkInOutData: null == checkInOutData
+                ? _value.checkInOutData
+                : checkInOutData // ignore: cast_nullable_to_non_nullable
+                      as CheckInOutEntity,
           )
           as $Val,
     );
@@ -381,6 +396,8 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     double persentaseNonDigital,
     List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
+    int laporanPelanggaran,
+    CheckInOutEntity checkInOutData,
   });
 
   @override
@@ -440,6 +457,8 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? persentaseNonDigital = null,
     Object? sofParkirResults = null,
     Object? role = null,
+    Object? laporanPelanggaran = null,
+    Object? checkInOutData = null,
   }) {
     return _then(
       _$HomeStateImpl(
@@ -575,6 +594,14 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.role
             : role // ignore: cast_nullable_to_non_nullable
                   as RoleLoginDigitalParkir,
+        laporanPelanggaran: null == laporanPelanggaran
+            ? _value.laporanPelanggaran
+            : laporanPelanggaran // ignore: cast_nullable_to_non_nullable
+                  as int,
+        checkInOutData: null == checkInOutData
+            ? _value.checkInOutData
+            : checkInOutData // ignore: cast_nullable_to_non_nullable
+                  as CheckInOutEntity,
       ),
     );
   }
@@ -645,6 +672,26 @@ class _$HomeStateImpl implements _HomeState {
     this.persentaseNonDigital = 0,
     final List<SofParkirResultEntity> sofParkirResults = const [],
     this.role = RoleLoginDigitalParkir.tidakDiketahui,
+    this.laporanPelanggaran = 0,
+    this.checkInOutData = const CheckInOutEntity(
+      idEvent: 0,
+      op: '',
+      nip: '',
+      tglRoster: '',
+      jadwalMasuk: '',
+      jadwalOut: '',
+      status: 0,
+      checkIn: '',
+      checkInString: '',
+      checkInJmlMobil: 0,
+      checkInJmlMotor: 0,
+      checkOut: '',
+      checkOutString: '',
+      checkOutJmlMobil: 0,
+      checkOutJmlMotor: 0,
+      latitude: '',
+      longitude: '',
+    ),
   }) : _recentTransactions = recentTransactions,
        _weeklyChartData = weeklyChartData,
        _sofParkirResults = sofParkirResults;
@@ -764,10 +811,17 @@ class _$HomeStateImpl implements _HomeState {
   @override
   @JsonKey()
   final RoleLoginDigitalParkir role;
+  //Segment Pengawas
+  @override
+  @JsonKey()
+  final int laporanPelanggaran;
+  @override
+  @JsonKey()
+  final CheckInOutEntity checkInOutData;
 
   @override
   String toString() {
-    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role)';
+    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, checkInOutData: $checkInOutData)';
   }
 
   @override
@@ -844,7 +898,11 @@ class _$HomeStateImpl implements _HomeState {
               other._sofParkirResults,
               _sofParkirResults,
             ) &&
-            (identical(other.role, role) || other.role == role));
+            (identical(other.role, role) || other.role == role) &&
+            (identical(other.laporanPelanggaran, laporanPelanggaran) ||
+                other.laporanPelanggaran == laporanPelanggaran) &&
+            (identical(other.checkInOutData, checkInOutData) ||
+                other.checkInOutData == checkInOutData));
   }
 
   @override
@@ -883,6 +941,8 @@ class _$HomeStateImpl implements _HomeState {
     persentaseNonDigital,
     const DeepCollectionEquality().hash(_sofParkirResults),
     role,
+    laporanPelanggaran,
+    checkInOutData,
   ]);
 
   /// Create a copy of HomeState
@@ -929,6 +989,8 @@ abstract class _HomeState implements HomeState {
     final double persentaseNonDigital,
     final List<SofParkirResultEntity> sofParkirResults,
     final RoleLoginDigitalParkir role,
+    final int laporanPelanggaran,
+    final CheckInOutEntity checkInOutData,
   }) = _$HomeStateImpl;
 
   @override
@@ -996,7 +1058,11 @@ abstract class _HomeState implements HomeState {
   @override
   List<SofParkirResultEntity> get sofParkirResults;
   @override
-  RoleLoginDigitalParkir get role;
+  RoleLoginDigitalParkir get role; //Segment Pengawas
+  @override
+  int get laporanPelanggaran;
+  @override
+  CheckInOutEntity get checkInOutData;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.

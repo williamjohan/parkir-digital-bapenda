@@ -5,20 +5,20 @@ import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/dio_error_handler.dart';
 import '../../../../core/utils/app_logger.dart';
-import '../models/dashboard_summary_model.dart';
+import '../models/dashboard_summary_jukir/dashboard_summary_jukir_model.dart';
 import '../models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
+import '../models/dashboard_summary_pengawas/dashboard_summary_pengawas_model.dart';
 import '../models/weekly_chart_item_model.dart';
 
 abstract class ISummaryRemoteDataSource {
-  Future<DashboardSummaryModel> getDashboardSummary({required String nop});
-
+  Future<DashboardSummaryJukirModel> getDashboardSummary({required String nop});
   Future<DashboardSummaryNonJukirModel> getDashboardSummaryNonJukir();
   Future<DashboardSummaryNonJukirModel> getDashboardSummaryNonJukirRange({
     String? tglAwal,
     String? tglAkhir,
   });
-
   Future<List<WeeklyChartItemModel>> getWeeklyChart({required String nop});
+  Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas();
 }
 
 @LazySingleton(as: ISummaryRemoteDataSource)
@@ -28,7 +28,7 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   SummaryRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<DashboardSummaryModel> getDashboardSummary({
+  Future<DashboardSummaryJukirModel> getDashboardSummary({
     required String nop,
   }) async {
     try {
@@ -38,7 +38,7 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
       );
 
       if (response.data['isSuccess'] == true) {
-        return DashboardSummaryModel.fromJson(response.data['data']);
+        return DashboardSummaryJukirModel.fromJson(response.data['data']);
       } else {
         throw ServerException(
           statusCode: response.data['statusCode'] ?? response.statusCode ?? 500,
@@ -165,6 +165,38 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal saat memproses summary}',
+      );
+    }
+  }
+
+  @override
+  Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas() async {
+    try {
+      final response = await _dio.get(
+        ApiEndpoints.pengawasDashboardRosterSummaryDev,
+      ); // Sesuaikan endpoint
+
+      final result = DashboardSummaryPengawasModel.fromJson(response.data);
+
+      if (result.isSuccess == true) {
+        return result;
+      } else {
+        throw ServerException(
+          statusCode: result.statusCode != 0 ? result.statusCode : 500,
+          message: result.message.isNotEmpty
+              ? result.message
+              : 'Gagal mengambil summary dashboard pengawas',
+        );
+      }
+    } on DioException catch (e) {
+      throw ServerException(
+        statusCode: e.response?.statusCode ?? 500,
+        message: e.message ?? 'Terjadi kesalahan koneksi saat memuat dashboard',
+      );
+    } catch (e) {
+      throw ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal: ${e.toString()}',
       );
     }
   }
