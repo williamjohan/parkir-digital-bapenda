@@ -116,6 +116,14 @@ import '../../features/init/domain/repositories/i_device_check_repository.dart'
 import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
     as _i232;
 import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
+import '../../features/jadwal/data/datasources/jadwal_remote_datasource.dart'
+    as _i595;
+import '../../features/jadwal/data/repositories/jadwal_repository_impl.dart'
+    as _i1061;
+import '../../features/jadwal/domain/repositories/i_jadwal_repositories.dart'
+    as _i394;
+import '../../features/jadwal/domain/usecases/jadwal_usecase.dart' as _i853;
+import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart' as _i367;
 import '../../features/payment/data/datasources/payment_remote_datasource.dart'
     as _i247;
 import '../../features/payment/data/datasources/qris_rompi_datasource.dart'
@@ -285,6 +293,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i905.DashboardOpDatasource>(
     () => _i905.DashboardOpDatasourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i595.IJadwalRemoteDataSource>(
+    () => _i595.JadwalRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i135.RealisasiRemoteDataSource>(
     () => _i135.RealisasiRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -322,6 +333,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i920.DataJukirDatasource>(
     () => _i920.DataJukirDatasourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i394.IJadwalRepository>(
+    () => _i1061.JadwalRepositoryImpl(gh<_i595.IJadwalRemoteDataSource>()),
   );
   gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
     () => _i247.PaymentRemoteDataSourceImpl(gh<_i361.Dio>()),
@@ -442,6 +456,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i996.ProfileUseCase>(
     () => _i996.ProfileUseCase(gh<_i879.IProfileRepository>()),
   );
+  gh.lazySingleton<_i853.JadwalUseCase>(
+    () => _i853.JadwalUseCase(gh<_i394.IJadwalRepository>()),
+  );
   gh.lazySingleton<_i502.ITransactionHistoryRepository>(
     () => _i19.TransactionHistoryRepositoryImpl(
       gh<_i896.ITransactionHistoryRemoteDataSource>(),
@@ -498,6 +515,15 @@ _i174.GetIt init(
   gh.lazySingleton<_i437.AddPengawasanUsecase>(
     () => _i437.AddPengawasanUsecase(gh<_i165.PengawasanRepository>()),
   );
+  gh.lazySingleton<_i437.GetLaporanPengawasanUsecase>(
+    () => _i437.GetLaporanPengawasanUsecase(gh<_i165.PengawasanRepository>()),
+  );
+  gh.factory<_i527.PengawasanCubit>(
+    () => _i527.PengawasanCubit(
+      gh<_i437.AddPengawasanUsecase>(),
+      gh<_i437.GetLaporanPengawasanUsecase>(),
+    ),
+  );
   gh.factory<_i789.DashboardOpCubit>(
     () => _i789.DashboardOpCubit(gh<_i644.GetSummaryDashboardOpUsecase>()),
   );
@@ -532,9 +558,6 @@ _i174.GetIt init(
       gh<_i996.ProfileUseCase>(),
       gh<_i127.CheckDeviceUuidUseCase>(),
     ),
-  );
-  gh.factory<_i527.PengawasanCubit>(
-    () => _i527.PengawasanCubit(gh<_i437.AddPengawasanUsecase>()),
   );
   gh.factory<_i513.PaymentCubit>(
     () => _i513.PaymentCubit(gh<_i212.GetLocalQrisUseCase>()),

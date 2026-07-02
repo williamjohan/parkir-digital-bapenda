@@ -23,6 +23,7 @@ class AppRoutes {
 
   static const String laporanPelanggaran = '/laporan-pelanggaran';
   static const String addLaporanPelanggaran = '/add-laporan-pelanggaran';
+  static const String detailLaporanPelanggaran = '/detail-laporan-pelanggaran';
   static const String jadwalKehadiran = '/jadwalKehadiran';
 
   static const String absensi = '/absensi';

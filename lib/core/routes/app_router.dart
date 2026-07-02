@@ -12,6 +12,8 @@ import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presenta
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/pendapatan_digital_screen.dart';
+import 'package:parkir_digital_bapenda/features/pengawasan/presentation/cubit/pengawasan_cubit.dart';
+import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/detail_laporan_pengawasan.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/laporan_form_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/pengawasan_screen.dart';
 import '../../features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
@@ -20,6 +22,7 @@ import '../../features/daftar_nop/presentation/screens/daftar_nop_screen.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
+import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart';
 import '../../features/jadwal/presentation/screens/jadwal_screen.dart';
 import '../../features/realisasi/presentation/cubit/realisasi_cubit.dart';
 import '../../features/realisasi/presentation/screens/realisasi_screen.dart';
@@ -101,14 +104,33 @@ class AppRouter {
         ),
         // pengawas
         GoRoute(
+          path: AppRoutes.detailLaporanPelanggaran,
+          name: AppRoutes.detailLaporanPelanggaran,
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+
+            return DetailLaporanPengawasanScreen(
+              namaJenisPelanggaran: extra['namaJenisPelanggaran'] as String,
+              keterangan: extra['keterangan'] as String,
+              foto: extra['foto'] as String?,
+            );
+          },
+        ),
+        GoRoute(
           path: AppRoutes.laporanPelanggaran,
           name: AppRoutes.laporanPelanggaran,
-          builder: (context, state) => const LaporanPelanggaranScreen(),
+          builder: (context, state) => BlocProvider(
+            create: (_) => locator<PengawasanCubit>()..getLaporanPengawasan(),
+            child: const LaporanPelanggaranScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.addLaporanPelanggaran,
           name: AppRoutes.addLaporanPelanggaran,
-          builder: (context, state) => const LaporanFormScreen(),
+          builder: (context, state) => BlocProvider(
+            create: (_) => locator<PengawasanCubit>(),
+            child: const LaporanFormScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.home,
@@ -244,14 +266,10 @@ class AppRouter {
           path: AppRoutes.jadwalKehadiran,
           name: AppRoutes.jadwalKehadiran,
           builder: (context, state) {
-            return const JadwalScreen();
-
-            /* // 🛠️ TODO (Fase Integrasi State Management):
             return BlocProvider(
               create: (_) => locator<JadwalCubit>(),
               child: const JadwalScreen(),
             );
-            */
           },
         ),
         GoRoute(

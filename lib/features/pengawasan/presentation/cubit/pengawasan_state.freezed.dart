@@ -17,9 +17,16 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$PengawasanState {
+  RequestLaporanPengawasanEntity get request =>
+      throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
+  bool get isLoadingLaporan => throw _privateConstructorUsedError;
   bool get isSuccess => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
+  List<JenisPelanggaranEntity> get jenisPelanggaran =>
+      throw _privateConstructorUsedError;
+  List<LaporanPengawasanEntity> get laporan =>
+      throw _privateConstructorUsedError;
 
   /// Create a copy of PengawasanState
   /// with the given fields replaced by the non-null parameter values.
@@ -35,7 +42,17 @@ abstract class $PengawasanStateCopyWith<$Res> {
     $Res Function(PengawasanState) then,
   ) = _$PengawasanStateCopyWithImpl<$Res, PengawasanState>;
   @useResult
-  $Res call({bool isLoading, bool isSuccess, String? errorMessage});
+  $Res call({
+    RequestLaporanPengawasanEntity request,
+    bool isLoading,
+    bool isLoadingLaporan,
+    bool isSuccess,
+    String? errorMessage,
+    List<JenisPelanggaranEntity> jenisPelanggaran,
+    List<LaporanPengawasanEntity> laporan,
+  });
+
+  $RequestLaporanPengawasanEntityCopyWith<$Res> get request;
 }
 
 /// @nodoc
@@ -53,15 +70,27 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? request = null,
     Object? isLoading = null,
+    Object? isLoadingLaporan = null,
     Object? isSuccess = null,
     Object? errorMessage = freezed,
+    Object? jenisPelanggaran = null,
+    Object? laporan = null,
   }) {
     return _then(
       _value.copyWith(
+            request: null == request
+                ? _value.request
+                : request // ignore: cast_nullable_to_non_nullable
+                      as RequestLaporanPengawasanEntity,
             isLoading: null == isLoading
                 ? _value.isLoading
                 : isLoading // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isLoadingLaporan: null == isLoadingLaporan
+                ? _value.isLoadingLaporan
+                : isLoadingLaporan // ignore: cast_nullable_to_non_nullable
                       as bool,
             isSuccess: null == isSuccess
                 ? _value.isSuccess
@@ -71,9 +100,29 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
                 ? _value.errorMessage
                 : errorMessage // ignore: cast_nullable_to_non_nullable
                       as String?,
+            jenisPelanggaran: null == jenisPelanggaran
+                ? _value.jenisPelanggaran
+                : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
+                      as List<JenisPelanggaranEntity>,
+            laporan: null == laporan
+                ? _value.laporan
+                : laporan // ignore: cast_nullable_to_non_nullable
+                      as List<LaporanPengawasanEntity>,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of PengawasanState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $RequestLaporanPengawasanEntityCopyWith<$Res> get request {
+    return $RequestLaporanPengawasanEntityCopyWith<$Res>(_value.request, (
+      value,
+    ) {
+      return _then(_value.copyWith(request: value) as $Val);
+    });
   }
 }
 
@@ -86,7 +135,18 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
   ) = __$$PengawasanStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isLoading, bool isSuccess, String? errorMessage});
+  $Res call({
+    RequestLaporanPengawasanEntity request,
+    bool isLoading,
+    bool isLoadingLaporan,
+    bool isSuccess,
+    String? errorMessage,
+    List<JenisPelanggaranEntity> jenisPelanggaran,
+    List<LaporanPengawasanEntity> laporan,
+  });
+
+  @override
+  $RequestLaporanPengawasanEntityCopyWith<$Res> get request;
 }
 
 /// @nodoc
@@ -103,15 +163,27 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? request = null,
     Object? isLoading = null,
+    Object? isLoadingLaporan = null,
     Object? isSuccess = null,
     Object? errorMessage = freezed,
+    Object? jenisPelanggaran = null,
+    Object? laporan = null,
   }) {
     return _then(
       _$PengawasanStateImpl(
+        request: null == request
+            ? _value.request
+            : request // ignore: cast_nullable_to_non_nullable
+                  as RequestLaporanPengawasanEntity,
         isLoading: null == isLoading
             ? _value.isLoading
             : isLoading // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isLoadingLaporan: null == isLoadingLaporan
+            ? _value.isLoadingLaporan
+            : isLoadingLaporan // ignore: cast_nullable_to_non_nullable
                   as bool,
         isSuccess: null == isSuccess
             ? _value.isSuccess
@@ -121,6 +193,14 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
             ? _value.errorMessage
             : errorMessage // ignore: cast_nullable_to_non_nullable
                   as String?,
+        jenisPelanggaran: null == jenisPelanggaran
+            ? _value._jenisPelanggaran
+            : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
+                  as List<JenisPelanggaranEntity>,
+        laporan: null == laporan
+            ? _value._laporan
+            : laporan // ignore: cast_nullable_to_non_nullable
+                  as List<LaporanPengawasanEntity>,
       ),
     );
   }
@@ -130,23 +210,52 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
 
 class _$PengawasanStateImpl implements _PengawasanState {
   const _$PengawasanStateImpl({
+    this.request = const RequestLaporanPengawasanEntity(),
     this.isLoading = false,
+    this.isLoadingLaporan = false,
     this.isSuccess = false,
     this.errorMessage,
-  });
+    final List<JenisPelanggaranEntity> jenisPelanggaran = const [],
+    final List<LaporanPengawasanEntity> laporan = const [],
+  }) : _jenisPelanggaran = jenisPelanggaran,
+       _laporan = laporan;
 
+  @override
+  @JsonKey()
+  final RequestLaporanPengawasanEntity request;
   @override
   @JsonKey()
   final bool isLoading;
   @override
   @JsonKey()
+  final bool isLoadingLaporan;
+  @override
+  @JsonKey()
   final bool isSuccess;
   @override
   final String? errorMessage;
+  final List<JenisPelanggaranEntity> _jenisPelanggaran;
+  @override
+  @JsonKey()
+  List<JenisPelanggaranEntity> get jenisPelanggaran {
+    if (_jenisPelanggaran is EqualUnmodifiableListView)
+      return _jenisPelanggaran;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_jenisPelanggaran);
+  }
+
+  final List<LaporanPengawasanEntity> _laporan;
+  @override
+  @JsonKey()
+  List<LaporanPengawasanEntity> get laporan {
+    if (_laporan is EqualUnmodifiableListView) return _laporan;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_laporan);
+  }
 
   @override
   String toString() {
-    return 'PengawasanState(isLoading: $isLoading, isSuccess: $isSuccess, errorMessage: $errorMessage)';
+    return 'PengawasanState(request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan)';
   }
 
   @override
@@ -154,17 +263,33 @@ class _$PengawasanStateImpl implements _PengawasanState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PengawasanStateImpl &&
+            (identical(other.request, request) || other.request == request) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
+            (identical(other.isLoadingLaporan, isLoadingLaporan) ||
+                other.isLoadingLaporan == isLoadingLaporan) &&
             (identical(other.isSuccess, isSuccess) ||
                 other.isSuccess == isSuccess) &&
             (identical(other.errorMessage, errorMessage) ||
-                other.errorMessage == errorMessage));
+                other.errorMessage == errorMessage) &&
+            const DeepCollectionEquality().equals(
+              other._jenisPelanggaran,
+              _jenisPelanggaran,
+            ) &&
+            const DeepCollectionEquality().equals(other._laporan, _laporan));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, isLoading, isSuccess, errorMessage);
+  int get hashCode => Object.hash(
+    runtimeType,
+    request,
+    isLoading,
+    isLoadingLaporan,
+    isSuccess,
+    errorMessage,
+    const DeepCollectionEquality().hash(_jenisPelanggaran),
+    const DeepCollectionEquality().hash(_laporan),
+  );
 
   /// Create a copy of PengawasanState
   /// with the given fields replaced by the non-null parameter values.
@@ -180,17 +305,29 @@ class _$PengawasanStateImpl implements _PengawasanState {
 
 abstract class _PengawasanState implements PengawasanState {
   const factory _PengawasanState({
+    final RequestLaporanPengawasanEntity request,
     final bool isLoading,
+    final bool isLoadingLaporan,
     final bool isSuccess,
     final String? errorMessage,
+    final List<JenisPelanggaranEntity> jenisPelanggaran,
+    final List<LaporanPengawasanEntity> laporan,
   }) = _$PengawasanStateImpl;
 
   @override
+  RequestLaporanPengawasanEntity get request;
+  @override
   bool get isLoading;
+  @override
+  bool get isLoadingLaporan;
   @override
   bool get isSuccess;
   @override
   String? get errorMessage;
+  @override
+  List<JenisPelanggaranEntity> get jenisPelanggaran;
+  @override
+  List<LaporanPengawasanEntity> get laporan;
 
   /// Create a copy of PengawasanState
   /// with the given fields replaced by the non-null parameter values.

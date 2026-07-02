@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
 import '../../../../core/design_system/tokens/app_colors.dart';
-import '../../data/jadwal_dummy_model.dart';
+import '../../domain/entities/jadwal_entity.dart';
 
 class JadwalCardItem extends StatelessWidget {
-  final JadwalDummyModel jadwal;
+  final JadwalEntity jadwal;
 
   const JadwalCardItem({super.key, required this.jadwal});
 
   @override
   Widget build(BuildContext context) {
-    // Penentuan warna berdasarkan status libur
+    // 🚀 LOGIKA WARNA & TANGGAL (Sesuai Entity Baru)
     final Color indicatorColor = jadwal.isLibur
         ? AppColors.error
         : AppColors.primary;
-    final String tglFormatted = DateFormat('dd MMM').format(jadwal.tanggal);
+
+    // Safety check agar tidak crash jika hariNama kosong/kurang dari 3 huruf
+    final String hariPendek = jadwal.hariNama.length >= 3
+        ? jadwal.hariNama.substring(0, 3).toUpperCase()
+        : jadwal.hariNama.toUpperCase();
+
+    // Format angka hari (contoh: '7' menjadi '07')
+    final String tanggal = jadwal.hari.toString().padLeft(2, '0');
 
     return Container(
       decoration: BoxDecoration(
@@ -34,11 +39,13 @@ class JadwalCardItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // ==========================================
             // 🚀 SEGMEN KIRI: Indikator Tanggal & Warna
+            // ==========================================
             Container(
               width: 70,
               decoration: BoxDecoration(
-                color: indicatorColor.withOpacity(0.1),
+                color: indicatorColor.withValues(alpha: 0.1),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
@@ -48,7 +55,7 @@ class JadwalCardItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    jadwal.hari.substring(0, 3).toUpperCase(),
+                    hariPendek, // Menggunakan properti dari Entity
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -57,7 +64,7 @@ class JadwalCardItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    DateFormat('dd').format(jadwal.tanggal),
+                    tanggal, // Menggunakan properti dari Entity
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -68,7 +75,9 @@ class JadwalCardItem extends StatelessWidget {
               ),
             ),
 
+            // ==========================================
             // 🚀 SEGMEN KANAN: Detail Jadwal & Kehadiran
+            // ==========================================
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -94,13 +103,13 @@ class JadwalCardItem extends StatelessWidget {
           children: [
             _buildTimeBlock(
               label: 'Jam Masuk',
-              time: jadwal.jamMasuk,
+              time: jadwal.jamMasuk.isNotEmpty ? jadwal.jamMasuk : '--:--',
               icon: Icons.login,
               iconColor: AppColors.info,
             ),
             _buildTimeBlock(
               label: 'Jam Pulang',
-              time: jadwal.jamPulang,
+              time: jadwal.jamPulang.isNotEmpty ? jadwal.jamPulang : '--:--',
               icon: Icons.logout,
               iconColor: AppColors.warning,
             ),
@@ -116,12 +125,14 @@ class JadwalCardItem extends StatelessWidget {
           children: [
             _buildTimeBlock(
               label: 'Check In',
-              time: jadwal.checkIn ?? '--:--',
+              time: jadwal.jamCheckIn.isNotEmpty ? jadwal.jamCheckIn : '--:--',
               isActual: true,
             ),
             _buildTimeBlock(
               label: 'Check Out',
-              time: jadwal.checkOut ?? '--:--',
+              time: jadwal.jamCheckOut.isNotEmpty
+                  ? jadwal.jamCheckOut
+                  : '--:--',
               isActual: true,
             ),
           ],
@@ -132,28 +143,21 @@ class JadwalCardItem extends StatelessWidget {
 
   // UI State jika Hari Libur
   Widget _buildHolidayState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.event_busy, color: AppColors.error, size: 28),
-          const SizedBox(height: 8),
+          Icon(Icons.event_busy, color: AppColors.error, size: 28),
+          SizedBox(height: 8),
           Text(
-            'LIBUR',
-            style: const TextStyle(
+            'HARI LIBUR',
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               color: AppColors.error,
               letterSpacing: 1.2,
             ),
           ),
-          if (jadwal.keteranganLibur != null)
-            Text(
-              jadwal.keteranganLibur!,
-              style: const TextStyle(
-                fontSize: 12,
-                color: AppColors.textSecondary,
-              ),
-            ),
+          // Note: keteranganLibur dihapus karena tidak ada di JadwalEntity Anda.
         ],
       ),
     );
@@ -194,7 +198,7 @@ class JadwalCardItem extends StatelessWidget {
             fontWeight: isActual ? FontWeight.bold : FontWeight.w600,
             color: (isActual && time != '--:--')
                 ? AppColors.textPrimary
-                : AppColors.textHint, // Redup jika belum absen
+                : AppColors.textHint,
           ),
         ),
       ],
