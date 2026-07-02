@@ -139,8 +139,13 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                 backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,
                 elevation: 3,
-                onTap: () {
-                  context.pushNamed(AppRoutes.addLaporanPelanggaran);
+                onTap: () async {
+                  final result = await context.pushNamed<bool>(
+                    AppRoutes.addLaporanPelanggaran,
+                  );
+                  if (result == true) {
+                    widget.onReload();
+                  }
                 },
               ),
               SpeedDialChild(

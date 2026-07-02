@@ -14,6 +14,7 @@ import '../../domain/entities/jenis_pelanggaran/jenis_pelanggaran_entity.dart';
 import '../cubit/pengawasan_cubit.dart';
 import '../cubit/pengawasan_state.dart';
 import '../widgets/laporan_photo_picker.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_show_dialog.dart';
 
 class LaporanFormScreen extends StatefulWidget {
   // final void Function(LaporanFormResult result) onSubmit;
@@ -185,30 +186,34 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
           BlocConsumer<PengawasanCubit, PengawasanState>(
             listener: (context, state) {
               if (state.isSuccess) {
-                final selected = state.jenisPelanggaran.firstWhere(
-                  (e) => e.id == state.request.jenisPel,
-                );
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Laporan berhasil dikirim')),
-                );
-
-                context.pushReplacementNamed(
-                  AppRoutes.detailLaporanPelanggaran,
-                  extra: {
-                    'namaJenisPelanggaran': selected.nama,
-                    'keterangan': _keteranganController.text.trim(),
-                    'foto': state.request.buktiFoto?.path,
+                PbShowDialog.show(
+                  context,
+                  title: "Laporan Berhasil",
+                  description: "Laporan pelanggaran kamu sudah tersimpan",
+                  icon: Icons.check_circle_outline_rounded,
+                  iconColor: AppColors.success,
+                  buttonText: "OK",
+                  onConfirm: () {
+                    Navigator.of(
+                      context,
+                    ).pop(true); // 🔥 balik + kasih sinyal sukses
                   },
                 );
-
                 return;
               }
 
               if (state.errorMessage != null) {
-                ScaffoldMessenger.of(
+                PbShowDialog.show(
                   context,
-                ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+                  title: "Gagal",
+                  description: state.errorMessage!,
+                  icon: Icons.error_outline_rounded,
+                  iconColor: AppColors.error,
+                  buttonText: "OK",
+                  onConfirm: () {
+                    // tetap di screen ini biar user bisa coba lagi
+                  },
+                );
               }
             },
             builder: (context, state) {
