@@ -223,7 +223,8 @@ class _HomePageState extends State<HomePage> {
                                                 child: CardRekapKendaraanWidget(
                                                   motorCount: state.motorCount,
                                                   mobilCount: state.mobilCount,
-                                                  laporanPelanggaran: 4,
+                                                  laporanPelanggaran:
+                                                      state.laporanPelanggaran,
                                                 ),
                                               ),
 

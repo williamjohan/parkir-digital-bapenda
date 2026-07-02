@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
 
 part 'dashboard_summary_pengawas_model.freezed.dart';
