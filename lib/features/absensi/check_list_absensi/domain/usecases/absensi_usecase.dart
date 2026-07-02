@@ -10,11 +10,7 @@ class AbsensiUsecase {
 
   AbsensiUsecase(this._repository);
 
-  Future<Either<Failure, AbsensiEntity>> getAbsensiHariIni() {
-    return _repository.getAbsensiHariIni();
-  }
-
-  Future<Either<Failure, AbsensiEntity>> submitAbsensi(AbsensiEntity data) {
-    return _repository.submitAbsensi(data);
+  Future<Either<Failure, void>> postAbsensi(AbsensiEntity absensi) async {
+    return await _repository.postAbsensi(absensi);
   }
 }

@@ -691,6 +691,7 @@ class _$HomeStateImpl implements _HomeState {
       checkOutJmlMotor: 0,
       latitude: '',
       longitude: '',
+      detailAlat: [],
     ),
   }) : _recentTransactions = recentTransactions,
        _weeklyChartData = weeklyChartData,

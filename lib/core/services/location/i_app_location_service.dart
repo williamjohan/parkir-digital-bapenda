@@ -1,7 +1,7 @@
-abstract class IAppLocationService {
-  /// Mengembalikan Map berisi 'latitude' dan 'longitude'
-  Future<Map<String, String>> getCurrentLocation();
+import 'package:parkir_digital_bapenda/core/services/location/app_location_data.dart';
 
-  /// Cek apakah GPS hardware aktif
+abstract class IAppLocationService {
+  Future<AppLocationData> getCurrentLocation();
+
   Future<bool> isLocationServiceEnabled();
 }

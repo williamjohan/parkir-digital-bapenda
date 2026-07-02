@@ -89,6 +89,11 @@ _$CheckInOutModelImpl _$$CheckInOutModelImplFromJson(
   checkOutJmlMotor: (json['checkOutJmlMotor'] as num?)?.toInt() ?? 0,
   latitude: json['latitude'] as String? ?? '',
   longitude: json['longitude'] as String? ?? '',
+  detailAlat:
+      (json['detailAlat'] as List<dynamic>?)
+          ?.map((e) => DetailAlatModel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$$CheckInOutModelImplToJson(
@@ -111,4 +116,21 @@ Map<String, dynamic> _$$CheckInOutModelImplToJson(
   'checkOutJmlMotor': instance.checkOutJmlMotor,
   'latitude': instance.latitude,
   'longitude': instance.longitude,
+  'detailAlat': instance.detailAlat,
+};
+
+_$DetailAlatModelImpl _$$DetailAlatModelImplFromJson(
+  Map<String, dynamic> json,
+) => _$DetailAlatModelImpl(
+  id: (json['id'] as num?)?.toInt() ?? 0,
+  namaAlat: json['namaAlat'] as String? ?? '',
+  isBawa: json['isBawa'] as bool? ?? false,
+);
+
+Map<String, dynamic> _$$DetailAlatModelImplToJson(
+  _$DetailAlatModelImpl instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'namaAlat': instance.namaAlat,
+  'isBawa': instance.isBawa,
 };

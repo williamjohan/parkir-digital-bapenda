@@ -1,44 +1,27 @@
 import 'package:dartz/dartz.dart';
+import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/data/models/absensi_model.dart';
+import '../../../../../core/errors/exception.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../domain/entities/absensi_entity.dart';
 import '../../domain/repositories/i_absensi_repository.dart';
-import '../datasources/absensi_dummy_datasource.dart';
-import '../models/absensi_model.dart';
+import '../datasources/absensi_remote_datasource.dart';
 
 class AbsensiRepositoryImpl implements IAbsensiRepository {
-  final IAbsensiDataSource dataSource;
+  final IAbsensiRemoteDataSource remoteDataSource;
 
-  AbsensiRepositoryImpl({required this.dataSource});
-
-  @override
-  Future<Either<Failure, AbsensiEntity>> getAbsensiHariIni() async {
-    try {
-      final result = await dataSource.getAbsensiHariIni();
-      return Right(result.toEntity());
-    } catch (e) {
-      // Handle spesifik exception di sini (DioException dll)
-      return Left(ServerFailure(e.toString()));
-    }
-  }
+  AbsensiRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, AbsensiEntity>> submitAbsensi(
-    AbsensiEntity entity,
-  ) async {
+  Future<Either<Failure, void>> postAbsensi(AbsensiEntity absensi) async {
     try {
-      final modelData = AbsensiModel.fromEntity(entity);
-      AbsensiModel result;
-
-      if (entity.isPresent == false) {
-        result = await dataSource.submitAbsenMasuk(modelData);
-      } else {
-        result = await dataSource.submitAbsenPulang(modelData);
-      }
-
-      // Mengembalikan response hasil POST sebagai Entity baru untuk UI
-      return Right(result.toEntity());
+      // Mapping dari Entity (Domain) ke Model (Data)
+      final requestModel = absensi.toModel();
+      await remoteDataSource.postAbsensi(requestModel);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure('Terjadi kesalahan: ${e.toString()}'));
     }
   }
 }

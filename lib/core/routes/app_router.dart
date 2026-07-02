@@ -1,10 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/cubit/absensi_checkin_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/domain/entities/dashboard_op_entity.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/screen/dashboard_op_screen.dart';
@@ -19,6 +16,7 @@ import 'package:parkir_digital_bapenda/features/pengawasan/presentation/cubit/pe
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/detail_laporan_pengawasan.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/laporan_form_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/pengawasan_screen.dart';
+import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_cubit.dart';
 import '../../features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
 import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart';
 import '../../features/daftar_nop/presentation/screens/daftar_nop_screen.dart';
@@ -49,6 +47,7 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/update/presentation/pages/update_page.dart';
 import '../di/injection.dart';
 import '../enums/app_enums.dart';
+import '../services/location/i_app_location_service.dart';
 import 'app_routes.dart';
 import 'go_router_refresh_stream.dart';
 
@@ -148,9 +147,13 @@ class AppRouter {
           name: AppRoutes.absensi,
           builder: (context, state) {
             final type = state.extra as ShiftFormType? ?? ShiftFormType.checkIn;
+
             return BlocProvider(
-              create: (_) => locator<AbsensiCheckInCubit>(),
-              child: ShiftFormScreen(type: type),
+              create: (_) => locator<AbsensiCubit>(),
+              child: ShiftFormScreen(
+                type: type,
+                locationService: locator<IAppLocationService>(),
+              ),
             );
           },
         ),

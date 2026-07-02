@@ -58,9 +58,6 @@ class CheckInOutModel with _$CheckInOutModel {
     @Default('') String jadwalMasuk,
     @Default('') String jadwalOut,
     @Default(0) int status,
-
-    // Field di bawah ini menggunakan String dan int dengan default fallback
-    // untuk mengamankan data jika API mengirimkan null
     @Default('') String checkIn,
     @Default('') String checkInString,
     @Default(0) int checkInJmlMobil,
@@ -71,10 +68,30 @@ class CheckInOutModel with _$CheckInOutModel {
     @Default(0) int checkOutJmlMotor,
     @Default('') String latitude,
     @Default('') String longitude,
+    @Default([]) List<DetailAlatModel> detailAlat,
   }) = _CheckInOutModel;
 
   factory CheckInOutModel.fromJson(Map<String, dynamic> json) =>
       _$CheckInOutModelFromJson(json);
+}
+
+@freezed
+class DetailAlatModel with _$DetailAlatModel {
+  const factory DetailAlatModel({
+    @Default(0) int id,
+    @Default('') String namaAlat,
+    @Default(false) bool isBawa,
+  }) = _DetailAlatModel;
+
+  factory DetailAlatModel.fromJson(Map<String, dynamic> json) =>
+      _$DetailAlatModelFromJson(json);
+}
+
+// Extension khusus List untuk mapping mudah
+extension DetailAlatModelListExt on List<DetailAlatModel> {
+  List<DetailAlatEntity> toEntityList() {
+    return map((model) => model.toEntity()).toList();
+  }
 }
 
 extension DashboardPengawasanModelExt on DashboardSummaryPengawasModel {
@@ -130,6 +147,13 @@ extension CheckInOutModelExt on CheckInOutModel {
       checkOutJmlMotor: checkOutJmlMotor,
       latitude: latitude,
       longitude: longitude,
+      detailAlat: detailAlat.toEntityList(),
     );
+  }
+}
+
+extension DetailAlatModelExt on DetailAlatModel {
+  DetailAlatEntity toEntity() {
+    return DetailAlatEntity(id: id, namaAlat: namaAlat, isBawa: isBawa);
   }
 }

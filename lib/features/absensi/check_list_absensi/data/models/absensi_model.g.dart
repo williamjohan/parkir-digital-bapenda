@@ -6,45 +6,30 @@ part of 'absensi_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AbsensiModel _$AbsensiModelFromJson(Map<String, dynamic> json) => AbsensiModel(
-  date: _toDateTime(json['date']),
-  isPresent: json['isPresent'] == null ? false : _toBool(json['isPresent']),
-  latitude: json['latitude'] == null ? 0.0 : _toDouble(json['latitude']),
-  longitude: json['longitude'] == null ? 0.0 : _toDouble(json['longitude']),
-  checkList: json['checkList'] == null
-      ? null
-      : AbsensiCheckListModel.fromJson(
-          json['checkList'] as Map<String, dynamic>,
-        ),
-);
-
-Map<String, dynamic> _$AbsensiModelToJson(AbsensiModel instance) =>
-    <String, dynamic>{
-      'date': instance.date.toIso8601String(),
-      'isPresent': instance.isPresent,
-      'latitude': instance.latitude,
-      'longitude': instance.longitude,
-      'checkList': instance.checkList?.toJson(),
-    };
-
-AbsensiCheckListModel _$AbsensiCheckListModelFromJson(
+_$AbsensiRequestModelImpl _$$AbsensiRequestModelImplFromJson(
   Map<String, dynamic> json,
-) => AbsensiCheckListModel(
-  edc: json['edc'] == null ? false : _toBool(json['edc']),
-  qrisRompi: json['qrisRompi'] == null ? false : _toBool(json['qrisRompi']),
-  cctv: json['cctv'] == null ? false : _toBool(json['cctv']),
-  tsPark: json['tsPark'] == null ? false : _toBool(json['tsPark']),
-  totalMotor: json['totalMotor'] == null ? 0 : _toInt(json['totalMotor']),
-  totalMobil: json['totalMobil'] == null ? 0 : _toInt(json['totalMobil']),
+) => _$AbsensiRequestModelImpl(
+  latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
+  longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
+  totalMotor: (json['totalMotor'] as num?)?.toInt() ?? 0,
+  totalMobil: (json['totalMobil'] as num?)?.toInt() ?? 0,
+  detailAlatIds:
+      (json['detailAlatIds'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList() ??
+      const [],
+  fotoPath: json['fotoPath'] as String? ?? '',
+  isCheckIn: json['isCheckIn'] as bool? ?? true,
 );
 
-Map<String, dynamic> _$AbsensiCheckListModelToJson(
-  AbsensiCheckListModel instance,
+Map<String, dynamic> _$$AbsensiRequestModelImplToJson(
+  _$AbsensiRequestModelImpl instance,
 ) => <String, dynamic>{
-  'edc': instance.edc,
-  'qrisRompi': instance.qrisRompi,
-  'cctv': instance.cctv,
-  'tsPark': instance.tsPark,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
   'totalMotor': instance.totalMotor,
   'totalMobil': instance.totalMobil,
+  'detailAlatIds': instance.detailAlatIds,
+  'fotoPath': instance.fotoPath,
+  'isCheckIn': instance.isCheckIn,
 };

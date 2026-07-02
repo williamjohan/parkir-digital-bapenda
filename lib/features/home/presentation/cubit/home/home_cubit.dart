@@ -146,6 +146,7 @@ class HomeCubit extends Cubit<HomeState> {
                 checkOutJmlMotor: 0,
                 latitude: '',
                 longitude: '',
+                detailAlat: [],
               ),
             ),
           );
@@ -168,7 +169,6 @@ class HomeCubit extends Cubit<HomeState> {
                   .dashboard
                   .totalNominalBersihUntukWajibPajak
                   .toDouble(),
-              // Map pengawas metrics
               laporanPelanggaran: summary.data.laporanPelanggaran,
               checkInOutData: summary.data.checkInOut,
             ),
