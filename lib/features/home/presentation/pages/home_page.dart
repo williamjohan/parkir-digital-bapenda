@@ -21,6 +21,7 @@ import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
 import '../cubit/home/home_cubit.dart';
 import '../cubit/home/home_state.dart';
+import '../widgets/animated_home_fab.dart';
 import '../widgets/card_rekap_jenis_pembayaran_widget.dart';
 import '../widgets/card_rekap_kendaraan_widget.dart';
 import '../widgets/home_header_widget.dart';
@@ -323,49 +324,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   floatingActionButton: FeatureFlags.enableCreateOrderFeature
-                      ? PbPermissionGate(
-                          allowedRoles: const [RoleLoginDigitalParkir.pengawas],
-                          currentRole: state.role,
-                          child: SpeedDial(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            icon: Icons.add,
-                            activeIcon: Icons.close,
-                            spacing: 14,
-                            spaceBetweenChildren: 14,
-                            children: [
-                              SpeedDialChild(
-                                child: const Icon(Icons.report_outlined),
-                                label: 'Buat Laporan',
-                                labelStyle: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                                labelBackgroundColor: Colors.white,
-                                backgroundColor: Colors.orange,
-                                foregroundColor: Colors.white,
-                                elevation: 3,
-                                onTap: () {
-                                  context.pushNamed(
-                                    AppRoutes.addLaporanPelanggaran,
-                                  );
-                                },
-                              ),
-                              SpeedDialChild(
-                                child: const Icon(Icons.receipt_long_outlined),
-                                label: 'Buat Transaksi',
-                                labelStyle: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                                labelBackgroundColor: Colors.white,
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                elevation: 3,
-                              ),
-                            ],
-                          ),
-                        )
+                      ? AnimatedHomeFab(currentRole: state.role)
                       : null,
                 ),
               ),
