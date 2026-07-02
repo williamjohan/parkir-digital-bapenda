@@ -165,7 +165,7 @@ class CheckInCardWidget extends StatelessWidget {
               child: _buildVehicleCount(
                 icon: Icons.two_wheeler_rounded,
                 label: "Motor",
-                count: totalMotor, // <-- Pakai parameter langsung
+                count: totalMotor,
               ),
             ),
             const SizedBox(width: 8),
@@ -173,47 +173,44 @@ class CheckInCardWidget extends StatelessWidget {
               child: _buildVehicleCount(
                 icon: Icons.directions_car_rounded,
                 label: "Mobil",
-                count: totalMobil, // <-- Pakai parameter langsung
+                count: totalMobil,
               ),
             ),
           ],
         ),
-        if (detailAlat.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Text(
-            "Instrumen",
-            style: AppTypography.caption.copyWith(
-              color: Colors.grey.shade500,
-              fontWeight: FontWeight.w600,
+        const SizedBox(height: 12),
+        Text(
+          "Instrumen",
+          style: AppTypography.caption.copyWith(
+            color: Colors.grey.shade500,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: InstrumentBadgeWidget(
+                label: "EDC",
+                isActive: _isAlatBawa("edc"),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: InstrumentBadgeWidget(
-                  label: "EDC",
-                  isActive: _isAlatBawa("edc"), // Pengecekan dinamis
-                ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: InstrumentBadgeWidget(
+                label: "QRIS",
+                isActive: _isAlatBawa("qris") || _isAlatBawa("rompi"),
               ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: InstrumentBadgeWidget(
-                  label: "QRIS",
-                  // Cek apakah ada kata qris ATAU rompi
-                  isActive: _isAlatBawa("qris") || _isAlatBawa("rompi"),
-                ),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: InstrumentBadgeWidget(
+                label: "TSpark",
+                isActive: _isAlatBawa("ts"),
               ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: InstrumentBadgeWidget(
-                  label: "TSpark",
-                  isActive: _isAlatBawa("ts"), // Pengecekan dinamis
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ],
     );
   }
