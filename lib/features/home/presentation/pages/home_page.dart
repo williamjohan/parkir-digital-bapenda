@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.only(),
                               child: HomeHeaderWidget(
                                 role: state.role,
-                                namaJukir: state.namaJukirFormatted,
+                                namaJukir: state.namaJukir,
                                 nop: state.nop,
                                 namaObjekPajak: state.namaOp,
                                 onPressed: () {
