@@ -221,6 +221,10 @@ class _HomePageState extends State<HomePage> {
                                                 ],
                                                 currentRole: state.role,
                                                 child: CardRekapKendaraanWidget(
+                                                  isShowPelanggaran:
+                                                      state.role ==
+                                                      RoleLoginDigitalParkir
+                                                          .pengawas,
                                                   motorCount: state.motorCount,
                                                   mobilCount: state.mobilCount,
                                                   laporanPelanggaran:
@@ -342,9 +346,16 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
 
-                  floatingActionButton: FeatureFlags.enableCreateOrderFeature
-                      ? AnimatedHomeFab(currentRole: state.role)
-                      : null,
+                  // floatingActionButton: FeatureFlags.enableCreateOrderFeature
+                  //     ? AnimatedHomeFab(currentRole: state.role)
+                  //     : null,
+                  floatingActionButton: AnimatedHomeFab(
+                    currentRole: state.role,
+                    isFree: false,
+                    isDemoMode: state.role == RoleLoginDigitalParkir.bapenda,
+                    onReload:
+                        _loadData, // Lempar referensi fungsinya, jangan pakai tanda kurung ()
+                  ),
                 ),
               ),
             );
