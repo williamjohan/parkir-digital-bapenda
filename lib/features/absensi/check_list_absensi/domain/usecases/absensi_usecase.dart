@@ -1,12 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../core/errors/failure.dart';
-import '../../data/repositories/absensi_repository_impl.dart';
 import '../entities/absensi_entity.dart';
+import '../repositories/i_absensi_repository.dart';
 
 @lazySingleton
 class AbsensiUsecase {
-  final AbsensiRepositoryImpl _repository;
+  final IAbsensiRepository _repository;
 
   AbsensiUsecase(this._repository);
 

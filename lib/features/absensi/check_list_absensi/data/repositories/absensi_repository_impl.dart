@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/data/models/absensi_model.dart';
 import '../../../../../core/errors/exception.dart';
 import '../../../../../core/errors/failure.dart';
@@ -6,6 +7,7 @@ import '../../domain/entities/absensi_entity.dart';
 import '../../domain/repositories/i_absensi_repository.dart';
 import '../datasources/absensi_remote_datasource.dart';
 
+@LazySingleton(as: IAbsensiRepository)
 class AbsensiRepositoryImpl implements IAbsensiRepository {
   final IAbsensiRemoteDataSource remoteDataSource;
 

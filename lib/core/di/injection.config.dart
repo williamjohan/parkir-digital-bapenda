@@ -14,8 +14,12 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/absensi/check_list_absensi/data/datasources/absensi_remote_datasource.dart'
+    as _i606;
 import '../../features/absensi/check_list_absensi/data/repositories/absensi_repository_impl.dart'
     as _i482;
+import '../../features/absensi/check_list_absensi/domain/repositories/i_absensi_repository.dart'
+    as _i263;
 import '../../features/absensi/check_list_absensi/domain/usecases/absensi_usecase.dart'
     as _i708;
 import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_cubit.dart'
@@ -240,9 +244,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i988.IAppLocationService>(
     () => _i35.AppLocationServiceImpl(gh<_i1042.ISecureStorageManager>()),
   );
-  gh.lazySingleton<_i708.AbsensiUsecase>(
-    () => _i708.AbsensiUsecase(gh<_i482.AbsensiRepositoryImpl>()),
-  );
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
   );
@@ -261,8 +262,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i59.ITarifRemoteDataSource>(
     () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
-  gh.factory<_i875.AbsensiCubit>(
-    () => _i875.AbsensiCubit(gh<_i708.AbsensiUsecase>()),
+  gh.lazySingleton<_i606.IAbsensiRemoteDataSource>(
+    () => _i606.AbsensiRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i905.DashboardOpDatasource>(
     () => _i905.DashboardOpDatasourceImpl(gh<_i361.Dio>()),
@@ -275,6 +276,11 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i926.PengawasanDatasource>(
     () => _i926.PengawasanDatasourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i263.IAbsensiRepository>(
+    () => _i482.AbsensiRepositoryImpl(
+      remoteDataSource: gh<_i606.IAbsensiRemoteDataSource>(),
+    ),
   );
   gh.lazySingleton<_i949.QrisRompiDatasource>(
     () => _i949.QrisRompiDatasourceImpl(gh<_i361.Dio>()),
@@ -356,6 +362,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i717.DataJukirRepository>(
     () => _i527.DataJukirRepositoryImpl(gh<_i920.DataJukirDatasource>()),
   );
+  gh.lazySingleton<_i708.AbsensiUsecase>(
+    () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
+  );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
       gh<_i107.IAuthRemoteDataSource>(),
@@ -401,6 +410,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i48.LogoutUseCase>(
     () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.factory<_i875.AbsensiCubit>(
+    () => _i875.AbsensiCubit(gh<_i708.AbsensiUsecase>()),
   );
   gh.lazySingleton<_i215.IQrisRepository>(
     () => _i718.QrisRepositoryImpl(

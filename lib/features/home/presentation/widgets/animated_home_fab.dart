@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/routes/app_routes.dart';
-// import sesuaikan dengan path project-mu
-// import 'package:parkir_digital_bapenda/core/theme/app_colors.dart';
-// import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
-// import 'package:go_router/go_router.dart';
 
 class AnimatedHomeFab extends StatefulWidget {
   final dynamic currentRole;
@@ -143,24 +139,22 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                     // Teks Utama (Government Style: Tegas, tidak miring, warna solid)
                     Text(
                       _hintTexts[_currentIndex],
-                      style: const TextStyle(
-                        fontSize: 15,
+                      style: AppTypography.heading1.copyWith(
+                        fontSize: 16,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.w600,
-                        letterSpacing:
-                            0.3, // Menambah spasi antar huruf sedikit agar rapi
-                        color: Colors.black87,
                       ),
                     ),
                     const SizedBox(width: 2),
                     // Tanda Tanya dengan Animasi Getar
                     RotationTransition(
                       turns: _shakeAnimation,
-                      child: const Text(
-                        '?',
-                        style: TextStyle(
+                      child: Text(
+                        ' ?',
+                        style: AppTypography.heading1.copyWith(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
