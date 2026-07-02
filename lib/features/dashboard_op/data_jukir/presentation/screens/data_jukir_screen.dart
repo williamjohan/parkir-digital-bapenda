@@ -5,21 +5,53 @@ import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presenta
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../../core/di/injection.dart';
 import '../../../../../core/routes/app_routes.dart';
+import '../../../../../core/storage/secure_storage_manager.dart';
 import '../cubit/data_jukir_cubit.dart';
 import '../cubit/data_jukir_state.dart';
 import '../widgets/data_jukir_card.dart';
 
 class DataJukirScreen extends StatefulWidget {
-  final Map<String, dynamic> item;
+  final Map<String, dynamic>? item;
+  final bool isPengawas;
+  final bool isShowPendapatan;
 
-  const DataJukirScreen({super.key, required this.item});
+  const DataJukirScreen({
+    super.key,
+    this.item,
+    this.isPengawas = false,
+    this.isShowPendapatan = true,
+  });
 
   @override
   State<DataJukirScreen> createState() => _DataJukirScreenState();
 }
 
 class _DataJukirScreenState extends State<DataJukirScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    late final String nop;
+
+    if (widget.isPengawas) {
+      // final profile = await locator<ISecureStorageManager>().getJukirProfile();
+
+      // nop = profile?['nop'] ?? '';
+      nop = '357801000390703149';
+    } else {
+      nop = widget.item?['nop'] ?? '';
+    }
+
+    if (!mounted) return;
+
+    context.read<DataJukirCubit>().getDataJukir(nop);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,17 +70,18 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 16,
-                    left: 16,
-                    right: 16,
+                if (widget.isShowPendapatan)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 16,
+                      left: 16,
+                      right: 16,
+                    ),
+                    child: Skeletonizer(
+                      enabled: state.isLoading,
+                      child: PendapatanInfoCard(),
+                    ),
                   ),
-                  child: Skeletonizer(
-                    enabled: state.isLoading,
-                    child: PendapatanInfoCard(),
-                  ),
-                ),
                 Expanded(
                   child: Skeletonizer(
                     enabled: state.isLoading,
@@ -60,6 +93,7 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
                         final entity = items[index];
 
                         return DataJukirCard(
+                          isShowPendapatan: widget.isShowPendapatan,
                           entity: entity,
                           lihatRiwayatOnTap: state.isLoading
                               ? null
@@ -68,7 +102,7 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
                                     AppRoutes.history,
                                     extra: {
                                       'isFree': false,
-                                      'nop': widget.item['nop'],
+                                      'nop': widget.item!['nop'],
                                       'idDevice': entity.idDevice,
                                     },
                                   );

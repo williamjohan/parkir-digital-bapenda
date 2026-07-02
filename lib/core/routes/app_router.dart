@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -189,15 +191,20 @@ class AppRouter {
           path: AppRoutes.dataJukir,
           name: AppRoutes.dataJukir,
           builder: (context, state) {
-            // final nop = state.extra as String? ?? '';
-
             final extra = state.extra as Map<String, dynamic>?;
-            final item = extra?['item'] as Map<String, dynamic>;
+
+            final item = extra?['item'] as Map<String, dynamic>?;
+            final isShowPendapatan =
+                extra?['isShowPendapatan'] as bool? ?? true;
+            final isPengawas = extra?['isPengawas'] as bool? ?? false;
 
             return BlocProvider(
-              create: (context) =>
-                  locator<DataJukirCubit>()..getDataJukir(item['nop']),
-              child: DataJukirScreen(item: item),
+              create: (_) => locator<DataJukirCubit>(),
+              child: DataJukirScreen(
+                item: item,
+                isShowPendapatan: isShowPendapatan,
+                isPengawas: isPengawas,
+              ),
             );
           },
         ),

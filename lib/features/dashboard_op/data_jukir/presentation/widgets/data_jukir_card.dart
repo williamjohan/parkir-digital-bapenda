@@ -8,11 +8,13 @@ import '../../domain/entities/data_jukir_entity.dart';
 class DataJukirCard extends StatefulWidget {
   final DataJukirEntity entity;
   final VoidCallback? lihatRiwayatOnTap;
+  final bool isShowPendapatan;
 
   const DataJukirCard({
     super.key,
     required this.entity,
     required this.lihatRiwayatOnTap,
+    required this.isShowPendapatan,
   });
 
   @override
@@ -72,66 +74,67 @@ class _DataJukirCardState extends State<DataJukirCard> {
                         ),
                       ),
                     ),
-                    TextButton.icon(
-                      onPressed: widget.lihatRiwayatOnTap,
-                      icon: const Icon(Icons.history, size: 18),
-                      label: const Text("Lihat Riwayat"),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    if (widget.isShowPendapatan == true)
+                      TextButton.icon(
+                        onPressed: widget.lihatRiwayatOnTap,
+                        icon: const Icon(Icons.history, size: 18),
+                        label: const Text("Lihat Riwayat"),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                       ),
-                    ),
                   ],
                 ),
+                if (widget.isShowPendapatan == true) ...[
+                  const SizedBox(height: 16),
 
-                const SizedBox(height: 16),
-
-                Text(
-                  "Rekap Pendapatan",
-                  style: AppTypography.bodyRegular.copyWith(
-                    fontWeight: FontWeight.w700,
+                  Text(
+                    "Rekap Pendapatan",
+                    style: AppTypography.bodyRegular.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 8),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 14,
-                    horizontal: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _SummaryItem(
-                          title: "Pendapatan",
-                          value: widget.entity.totalNominal,
-                          icon: Icons.payments_outlined,
-                          isKendaraan: false,
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _SummaryItem(
+                            title: "Pendapatan",
+                            value: widget.entity.totalNominal,
+                            icon: Icons.payments_outlined,
+                            isKendaraan: false,
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: _SummaryItem(
-                          title: "Motor",
-                          value: widget.entity.totalMotorHariIni,
-                          icon: Icons.two_wheeler,
+                        Expanded(
+                          child: _SummaryItem(
+                            title: "Motor",
+                            value: widget.entity.totalMotorHariIni,
+                            icon: Icons.two_wheeler,
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: _SummaryItem(
-                          title: "Mobil",
-                          value: widget.entity.totalMobilHariIni,
-                          icon: Icons.directions_car,
+                        Expanded(
+                          child: _SummaryItem(
+                            title: "Mobil",
+                            value: widget.entity.totalMobilHariIni,
+                            icon: Icons.directions_car,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -156,7 +159,10 @@ class _DataJukirCardState extends State<DataJukirCard> {
                 ...visibleJukirList.map(
                   (jukir) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: _JukirItem(jukir: jukir),
+                    child: _JukirItem(
+                      jukir: jukir,
+                      isShowPendapatan: widget.isShowPendapatan,
+                    ),
                   ),
                 ),
 
@@ -196,8 +202,9 @@ class _DataJukirCardState extends State<DataJukirCard> {
 
 class _JukirItem extends StatelessWidget {
   final UsernameEntity jukir;
+  final bool isShowPendapatan;
 
-  const _JukirItem({required this.jukir});
+  const _JukirItem({required this.jukir, required this.isShowPendapatan});
 
   @override
   Widget build(BuildContext context) {
@@ -220,20 +227,22 @@ class _JukirItem extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
-              Text(
-                "username : ${jukir.username}",
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+              if (isShowPendapatan) ...[
+                const SizedBox(height: 2),
+                Text(
+                  "username : ${jukir.username}",
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                "password : ${jukir.username}",
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+                const SizedBox(height: 2),
+                Text(
+                  "password : ${jukir.username}",
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

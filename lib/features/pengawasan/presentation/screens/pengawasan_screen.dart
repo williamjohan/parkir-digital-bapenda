@@ -76,8 +76,8 @@ class _LaporanPelanggaranScreenState extends State<LaporanPelanggaranScreen> {
                       AppRoutes.detailLaporanPelanggaran,
                       extra: {
                         'namaJenisPelanggaran': jenisPelanggaran.nama,
-                        'keterangan': state.laporan[index].ketPel,
-                        'foto': state.laporan[index].fotoPelaporan,
+                        'keterangan': laporan.ketPel,
+                        'foto': laporan.fotoPelaporan,
                       },
                     );
                   },

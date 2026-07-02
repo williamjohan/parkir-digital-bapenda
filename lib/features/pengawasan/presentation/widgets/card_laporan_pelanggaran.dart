@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -8,7 +10,11 @@ class CardLaporanPelanggaran extends StatelessWidget {
   final LaporanPengawasanEntity item;
   final VoidCallback? onTapLaporan;
 
-  const CardLaporanPelanggaran({super.key, required this.item,required this.onTapLaporan});
+  const CardLaporanPelanggaran({
+    super.key,
+    required this.item,
+    required this.onTapLaporan,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,56 +42,49 @@ class CardLaporanPelanggaran extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (item.fotoPelaporan != null)
+            if (item.fotoPelaporan != null && item.fotoPelaporan!.isNotEmpty)
               GestureDetector(
                 onTap: () => _showImage(context),
-                child: Hero(
-                  tag: 'laporan-${item.idEvent}',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.memory(
-                      item.fotoPelaporan!,
-                      width: 88,
-                      height: 88,
-                      fit: BoxFit.cover,
-                    ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.memory(
+                    base64Decode(item.fotoPelaporan!),
+                    width: 88,
+                    height: 88,
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true,
+                    errorBuilder: (_, __, ___) {
+                      return _imagePlaceholder();
+                    },
                   ),
                 ),
               )
             else
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.image_not_supported_outlined),
-              ),
-      
+              _imagePlaceholder(),
+
             const SizedBox(width: 14),
-      
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    jenisPelanggaran?.nama ?? 'Jenis Pelanggaran Tidak Diketahui',
+                    jenisPelanggaran?.nama ??
+                        'Jenis Pelanggaran Tidak Diketahui',
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
                   ),
-      
                   const SizedBox(height: 4),
-      
                   Text(
-                    DateFormat('dd MMM yyyy HH:mm', 'id_ID').format(item.insDate),
+                    DateFormat(
+                      'dd MMM yyyy HH:mm',
+                      'id_ID',
+                    ).format(item.insDate),
                     style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                   ),
-      
                   const SizedBox(height: 8),
-      
                   Text(
                     item.ketPel,
                     maxLines: 2,
@@ -101,8 +100,22 @@ class CardLaporanPelanggaran extends StatelessWidget {
     );
   }
 
+  Widget _imagePlaceholder() {
+    return Container(
+      width: 88,
+      height: 88,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Icon(Icons.image_not_supported_outlined),
+    );
+  }
+
   void _showImage(BuildContext context) {
-    if (item.fotoPelaporan == null) return;
+    if (item.fotoPelaporan == null || item.fotoPelaporan!.isEmpty) {
+      return;
+    }
 
     showDialog(
       context: context,
@@ -111,12 +124,25 @@ class CardLaporanPelanggaran extends StatelessWidget {
         insetPadding: const EdgeInsets.all(20),
         child: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: Hero(
-            tag: 'laporan-${item.idEvent}',
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: InteractiveViewer(
-                child: Image.memory(item.fotoPelaporan!),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: InteractiveViewer(
+              minScale: 0.5,
+              maxScale: 4,
+              child: Image.memory(
+                base64Decode(item.fotoPelaporan!),
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) {
+                  return Container(
+                    color: Colors.black,
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.broken_image,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  );
+                },
               ),
             ),
           ),

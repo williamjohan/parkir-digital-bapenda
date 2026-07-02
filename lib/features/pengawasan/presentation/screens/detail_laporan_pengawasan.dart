@@ -10,7 +10,7 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
   final String keterangan;
 
   /// Bisa berupa:
-  /// - File path
+  /// - Path file lokal (/storage/...)
   /// - Base64
   /// - null
   final String? foto;
@@ -34,7 +34,7 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back_ios_rounded, size: 18),
         ),
-        title: Text("Detail Laporan", style: AppTypography.bodySemiBold),
+        title: Text('Detail Laporan', style: AppTypography.bodySemiBold),
         centerTitle: true,
       ),
       body: ListView(
@@ -45,14 +45,18 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
             icon: Icons.report_problem_outlined,
             child: Text(namaJenisPelanggaran, style: AppTypography.bodyRegular),
           ),
+
           const SizedBox(height: 16),
+
           LaporanSectionCard(
             title: 'Keterangan',
             icon: Icons.notes_rounded,
             child: Text(keterangan, style: AppTypography.bodyRegular),
           ),
+
           if (foto != null && foto!.isNotEmpty) ...[
             const SizedBox(height: 16),
+
             LaporanSectionCard(
               title: 'Foto Bukti',
               icon: Icons.image_outlined,
@@ -69,48 +73,56 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
 
   Widget _buildImage() {
     if (foto == null || foto!.isEmpty) {
-      return const SizedBox.shrink();
+      return _brokenImage();
     }
 
-    // File path
+    // File hasil kamera
     if (foto!.startsWith('/')) {
-      return Image.file(File(foto!), fit: BoxFit.cover);
-    }
-
-    // Base64 dengan prefix
-    if (foto!.startsWith('data:image')) {
-      final bytes = base64Decode(foto!.substring(foto!.indexOf(',') + 1));
-
-      return Image.memory(bytes, fit: BoxFit.cover);
-    }
-
-    // Base64 tanpa prefix
-    try {
-      final bytes = base64Decode(foto!);
-
-      return Image.memory(bytes, fit: BoxFit.cover);
-    } catch (_) {
-      return Container(
-        color: Colors.grey.shade200,
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.broken_image_outlined,
-              size: 40,
-              color: Colors.grey.shade500,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Gagal memuat gambar',
-              style: AppTypography.bodySmall.copyWith(
-                color: Colors.grey.shade600,
-              ),
-            ),
-          ],
-        ),
+      return Image.file(
+        File(foto!),
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _brokenImage(),
       );
     }
+
+    try {
+      // Base64 dengan prefix data:image
+      final base64String = foto!.startsWith('data:image')
+          ? foto!.substring(foto!.indexOf(',') + 1)
+          : foto!;
+
+      return Image.memory(
+        base64Decode(base64String),
+        fit: BoxFit.cover,
+        gaplessPlayback: true,
+        errorBuilder: (_, __, ___) => _brokenImage(),
+      );
+    } catch (_) {
+      return _brokenImage();
+    }
+  }
+
+  Widget _brokenImage() {
+    return Container(
+      color: Colors.grey.shade200,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.broken_image_outlined,
+            color: Colors.grey.shade600,
+            size: 48,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Gagal memuat gambar',
+            style: AppTypography.bodySmall.copyWith(
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

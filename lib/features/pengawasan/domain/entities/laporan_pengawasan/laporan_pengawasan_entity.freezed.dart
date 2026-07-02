@@ -27,7 +27,7 @@ mixin _$LaporanPengawasanEntity {
   DateTime get insDate => throw _privateConstructorUsedError;
   String get insBy => throw _privateConstructorUsedError;
   int get seq => throw _privateConstructorUsedError;
-  Uint8List? get fotoPelaporan => throw _privateConstructorUsedError;
+  String? get fotoPelaporan => throw _privateConstructorUsedError;
 
   /// Create a copy of LaporanPengawasanEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -54,7 +54,7 @@ abstract class $LaporanPengawasanEntityCopyWith<$Res> {
     DateTime insDate,
     String insBy,
     int seq,
-    Uint8List? fotoPelaporan,
+    String? fotoPelaporan,
   });
 }
 
@@ -133,7 +133,7 @@ class _$LaporanPengawasanEntityCopyWithImpl<
             fotoPelaporan: freezed == fotoPelaporan
                 ? _value.fotoPelaporan
                 : fotoPelaporan // ignore: cast_nullable_to_non_nullable
-                      as Uint8List?,
+                      as String?,
           )
           as $Val,
     );
@@ -160,7 +160,7 @@ abstract class _$$LaporanPengawasanEntityImplCopyWith<$Res>
     DateTime insDate,
     String insBy,
     int seq,
-    Uint8List? fotoPelaporan,
+    String? fotoPelaporan,
   });
 }
 
@@ -239,7 +239,7 @@ class __$$LaporanPengawasanEntityImplCopyWithImpl<$Res>
         fotoPelaporan: freezed == fotoPelaporan
             ? _value.fotoPelaporan
             : fotoPelaporan // ignore: cast_nullable_to_non_nullable
-                  as Uint8List?,
+                  as String?,
       ),
     );
   }
@@ -283,7 +283,7 @@ class _$LaporanPengawasanEntityImpl implements _LaporanPengawasanEntity {
   @override
   final int seq;
   @override
-  final Uint8List? fotoPelaporan;
+  final String? fotoPelaporan;
 
   @override
   String toString() {
@@ -308,10 +308,8 @@ class _$LaporanPengawasanEntityImpl implements _LaporanPengawasanEntity {
             (identical(other.insDate, insDate) || other.insDate == insDate) &&
             (identical(other.insBy, insBy) || other.insBy == insBy) &&
             (identical(other.seq, seq) || other.seq == seq) &&
-            const DeepCollectionEquality().equals(
-              other.fotoPelaporan,
-              fotoPelaporan,
-            ));
+            (identical(other.fotoPelaporan, fotoPelaporan) ||
+                other.fotoPelaporan == fotoPelaporan));
   }
 
   @override
@@ -327,7 +325,7 @@ class _$LaporanPengawasanEntityImpl implements _LaporanPengawasanEntity {
     insDate,
     insBy,
     seq,
-    const DeepCollectionEquality().hash(fotoPelaporan),
+    fotoPelaporan,
   );
 
   /// Create a copy of LaporanPengawasanEntity
@@ -354,7 +352,7 @@ abstract class _LaporanPengawasanEntity implements LaporanPengawasanEntity {
     required final DateTime insDate,
     required final String insBy,
     required final int seq,
-    final Uint8List? fotoPelaporan,
+    final String? fotoPelaporan,
   }) = _$LaporanPengawasanEntityImpl;
 
   @override
@@ -378,7 +376,7 @@ abstract class _LaporanPengawasanEntity implements LaporanPengawasanEntity {
   @override
   int get seq;
   @override
-  Uint8List? get fotoPelaporan;
+  String? get fotoPelaporan;
 
   /// Create a copy of LaporanPengawasanEntity
   /// with the given fields replaced by the non-null parameter values.

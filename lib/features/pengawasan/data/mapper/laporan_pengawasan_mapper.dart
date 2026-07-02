@@ -16,9 +16,7 @@ extension LaporanPengawasanMapper on LaporanPengawasanModel {
       insDate: insDate,
       insBy: insBy,
       seq: seq,
-      fotoPelaporan: fotoPelaporan == null || fotoPelaporan!.isEmpty
-          ? null
-          : base64Decode(fotoPelaporan!),
+      fotoPelaporan: fotoPelaporan,
     );
   }
 }

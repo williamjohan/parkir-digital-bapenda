@@ -94,12 +94,14 @@ class HomeHeaderWidget extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
-          PbPrimaryButton(
-            text: "Lihat Data Jukir",
-            variant: PbButtonVariant.outlinedSecondaryLight,
-            onPressed: () {},
-          ),
+          if (role == RoleLoginDigitalParkir.pengawas) ...[
+            SizedBox(height: 16),
+            PbPrimaryButton(
+              text: "Lihat Data Jukir",
+              variant: PbButtonVariant.outlinedSecondaryLight,
+              onPressed: onPressed,
+            ),
+          ],
         ],
       ),
     );

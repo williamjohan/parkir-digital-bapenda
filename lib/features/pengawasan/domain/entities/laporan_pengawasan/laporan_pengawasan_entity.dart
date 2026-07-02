@@ -16,6 +16,6 @@ class LaporanPengawasanEntity with _$LaporanPengawasanEntity {
     required DateTime insDate,
     required String insBy,
     required int seq,
-    Uint8List? fotoPelaporan,
+    final String? fotoPelaporan,
   }) = _LaporanPengawasanEntity;
 }

@@ -115,7 +115,15 @@ class _HomePageState extends State<HomePage> {
                                 namaJukir: state.namaJukirFormatted,
                                 nop: state.nop,
                                 namaObjekPajak: state.namaOp,
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.pushNamed(
+                                    AppRoutes.dataJukir,
+                                    extra: {
+                                      'isPengawas': true,
+                                      'isShowPendapatan': false,
+                                    },
+                                  );
+                                },
                               ),
                             ),
                             Expanded(
