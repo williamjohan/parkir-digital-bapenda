@@ -4,12 +4,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/services/location/app_location_data.dart';
 import '../../errors/exception.dart';
-import '../../storage/secure_storage_manager.dart'; // 🚀 Import Secure Storage
+import '../../storage/secure_storage_manager.dart';
 import 'i_app_location_service.dart';
 
 @LazySingleton(as: IAppLocationService)
 class AppLocationServiceImpl implements IAppLocationService {
-  final ISecureStorageManager _secureStorage; // 🚀 Injeksi Storage
+  final ISecureStorageManager _secureStorage;
 
   AppLocationServiceImpl(this._secureStorage);
 
@@ -32,39 +32,64 @@ class AppLocationServiceImpl implements IAppLocationService {
         );
       }
 
-      // Tingkatkan limit sedikit menjadi 5 detik untuk mengakomodasi HP jadul
+      // 1. PERBAIKAN AKURASI & TIMEOUT
+      // Ubah ke 'high' untuk absensi, dan beri toleransi waktu 15 detik agar GPS HP sempat mencari satelit
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-          timeLimit: Duration(seconds: 5),
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 15),
         ),
       );
+
+      if (position.isMocked) {
+        throw Exception(
+          "TERDETEKSI FAKE GPS: Harap matikan aplikasi lokasi palsu untuk melakukan absensi.",
+        );
+      }
 
       final lat = position.latitude.toString();
       final lng = position.longitude.toString();
 
-      // Simpan koordinat ke cache (fallback)
+      // Simpan koordinat presisi ke cache
       await _secureStorage.saveLastLocation(lat, lng);
 
-      // (Opsional) Ambil nama alamat. Dibungkus try-catch agar kalau gagal, tetap me-return koordinat
       String? placeName;
       try {
         final placemarks = await placemarkFromCoordinates(
           position.latitude,
           position.longitude,
         );
+
         if (placemarks.isNotEmpty) {
           final p = placemarks.first;
+          String namaJalan = p.thoroughfare ?? p.street ?? '';
+          if (namaJalan.contains('+')) {
+            // Jika isinya Plus Code, kita kosongkan saja daripada aneh dibaca
+            namaJalan = '';
+          } else if (p.subThoroughfare != null &&
+              p.subThoroughfare!.isNotEmpty) {
+            //  3. Gabungkan dengan Nomor Bangunan jika tersedia
+            // Hasil: "Jl. Jimerto No.19"
+            namaJalan = '$namaJalan No.${p.subThoroughfare}';
+          }
+          // 2. PERBAIKAN FORMAT ALAMAT (Memasukkan Nama Jalan)
+          // Contoh hasil: "Jl. Pemuda No. 1, Embong Kaliasin, Surabaya"
           final parts = [
+            namaJalan,
             p.subLocality,
             p.locality,
           ].where((e) => e != null && e.isNotEmpty).toList();
+
           placeName = parts.isNotEmpty ? parts.join(', ') : null;
         }
-      } catch (_) {}
+      } catch (_) {
+        // Jika internet mati sehingga geocoding gagal, biarkan placeName null.
+        // Nanti UI akan secara otomatis hanya menampilkan koordinat Lat/Long.
+      }
 
       return AppLocationData(latitude: lat, longitude: lng, address: placeName);
     } on TimeoutException {
+      // Jika setelah 15 detik GPS tetap gagal mengunci, baru gunakan Cache
       return await _fallbackLocation();
     } catch (e) {
       final errorString = e.toString().toLowerCase();
@@ -90,8 +115,7 @@ class AppLocationServiceImpl implements IAppLocationService {
       return AppLocationData(
         latitude: cachedLocation['latitude']!,
         longitude: cachedLocation['longitude']!,
-        address:
-            'Lokasi Terakhir (Cache)', // Penanda bahwa ini lokasi offline/cache
+        address: 'Lokasi Terakhir (Cache)',
       );
     }
     return AppLocationData(

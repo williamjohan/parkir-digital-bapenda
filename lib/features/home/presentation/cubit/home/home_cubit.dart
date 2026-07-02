@@ -35,16 +35,20 @@ class HomeCubit extends Cubit<HomeState> {
 
     formatUserName();
 
+    await _ensureValidToken();
+
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboarJukir();
       await _profileUseCase.getProfilePicturePath();
-      await _syncQrisUseCase.execute();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
       await loadDashboardPengawas();
     } else {
-      await _ensureValidToken();
+      // await _ensureValidToken();
       await _loadDashboardNonJukir();
+      return;
     }
+
+    await _syncQrisUseCase.execute();
   }
 
   Future<void> _ensureValidToken() async {
@@ -146,7 +150,8 @@ class HomeCubit extends Cubit<HomeState> {
                 checkOutJmlMotor: 0,
                 latitude: '',
                 longitude: '',
-                detailAlat: [],
+                detailAlatCheckIn: [], // ⬅️ ganti dari detailAlat
+                detailAlatCheckOut: [],
               ),
             ),
           );

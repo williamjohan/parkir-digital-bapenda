@@ -67,7 +67,8 @@ class CheckInOutModel with _$CheckInOutModel {
     @Default(0) int checkOutJmlMotor,
     @Default('') String latitude,
     @Default('') String longitude,
-    @Default([]) List<DetailAlatModel> detailAlat,
+    @Default([]) List<DetailAlatModel> detailAlatCheckIn,
+    @Default([]) List<DetailAlatModel> detailAlatCheckOut,
   }) = _CheckInOutModel;
 
   factory CheckInOutModel.fromJson(Map<String, dynamic> json) =>
@@ -77,9 +78,11 @@ class CheckInOutModel with _$CheckInOutModel {
 @freezed
 class DetailAlatModel with _$DetailAlatModel {
   const factory DetailAlatModel({
-    @Default(0) int id,
-    @Default('') String namaAlat,
-    @Default(false) bool isBawa,
+    @JsonKey(name: 'alatId') @Default(0) int id,
+    @JsonKey(name: 'nama') @Default('') String namaAlat,
+    @Default(true)
+    bool
+    isBawa, // gak ada di JSON, tapi kalau item ini muncul di list = otomatis dibawa
   }) = _DetailAlatModel;
 
   factory DetailAlatModel.fromJson(Map<String, dynamic> json) =>
@@ -146,11 +149,11 @@ extension CheckInOutModelExt on CheckInOutModel {
       checkOutJmlMotor: checkOutJmlMotor,
       latitude: latitude,
       longitude: longitude,
-      detailAlat: detailAlat.toEntityList(),
+      detailAlatCheckIn: detailAlatCheckIn.toEntityList(),
+      detailAlatCheckOut: detailAlatCheckOut.toEntityList(),
     );
   }
 }
-
 extension DetailAlatModelExt on DetailAlatModel {
   DetailAlatEntity toEntity() {
     return DetailAlatEntity(id: id, namaAlat: namaAlat, isBawa: isBawa);

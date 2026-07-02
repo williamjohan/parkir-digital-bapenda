@@ -822,7 +822,10 @@ mixin _$CheckInOutModel {
   int get checkOutJmlMotor => throw _privateConstructorUsedError;
   String get latitude => throw _privateConstructorUsedError;
   String get longitude => throw _privateConstructorUsedError;
-  List<DetailAlatModel> get detailAlat => throw _privateConstructorUsedError;
+  List<DetailAlatModel> get detailAlatCheckIn =>
+      throw _privateConstructorUsedError;
+  List<DetailAlatModel> get detailAlatCheckOut =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this CheckInOutModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -859,7 +862,8 @@ abstract class $CheckInOutModelCopyWith<$Res> {
     int checkOutJmlMotor,
     String latitude,
     String longitude,
-    List<DetailAlatModel> detailAlat,
+    List<DetailAlatModel> detailAlatCheckIn,
+    List<DetailAlatModel> detailAlatCheckOut,
   });
 }
 
@@ -895,7 +899,8 @@ class _$CheckInOutModelCopyWithImpl<$Res, $Val extends CheckInOutModel>
     Object? checkOutJmlMotor = null,
     Object? latitude = null,
     Object? longitude = null,
-    Object? detailAlat = null,
+    Object? detailAlatCheckIn = null,
+    Object? detailAlatCheckOut = null,
   }) {
     return _then(
       _value.copyWith(
@@ -967,9 +972,13 @@ class _$CheckInOutModelCopyWithImpl<$Res, $Val extends CheckInOutModel>
                 ? _value.longitude
                 : longitude // ignore: cast_nullable_to_non_nullable
                       as String,
-            detailAlat: null == detailAlat
-                ? _value.detailAlat
-                : detailAlat // ignore: cast_nullable_to_non_nullable
+            detailAlatCheckIn: null == detailAlatCheckIn
+                ? _value.detailAlatCheckIn
+                : detailAlatCheckIn // ignore: cast_nullable_to_non_nullable
+                      as List<DetailAlatModel>,
+            detailAlatCheckOut: null == detailAlatCheckOut
+                ? _value.detailAlatCheckOut
+                : detailAlatCheckOut // ignore: cast_nullable_to_non_nullable
                       as List<DetailAlatModel>,
           )
           as $Val,
@@ -1004,7 +1013,8 @@ abstract class _$$CheckInOutModelImplCopyWith<$Res>
     int checkOutJmlMotor,
     String latitude,
     String longitude,
-    List<DetailAlatModel> detailAlat,
+    List<DetailAlatModel> detailAlatCheckIn,
+    List<DetailAlatModel> detailAlatCheckOut,
   });
 }
 
@@ -1039,7 +1049,8 @@ class __$$CheckInOutModelImplCopyWithImpl<$Res>
     Object? checkOutJmlMotor = null,
     Object? latitude = null,
     Object? longitude = null,
-    Object? detailAlat = null,
+    Object? detailAlatCheckIn = null,
+    Object? detailAlatCheckOut = null,
   }) {
     return _then(
       _$CheckInOutModelImpl(
@@ -1111,9 +1122,13 @@ class __$$CheckInOutModelImplCopyWithImpl<$Res>
             ? _value.longitude
             : longitude // ignore: cast_nullable_to_non_nullable
                   as String,
-        detailAlat: null == detailAlat
-            ? _value._detailAlat
-            : detailAlat // ignore: cast_nullable_to_non_nullable
+        detailAlatCheckIn: null == detailAlatCheckIn
+            ? _value._detailAlatCheckIn
+            : detailAlatCheckIn // ignore: cast_nullable_to_non_nullable
+                  as List<DetailAlatModel>,
+        detailAlatCheckOut: null == detailAlatCheckOut
+            ? _value._detailAlatCheckOut
+            : detailAlatCheckOut // ignore: cast_nullable_to_non_nullable
                   as List<DetailAlatModel>,
       ),
     );
@@ -1141,8 +1156,10 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
     this.checkOutJmlMotor = 0,
     this.latitude = '',
     this.longitude = '',
-    final List<DetailAlatModel> detailAlat = const [],
-  }) : _detailAlat = detailAlat;
+    final List<DetailAlatModel> detailAlatCheckIn = const [],
+    final List<DetailAlatModel> detailAlatCheckOut = const [],
+  }) : _detailAlatCheckIn = detailAlatCheckIn,
+       _detailAlatCheckOut = detailAlatCheckOut;
 
   factory _$CheckInOutModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CheckInOutModelImplFromJson(json);
@@ -1198,18 +1215,29 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
   @override
   @JsonKey()
   final String longitude;
-  final List<DetailAlatModel> _detailAlat;
+  final List<DetailAlatModel> _detailAlatCheckIn;
   @override
   @JsonKey()
-  List<DetailAlatModel> get detailAlat {
-    if (_detailAlat is EqualUnmodifiableListView) return _detailAlat;
+  List<DetailAlatModel> get detailAlatCheckIn {
+    if (_detailAlatCheckIn is EqualUnmodifiableListView)
+      return _detailAlatCheckIn;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_detailAlat);
+    return EqualUnmodifiableListView(_detailAlatCheckIn);
+  }
+
+  final List<DetailAlatModel> _detailAlatCheckOut;
+  @override
+  @JsonKey()
+  List<DetailAlatModel> get detailAlatCheckOut {
+    if (_detailAlatCheckOut is EqualUnmodifiableListView)
+      return _detailAlatCheckOut;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_detailAlatCheckOut);
   }
 
   @override
   String toString() {
-    return 'CheckInOutModel(idEvent: $idEvent, op: $op, nip: $nip, tglRoster: $tglRoster, jadwalMasuk: $jadwalMasuk, jadwalOut: $jadwalOut, status: $status, checkIn: $checkIn, checkInString: $checkInString, checkInJmlMobil: $checkInJmlMobil, checkInJmlMotor: $checkInJmlMotor, checkOut: $checkOut, checkOutString: $checkOutString, checkOutJmlMobil: $checkOutJmlMobil, checkOutJmlMotor: $checkOutJmlMotor, latitude: $latitude, longitude: $longitude, detailAlat: $detailAlat)';
+    return 'CheckInOutModel(idEvent: $idEvent, op: $op, nip: $nip, tglRoster: $tglRoster, jadwalMasuk: $jadwalMasuk, jadwalOut: $jadwalOut, status: $status, checkIn: $checkIn, checkInString: $checkInString, checkInJmlMobil: $checkInJmlMobil, checkInJmlMotor: $checkInJmlMotor, checkOut: $checkOut, checkOutString: $checkOutString, checkOutJmlMobil: $checkOutJmlMobil, checkOutJmlMotor: $checkOutJmlMotor, latitude: $latitude, longitude: $longitude, detailAlatCheckIn: $detailAlatCheckIn, detailAlatCheckOut: $detailAlatCheckOut)';
   }
 
   @override
@@ -1247,14 +1275,18 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
             const DeepCollectionEquality().equals(
-              other._detailAlat,
-              _detailAlat,
+              other._detailAlatCheckIn,
+              _detailAlatCheckIn,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._detailAlatCheckOut,
+              _detailAlatCheckOut,
             ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     idEvent,
     op,
@@ -1273,8 +1305,9 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
     checkOutJmlMotor,
     latitude,
     longitude,
-    const DeepCollectionEquality().hash(_detailAlat),
-  );
+    const DeepCollectionEquality().hash(_detailAlatCheckIn),
+    const DeepCollectionEquality().hash(_detailAlatCheckOut),
+  ]);
 
   /// Create a copy of CheckInOutModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1312,7 +1345,8 @@ abstract class _CheckInOutModel implements CheckInOutModel {
     final int checkOutJmlMotor,
     final String latitude,
     final String longitude,
-    final List<DetailAlatModel> detailAlat,
+    final List<DetailAlatModel> detailAlatCheckIn,
+    final List<DetailAlatModel> detailAlatCheckOut,
   }) = _$CheckInOutModelImpl;
 
   factory _CheckInOutModel.fromJson(Map<String, dynamic> json) =
@@ -1353,7 +1387,9 @@ abstract class _CheckInOutModel implements CheckInOutModel {
   @override
   String get longitude;
   @override
-  List<DetailAlatModel> get detailAlat;
+  List<DetailAlatModel> get detailAlatCheckIn;
+  @override
+  List<DetailAlatModel> get detailAlatCheckOut;
 
   /// Create a copy of CheckInOutModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1369,7 +1405,9 @@ DetailAlatModel _$DetailAlatModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$DetailAlatModel {
+  @JsonKey(name: 'alatId')
   int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'nama')
   String get namaAlat => throw _privateConstructorUsedError;
   bool get isBawa => throw _privateConstructorUsedError;
 
@@ -1390,7 +1428,11 @@ abstract class $DetailAlatModelCopyWith<$Res> {
     $Res Function(DetailAlatModel) then,
   ) = _$DetailAlatModelCopyWithImpl<$Res, DetailAlatModel>;
   @useResult
-  $Res call({int id, String namaAlat, bool isBawa});
+  $Res call({
+    @JsonKey(name: 'alatId') int id,
+    @JsonKey(name: 'nama') String namaAlat,
+    bool isBawa,
+  });
 }
 
 /// @nodoc
@@ -1441,7 +1483,11 @@ abstract class _$$DetailAlatModelImplCopyWith<$Res>
   ) = __$$DetailAlatModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String namaAlat, bool isBawa});
+  $Res call({
+    @JsonKey(name: 'alatId') int id,
+    @JsonKey(name: 'nama') String namaAlat,
+    bool isBawa,
+  });
 }
 
 /// @nodoc
@@ -1485,19 +1531,19 @@ class __$$DetailAlatModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DetailAlatModelImpl implements _DetailAlatModel {
   const _$DetailAlatModelImpl({
-    this.id = 0,
-    this.namaAlat = '',
-    this.isBawa = false,
+    @JsonKey(name: 'alatId') this.id = 0,
+    @JsonKey(name: 'nama') this.namaAlat = '',
+    this.isBawa = true,
   });
 
   factory _$DetailAlatModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$DetailAlatModelImplFromJson(json);
 
   @override
-  @JsonKey()
+  @JsonKey(name: 'alatId')
   final int id;
   @override
-  @JsonKey()
+  @JsonKey(name: 'nama')
   final String namaAlat;
   @override
   @JsonKey()
@@ -1542,8 +1588,8 @@ class _$DetailAlatModelImpl implements _DetailAlatModel {
 
 abstract class _DetailAlatModel implements DetailAlatModel {
   const factory _DetailAlatModel({
-    final int id,
-    final String namaAlat,
+    @JsonKey(name: 'alatId') final int id,
+    @JsonKey(name: 'nama') final String namaAlat,
     final bool isBawa,
   }) = _$DetailAlatModelImpl;
 
@@ -1551,8 +1597,10 @@ abstract class _DetailAlatModel implements DetailAlatModel {
       _$DetailAlatModelImpl.fromJson;
 
   @override
+  @JsonKey(name: 'alatId')
   int get id;
   @override
+  @JsonKey(name: 'nama')
   String get namaAlat;
   @override
   bool get isBawa;

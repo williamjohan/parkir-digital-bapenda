@@ -48,7 +48,7 @@ class MainAbsensiWidget extends StatelessWidget {
           checkInTimeString: isCheckedIn ? absensiData.checkInString : null,
           totalMotor: absensiData.checkInJmlMotor,
           totalMobil: absensiData.checkInJmlMobil,
-          detailAlat: absensiData.detailAlat,
+          detailAlat: absensiData.detailAlatCheckIn, // ⬅️ ganti
           onTapCheckIn: () => _openForm(context, ShiftFormType.checkIn),
         ),
 
@@ -61,7 +61,7 @@ class MainAbsensiWidget extends StatelessWidget {
           checkOutTimeString: isCheckedOut ? absensiData.checkOutString : null,
           totalMotor: absensiData.checkOutJmlMotor,
           totalMobil: absensiData.checkOutJmlMobil,
-          detailAlat: absensiData.detailAlat,
+          detailAlat: absensiData.detailAlatCheckOut, // ⬅️ ganti
           onTapCheckOut: () => _openForm(context, ShiftFormType.checkOut),
         ),
       ],
