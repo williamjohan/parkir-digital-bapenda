@@ -75,6 +75,7 @@ class CheckInOutEntity extends Equatable {
   final int checkOutJmlMotor;
   final String latitude;
   final String longitude;
+  final List<DetailAlatEntity> detailAlat;
 
   const CheckInOutEntity({
     required this.idEvent,
@@ -94,6 +95,7 @@ class CheckInOutEntity extends Equatable {
     required this.checkOutJmlMotor,
     required this.latitude,
     required this.longitude,
+    required this.detailAlat,
   });
 
   @override
@@ -116,4 +118,19 @@ class CheckInOutEntity extends Equatable {
     latitude,
     longitude,
   ];
+}
+
+class DetailAlatEntity extends Equatable {
+  final int id;
+  final String namaAlat;
+  final bool isBawa;
+
+  const DetailAlatEntity({
+    required this.id,
+    required this.namaAlat,
+    required this.isBawa,
+  });
+
+  @override
+  List<Object?> get props => [id, namaAlat, isBawa];
 }

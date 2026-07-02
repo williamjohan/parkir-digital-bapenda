@@ -3,27 +3,27 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
+import '../../../../../core/services/camera/camera_service.dart';
+import '../../../../../core/services/location/i_app_location_service.dart';
+import '../../domain/entities/absensi_entity.dart';
+import '../cubit/absensi_cubit.dart';
+import '../cubit/absensi_state.dart';
 import '../widgets/instrument_toggle_widget.dart';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
-
-// Sesuaikan path import ini dengan struktur folder project kamu.
-import '../../domain/entities/absensi_checkin_entity.dart';
-import '../cubit/absensi_checkin_cubit.dart';
-import '../cubit/absensi_checkin_state.dart';
 
 enum ShiftFormType { checkIn, checkOut }
 
-/// TODO: GANTI id ini sesuai master data alat/instrumen dari backend.
-/// Ini cuma placeholder supaya kode bisa jalan dulu.
 const Map<String, int> kInstrumentIds = {'EDC': 1, 'QRIS': 2, 'TSpark': 3};
 
 class ShiftFormScreen extends StatefulWidget {
   final ShiftFormType type;
+  final IAppLocationService locationService;
 
-  const ShiftFormScreen({super.key, required this.type});
+  const ShiftFormScreen({
+    super.key,
+    required this.type,
+    required this.locationService,
+  });
 
   @override
   State<ShiftFormScreen> createState() => _ShiftFormScreenState();
@@ -33,20 +33,21 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   final _motorController = TextEditingController();
   final _mobilController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final ImagePicker _picker = ImagePicker();
+
   File? _photo;
+  DateTime? _photoTakenAt;
+  double? _latitude;
+  double? _longitude;
+  String? _placeName;
+  String? _locationError;
+  bool _isFetchingLocation = false;
 
   bool _edc = false;
   bool _qris = false;
   bool _tsPark = false;
-  bool _isFetchingLocation = false;
 
   bool get _isCheckIn => widget.type == ShiftFormType.checkIn;
   Color get _accentColor => _isCheckIn ? AppColors.success : AppColors.error;
-  Position? _position;
-  String? _locationError;
-  String? _placeName;
-  DateTime? _photoTakenAt;
   String get _title => _isCheckIn ? "Form Check In" : "Form Check Out";
   String get _submitLabel =>
       _isCheckIn ? "Simpan Check In" : "Simpan Check Out";
@@ -56,7 +57,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _fetchLocation();
   }
 
   @override
@@ -66,75 +67,23 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
     super.dispose();
   }
 
-  Future<void> _takePhoto() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.camera,
-      preferredCameraDevice: CameraDevice.front,
-      imageQuality: 80,
-    );
-    if (image == null) return;
-
-    setState(() {
-      _photo = File(image.path);
-      _photoTakenAt = DateTime.now();
-    });
-
-    await _getCurrentLocation(); // refresh biar waktu & lokasi sinkron sama momen foto
-  }
-
-  Future<void> _getCurrentLocation() async {
+  Future<void> _fetchLocation() async {
     setState(() {
       _isFetchingLocation = true;
       _locationError = null;
     });
 
     try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        throw 'GPS tidak aktif. Aktifkan lokasi terlebih dahulu.';
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw 'Izin lokasi ditolak.';
-        }
-      }
-      if (permission == LocationPermission.deniedForever) {
-        throw 'Izin lokasi ditolak permanen. Aktifkan lewat pengaturan.';
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      );
+      final result = await widget.locationService.getCurrentLocation();
 
       setState(() {
-        _position = position;
+        // Parse string latitude/longitude ke double
+        _latitude = double.tryParse(result.latitude);
+        _longitude = double.tryParse(result.longitude);
+        _placeName = result.address; // Gunakan .address dari AppLocationData
+
         _isFetchingLocation = false;
       });
-
-      try {
-        final placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-        if (placemarks.isNotEmpty) {
-          final p = placemarks.first;
-          final parts = [
-            p.subLocality,
-            p.locality,
-            p.subAdministrativeArea,
-          ].where((e) => e != null && e.trim().isNotEmpty).toList();
-          setState(
-            () => _placeName = parts.isNotEmpty ? parts.join(', ') : null,
-          );
-        }
-      } catch (_) {
-        // nama tempat gagal diambil, biarkan null (lat/lng tetap valid)
-      }
     } catch (e) {
       setState(() {
         _locationError = e.toString();
@@ -143,15 +92,17 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
     }
   }
 
-  // ---- helper baca state cubit sesuai mode (checkIn / checkOut) ----
-  bool _loadingFor(AbsensiCheckInState state) =>
-      _isCheckIn ? state.isCheckInLoading : state.isCheckOutLoading;
-
-  bool _successFor(AbsensiCheckInState state) =>
-      _isCheckIn ? state.isCheckInSuccess : state.isCheckOutSuccess;
-
-  String? _errorFor(AbsensiCheckInState state) =>
-      _isCheckIn ? state.checkInErrorMessage : state.checkOutErrorMessage;
+  Future<void> _takePhoto() async {
+    // MENGGUNAKAN SERVICE EKSTERNAL (Lebih Clean)
+    final file = await CameraService.takePhoto();
+    if (file != null) {
+      setState(() {
+        _photo = file;
+        _photoTakenAt = DateTime.now();
+      });
+      await _fetchLocation(); // Refresh lokasi saat foto diambil
+    }
+  }
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
@@ -163,63 +114,48 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
       return;
     }
 
-    if (_position == null) {
+    if (_latitude == null || _longitude == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Lokasi belum terdeteksi, coba lagi")),
       );
       return;
     }
 
-    final detailAlat = <AlatEntity>[
-      if (_edc) AlatEntity(id: kInstrumentIds['EDC']!),
-      if (_qris) AlatEntity(id: kInstrumentIds['QRIS']!),
-      if (_tsPark) AlatEntity(id: kInstrumentIds['TSpark']!),
+    // Ekstrak ID instrumen yang aktif
+    final List<int> detailAlatIds = [
+      if (_edc) kInstrumentIds['EDC']!,
+      if (_qris) kInstrumentIds['QRIS']!,
+      if (_tsPark) kInstrumentIds['TSpark']!,
     ];
 
-    final jumlahMobil = double.tryParse(_mobilController.text) ?? 0;
-    final jumlahMotor = double.tryParse(_motorController.text) ?? 0;
-    final lat = _position!.latitude.toString();
-    final lng = _position!.longitude.toString();
+    // Mapping ke AbsensiEntity tunggal
+    final entity = AbsensiEntity(
+      latitude: _latitude!,
+      longitude: _longitude!,
+      totalMotor:
+          int.tryParse(_motorController.text) ?? 0, // Entity baru pakai int
+      totalMobil:
+          int.tryParse(_mobilController.text) ?? 0, // Entity baru pakai int
+      detailAlatIds: detailAlatIds, // Mengirim List<int> sesuai entity
+      fotoPath: _photo!.path,
+      isCheckIn: _isCheckIn,
+    );
 
-    final cubit = context.read<AbsensiCheckInCubit>();
-
-    if (_isCheckIn) {
-      final entity = CheckInEntity(
-        jumlahMobil: jumlahMobil,
-        jumlahMotor: jumlahMotor,
-        latitude: lat,
-        longitude: lng,
-        detailAlat: detailAlat,
-      );
-      cubit.checkIn(entity, _photo!);
-    } else {
-      final entity = CheckOutEntity(
-        jumlahMobil: jumlahMobil,
-        jumlahMotor: jumlahMotor,
-        latitude: lat,
-        longitude: lng,
-        detailAlat: detailAlat,
-      );
-      cubit.checkOut(entity, _photo!);
-    }
+    // Lempar ke Cubit Baru
+    context.read<AbsensiCubit>().submitAbsensi(entity);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AbsensiCheckInCubit, AbsensiCheckInState>(
-      listenWhen: (prev, curr) =>
-          _successFor(prev) != _successFor(curr) ||
-          _errorFor(prev) != _errorFor(curr),
+    // MENGGUNAKAN ABSENSI CUBIT BARU
+    return BlocListener<AbsensiCubit, AbsensiState>(
+      listenWhen: (prev, curr) => prev.status != curr.status,
       listener: (context, state) {
-        final error = _errorFor(state);
-        if (error != null) {
+        if (state.status == AbsensiStatus.failure) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(error)));
-          return;
-        }
-
-        if (_successFor(state)) {
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+        } else if (state.status == AbsensiStatus.success) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -227,9 +163,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
               ),
             ),
           );
-          // reset supaya kalau screen ini dipakai lagi state-nya bersih
-          context.read<AbsensiCheckInCubit>().reset();
-          Navigator.of(context).pop(true); // true = kasih tau caller sukses
+          Navigator.of(context).pop(true);
         }
       },
       child: Scaffold(
@@ -237,7 +171,6 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          scrolledUnderElevation: 1,
           leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back_ios_rounded, size: 18),
@@ -303,35 +236,39 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              BlocBuilder<AbsensiCheckInCubit, AbsensiCheckInState>(
+
+              // BLOC BUILDER DENGAN STATE BARU
+              BlocBuilder<AbsensiCubit, AbsensiState>(
                 builder: (context, state) {
-                  final loading = _loadingFor(state);
+                  final isLoading = state.status == AbsensiStatus.loading;
                   return SizedBox(
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: loading ? null : _submit,
+                      onPressed: isLoading ? null : _submit,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        elevation: 0,
                       ),
-                      child: loading
+                      child: isLoading
                           ? const SizedBox(
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2.4,
                                 color: Colors.white,
+                                strokeWidth: 2.4,
                               ),
                             )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(_headerIcon, size: 18),
+                                Icon(
+                                  _headerIcon,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   _submitLabel,
@@ -534,11 +471,12 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                                   ),
                                 ],
                               ),
-                            if (_position != null)
+                            if (_latitude != null &&
+                                _longitude != null) // 🔥 Ubah pengecekannya
                               Padding(
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Text(
-                                  "${_position!.latitude.toStringAsFixed(5)}, ${_position!.longitude.toStringAsFixed(5)}",
+                                  "${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}", // 🔥 Panggil langsung variabelnya
                                   style: AppTypography.caption.copyWith(
                                     color: Colors.white70,
                                     fontSize: 10,

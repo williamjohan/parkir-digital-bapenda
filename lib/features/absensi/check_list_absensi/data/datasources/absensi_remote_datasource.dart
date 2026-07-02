@@ -1,33 +1,51 @@
 import 'package:dio/dio.dart';
+import '../../../../../core/errors/exception.dart';
+import '../../../../../core/network/api_endpoints.dart';
 import '../models/absensi_model.dart';
-import 'absensi_dummy_datasource.dart';
 
-class AbsensiRemoteDataSource implements IAbsensiDataSource {
-  final Dio dio;
+abstract class IAbsensiRemoteDataSource {
+  Future<void> postAbsensi(AbsensiRequestModel request);
+}
 
-  AbsensiRemoteDataSource({required this.dio});
+class AbsensiRemoteDataSourceImpl implements IAbsensiRemoteDataSource {
+  final Dio _dio;
 
-  @override
-  Future<AbsensiModel> getAbsensiHariIni() async {
-    final response = await dio.get('/api/v1/absensi/hari-ini');
-    return AbsensiModel.fromJson(response.data['data']);
-  }
+  AbsensiRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<AbsensiModel> submitAbsenMasuk(AbsensiModel data) async {
-    final response = await dio.post(
-      '/api/v1/absensi/masuk',
-      data: data.toJson(),
-    );
-    return AbsensiModel.fromJson(response.data['data']);
-  }
+  Future<void> postAbsensi(AbsensiRequestModel request) async {
+    try {
+      // 1. Generate FormData (Otomatis handle tipe file dan struktur JSON di dalam form)
+      final formData = await request.toFormData();
 
-  @override
-  Future<AbsensiModel> submitAbsenPulang(AbsensiModel data) async {
-    final response = await dio.post(
-      '/api/v1/absensi/pulang',
-      data: data.toJson(),
-    );
-    return AbsensiModel.fromJson(response.data['data']);
+      // 2. Tentukan Endpoint (Check In vs Check Out)
+      final endpoint = request.isCheckIn
+          ? ApiEndpoints.pengawasCheckIn
+          : ApiEndpoints.pengawasCheckOut;
+
+      // 3. Tembak API (Dio otomatis set Content-Type ke multipart/form-data jika pakai FormData)
+      final response = await _dio.post(endpoint, data: formData);
+
+      // 4. Validasi Response standar Bapenda
+      if (response.data['isSuccess'] == true) {
+        return; // Berhasil, tidak perlu return data
+      } else {
+        throw ServerException(
+          statusCode: response.data['statusCode'] ?? response.statusCode ?? 500,
+          message:
+              response.data['message'] ?? 'Gagal memproses absensi pengawas',
+        );
+      }
+    } on DioException catch (e) {
+      throw ServerException(
+        statusCode: e.response?.statusCode ?? 500,
+        message: e.message ?? 'Terjadi kesalahan koneksi saat absensi',
+      );
+    } catch (e) {
+      throw ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal: ${e.toString()}',
+      );
+    }
   }
 }

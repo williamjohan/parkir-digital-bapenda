@@ -811,9 +811,7 @@ mixin _$CheckInOutModel {
   String get tglRoster => throw _privateConstructorUsedError;
   String get jadwalMasuk => throw _privateConstructorUsedError;
   String get jadwalOut => throw _privateConstructorUsedError;
-  int get status =>
-      throw _privateConstructorUsedError; // Field di bawah ini menggunakan String dan int dengan default fallback
-  // untuk mengamankan data jika API mengirimkan null
+  int get status => throw _privateConstructorUsedError;
   String get checkIn => throw _privateConstructorUsedError;
   String get checkInString => throw _privateConstructorUsedError;
   int get checkInJmlMobil => throw _privateConstructorUsedError;
@@ -824,6 +822,7 @@ mixin _$CheckInOutModel {
   int get checkOutJmlMotor => throw _privateConstructorUsedError;
   String get latitude => throw _privateConstructorUsedError;
   String get longitude => throw _privateConstructorUsedError;
+  List<DetailAlatModel> get detailAlat => throw _privateConstructorUsedError;
 
   /// Serializes this CheckInOutModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -860,6 +859,7 @@ abstract class $CheckInOutModelCopyWith<$Res> {
     int checkOutJmlMotor,
     String latitude,
     String longitude,
+    List<DetailAlatModel> detailAlat,
   });
 }
 
@@ -895,6 +895,7 @@ class _$CheckInOutModelCopyWithImpl<$Res, $Val extends CheckInOutModel>
     Object? checkOutJmlMotor = null,
     Object? latitude = null,
     Object? longitude = null,
+    Object? detailAlat = null,
   }) {
     return _then(
       _value.copyWith(
@@ -966,6 +967,10 @@ class _$CheckInOutModelCopyWithImpl<$Res, $Val extends CheckInOutModel>
                 ? _value.longitude
                 : longitude // ignore: cast_nullable_to_non_nullable
                       as String,
+            detailAlat: null == detailAlat
+                ? _value.detailAlat
+                : detailAlat // ignore: cast_nullable_to_non_nullable
+                      as List<DetailAlatModel>,
           )
           as $Val,
     );
@@ -999,6 +1004,7 @@ abstract class _$$CheckInOutModelImplCopyWith<$Res>
     int checkOutJmlMotor,
     String latitude,
     String longitude,
+    List<DetailAlatModel> detailAlat,
   });
 }
 
@@ -1033,6 +1039,7 @@ class __$$CheckInOutModelImplCopyWithImpl<$Res>
     Object? checkOutJmlMotor = null,
     Object? latitude = null,
     Object? longitude = null,
+    Object? detailAlat = null,
   }) {
     return _then(
       _$CheckInOutModelImpl(
@@ -1104,6 +1111,10 @@ class __$$CheckInOutModelImplCopyWithImpl<$Res>
             ? _value.longitude
             : longitude // ignore: cast_nullable_to_non_nullable
                   as String,
+        detailAlat: null == detailAlat
+            ? _value._detailAlat
+            : detailAlat // ignore: cast_nullable_to_non_nullable
+                  as List<DetailAlatModel>,
       ),
     );
   }
@@ -1130,7 +1141,8 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
     this.checkOutJmlMotor = 0,
     this.latitude = '',
     this.longitude = '',
-  });
+    final List<DetailAlatModel> detailAlat = const [],
+  }) : _detailAlat = detailAlat;
 
   factory _$CheckInOutModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CheckInOutModelImplFromJson(json);
@@ -1156,8 +1168,6 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
   @override
   @JsonKey()
   final int status;
-  // Field di bawah ini menggunakan String dan int dengan default fallback
-  // untuk mengamankan data jika API mengirimkan null
   @override
   @JsonKey()
   final String checkIn;
@@ -1188,10 +1198,18 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
   @override
   @JsonKey()
   final String longitude;
+  final List<DetailAlatModel> _detailAlat;
+  @override
+  @JsonKey()
+  List<DetailAlatModel> get detailAlat {
+    if (_detailAlat is EqualUnmodifiableListView) return _detailAlat;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_detailAlat);
+  }
 
   @override
   String toString() {
-    return 'CheckInOutModel(idEvent: $idEvent, op: $op, nip: $nip, tglRoster: $tglRoster, jadwalMasuk: $jadwalMasuk, jadwalOut: $jadwalOut, status: $status, checkIn: $checkIn, checkInString: $checkInString, checkInJmlMobil: $checkInJmlMobil, checkInJmlMotor: $checkInJmlMotor, checkOut: $checkOut, checkOutString: $checkOutString, checkOutJmlMobil: $checkOutJmlMobil, checkOutJmlMotor: $checkOutJmlMotor, latitude: $latitude, longitude: $longitude)';
+    return 'CheckInOutModel(idEvent: $idEvent, op: $op, nip: $nip, tglRoster: $tglRoster, jadwalMasuk: $jadwalMasuk, jadwalOut: $jadwalOut, status: $status, checkIn: $checkIn, checkInString: $checkInString, checkInJmlMobil: $checkInJmlMobil, checkInJmlMotor: $checkInJmlMotor, checkOut: $checkOut, checkOutString: $checkOutString, checkOutJmlMobil: $checkOutJmlMobil, checkOutJmlMotor: $checkOutJmlMotor, latitude: $latitude, longitude: $longitude, detailAlat: $detailAlat)';
   }
 
   @override
@@ -1227,7 +1245,11 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
-                other.longitude == longitude));
+                other.longitude == longitude) &&
+            const DeepCollectionEquality().equals(
+              other._detailAlat,
+              _detailAlat,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1251,6 +1273,7 @@ class _$CheckInOutModelImpl implements _CheckInOutModel {
     checkOutJmlMotor,
     latitude,
     longitude,
+    const DeepCollectionEquality().hash(_detailAlat),
   );
 
   /// Create a copy of CheckInOutModel
@@ -1289,6 +1312,7 @@ abstract class _CheckInOutModel implements CheckInOutModel {
     final int checkOutJmlMotor,
     final String latitude,
     final String longitude,
+    final List<DetailAlatModel> detailAlat,
   }) = _$CheckInOutModelImpl;
 
   factory _CheckInOutModel.fromJson(Map<String, dynamic> json) =
@@ -1307,8 +1331,7 @@ abstract class _CheckInOutModel implements CheckInOutModel {
   @override
   String get jadwalOut;
   @override
-  int get status; // Field di bawah ini menggunakan String dan int dengan default fallback
-  // untuk mengamankan data jika API mengirimkan null
+  int get status;
   @override
   String get checkIn;
   @override
@@ -1329,11 +1352,215 @@ abstract class _CheckInOutModel implements CheckInOutModel {
   String get latitude;
   @override
   String get longitude;
+  @override
+  List<DetailAlatModel> get detailAlat;
 
   /// Create a copy of CheckInOutModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CheckInOutModelImplCopyWith<_$CheckInOutModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DetailAlatModel _$DetailAlatModelFromJson(Map<String, dynamic> json) {
+  return _DetailAlatModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DetailAlatModel {
+  int get id => throw _privateConstructorUsedError;
+  String get namaAlat => throw _privateConstructorUsedError;
+  bool get isBawa => throw _privateConstructorUsedError;
+
+  /// Serializes this DetailAlatModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of DetailAlatModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $DetailAlatModelCopyWith<DetailAlatModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DetailAlatModelCopyWith<$Res> {
+  factory $DetailAlatModelCopyWith(
+    DetailAlatModel value,
+    $Res Function(DetailAlatModel) then,
+  ) = _$DetailAlatModelCopyWithImpl<$Res, DetailAlatModel>;
+  @useResult
+  $Res call({int id, String namaAlat, bool isBawa});
+}
+
+/// @nodoc
+class _$DetailAlatModelCopyWithImpl<$Res, $Val extends DetailAlatModel>
+    implements $DetailAlatModelCopyWith<$Res> {
+  _$DetailAlatModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of DetailAlatModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? namaAlat = null,
+    Object? isBawa = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as int,
+            namaAlat: null == namaAlat
+                ? _value.namaAlat
+                : namaAlat // ignore: cast_nullable_to_non_nullable
+                      as String,
+            isBawa: null == isBawa
+                ? _value.isBawa
+                : isBawa // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$DetailAlatModelImplCopyWith<$Res>
+    implements $DetailAlatModelCopyWith<$Res> {
+  factory _$$DetailAlatModelImplCopyWith(
+    _$DetailAlatModelImpl value,
+    $Res Function(_$DetailAlatModelImpl) then,
+  ) = __$$DetailAlatModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int id, String namaAlat, bool isBawa});
+}
+
+/// @nodoc
+class __$$DetailAlatModelImplCopyWithImpl<$Res>
+    extends _$DetailAlatModelCopyWithImpl<$Res, _$DetailAlatModelImpl>
+    implements _$$DetailAlatModelImplCopyWith<$Res> {
+  __$$DetailAlatModelImplCopyWithImpl(
+    _$DetailAlatModelImpl _value,
+    $Res Function(_$DetailAlatModelImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of DetailAlatModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? namaAlat = null,
+    Object? isBawa = null,
+  }) {
+    return _then(
+      _$DetailAlatModelImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as int,
+        namaAlat: null == namaAlat
+            ? _value.namaAlat
+            : namaAlat // ignore: cast_nullable_to_non_nullable
+                  as String,
+        isBawa: null == isBawa
+            ? _value.isBawa
+            : isBawa // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DetailAlatModelImpl implements _DetailAlatModel {
+  const _$DetailAlatModelImpl({
+    this.id = 0,
+    this.namaAlat = '',
+    this.isBawa = false,
+  });
+
+  factory _$DetailAlatModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DetailAlatModelImplFromJson(json);
+
+  @override
+  @JsonKey()
+  final int id;
+  @override
+  @JsonKey()
+  final String namaAlat;
+  @override
+  @JsonKey()
+  final bool isBawa;
+
+  @override
+  String toString() {
+    return 'DetailAlatModel(id: $id, namaAlat: $namaAlat, isBawa: $isBawa)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DetailAlatModelImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.namaAlat, namaAlat) ||
+                other.namaAlat == namaAlat) &&
+            (identical(other.isBawa, isBawa) || other.isBawa == isBawa));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, namaAlat, isBawa);
+
+  /// Create a copy of DetailAlatModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DetailAlatModelImplCopyWith<_$DetailAlatModelImpl> get copyWith =>
+      __$$DetailAlatModelImplCopyWithImpl<_$DetailAlatModelImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DetailAlatModelImplToJson(this);
+  }
+}
+
+abstract class _DetailAlatModel implements DetailAlatModel {
+  const factory _DetailAlatModel({
+    final int id,
+    final String namaAlat,
+    final bool isBawa,
+  }) = _$DetailAlatModelImpl;
+
+  factory _DetailAlatModel.fromJson(Map<String, dynamic> json) =
+      _$DetailAlatModelImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  String get namaAlat;
+  @override
+  bool get isBawa;
+
+  /// Create a copy of DetailAlatModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DetailAlatModelImplCopyWith<_$DetailAlatModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

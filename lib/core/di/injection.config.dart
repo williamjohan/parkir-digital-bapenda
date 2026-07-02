@@ -14,22 +14,12 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
-import '../../features/absensi/check_list_absensi/data/datasources/absensi_datasource.dart'
-    as _i720;
-import '../../features/absensi/check_list_absensi/data/repositories/absensi_checkin_repository.dart'
-    as _i691;
 import '../../features/absensi/check_list_absensi/data/repositories/absensi_repository_impl.dart'
     as _i482;
-import '../../features/absensi/check_list_absensi/domain/repositories/i_absensi_checkin_repository.dart'
-    as _i813;
-import '../../features/absensi/check_list_absensi/domain/usecases/absensi_checkin_usecase.dart'
-    as _i492;
-import '../../features/absensi/check_list_absensi/domain/usecases/absensi_checkout_usecase.dart'
-    as _i900;
 import '../../features/absensi/check_list_absensi/domain/usecases/absensi_usecase.dart'
     as _i708;
-import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_checkin_cubit.dart'
-    as _i342;
+import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_cubit.dart'
+    as _i875;
 import '../../features/auth/data/datasources/auth_remote_data_source.dart'
     as _i107;
 import '../../features/auth/data/repositories/auth_repository_impl.dart'
@@ -271,8 +261,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i59.ITarifRemoteDataSource>(
     () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i720.AbsensiCheckInDatasource>(
-    () => _i720.AbsensiCheckInDatasourceImpl(gh<_i361.Dio>()),
+  gh.factory<_i875.AbsensiCubit>(
+    () => _i875.AbsensiCubit(gh<_i708.AbsensiUsecase>()),
   );
   gh.lazySingleton<_i905.DashboardOpDatasource>(
     () => _i905.DashboardOpDatasourceImpl(gh<_i361.Dio>()),
@@ -308,11 +298,6 @@ _i174.GetIt init(
     () => _i377.PrinterCubit(
       gh<_i1003.IPrinterService>(),
       gh<_i1042.ISecureStorageManager>(),
-    ),
-  );
-  gh.lazySingleton<_i813.AbsensiCheckInRepository>(
-    () => _i691.AbsensiCheckInRepositoryImpl(
-      gh<_i720.AbsensiCheckInDatasource>(),
     ),
   );
   gh.lazySingleton<_i1051.IUpdateRemoteDataSource>(
@@ -443,12 +428,6 @@ _i174.GetIt init(
   gh.factory<_i425.GetRealisasiSeluruhOpUseCase>(
     () => _i425.GetRealisasiSeluruhOpUseCase(gh<_i534.RealisasiRepository>()),
   );
-  gh.lazySingleton<_i492.CheckInUsecase>(
-    () => _i492.CheckInUsecase(gh<_i813.AbsensiCheckInRepository>()),
-  );
-  gh.lazySingleton<_i900.CheckOutUsecase>(
-    () => _i900.CheckOutUsecase(gh<_i813.AbsensiCheckInRepository>()),
-  );
   gh.factory<_i367.JadwalCubit>(
     () => _i367.JadwalCubit(gh<_i853.JadwalUseCase>()),
   );
@@ -510,12 +489,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i232.WatchPaymentStatusUseCase>(
     () => _i232.WatchPaymentStatusUseCase(gh<_i1004.IPaymentRepository>()),
-  );
-  gh.factory<_i342.AbsensiCheckInCubit>(
-    () => _i342.AbsensiCheckInCubit(
-      gh<_i492.CheckInUsecase>(),
-      gh<_i900.CheckOutUsecase>(),
-    ),
   );
   gh.lazySingleton<_i808.AppAuthCubit>(
     () => _i808.AppAuthCubit(

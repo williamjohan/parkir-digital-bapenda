@@ -39,6 +39,8 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
       source: ImageSource.camera,
       imageQuality: 80,
     );
+    if (!mounted) return;
+
     if (image != null) {
       context.read<PengawasanCubit>().setFoto(File(image.path));
     }

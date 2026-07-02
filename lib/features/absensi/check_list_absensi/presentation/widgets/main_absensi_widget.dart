@@ -7,7 +7,6 @@ import '../../../../home/domain/entities/dashboard_summary_pengawas.entity.dart'
 import '../../../../home/presentation/cubit/home/home_cubit.dart';
 import '../screens/absensi_checklist_screen.dart';
 import '../../../../../core/routes/app_routes.dart';
-
 import 'checkin_card_widget.dart';
 import 'checkout_card_widget.dart';
 
@@ -22,20 +21,18 @@ class MainAbsensiWidget extends StatelessWidget {
       extra: type,
     );
 
+    if (!context.mounted) return;
+
     // 🚀 2. REFRESH MENGGUNAKAN HOME CUBIT, BUKAN ABSENSI CUBIT
     if (result == true) {
       // Panggil fungsi load dashboard pengawas Anda untuk merefresh seluruh halaman
       // Sesuaikan nama fungsinya dengan yang ada di HomeCubit Anda
-      context.read<HomeCubit>()._loadDashboardPengawas();
+      context.read<HomeCubit>().loadDashboardPengawas();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // 🚀 3. LOGIKA PENENTUAN STATUS DARI ENTITY
-    // Asumsi: Jika checkInString tidak kosong, berarti sudah check-in
-    // Jika checkOutString tidak kosong, berarti sudah check-out
-    // Sesuaikan logika ini jika Anda menggunakan properti 'status' (misal status == 1 atau 2)
     final bool isCheckedIn = absensiData.checkInString.isNotEmpty;
     final bool isCheckedOut = absensiData.checkOutString.isNotEmpty;
 
@@ -48,9 +45,10 @@ class MainAbsensiWidget extends StatelessWidget {
         // CARD CHECK IN
         CheckInCardWidget(
           isCheckedIn: isCheckedIn,
-          // Gunakan properti string atau parse ke DateTime jika Card Anda butuh DateTime
-          checkInTime: isCheckedIn ? absensiData.checkInString : null,
-          // checklist: checklistModel, 🚨 (LIHAT CATATAN AUDITOR DI BAWAH)
+          checkInTimeString: isCheckedIn ? absensiData.checkInString : null,
+          totalMotor: absensiData.checkInJmlMotor,
+          totalMobil: absensiData.checkInJmlMobil,
+          detailAlat: absensiData.detailAlat,
           onTapCheckIn: () => _openForm(context, ShiftFormType.checkIn),
         ),
 
@@ -60,8 +58,10 @@ class MainAbsensiWidget extends StatelessWidget {
         CheckOutCardWidget(
           isCheckedIn: isCheckedIn,
           isCheckedOut: isCheckedOut,
-          checkOutTime: isCheckedOut ? absensiData.checkOutString : null,
-          // checklist: checklistModel, 🚨 (LIHAT CATATAN AUDITOR DI BAWAH)
+          checkOutTimeString: isCheckedOut ? absensiData.checkOutString : null,
+          totalMotor: absensiData.checkOutJmlMotor,
+          totalMobil: absensiData.checkOutJmlMobil,
+          detailAlat: absensiData.detailAlat,
           onTapCheckOut: () => _openForm(context, ShiftFormType.checkOut),
         ),
       ],
@@ -100,7 +100,7 @@ class MainAbsensiWidget extends StatelessWidget {
           alpha: 0.1,
         ), // Gunakan withOpacity untuk support versi Flutter lama/baru
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

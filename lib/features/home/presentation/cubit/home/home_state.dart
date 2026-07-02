@@ -106,6 +106,7 @@ class HomeState with _$HomeState {
         checkOutJmlMotor: 0,
         latitude: '',
         longitude: '',
+        detailAlat: [],
       ),
     )
     CheckInOutEntity checkInOutData,

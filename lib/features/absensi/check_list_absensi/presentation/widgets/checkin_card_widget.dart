@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import '../../data/models/absensi_model.dart';
+// 1. Sesuaikan path import entity pengawas Anda
+import '../../../../home/domain/entities/dashboard_summary_pengawas.entity.dart';
 import 'instrument_badge_widget.dart';
 
 class CheckInCardWidget extends StatelessWidget {
   final bool isCheckedIn;
-  final DateTime? checkInTime;
-  final AbsensiCheckListModel? checklist;
+  final String? checkInTimeString; // <-- Diubah jadi String
+  final int totalMotor; // <-- Ditambahkan
+  final int totalMobil; // <-- Ditambahkan
+  final List<DetailAlatEntity> detailAlat; // <-- Ditambahkan
   final VoidCallback onTapCheckIn;
 
   const CheckInCardWidget({
     super.key,
     required this.isCheckedIn,
     required this.onTapCheckIn,
-    this.checkInTime,
-    this.checklist,
+    this.checkInTimeString,
+    this.totalMotor = 0,
+    this.totalMobil = 0,
+    this.detailAlat = const [],
   });
 
   @override
@@ -100,10 +105,11 @@ class CheckInCardWidget extends StatelessWidget {
               ),
             ],
           ),
-          if (checkInTime != null) ...[
+          // Parsing aman (Safe Parsing)
+          if (checkInTimeString != null && checkInTimeString!.isNotEmpty) ...[
             const SizedBox(height: 2),
             Text(
-              "${_formatDate(checkInTime!)} - ${_formatTime(checkInTime!)}",
+              _formatDateTimeString(checkInTimeString!),
               style: AppTypography.caption.copyWith(
                 color: Colors.grey.shade500,
               ),
@@ -140,6 +146,15 @@ class CheckInCardWidget extends StatelessWidget {
     );
   }
 
+  // 2. Helper Method untuk mengecek apakah alat dibawa (Berdasarkan keyword nama)
+  bool _isAlatBawa(String keyword) {
+    return detailAlat.any(
+      (alat) =>
+          alat.namaAlat.toLowerCase().contains(keyword.toLowerCase()) &&
+          alat.isBawa,
+    );
+  }
+
   Widget _buildCheckedInContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +165,7 @@ class CheckInCardWidget extends StatelessWidget {
               child: _buildVehicleCount(
                 icon: Icons.two_wheeler_rounded,
                 label: "Motor",
-                count: checklist?.totalMotor ?? 0,
+                count: totalMotor, // <-- Pakai parameter langsung
               ),
             ),
             const SizedBox(width: 8),
@@ -158,12 +173,12 @@ class CheckInCardWidget extends StatelessWidget {
               child: _buildVehicleCount(
                 icon: Icons.directions_car_rounded,
                 label: "Mobil",
-                count: checklist?.totalMobil ?? 0,
+                count: totalMobil, // <-- Pakai parameter langsung
               ),
             ),
           ],
         ),
-        if (checklist != null) ...[
+        if (detailAlat.isNotEmpty) ...[
           const SizedBox(height: 12),
           Text(
             "Instrumen",
@@ -178,21 +193,22 @@ class CheckInCardWidget extends StatelessWidget {
               Expanded(
                 child: InstrumentBadgeWidget(
                   label: "EDC",
-                  isActive: checklist!.edc,
+                  isActive: _isAlatBawa("edc"), // Pengecekan dinamis
                 ),
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: InstrumentBadgeWidget(
                   label: "QRIS",
-                  isActive: checklist!.qrisRompi, // ⬅️ nama field baru
+                  // Cek apakah ada kata qris ATAU rompi
+                  isActive: _isAlatBawa("qris") || _isAlatBawa("rompi"),
                 ),
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: InstrumentBadgeWidget(
                   label: "TSpark",
-                  isActive: checklist!.tsPark,
+                  isActive: _isAlatBawa("ts"), // Pengecekan dinamis
                 ),
               ),
             ],
@@ -254,27 +270,29 @@ class CheckInCardWidget extends StatelessWidget {
     );
   }
 
-  String _formatTime(DateTime dt) {
-    final h = dt.hour.toString().padLeft(2, '0');
-    final m = dt.minute.toString().padLeft(2, '0');
-    return "$h:$m";
-  }
-
-  String _formatDate(DateTime dt) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Ags',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des',
-    ];
-    return "${dt.day} ${months[dt.month - 1]} ${dt.year}";
+  // 3. Fallback Parsing Waktu (Menghindari Crash jika API ngirim format aneh)
+  String _formatDateTimeString(String dtString) {
+    try {
+      final dt = DateTime.parse(dtString);
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'Mei',
+        'Jun',
+        'Jul',
+        'Ags',
+        'Sep',
+        'Okt',
+        'Nov',
+        'Des',
+      ];
+      final h = dt.hour.toString().padLeft(2, '0');
+      final m = dt.minute.toString().padLeft(2, '0');
+      return "${dt.day} ${months[dt.month - 1]} ${dt.year} - $h:$m";
+    } catch (e) {
+      return dtString; // Jika gagal di-parse, tampilkan string mentahnya saja
+    }
   }
 }

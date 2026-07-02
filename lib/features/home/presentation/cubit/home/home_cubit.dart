@@ -40,7 +40,7 @@ class HomeCubit extends Cubit<HomeState> {
       await _profileUseCase.getProfilePicturePath();
       await _syncQrisUseCase.execute();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
-      _loadDashboardPengawas();
+      await loadDashboardPengawas();
     } else {
       await _ensureValidToken();
       await _loadDashboardNonJukir();
@@ -146,6 +146,7 @@ class HomeCubit extends Cubit<HomeState> {
                 checkOutJmlMotor: 0,
                 latitude: '',
                 longitude: '',
+                detailAlat: [],
               ),
             ),
           );
@@ -168,7 +169,6 @@ class HomeCubit extends Cubit<HomeState> {
                   .dashboard
                   .totalNominalBersihUntukWajibPajak
                   .toDouble(),
-              // Map pengawas metrics
               laporanPelanggaran: summary.data.laporanPelanggaran,
               checkInOutData: summary.data.checkInOut,
             ),
