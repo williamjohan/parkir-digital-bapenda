@@ -35,5 +35,11 @@ class AbsensiCheckList extends Equatable {
   });
 
   @override
-  List<Object?> get props => [edc, qrisRompi, tsPark, totalMotor, totalMobil];
+  List<Object?> get props => [
+    edc,
+    qrisRompi,
+    tsPark,
+    totalMotor,
+    totalMobil,
+  ];
 }

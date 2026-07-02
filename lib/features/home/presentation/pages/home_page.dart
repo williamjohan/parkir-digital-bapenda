@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
-import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/home_absensi_test_section.dart';
+import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/main_absensi_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                                                     bottom: 16,
                                                   ),
                                                   child:
-                                                      HomeAbsensiTestSection(),
+                                                      MainAbsensiWidget(),
                                                 ),
                                               ),
 

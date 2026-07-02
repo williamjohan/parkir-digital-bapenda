@@ -4,6 +4,7 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/cubit/absensi_checkin_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/domain/entities/dashboard_op_entity.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/screen/dashboard_op_screen.dart';
@@ -17,6 +18,7 @@ import 'package:parkir_digital_bapenda/features/pengawasan/presentation/cubit/pe
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/detail_laporan_pengawasan.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/laporan_form_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/pengawasan_screen.dart';
+import '../../features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
 import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart';
 import '../../features/daftar_nop/presentation/screens/daftar_nop_screen.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
@@ -139,6 +141,17 @@ class AppRouter {
             create: (_) => locator<HomeCubit>(),
             child: const HomePage(),
           ),
+        ),
+        GoRoute(
+          path: AppRoutes.absensi,
+          name: AppRoutes.absensi,
+          builder: (context, state) {
+            final type = state.extra as ShiftFormType? ?? ShiftFormType.checkIn;
+            return BlocProvider(
+              create: (_) => locator<AbsensiCheckInCubit>(),
+              child: ShiftFormScreen(type: type),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.searchObjekPajak,
