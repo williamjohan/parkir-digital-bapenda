@@ -116,6 +116,8 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> loadDashboardPengawas() async {
+    emit(state.copyWith(status: HomeStatus.loading)); 
+
     final result = await _homeUsecase.getDashboardSummaryPengawas();
 
     result.fold(
@@ -124,13 +126,11 @@ class HomeCubit extends Cubit<HomeState> {
           emit(
             state.copyWith(
               status: HomeStatus.failure,
-              // Reset shared metrics
               motorCount: 0,
               mobilCount: 0,
               totalPendapatan: 0,
               totalPajak: 0,
               totalBersih: 0,
-              // Reset pengawas metrics
               laporanPelanggaran: 0,
               checkInOutData: const CheckInOutEntity(
                 idEvent: 0,
@@ -150,7 +150,7 @@ class HomeCubit extends Cubit<HomeState> {
                 checkOutJmlMotor: 0,
                 latitude: '',
                 longitude: '',
-                detailAlatCheckIn: [], // ⬅️ ganti dari detailAlat
+                detailAlatCheckIn: [],
                 detailAlatCheckOut: [],
               ),
             ),
@@ -162,7 +162,6 @@ class HomeCubit extends Cubit<HomeState> {
           emit(
             state.copyWith(
               status: HomeStatus.success,
-              // Map shared metrics (harus di-cast ke double jika state Anda minta double)
               motorCount: summary.data.dashboard.jumlahMotorHariIni,
               mobilCount: summary.data.dashboard.jumlahMobilHariIni,
               totalPendapatan: summary.data.dashboard.totalNominalHariIni

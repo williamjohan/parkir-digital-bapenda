@@ -23,11 +23,8 @@ class MainAbsensiWidget extends StatelessWidget {
 
     if (!context.mounted) return;
 
-    // 🚀 2. REFRESH MENGGUNAKAN HOME CUBIT, BUKAN ABSENSI CUBIT
     if (result == true) {
-      // Panggil fungsi load dashboard pengawas Anda untuk merefresh seluruh halaman
-      // Sesuaikan nama fungsinya dengan yang ada di HomeCubit Anda
-      context.read<HomeCubit>().loadDashboardPengawas();
+      context.read<HomeCubit>().loadDashboardPengawas(); // ⬅️ refresh di sini
     }
   }
 
