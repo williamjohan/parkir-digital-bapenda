@@ -25,5 +25,6 @@ class UsernameEntity with _$UsernameEntity {
   const factory UsernameEntity({
     required String username,
     required String namaPetugas,
+    required String fotoBase64,
   }) = _UsernameEntity;
 }

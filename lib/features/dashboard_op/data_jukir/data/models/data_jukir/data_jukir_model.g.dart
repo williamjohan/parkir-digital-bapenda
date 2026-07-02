@@ -44,10 +44,12 @@ UsernameModel _$UsernameModelFromJson(Map<String, dynamic> json) =>
     UsernameModel(
       username: json['username'] as String? ?? '',
       namaPetugas: json['namaPetugas'] as String? ?? '',
+      fotoBase64: json['fotoBase64'] as String? ?? '',
     );
 
 Map<String, dynamic> _$UsernameModelToJson(UsernameModel instance) =>
     <String, dynamic>{
       'username': instance.username,
       'namaPetugas': instance.namaPetugas,
+      'fotoBase64': instance.fotoBase64,
     };

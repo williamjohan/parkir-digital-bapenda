@@ -379,6 +379,7 @@ abstract class _DataJukirEntity implements DataJukirEntity {
 mixin _$UsernameEntity {
   String get username => throw _privateConstructorUsedError;
   String get namaPetugas => throw _privateConstructorUsedError;
+  String get fotoBase64 => throw _privateConstructorUsedError;
 
   /// Create a copy of UsernameEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -394,7 +395,7 @@ abstract class $UsernameEntityCopyWith<$Res> {
     $Res Function(UsernameEntity) then,
   ) = _$UsernameEntityCopyWithImpl<$Res, UsernameEntity>;
   @useResult
-  $Res call({String username, String namaPetugas});
+  $Res call({String username, String namaPetugas, String fotoBase64});
 }
 
 /// @nodoc
@@ -411,7 +412,11 @@ class _$UsernameEntityCopyWithImpl<$Res, $Val extends UsernameEntity>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? username = null, Object? namaPetugas = null}) {
+  $Res call({
+    Object? username = null,
+    Object? namaPetugas = null,
+    Object? fotoBase64 = null,
+  }) {
     return _then(
       _value.copyWith(
             username: null == username
@@ -421,6 +426,10 @@ class _$UsernameEntityCopyWithImpl<$Res, $Val extends UsernameEntity>
             namaPetugas: null == namaPetugas
                 ? _value.namaPetugas
                 : namaPetugas // ignore: cast_nullable_to_non_nullable
+                      as String,
+            fotoBase64: null == fotoBase64
+                ? _value.fotoBase64
+                : fotoBase64 // ignore: cast_nullable_to_non_nullable
                       as String,
           )
           as $Val,
@@ -437,7 +446,7 @@ abstract class _$$UsernameEntityImplCopyWith<$Res>
   ) = __$$UsernameEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String username, String namaPetugas});
+  $Res call({String username, String namaPetugas, String fotoBase64});
 }
 
 /// @nodoc
@@ -453,7 +462,11 @@ class __$$UsernameEntityImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? username = null, Object? namaPetugas = null}) {
+  $Res call({
+    Object? username = null,
+    Object? namaPetugas = null,
+    Object? fotoBase64 = null,
+  }) {
     return _then(
       _$UsernameEntityImpl(
         username: null == username
@@ -463,6 +476,10 @@ class __$$UsernameEntityImplCopyWithImpl<$Res>
         namaPetugas: null == namaPetugas
             ? _value.namaPetugas
             : namaPetugas // ignore: cast_nullable_to_non_nullable
+                  as String,
+        fotoBase64: null == fotoBase64
+            ? _value.fotoBase64
+            : fotoBase64 // ignore: cast_nullable_to_non_nullable
                   as String,
       ),
     );
@@ -475,16 +492,19 @@ class _$UsernameEntityImpl implements _UsernameEntity {
   const _$UsernameEntityImpl({
     required this.username,
     required this.namaPetugas,
+    required this.fotoBase64,
   });
 
   @override
   final String username;
   @override
   final String namaPetugas;
+  @override
+  final String fotoBase64;
 
   @override
   String toString() {
-    return 'UsernameEntity(username: $username, namaPetugas: $namaPetugas)';
+    return 'UsernameEntity(username: $username, namaPetugas: $namaPetugas, fotoBase64: $fotoBase64)';
   }
 
   @override
@@ -495,11 +515,14 @@ class _$UsernameEntityImpl implements _UsernameEntity {
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.namaPetugas, namaPetugas) ||
-                other.namaPetugas == namaPetugas));
+                other.namaPetugas == namaPetugas) &&
+            (identical(other.fotoBase64, fotoBase64) ||
+                other.fotoBase64 == fotoBase64));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, username, namaPetugas);
+  int get hashCode =>
+      Object.hash(runtimeType, username, namaPetugas, fotoBase64);
 
   /// Create a copy of UsernameEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -517,12 +540,15 @@ abstract class _UsernameEntity implements UsernameEntity {
   const factory _UsernameEntity({
     required final String username,
     required final String namaPetugas,
+    required final String fotoBase64,
   }) = _$UsernameEntityImpl;
 
   @override
   String get username;
   @override
   String get namaPetugas;
+  @override
+  String get fotoBase64;
 
   /// Create a copy of UsernameEntity
   /// with the given fields replaced by the non-null parameter values.

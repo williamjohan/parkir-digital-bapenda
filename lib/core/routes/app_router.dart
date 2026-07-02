@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/domain/entities/dashboard_op_entity.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/screen/dashboard_op_screen.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/screens/data_jukir_list_screen.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/detail_rekap_jenis_pembayaran_op/presentation/detail_rekap_jenis_pembayaran_screen.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/cubit/data_jukir_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/screens/data_jukir_screen.dart';
@@ -207,20 +208,30 @@ class AppRouter {
           path: AppRoutes.dataJukir,
           name: AppRoutes.dataJukir,
           builder: (context, state) {
-            final extra = state.extra as Map<String, dynamic>?;
+            // final nop = state.extra as String? ?? '';
 
-            final item = extra?['item'] as Map<String, dynamic>?;
-            final isShowPendapatan =
-                extra?['isShowPendapatan'] as bool? ?? true;
-            final isPengawas = extra?['isPengawas'] as bool? ?? false;
+            final extra = state.extra as Map<String, dynamic>?;
+            final item = extra?['item'] as Map<String, dynamic>;
 
             return BlocProvider(
-              create: (_) => locator<DataJukirCubit>(),
-              child: DataJukirScreen(
-                item: item,
-                isShowPendapatan: isShowPendapatan,
-                isPengawas: isPengawas,
-              ),
+              create: (context) =>
+                  locator<DataJukirCubit>()..getDataJukir(item['nop']),
+              child: DataJukirScreen(item: item),
+            );
+          },
+        ),
+
+        GoRoute(
+          path: AppRoutes.dataJukirList,
+          name: AppRoutes.dataJukirList,
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>?;
+
+            final nop = extra?['nop'] as String;
+
+            return BlocProvider(
+              create: (_) => locator<DataJukirCubit>()..getDataJukir(nop),
+              child: DataJukirListScreen(),
             );
           },
         ),

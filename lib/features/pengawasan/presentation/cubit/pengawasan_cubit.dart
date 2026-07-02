@@ -10,7 +10,8 @@ class PengawasanCubit extends Cubit<PengawasanState> {
   final AddPengawasanUsecase _addPengawasanUsecase;
   final GetLaporanPengawasanUsecase _getLaporanPengawasanUsecase;
 
-  PengawasanCubit(this._addPengawasanUsecase, this._getLaporanPengawasanUsecase) : super(const PengawasanState());
+  PengawasanCubit(this._addPengawasanUsecase, this._getLaporanPengawasanUsecase)
+    : super(const PengawasanState());
 
   void loadJenisPelanggaran() {
     emit(state.copyWith(jenisPelanggaran: dummyJenisPelanggaran));
@@ -24,7 +25,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     emit(state.copyWith(request: state.request.copyWith(buktiFoto: foto)));
   }
 
-void removeFoto() {
+  void removeFoto() {
     emit(state.copyWith(request: state.request.copyWith(buktiFoto: null)));
   }
 
@@ -32,27 +33,41 @@ void removeFoto() {
     final request = state.request.copyWith(ketPel: ketPel.trim());
 
     if (request.jenisPel == 0) {
-      emit(state.copyWith(errorMessage: 'Jenis pelanggaran wajib dipilih.'));
+      if (!isClosed) {
+        emit(state.copyWith(errorMessage: 'Jenis pelanggaran wajib dipilih.'));
+      }
       return;
     }
 
     if (request.ketPel.isEmpty) {
-      emit(state.copyWith(errorMessage: 'Keterangan wajib diisi.'));
+      if (!isClosed) {
+        emit(state.copyWith(errorMessage: 'Keterangan wajib diisi.'));
+      }
       return;
     }
 
     if (request.buktiFoto == null) {
-      emit(state.copyWith(errorMessage: 'Foto bukti wajib diunggah.'));
+      if (!isClosed) {
+        emit(state.copyWith(errorMessage: 'Foto bukti wajib diunggah.'));
+      }
       return;
     }
 
-    emit(state.copyWith(isLoading: true, isSuccess: false, errorMessage: null));
+    if (!isClosed) {
+      emit(
+        state.copyWith(isLoading: true, isSuccess: false, errorMessage: null),
+      );
+    }
 
     try {
       await _addPengawasanUsecase(request);
 
+      if (isClosed) return;
+
       emit(state.copyWith(isLoading: false, isSuccess: true));
     } catch (e) {
+      if (isClosed) return;
+
       emit(
         state.copyWith(
           isLoading: false,
@@ -62,20 +77,27 @@ void removeFoto() {
       );
     }
   }
-  
+
   Future<void> getLaporanPengawasan() async {
-    emit(state.copyWith(isLoadingLaporan: true, errorMessage: null));
+    if (!isClosed) {
+      emit(state.copyWith(isLoadingLaporan: true, errorMessage: null));
+    }
 
     try {
       final result = await _getLaporanPengawasanUsecase();
 
+      if (isClosed) return;
+
       emit(state.copyWith(isLoadingLaporan: false, laporan: result));
     } catch (e) {
+      if (isClosed) return;
+
       emit(state.copyWith(isLoadingLaporan: false, errorMessage: e.toString()));
     }
   }
-  
+
   void reset() {
+    if (isClosed) return;
     emit(const PengawasanState());
   }
 }

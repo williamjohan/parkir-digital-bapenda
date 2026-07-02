@@ -76,7 +76,14 @@ class UsernameModel extends Equatable {
   @JsonKey(defaultValue: '')
   final String namaPetugas;
 
-  const UsernameModel({required this.username, required this.namaPetugas});
+  @JsonKey(defaultValue: '')
+  final String fotoBase64;
+
+  const UsernameModel({
+    required this.username,
+    required this.namaPetugas,
+    required this.fotoBase64,
+  });
 
   factory UsernameModel.fromJson(Map<String, dynamic> json) =>
       _$UsernameModelFromJson(json);
@@ -84,5 +91,5 @@ class UsernameModel extends Equatable {
   Map<String, dynamic> toJson() => _$UsernameModelToJson(this);
 
   @override
-  List<Object?> get props => [username, namaPetugas];
+  List<Object?> get props => [username, namaPetugas, fotoBase64];
 }
