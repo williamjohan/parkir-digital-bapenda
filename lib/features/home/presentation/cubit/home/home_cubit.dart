@@ -146,7 +146,8 @@ class HomeCubit extends Cubit<HomeState> {
                 checkOutJmlMotor: 0,
                 latitude: '',
                 longitude: '',
-                detailAlat: [],
+                detailAlatCheckIn: [], // ⬅️ ganti dari detailAlat
+                detailAlatCheckOut: [],
               ),
             ),
           );
