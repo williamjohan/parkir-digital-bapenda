@@ -205,7 +205,12 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                     AppColors.primary, // Ganti ke AppColors.primary
                 foregroundColor: Colors.white,
                 elevation: 3,
-                onTap: () {},
+                onTap: () {
+                  context.pushNamed(
+                    AppRoutes.transaction,
+                    extra: {'isFree': false, 'isDemoMode': false},
+                  );
+                },
               ),
             ],
           ),
