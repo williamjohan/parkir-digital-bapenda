@@ -39,7 +39,7 @@ class AuthRepositoryImpl implements IAuthRepository {
         await _secureStorage.saveRoleId(response.roleLoginId);
 
         //  3. VALIDASI & SIMPAN UUID (Mekanisme Single Device)
-        if (response.roleLoginId > 3 && response.uuidStatic.isNotEmpty) {
+        if (response.roleLoginId < 3 && response.uuidStatic.isNotEmpty) {
           await _secureStorage.saveDeviceUUID(response.uuidStatic);
         }
 
