@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-// 1. Sesuaikan path import entity pengawas Anda
 import '../../../../home/domain/entities/dashboard_summary_pengawas.entity.dart';
 import 'instrument_badge_widget.dart';
 
 class CheckInCardWidget extends StatelessWidget {
   final bool isCheckedIn;
-  final String? checkInTimeString; // <-- Diubah jadi String
-  final int totalMotor; // <-- Ditambahkan
-  final int totalMobil; // <-- Ditambahkan
-  final List<DetailAlatEntity> detailAlat; // <-- Ditambahkan
-  final VoidCallback onTapCheckIn;
+  final String? checkInTimeString;
+  final int totalMotor;
+  final int totalMobil;
+  final List<DetailAlatEntity> detailAlat;
+  final VoidCallback? onTapCheckIn; // 🔥 jadi nullable
 
   const CheckInCardWidget({
     super.key,
@@ -105,7 +104,6 @@ class CheckInCardWidget extends StatelessWidget {
               ),
             ],
           ),
-          // Parsing aman (Safe Parsing)
           if (checkInTimeString != null && checkInTimeString!.isNotEmpty) ...[
             const SizedBox(height: 2),
             Text(
@@ -119,24 +117,36 @@ class CheckInCardWidget extends StatelessWidget {
       );
     }
 
+    final bool isDisabled = onTapCheckIn == null; // 🔥
+
     return GestureDetector(
       onTap: onTapCheckIn,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: AppColors.success.withValues(alpha: 0.1),
+          color: isDisabled
+              ? Colors.grey.shade200
+              : AppColors.success.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+          border: Border.all(
+            color: isDisabled
+                ? Colors.grey.shade300
+                : AppColors.success.withValues(alpha: 0.3),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.add_rounded, size: 14, color: AppColors.success),
+            Icon(
+              Icons.add_rounded,
+              size: 14,
+              color: isDisabled ? Colors.grey.shade400 : AppColors.success,
+            ),
             const SizedBox(width: 4),
             Text(
               "Input Check In",
               style: AppTypography.caption.copyWith(
-                color: AppColors.success,
+                color: isDisabled ? Colors.grey.shade400 : AppColors.success,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -146,7 +156,6 @@ class CheckInCardWidget extends StatelessWidget {
     );
   }
 
-  // 2. Helper Method untuk mengecek apakah alat dibawa (Berdasarkan keyword nama)
   bool _isAlatBawa(String keyword) {
     return detailAlat.any(
       (alat) =>
@@ -267,7 +276,6 @@ class CheckInCardWidget extends StatelessWidget {
     );
   }
 
-  // 3. Fallback Parsing Waktu (Menghindari Crash jika API ngirim format aneh)
   String _formatDateTimeString(String dtString) {
     try {
       final dt = DateTime.parse(dtString);
@@ -289,7 +297,7 @@ class CheckInCardWidget extends StatelessWidget {
       final m = dt.minute.toString().padLeft(2, '0');
       return "${dt.day} ${months[dt.month - 1]} ${dt.year} - $h:$m";
     } catch (e) {
-      return dtString; // Jika gagal di-parse, tampilkan string mentahnya saja
+      return dtString;
     }
   }
 }

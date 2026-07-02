@@ -24,7 +24,7 @@ class MainAbsensiWidget extends StatelessWidget {
     if (!context.mounted) return;
 
     if (result == true) {
-      context.read<HomeCubit>().loadDashboardPengawas(); // ⬅️ refresh di sini
+      context.read<HomeCubit>().loadDashboardPengawas();
     }
   }
 
@@ -32,6 +32,7 @@ class MainAbsensiWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isCheckedIn = absensiData.checkInString.isNotEmpty;
     final bool isCheckedOut = absensiData.checkOutString.isNotEmpty;
+    final bool hasJadwal = absensiData.hasJadwal; // 🔥
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,14 +40,46 @@ class MainAbsensiWidget extends StatelessWidget {
         _buildShiftStatus(isCheckedIn: isCheckedIn, isCheckedOut: isCheckedOut),
         const SizedBox(height: 12),
 
+        if (!hasJadwal) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.event_busy_rounded,
+                  size: 18,
+                  color: Colors.grey.shade500,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    "Belum ada jadwal roster hari ini",
+                    style: AppTypography.bodySmall.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+
         // CARD CHECK IN
         CheckInCardWidget(
           isCheckedIn: isCheckedIn,
           checkInTimeString: isCheckedIn ? absensiData.checkInString : null,
           totalMotor: absensiData.checkInJmlMotor,
           totalMobil: absensiData.checkInJmlMobil,
-          detailAlat: absensiData.detailAlatCheckIn, // ⬅️ ganti
-          onTapCheckIn: () => _openForm(context, ShiftFormType.checkIn),
+          detailAlat: absensiData.detailAlatCheckIn,
+          onTapCheckIn: hasJadwal
+              ? () => _openForm(context, ShiftFormType.checkIn)
+              : null, // 🔥 disable kalau belum ada jadwal
         ),
 
         const SizedBox(height: 10),
@@ -58,8 +91,10 @@ class MainAbsensiWidget extends StatelessWidget {
           checkOutTimeString: isCheckedOut ? absensiData.checkOutString : null,
           totalMotor: absensiData.checkOutJmlMotor,
           totalMobil: absensiData.checkOutJmlMobil,
-          detailAlat: absensiData.detailAlatCheckOut, // ⬅️ ganti
-          onTapCheckOut: () => _openForm(context, ShiftFormType.checkOut),
+          detailAlat: absensiData.detailAlatCheckOut,
+          onTapCheckOut: hasJadwal
+              ? () => _openForm(context, ShiftFormType.checkOut)
+              : null, 
         ),
       ],
     );
@@ -93,9 +128,7 @@ class MainAbsensiWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(
-          alpha: 0.1,
-        ), // Gunakan withOpacity untuk support versi Flutter lama/baru
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withValues(alpha: 0.25)),
       ),

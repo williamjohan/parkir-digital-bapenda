@@ -75,8 +75,8 @@ class CheckInOutEntity extends Equatable {
   final int checkOutJmlMotor;
   final String latitude;
   final String longitude;
-  final List<DetailAlatEntity> detailAlatCheckIn; // ⬅️ ganti
-  final List<DetailAlatEntity> detailAlatCheckOut; // ⬅️ tambah
+  final List<DetailAlatEntity> detailAlatCheckIn;
+  final List<DetailAlatEntity> detailAlatCheckOut;
 
   const CheckInOutEntity({
     required this.idEvent,
@@ -96,9 +96,12 @@ class CheckInOutEntity extends Equatable {
     required this.checkOutJmlMotor,
     required this.latitude,
     required this.longitude,
-    required this.detailAlatCheckIn, // ⬅️ ganti
-    required this.detailAlatCheckOut, // ⬅️ tambah
+    required this.detailAlatCheckIn,
+    required this.detailAlatCheckOut,
   });
+
+  // 🔥 Tambahin ini — dipakai buat cek apakah user punya jadwal roster hari ini
+  bool get hasJadwal => idEvent != 0 && op.isNotEmpty;
 
   @override
   List<Object?> get props => [
@@ -119,8 +122,8 @@ class CheckInOutEntity extends Equatable {
     checkOutJmlMotor,
     latitude,
     longitude,
-    detailAlatCheckIn, // ⬅️ tambah ke props juga
-    detailAlatCheckOut, // ⬅️ tambah ke props juga
+    detailAlatCheckIn,
+    detailAlatCheckOut,
   ];
 }
 

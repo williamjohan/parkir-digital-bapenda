@@ -7,17 +7,17 @@ import 'instrument_badge_widget.dart';
 class CheckOutCardWidget extends StatelessWidget {
   final bool isCheckedIn;
   final bool isCheckedOut;
-  final String? checkOutTimeString; // <-- Diubah jadi String
-  final int totalMotor; // <-- Ditambahkan
-  final int totalMobil; // <-- Ditambahkan
-  final List<DetailAlatEntity> detailAlat; // <-- Ditambahkan
-  final VoidCallback onTapCheckOut;
+  final String? checkOutTimeString;
+  final int totalMotor;
+  final int totalMobil;
+  final List<DetailAlatEntity> detailAlat;
+  final VoidCallback? onTapCheckOut; // 🔥 jadi nullable, sama seperti CheckIn
 
   const CheckOutCardWidget({
     super.key,
     required this.isCheckedIn,
     required this.isCheckedOut,
-    required this.onTapCheckOut,
+    required this.onTapCheckOut, // 🔥 tetap required, tapi tipe nullable
     this.checkOutTimeString,
     this.totalMotor = 0,
     this.totalMobil = 0,
@@ -106,7 +106,6 @@ class CheckOutCardWidget extends StatelessWidget {
               ),
             ],
           ),
-          // Parsing aman (Safe Parsing) untuk String Date
           if (checkOutTimeString != null && checkOutTimeString!.isNotEmpty) ...[
             const SizedBox(height: 2),
             Text(
@@ -120,53 +119,37 @@ class CheckOutCardWidget extends StatelessWidget {
       );
     }
 
-    if (!isCheckedIn) {
-      return Container(
+    // Belum checkout: disabled jika belum checkin ATAU onTapCheckOut null
+    final bool isDisabled = !isCheckedIn || onTapCheckOut == null;
+
+    return GestureDetector(
+      onTap: isDisabled ? null : onTapCheckOut,
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          color: isDisabled
+              ? Colors.grey.shade200
+              : AppColors.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(
+            color: isDisabled
+                ? Colors.grey.shade300
+                : AppColors.error.withValues(alpha: 0.3),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.lock_outline_rounded,
+              !isCheckedIn ? Icons.lock_outline_rounded : Icons.add_rounded,
               size: 14,
-              color: Colors.grey.shade400,
+              color: isDisabled ? Colors.grey.shade400 : AppColors.error,
             ),
             const SizedBox(width: 4),
             Text(
-              "Check In Dulu",
+              !isCheckedIn ? "Check In Dulu" : "Input Check Out",
               style: AppTypography.caption.copyWith(
-                color: Colors.grey.shade400,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return GestureDetector(
-      onTap: onTapCheckOut,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: AppColors.error.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.add_rounded, size: 14, color: AppColors.error),
-            const SizedBox(width: 4),
-            Text(
-              "Input Check Out",
-              style: AppTypography.caption.copyWith(
-                color: AppColors.error,
+                color: isDisabled ? Colors.grey.shade400 : AppColors.error,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -176,7 +159,6 @@ class CheckOutCardWidget extends StatelessWidget {
     );
   }
 
-  // Helper Method untuk mengecek apakah alat dibawa (Berdasarkan keyword nama)
   bool _isAlatBawa(String keyword) {
     return detailAlat.any(
       (alat) =>
@@ -299,7 +281,6 @@ class CheckOutCardWidget extends StatelessWidget {
     );
   }
 
-  // Fallback Parsing Waktu
   String _formatDateTimeString(String dtString) {
     try {
       final dt = DateTime.parse(dtString);
