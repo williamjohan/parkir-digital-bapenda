@@ -40,7 +40,7 @@ class HomeCubit extends Cubit<HomeState> {
       await _profileUseCase.getProfilePicturePath();
       await _syncQrisUseCase.execute();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
-      _loadDashboardPengawas();
+      await loadDashboardPengawas();
     } else {
       await _ensureValidToken();
       await _loadDashboardNonJukir();

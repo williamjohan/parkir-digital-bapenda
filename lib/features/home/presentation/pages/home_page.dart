@@ -116,12 +116,17 @@ class _HomePageState extends State<HomePage> {
                                 nop: state.nop,
                                 namaObjekPajak: state.namaOp,
                                 onPressed: () {
+                                  // context.pushNamed(
+                                  //   AppRoutes.dataJukir,
+                                  //   extra: {
+                                  //     'isPengawas': true,
+                                  //     'isShowPendapatan': false,
+                                  //   },
+                                  // );
+
                                   context.pushNamed(
-                                    AppRoutes.dataJukir,
-                                    extra: {
-                                      'isPengawas': true,
-                                      'isShowPendapatan': false,
-                                    },
+                                    AppRoutes.dataJukirList,
+                                    extra: {'nop': '357801000390703149'},
                                   );
                                 },
                               ),

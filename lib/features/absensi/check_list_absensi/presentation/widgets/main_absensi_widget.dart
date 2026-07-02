@@ -26,7 +26,7 @@ class MainAbsensiWidget extends StatelessWidget {
     if (result == true) {
       // Panggil fungsi load dashboard pengawas Anda untuk merefresh seluruh halaman
       // Sesuaikan nama fungsinya dengan yang ada di HomeCubit Anda
-      context.read<HomeCubit>()._loadDashboardPengawas();
+      context.read<HomeCubit>().loadDashboardPengawas();
     }
   }
 
@@ -49,7 +49,9 @@ class MainAbsensiWidget extends StatelessWidget {
         CheckInCardWidget(
           isCheckedIn: isCheckedIn,
           // Gunakan properti string atau parse ke DateTime jika Card Anda butuh DateTime
-          checkInTime: isCheckedIn ? absensiData.checkInString : null,
+          checkInTime: isCheckedIn
+              ? DateTime.tryParse(absensiData.checkIn)
+              : null,
           // checklist: checklistModel, 🚨 (LIHAT CATATAN AUDITOR DI BAWAH)
           onTapCheckIn: () => _openForm(context, ShiftFormType.checkIn),
         ),
@@ -60,7 +62,9 @@ class MainAbsensiWidget extends StatelessWidget {
         CheckOutCardWidget(
           isCheckedIn: isCheckedIn,
           isCheckedOut: isCheckedOut,
-          checkOutTime: isCheckedOut ? absensiData.checkOutString : null,
+          checkOutTime: isCheckedOut
+              ? DateTime.tryParse(absensiData.checkOut)
+              : null,
           // checklist: checklistModel, 🚨 (LIHAT CATATAN AUDITOR DI BAWAH)
           onTapCheckOut: () => _openForm(context, ShiftFormType.checkOut),
         ),

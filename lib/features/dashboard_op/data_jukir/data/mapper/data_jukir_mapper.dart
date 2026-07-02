@@ -18,6 +18,7 @@ class DataJukirMapper {
             (e) => UsernameEntity(
               username: e.username,
               namaPetugas: e.namaPetugas,
+              fotoBase64: e.fotoBase64,
             ),
           )
           .toList(),
