@@ -44,24 +44,33 @@ extension AbsensiRequestModelExt on AbsensiRequestModel {
   Future<FormData> toFormData() async {
     final prefix = isCheckIn ? 'CheckIn' : 'CheckOut';
 
-    final List<Map<String, int>> alatMapList = detailAlatIds
-        .map((id) => {"id": id})
-        .toList();
-    final String detailAlatListJson = jsonEncode(alatMapList);
+    final formData = FormData();
 
-    // Pastikan fotoPath tidak kosong sebelum memproses
-    final fotoFile = await MultipartFile.fromFile(
-      fotoPath,
-      filename: fotoPath.split('/').last,
+    formData.fields.add(MapEntry('${prefix}JmlMobil', totalMobil.toString()));
+
+    formData.fields.add(MapEntry('${prefix}JmlMotor', totalMotor.toString()));
+
+    formData.fields.add(MapEntry('Latitude', latitude.toString()));
+
+    formData.fields.add(MapEntry('Longitude', longitude.toString()));
+
+    // DetailAlatList=1
+    // DetailAlatList=2
+    // DetailAlatList=3
+    for (final id in detailAlatIds) {
+      formData.fields.add(MapEntry('DetailAlatList', id.toString()));
+    }
+
+    formData.files.add(
+      MapEntry(
+        'Foto$prefix',
+        await MultipartFile.fromFile(
+          fotoPath,
+          filename: fotoPath.split('/').last,
+        ),
+      ),
     );
 
-    return FormData.fromMap({
-      '${prefix}JmlMobil': totalMobil.toString(),
-      '${prefix}JmlMotor': totalMotor.toString(),
-      'Latitude': latitude.toString(),
-      'Longitude': longitude.toString(),
-      'DetailAlatList': detailAlatListJson,
-      'Foto$prefix': fotoFile,
-    });
+    return formData;
   }
 }
