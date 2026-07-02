@@ -64,7 +64,7 @@ class _JukirCard extends StatelessWidget {
         // border: BorderSide(color: Colors.grey.shade200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -208,9 +208,7 @@ class _JukirCard extends StatelessWidget {
                 // Menutup modal dengan mengetuk di luar area gambar
                 onTap: () => Navigator.of(context).pop(),
                 child: Container(
-                  color: Colors.black.withOpacity(
-                    0.6,
-                  ), // Latar belakang semi-transparan
+                  color: Colors.black.withValues(alpha: 0.6),
                   width: double.infinity,
                   height: double.infinity,
                 ),

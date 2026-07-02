@@ -11,8 +11,6 @@ class DataJukirCubit extends Cubit<DataJukirState> {
   DataJukirCubit(this._getDataJukirUseCase) : super(const DataJukirState());
 
   Future<void> getDataJukir(String nop) async {
-    print("🚀 [DATA JUKIR CUBIT] Memulai load data untuk NOP: '$nop'");
-
     emit(
       state.copyWith(
         isLoading: true,

@@ -113,61 +113,13 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // --- WIDGET TEKS DENGAN ANIMASI ---
-        ClipRect(
-          // ClipRect memastikan teks yang belum keluar penuh tidak bocor posisinya
-          child: SlideTransition(
-            position: _slideAnimation,
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 5.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Teks Utama (Government Style: Tegas, tidak miring, warna solid)
-                    Text(
-                      _hintTexts[_currentIndex],
-                      style: AppTypography.heading1.copyWith(
-                        fontSize: 16,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    // Tanda Tanya dengan Animasi Getar
-                    RotationTransition(
-                      turns: _shakeAnimation,
-                      child: Text(
-                        ' ?',
-                        style: AppTypography.heading1.copyWith(
-                          fontSize: 16,
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+    // Cek role user
+    final bool isPengawas =
+        widget.currentRole == RoleLoginDigitalParkir.pengawas;
 
-        // --- TOMBOL SPEED DIAL ASLI ---
-        PbPermissionGate(
-          allowedRoles: const [
-            RoleLoginDigitalParkir.pengawas,
-            RoleLoginDigitalParkir.jukir,
-            RoleLoginDigitalParkir.bapenda,
-          ],
-          currentRole: widget.currentRole,
-          child: SpeedDial(
+    // Definisikan tombol berdasarkan role
+    final Widget mainButton = isPengawas
+        ? SpeedDial(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             icon: Icons.add,
