@@ -341,6 +341,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
+
                   floatingActionButton: FeatureFlags.enableCreateOrderFeature
                       ? AnimatedHomeFab(currentRole: state.role)
                       : null,
