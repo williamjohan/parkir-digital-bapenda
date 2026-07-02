@@ -1,15 +1,20 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_show_dialog.dart'; // sesuaikan path aslinya
 import '../../../../../core/services/camera/camera_service.dart';
 import '../../../../../core/services/location/i_app_location_service.dart';
 import '../../domain/entities/absensi_entity.dart';
 import '../cubit/absensi_cubit.dart';
 import '../cubit/absensi_state.dart';
 import '../widgets/instrument_toggle_widget.dart';
-import 'dart:io';
 
 enum ShiftFormType { checkIn, checkOut }
 
@@ -34,13 +39,18 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   final _mobilController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  File? _photo;
+  // 🔥 Key buat capture area foto + watermark jadi 1 gambar
+  final GlobalKey _photoKey = GlobalKey();
+
+  File? _photo; // foto asli dari kamera (dipakai buat preview UI)
+  File? _watermarkedPhoto; // 🔥 hasil capture, ini yang dikirim ke API
   DateTime? _photoTakenAt;
   double? _latitude;
   double? _longitude;
   String? _placeName;
   String? _locationError;
   bool _isFetchingLocation = false;
+  bool _isCapturing = false; 
 
   bool _edc = false;
   bool _qris = false;
@@ -77,11 +87,9 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
       final result = await widget.locationService.getCurrentLocation();
 
       setState(() {
-        // Parse string latitude/longitude ke double
         _latitude = double.tryParse(result.latitude);
         _longitude = double.tryParse(result.longitude);
-        _placeName = result.address; // Gunakan .address dari AppLocationData
-
+        _placeName = result.address;
         _isFetchingLocation = false;
       });
     } catch (e) {
@@ -93,7 +101,6 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   }
 
   Future<void> _takePhoto() async {
-    // MENGGUNAKAN SERVICE EKSTERNAL (Lebih Clean)
     final file = await CameraService.takePhoto();
     if (file != null) {
       setState(() {
@@ -104,7 +111,36 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
     }
   }
 
-  void _submit() {
+  /// 🔥 Capture Stack (foto + overlay lokasi/waktu) jadi 1 file PNG baru.
+  /// Ini yang bikin watermark "nempel" permanen di gambar, bukan cuma
+  /// tampil di UI doang.
+  Future<File?> _captureWatermarkedImage() async {
+    try {
+      final boundary =
+          _photoKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
+      if (boundary == null) return null;
+
+      final image = await boundary.toImage(pixelRatio: 2.5);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) return null;
+
+      final pngBytes = byteData.buffer.asUint8List();
+
+      final dir = await getTemporaryDirectory();
+      final file = File(
+        '${dir.path}/watermarked_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
+      await file.writeAsBytes(pngBytes);
+
+      return file;
+    } catch (e) {
+      debugPrint('Gagal capture watermark: $e');
+      return null;
+    }
+  }
+
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_photo == null) {
@@ -121,49 +157,81 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
       return;
     }
 
-    // Ekstrak ID instrumen yang aktif
+    if (_isFetchingLocation) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Tunggu lokasi selesai terdeteksi")),
+      );
+      return;
+    }
+
+    setState(() => _isCapturing = true);
+
+    // 🔥 Capture foto + watermark jadi 1 file gambar
+    final capturedFile = await _captureWatermarkedImage();
+
+    if (!mounted) return;
+    setState(() => _isCapturing = false);
+
+    if (capturedFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Gagal memproses foto, coba ambil ulang")),
+      );
+      return;
+    }
+    _watermarkedPhoto = capturedFile;
+
     final List<int> detailAlatIds = [
       if (_edc) kInstrumentIds['EDC']!,
       if (_qris) kInstrumentIds['QRIS']!,
       if (_tsPark) kInstrumentIds['TSpark']!,
     ];
 
-    // Mapping ke AbsensiEntity tunggal
     final entity = AbsensiEntity(
       latitude: _latitude!,
       longitude: _longitude!,
-      totalMotor:
-          int.tryParse(_motorController.text) ?? 0, // Entity baru pakai int
-      totalMobil:
-          int.tryParse(_mobilController.text) ?? 0, // Entity baru pakai int
-      detailAlatIds: detailAlatIds, // Mengirim List<int> sesuai entity
-      fotoPath: _photo!.path,
+      totalMotor: int.tryParse(_motorController.text) ?? 0,
+      totalMobil: int.tryParse(_mobilController.text) ?? 0,
+      detailAlatIds: detailAlatIds,
+      fotoPath: _watermarkedPhoto!
+          .path, // 🔥 kirim gambar yang sudah ada watermark-nya
       isCheckIn: _isCheckIn,
     );
 
-    // Lempar ke Cubit Baru
+    if (!mounted) return;
     context.read<AbsensiCubit>().submitAbsensi(entity);
   }
 
   @override
   Widget build(BuildContext context) {
-    // MENGGUNAKAN ABSENSI CUBIT BARU
     return BlocListener<AbsensiCubit, AbsensiState>(
       listenWhen: (prev, curr) => prev.status != curr.status,
       listener: (context, state) {
         if (state.status == AbsensiStatus.failure) {
-          ScaffoldMessenger.of(
+          PbShowDialog.show(
             context,
-          ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
-        } else if (state.status == AbsensiStatus.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                _isCheckIn ? 'Check in berhasil' : 'Check out berhasil',
-              ),
-            ),
+            title: "Gagal",
+            description: state.errorMessage,
+            icon: Icons.error_outline_rounded,
+            iconColor: AppColors.error,
+            buttonText: "OK",
+            onConfirm: () {
+              // tetap di screen ini biar user bisa coba lagi
+            },
           );
-          Navigator.of(context).pop(true);
+        } else if (state.status == AbsensiStatus.success) {
+          PbShowDialog.show(
+            context,
+            title: _isCheckIn ? "Check In Berhasil" : "Check Out Berhasil",
+            description: _isCheckIn
+                ? "Absensi check in kamu sudah tersimpan"
+                : "Absensi check out kamu sudah tersimpan",
+            icon: Icons.check_circle_outline_rounded,
+            iconColor: AppColors.success,
+            buttonText: "OK",
+            onConfirm: () {
+              Navigator.of(context).pop(true);
+            },
+          );
         }
       },
       child: Scaffold(
@@ -236,11 +304,10 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // BLOC BUILDER DENGAN STATE BARU
               BlocBuilder<AbsensiCubit, AbsensiState>(
                 builder: (context, state) {
-                  final isLoading = state.status == AbsensiStatus.loading;
+                  final isLoading =
+                      state.status == AbsensiStatus.loading || _isCapturing;
                   return SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -357,168 +424,172 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
         onTap: _takePhoto,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(14),
-          child: Container(
-            width: double.infinity,
-            height: 240,
-            color: Colors.grey.shade100,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (_photo != null)
-                  Image.file(_photo!, fit: BoxFit.cover)
-                else
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add_a_photo_rounded,
-                        size: 40,
-                        color: Colors.grey.shade400,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Ketuk untuk ambil foto",
-                        style: AppTypography.bodySmall.copyWith(
-                          color: Colors.grey.shade500,
+          // 🔥 RepaintBoundary membungkus area yang akan di-capture
+          // (foto + watermark overlay) supaya bisa "dibakar" jadi 1 gambar.
+          child: RepaintBoundary(
+            key: _photoKey,
+            child: Container(
+              width: double.infinity,
+              height: 240,
+              color: Colors.grey.shade100,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (_photo != null)
+                    Image.file(_photo!, fit: BoxFit.cover)
+                  else
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add_a_photo_rounded,
+                          size: 40,
+                          color: Colors.grey.shade400,
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Ketuk untuk ambil foto",
+                          style: AppTypography.bodySmall.copyWith(
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
+                    ),
 
-                // watermark info lokasi & waktu, hanya muncul kalau sudah ada foto
-                if (_photo != null)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(12, 20, 12, 10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withValues(alpha: 0.0),
-                            Colors.black.withValues(alpha: 0.75),
-                          ],
+                  // watermark info lokasi & waktu, hanya muncul kalau sudah ada foto
+                  if (_photo != null)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(12, 20, 12, 10),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.0),
+                              Colors.black.withValues(alpha: 0.75),
+                            ],
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_isFetchingLocation)
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 10,
-                                  height: 10,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1.5,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "Mendeteksi lokasi...",
-                                  style: AppTypography.caption.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            )
-                          else if (_locationError != null)
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.error_outline_rounded,
-                                  size: 12,
-                                  color: Colors.orangeAccent,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    _locationError!,
-                                    style: AppTypography.caption.copyWith(
-                                      color: Colors.orangeAccent,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_isFetchingLocation)
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 10,
+                                    height: 10,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1.5,
+                                      color: Colors.white,
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                              ],
-                            )
-                          else ...[
-                            if (_placeName != null)
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    "Mendeteksi lokasi...",
+                                    style: AppTypography.caption.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else if (_locationError != null)
                               Row(
                                 children: [
                                   const Icon(
-                                    Icons.location_on_rounded,
-                                    size: 13,
-                                    color: Colors.white,
+                                    Icons.error_outline_rounded,
+                                    size: 12,
+                                    color: Colors.orangeAccent,
                                   ),
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      _placeName!,
+                                      _locationError!,
                                       style: AppTypography.caption.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
+                                        color: Colors.orangeAccent,
                                       ),
-                                      maxLines: 1,
+                                      maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
-                              ),
-                            if (_latitude != null &&
-                                _longitude != null) // 🔥 Ubah pengecekannya
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: Text(
-                                  "${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}", // 🔥 Panggil langsung variabelnya
-                                  style: AppTypography.caption.copyWith(
-                                    color: Colors.white70,
-                                    fontSize: 10,
+                              )
+                            else ...[
+                              if (_placeName != null)
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on_rounded,
+                                      size: 13,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        _placeName!,
+                                        style: AppTypography.caption.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              if (_latitude != null && _longitude != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child: Text(
+                                    "${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}",
+                                    style: AppTypography.caption.copyWith(
+                                      color: Colors.white70,
+                                      fontSize: 10,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            if (_photoTakenAt != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: Text(
-                                  _formatStampTime(_photoTakenAt!),
-                                  style: AppTypography.caption.copyWith(
-                                    color: Colors.white70,
-                                    fontSize: 10,
+                              if (_photoTakenAt != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child: Text(
+                                    _formatStampTime(_photoTakenAt!),
+                                    style: AppTypography.caption.copyWith(
+                                      color: Colors.white70,
+                                      fontSize: 10,
+                                    ),
                                   ),
                                 ),
-                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                     ),
-                  ),
 
-                // tombol retake, pojok kanan atas
-                if (_photo != null)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.refresh_rounded,
-                        size: 16,
-                        color: Colors.white,
+                  // tombol retake, pojok kanan atas
+                  if (_photo != null)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.refresh_rounded,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
