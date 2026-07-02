@@ -280,7 +280,8 @@ class HomeCubit extends Cubit<HomeState> {
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
 
     final namaUserShort = namaUser.shortName;
-    if (userRole == RoleLoginDigitalParkir.jukir) {
+    if (userRole == RoleLoginDigitalParkir.jukir ||
+        userRole == RoleLoginDigitalParkir.pengawas) {
       emit(
         state.copyWith(
           namaJukir: namaUserShort,

@@ -9,8 +9,17 @@ import '../../../../core/routes/app_routes.dart';
 
 class AnimatedHomeFab extends StatefulWidget {
   final dynamic currentRole;
+  final bool isFree;
+  final bool isDemoMode;
+  final VoidCallback onReload;
 
-  const AnimatedHomeFab({super.key, required this.currentRole});
+  const AnimatedHomeFab({
+    super.key,
+    required this.currentRole,
+    required this.isFree,
+    required this.isDemoMode,
+    required this.onReload,
+  });
 
   @override
   State<AnimatedHomeFab> createState() => _AnimatedHomeFabState();
@@ -18,17 +27,14 @@ class AnimatedHomeFab extends StatefulWidget {
 
 class _AnimatedHomeFabState extends State<AnimatedHomeFab>
     with TickerProviderStateMixin {
-  // Teks utama, tanda "?" dipisah agar bisa digetarkan sendiri
+  // Teks kembali ke versi awal karena hanya akan dilihat oleh Pengawas
   final List<String> _hintTexts = ['Buat Laporan', 'Check Qris nya'];
-
   int _currentIndex = 0;
 
-  // Controller untuk animasi meluncur & muncul
   late AnimationController _slideController;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
 
-  // Controller khusus untuk animasi getar/goyang (?)
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
 
@@ -36,14 +42,11 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
   void initState() {
     super.initState();
 
-    // 1. Setup Animasi Slide & Fade (Durasi dibuat lebih smooth)
     _slideController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
 
-    // Animasi muncul dari sudut kanan bawah (Offset 0.5, 0.5) menuju titik aslinya (Offset.zero)
-    // Menggunakan curve easeOutBack agar ada sedikit efek membal (smooth) di akhir
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0.5, 0.5), end: Offset.zero).animate(
           CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack),
@@ -56,13 +59,11 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
       ),
     );
 
-    // 2. Setup Animasi Goyang untuk tanda "?"
     _shakeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
 
-    // Membuat urutan rotasi (kiri - kanan - tengah)
     _shakeAnimation =
         TweenSequence<double>([
           TweenSequenceItem(tween: Tween(begin: 0.0, end: -0.05), weight: 1),
@@ -73,39 +74,32 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
           CurvedAnimation(parent: _shakeController, curve: Curves.easeInOut),
         );
 
-    // Mulai siklus animasinya
+    // Tetap jalankan animasi di background (tidak masalah karena widgetnya di-hide)
     _startAnimationLoop();
   }
 
   void _startAnimationLoop() async {
-    // Jeda awal saat halaman dimuat
     await Future.delayed(const Duration(seconds: 1));
 
     while (mounted) {
-      // 1. Teks Meluncur Keluar
       await _slideController.forward();
       if (!mounted) break;
 
-      // 2. Tanda "?" Bergoyang 2 kali untuk menarik perhatian user
       _shakeController.reset();
       await _shakeController.forward();
       _shakeController.reset();
       await _shakeController.forward();
 
-      // 3. Tahan posisi selama 3 detik agar bisa dibaca
       await Future.delayed(const Duration(seconds: 3));
       if (!mounted) break;
 
-      // 4. Teks Meluncur Masuk (Sembunyi ke arah kanan bawah)
       await _slideController.reverse();
       if (!mounted) break;
 
-      // 5. Ganti teks selagi sembunyi
       setState(() {
         _currentIndex = (_currentIndex + 1) % _hintTexts.length;
       });
 
-      // Jeda nafas sebelum teks baru muncul
       await Future.delayed(const Duration(milliseconds: 500));
     }
   }
@@ -119,57 +113,13 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // --- WIDGET TEKS DENGAN ANIMASI ---
-        ClipRect(
-          // ClipRect memastikan teks yang belum keluar penuh tidak bocor posisinya
-          child: SlideTransition(
-            position: _slideAnimation,
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 5.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Teks Utama (Government Style: Tegas, tidak miring, warna solid)
-                    Text(
-                      _hintTexts[_currentIndex],
-                      style: AppTypography.heading1.copyWith(
-                        fontSize: 16,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    // Tanda Tanya dengan Animasi Getar
-                    RotationTransition(
-                      turns: _shakeAnimation,
-                      child: Text(
-                        ' ?',
-                        style: AppTypography.heading1.copyWith(
-                          fontSize: 16,
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+    // Cek role user
+    final bool isPengawas =
+        widget.currentRole == RoleLoginDigitalParkir.pengawas;
 
-        // --- TOMBOL SPEED DIAL ASLI ---
-        PbPermissionGate(
-          allowedRoles: const [RoleLoginDigitalParkir.pengawas],
-          currentRole: widget.currentRole,
-          child: SpeedDial(
+    // Definisikan tombol berdasarkan role
+    final Widget mainButton = isPengawas
+        ? SpeedDial(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             icon: Icons.add,
@@ -201,21 +151,99 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                   fontSize: 14,
                 ),
                 labelBackgroundColor: Colors.white,
-                backgroundColor:
-                    AppColors.primary, // Ganti ke AppColors.primary
+                backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 elevation: 3,
-                onTap: () {
-                  context.pushNamed(
+                onTap: () async {
+                  final result = await context.pushNamed(
                     AppRoutes.transaction,
-                    extra: {'isFree': false, 'isDemoMode': false},
+                    extra: {
+                      'isFree': widget.isFree,
+                      'isDemoMode': widget.isDemoMode,
+                    },
                   );
+                  if (result == true) {
+                    widget.onReload();
+                  }
                 },
               ),
             ],
-          ),
-        ),
+          )
+        : FloatingActionButton(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            shape: const CircleBorder(),
+            elevation: 4,
+            onPressed: () async {
+              final result = await context.pushNamed(
+                AppRoutes.transaction,
+                extra: {
+                  'isFree': widget.isFree,
+                  'isDemoMode': widget.isDemoMode,
+                },
+              );
+              if (result == true) {
+                widget.onReload();
+              }
+            },
+            child: const Icon(Icons.add),
+          );
+
+    return PbPermissionGate(
+      allowedRoles: const [
+        RoleLoginDigitalParkir.jukir,
+        RoleLoginDigitalParkir.bapenda,
+        RoleLoginDigitalParkir.pengawas,
       ],
+      currentRole: widget.currentRole,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // 💡 HANYA TAMPILKAN TEKS ANIMASI JIKA DIA PENGAWAS
+          if (isPengawas)
+            ClipRect(
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 5.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _hintTexts[_currentIndex],
+                          style: AppTypography.heading1.copyWith(
+                            fontSize: 16,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        RotationTransition(
+                          turns: _shakeAnimation,
+                          child: Text(
+                            ' ?',
+                            style: AppTypography.heading1.copyWith(
+                              fontSize: 16,
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+          // Tombol Utama (SpeedDial atau FAB biasa)
+          mainButton,
+        ],
+      ),
     );
   }
 }

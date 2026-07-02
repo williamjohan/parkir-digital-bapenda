@@ -93,6 +93,7 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
                               ),
                               SizedBox(height: 16),
                               CardRekapKendaraanWidget(
+                                isShowPelanggaran: false,
                                 motorCount:
                                     state.summary?.jumlahMotorHariIni ?? 0,
                                 mobilCount:

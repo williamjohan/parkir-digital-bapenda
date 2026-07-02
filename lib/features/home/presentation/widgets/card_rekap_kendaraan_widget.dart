@@ -9,12 +9,14 @@ class CardRekapKendaraanWidget extends StatelessWidget {
   final int motorCount;
   final int mobilCount;
   final int? laporanPelanggaran;
+  final bool isShowPelanggaran;
 
   const CardRekapKendaraanWidget({
     super.key,
     required this.motorCount,
     required this.mobilCount,
     this.laporanPelanggaran = 0,
+    required this.isShowPelanggaran,
   });
 
   @override
@@ -97,60 +99,63 @@ class CardRekapKendaraanWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: Colors.red.shade50,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.red.shade100),
-            ),
-            child: InkWell(
-              onTap: () {
-                context.pushNamed(AppRoutes.laporanPelanggaran);
-              },
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade100,
-                      borderRadius: BorderRadius.circular(10),
+          if (isShowPelanggaran)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: Colors.red.shade100),
+              ),
+              child: InkWell(
+                onTap: () {
+                  context.pushNamed(AppRoutes.laporanPelanggaran);
+                },
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade100,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.warning_amber_rounded,
+                        color: Colors.red.shade700,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.red.shade700,
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Laporan Pelanggaran",
+                            style: AppTypography.bodySemiBold,
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            "Jumlah laporan yang masuk hari ini",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Laporan Pelanggaran",
-                          style: AppTypography.bodySemiBold,
-                        ),
-                        SizedBox(height: 2),
-                        Text(
-                          "Jumlah laporan yang masuk hari ini",
-                          style: TextStyle(fontSize: 12, color: Colors.black54),
-                        ),
-                      ],
+                    Text(
+                      NumberFormatter.format(laporanPelanggaran.toString()),
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red.shade700,
+                      ),
                     ),
-                  ),
-                  Text(
-                    NumberFormatter.format(laporanPelanggaran.toString()),
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red.shade700,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
