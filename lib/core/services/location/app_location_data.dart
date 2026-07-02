@@ -1,7 +1,7 @@
 class AppLocationData {
   final String latitude;
   final String longitude;
-  final String? address; // Tambahan untuk nama jalan (opsional)
+  final String? address;
 
   AppLocationData({
     required this.latitude,

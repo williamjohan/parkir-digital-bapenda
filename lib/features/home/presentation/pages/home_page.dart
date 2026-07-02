@@ -119,9 +119,7 @@ class _HomePageState extends State<HomePage> {
                                 onPressed: () {
                                   context.pushNamed(
                                     AppRoutes.dataJukirList,
-                                    extra: {
-                                      'nop': state.nop,
-                                    }, // atau pakai 'rawNop' jika backend butuh yang ada titiknya
+                                    extra: {'nop': state.nop},
                                   );
                                 },
                               ),

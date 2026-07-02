@@ -50,7 +50,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   String? _placeName;
   String? _locationError;
   bool _isFetchingLocation = false;
-  bool _isCapturing = false; 
+  bool _isCapturing = false;
 
   bool _edc = false;
   bool _qris = false;
@@ -121,7 +121,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
               as RenderRepaintBoundary?;
       if (boundary == null) return null;
 
-      final image = await boundary.toImage(pixelRatio: 2.5);
+      final image = await boundary.toImage(pixelRatio: 1.5);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) return null;
 
@@ -165,7 +165,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
     }
 
     setState(() => _isCapturing = true);
-
+    await Future.delayed(const Duration(milliseconds: 300));
     // 🔥 Capture foto + watermark jadi 1 file gambar
     final capturedFile = await _captureWatermarkedImage();
 
@@ -522,11 +522,15 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                             else ...[
                               if (_placeName != null)
                                 Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Icon(
-                                      Icons.location_on_rounded,
-                                      size: 13,
-                                      color: Colors.white,
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2.0),
+                                      child: const Icon(
+                                        Icons.location_on_rounded,
+                                        size: 13,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                     const SizedBox(width: 4),
                                     Expanded(
@@ -536,7 +540,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700,
                                         ),
-                                        maxLines: 1,
+                                        maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
