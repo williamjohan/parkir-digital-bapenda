@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
 import '../../../../../core/errors/exception.dart';
 import '../../../../../core/network/api_endpoints.dart';
 import '../models/absensi_model.dart';
@@ -7,6 +8,7 @@ abstract class IAbsensiRemoteDataSource {
   Future<void> postAbsensi(AbsensiRequestModel request);
 }
 
+@LazySingleton(as: IAbsensiRemoteDataSource)
 class AbsensiRemoteDataSourceImpl implements IAbsensiRemoteDataSource {
   final Dio _dio;
 
