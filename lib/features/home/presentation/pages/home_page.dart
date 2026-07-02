@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
@@ -260,7 +259,9 @@ class _HomePageState extends State<HomePage> {
                                                                   state.role,
                                                             },
                                                           );
-
+                                                      if (!context.mounted) {
+                                                        return;
+                                                      }
                                                       if (result != null) {
                                                         await context
                                                             .read<HomeCubit>()

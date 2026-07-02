@@ -14,8 +14,7 @@ import '../../../../core/routes/app_routes.dart';
 class AnimatedHomeFab extends StatefulWidget {
   final dynamic currentRole;
 
-  const AnimatedHomeFab({Key? key, required this.currentRole})
-    : super(key: key);
+  const AnimatedHomeFab({super.key, required this.currentRole});
 
   @override
   State<AnimatedHomeFab> createState() => _AnimatedHomeFabState();
@@ -213,7 +212,7 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                 foregroundColor: Colors.white,
                 elevation: 3,
                 onTap: () {
-                  // TODO SINTA
+                  // TODO transaksi qris ke payment.
                 },
               ),
             ],
