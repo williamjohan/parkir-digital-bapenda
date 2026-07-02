@@ -15,6 +15,7 @@ import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../core/storage/secure_storage_manager.dart';
 import '../../../update/presentation/cubit/check_update_cubit.dart';
 import '../../../update/presentation/cubit/check_update_state.dart';
 import '../../../update/presentation/widgets/force_update_dialog.dart';
@@ -116,17 +117,11 @@ class _HomePageState extends State<HomePage> {
                                 nop: state.nop,
                                 namaObjekPajak: state.namaOp,
                                 onPressed: () {
-                                  // context.pushNamed(
-                                  //   AppRoutes.dataJukir,
-                                  //   extra: {
-                                  //     'isPengawas': true,
-                                  //     'isShowPendapatan': false,
-                                  //   },
-                                  // );
-
                                   context.pushNamed(
                                     AppRoutes.dataJukirList,
-                                    extra: {'nop': '357801000390703149'},
+                                    extra: {
+                                      'nop': state.nop,
+                                    }, // atau pakai 'rawNop' jika backend butuh yang ada titiknya
                                   );
                                 },
                               ),

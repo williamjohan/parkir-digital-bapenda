@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/cubit/data_jukir_cubit.dart';
-
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../../domain/entities/data_jukir_entity.dart';
@@ -15,28 +13,27 @@ class DataJukirListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DataJukirCubit, DataJukirState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      appBar: AppBar(
+        title: Text('Daftar Jukir', style: AppTypography.heading5),
+        centerTitle: true,
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        foregroundColor: Colors.black,
+      ),
+      body: BlocBuilder<DataJukirCubit, DataJukirState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (state.data.isEmpty) {
-          return const Center(child: Text("Tidak ada data"));
-        }
+          if (state.data.isEmpty) {
+            return const Center(child: Text("Tidak ada data"));
+          }
 
-        final data = state.data.first;
-
-        return Scaffold(
-          backgroundColor: Colors.grey.shade50,
-          appBar: AppBar(
-            title: Text('Daftar Jukir', style: AppTypography.heading5),
-            centerTitle: true,
-            backgroundColor: AppColors.surface,
-            elevation: 0,
-            foregroundColor: Colors.black,
-          ),
-          body: ListView.separated(
+          final data = state.data.first;
+          return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: data.usernameList.length,
             separatorBuilder: (_, __) => const SizedBox(height: 12),
@@ -45,9 +42,9 @@ class DataJukirListScreen extends StatelessWidget {
 
               return _JukirCard(item: item, shift: data.shift);
             },
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
