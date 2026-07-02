@@ -18,7 +18,7 @@ import '../widgets/card_jenis_kendaraan.dart';
 class TransactionPage extends StatefulWidget {
   final Map<String, dynamic>? itemOP;
   final bool isFree;
-  final bool isDemoMode; // 🚀 Flag dari FAB Home
+  final bool isDemoMode;
 
   const TransactionPage({
     super.key,
@@ -46,22 +46,19 @@ class _TransactionPageState extends State<TransactionPage> {
     _profileFuture = GetIt.I<ISecureStorageManager>().getJukirProfile();
   }
 
-  void _navigateToPayment(TransactionState state) {
+  Future<void> _navigateToPayment(TransactionState state) async {
     final selected = state.selectedTarif!;
     final args = PaymentPageArgs(
       jenisKendaraanId: selected.id,
       kategoriKendaraan: selected.jenisTarif,
       isDemoMode: widget.isDemoMode,
     );
-
-    context.push(AppRoutes.payment, extra: args).then((result) {
-      if (!context.mounted) return;
-      context.read<TransactionCubit>().resetForm();
-
-      if (result == true) {
-        context.pop(true);
-      }
-    });
+    final result = await context.push(AppRoutes.payment, extra: args);
+    if (!mounted) return;
+    context.read<TransactionCubit>().resetForm();
+    if (result == true) {
+      context.pop(true);
+    }
   }
 
   @override

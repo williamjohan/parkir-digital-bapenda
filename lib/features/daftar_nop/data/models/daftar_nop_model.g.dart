@@ -8,13 +8,13 @@ part of 'daftar_nop_model.dart';
 
 _$DaftarNopModelImpl _$$DaftarNopModelImplFromJson(Map<String, dynamic> json) =>
     _$DaftarNopModelImpl(
-      nop: json['nop'] as String,
-      namaOp: json['namaOp'] as String,
-      alamatOp: json['alamatOp'] as String,
-      isDigital: json['isDigital'] as bool,
-      pungutTarif: (json['pungutTarif'] as num).toInt(),
-      uptb: (json['uptb'] as num).toInt(),
-      totalPendapatan: (json['totalPendapatan'] as num).toInt(),
+      nop: json['nop'] as String? ?? '',
+      namaOp: json['namaOp'] as String? ?? '',
+      alamatOp: json['alamatOp'] as String? ?? '',
+      isDigital: json['isDigital'] as bool? ?? false,
+      pungutTarif: (json['pungutTarif'] as num?)?.toInt() ?? 0,
+      uptb: (json['uptb'] as num?)?.toInt() ?? 0,
+      totalPendapatan: (json['totalPendapatan'] as num?)?.toInt() ?? 0,
       kdCamat: json['kdCamat'] as String? ?? '',
       nmCamat: json['nmCamat'] as String? ?? '',
       kdLurah: json['kdLurah'] as String? ?? '',
