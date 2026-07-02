@@ -22,17 +22,11 @@ DaftarNopModel _$DaftarNopModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$DaftarNopModel {
   String get nop => throw _privateConstructorUsedError;
-  @JsonKey(name: 'namaOp')
   String get namaOp => throw _privateConstructorUsedError;
-  @JsonKey(name: 'alamatOp')
   String get alamatOp => throw _privateConstructorUsedError;
-  @JsonKey(name: 'isDigital')
   bool get isDigital => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pungutTarif')
   int get pungutTarif => throw _privateConstructorUsedError;
-  @JsonKey(name: 'uptb')
   int get uptb => throw _privateConstructorUsedError;
-  @JsonKey(name: 'totalPendapatan')
   int get totalPendapatan => throw _privateConstructorUsedError;
   String get kdCamat => throw _privateConstructorUsedError;
   String get nmCamat => throw _privateConstructorUsedError;
@@ -58,12 +52,12 @@ abstract class $DaftarNopModelCopyWith<$Res> {
   @useResult
   $Res call({
     String nop,
-    @JsonKey(name: 'namaOp') String namaOp,
-    @JsonKey(name: 'alamatOp') String alamatOp,
-    @JsonKey(name: 'isDigital') bool isDigital,
-    @JsonKey(name: 'pungutTarif') int pungutTarif,
-    @JsonKey(name: 'uptb') int uptb,
-    @JsonKey(name: 'totalPendapatan') int totalPendapatan,
+    String namaOp,
+    String alamatOp,
+    bool isDigital,
+    int pungutTarif,
+    int uptb,
+    int totalPendapatan,
     String kdCamat,
     String nmCamat,
     String kdLurah,
@@ -161,12 +155,12 @@ abstract class _$$DaftarNopModelImplCopyWith<$Res>
   @useResult
   $Res call({
     String nop,
-    @JsonKey(name: 'namaOp') String namaOp,
-    @JsonKey(name: 'alamatOp') String alamatOp,
-    @JsonKey(name: 'isDigital') bool isDigital,
-    @JsonKey(name: 'pungutTarif') int pungutTarif,
-    @JsonKey(name: 'uptb') int uptb,
-    @JsonKey(name: 'totalPendapatan') int totalPendapatan,
+    String namaOp,
+    String alamatOp,
+    bool isDigital,
+    int pungutTarif,
+    int uptb,
+    int totalPendapatan,
     String kdCamat,
     String nmCamat,
     String kdLurah,
@@ -255,13 +249,13 @@ class __$$DaftarNopModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DaftarNopModelImpl implements _DaftarNopModel {
   const _$DaftarNopModelImpl({
-    required this.nop,
-    @JsonKey(name: 'namaOp') required this.namaOp,
-    @JsonKey(name: 'alamatOp') required this.alamatOp,
-    @JsonKey(name: 'isDigital') required this.isDigital,
-    @JsonKey(name: 'pungutTarif') required this.pungutTarif,
-    @JsonKey(name: 'uptb') required this.uptb,
-    @JsonKey(name: 'totalPendapatan') required this.totalPendapatan,
+    this.nop = '',
+    this.namaOp = '',
+    this.alamatOp = '',
+    this.isDigital = false,
+    this.pungutTarif = 0,
+    this.uptb = 0,
+    this.totalPendapatan = 0,
     this.kdCamat = '',
     this.nmCamat = '',
     this.kdLurah = '',
@@ -272,24 +266,25 @@ class _$DaftarNopModelImpl implements _DaftarNopModel {
       _$$DaftarNopModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String nop;
   @override
-  @JsonKey(name: 'namaOp')
+  @JsonKey()
   final String namaOp;
   @override
-  @JsonKey(name: 'alamatOp')
+  @JsonKey()
   final String alamatOp;
   @override
-  @JsonKey(name: 'isDigital')
+  @JsonKey()
   final bool isDigital;
   @override
-  @JsonKey(name: 'pungutTarif')
+  @JsonKey()
   final int pungutTarif;
   @override
-  @JsonKey(name: 'uptb')
+  @JsonKey()
   final int uptb;
   @override
-  @JsonKey(name: 'totalPendapatan')
+  @JsonKey()
   final int totalPendapatan;
   @override
   @JsonKey()
@@ -367,13 +362,13 @@ class _$DaftarNopModelImpl implements _DaftarNopModel {
 
 abstract class _DaftarNopModel implements DaftarNopModel {
   const factory _DaftarNopModel({
-    required final String nop,
-    @JsonKey(name: 'namaOp') required final String namaOp,
-    @JsonKey(name: 'alamatOp') required final String alamatOp,
-    @JsonKey(name: 'isDigital') required final bool isDigital,
-    @JsonKey(name: 'pungutTarif') required final int pungutTarif,
-    @JsonKey(name: 'uptb') required final int uptb,
-    @JsonKey(name: 'totalPendapatan') required final int totalPendapatan,
+    final String nop,
+    final String namaOp,
+    final String alamatOp,
+    final bool isDigital,
+    final int pungutTarif,
+    final int uptb,
+    final int totalPendapatan,
     final String kdCamat,
     final String nmCamat,
     final String kdLurah,
@@ -386,22 +381,16 @@ abstract class _DaftarNopModel implements DaftarNopModel {
   @override
   String get nop;
   @override
-  @JsonKey(name: 'namaOp')
   String get namaOp;
   @override
-  @JsonKey(name: 'alamatOp')
   String get alamatOp;
   @override
-  @JsonKey(name: 'isDigital')
   bool get isDigital;
   @override
-  @JsonKey(name: 'pungutTarif')
   int get pungutTarif;
   @override
-  @JsonKey(name: 'uptb')
   int get uptb;
   @override
-  @JsonKey(name: 'totalPendapatan')
   int get totalPendapatan;
   @override
   String get kdCamat;

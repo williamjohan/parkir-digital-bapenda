@@ -56,8 +56,8 @@ class PbPrimaryButton extends StatelessWidget {
         break;
 
       case PbButtonVariant.secondaryLight:
-        backgroundColor = Colors.white.withOpacity(
-          0.2,
+        backgroundColor = Colors.white.withValues(
+          alpha: 0.2,
         ); // Putih dengan opacity 0.2
         textColor = Colors.white;
         borderColor = Colors.transparent;
@@ -84,7 +84,7 @@ class PbPrimaryButton extends StatelessWidget {
       case PbButtonVariant.glassmorphism:
         backgroundColor = Colors.transparent;
         textColor = Colors.white;
-        borderColor = Colors.white.withOpacity(0.3);
+        borderColor = Colors.white.withValues(alpha: 0.3);
         break;
     }
 
@@ -122,15 +122,15 @@ class PbPrimaryButton extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.white.withOpacity(0.15),
-                          Colors.white.withOpacity(0.02),
+                          Colors.white.withValues(alpha: 0.15),
+                          Colors.white.withValues(alpha: 0.02),
                         ],
                       ),
                       borderRadius: buttonRadius,
                       border: Border.all(color: borderColor, width: 1.2),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
