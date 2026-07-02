@@ -11,6 +11,8 @@ class JadwalCubit extends Cubit<JadwalState> {
   JadwalCubit(this._getJadwalUseCase) : super(const JadwalState());
 
   Future<void> fetchJadwal({bool forceRefresh = false}) async {
+    if (isClosed) return;
+
     emit(state.copyWith(status: JadwalStatus.loading));
 
     AppLogger.info('>>> [JadwalCubit] Mengeksekusi permintaan data jadwal...');
@@ -19,9 +21,14 @@ class JadwalCubit extends Cubit<JadwalState> {
       forceRefresh: forceRefresh,
     );
 
+    if (isClosed) return;
+
     result.fold(
       (failure) {
+        if (isClosed) return;
+
         AppLogger.warning('>>> [JadwalCubit] Gagal: ${failure.message}');
+
         emit(
           state.copyWith(
             status: JadwalStatus.failure,
@@ -30,7 +37,10 @@ class JadwalCubit extends Cubit<JadwalState> {
         );
       },
       (jadwalEntity) {
+        if (isClosed) return;
+
         AppLogger.info('>>> [JadwalCubit] Sukses memuat data jadwal!');
+
         emit(
           state.copyWith(status: JadwalStatus.success, jadwal: jadwalEntity),
         );

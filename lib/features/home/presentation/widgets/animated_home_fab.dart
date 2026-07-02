@@ -211,9 +211,7 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                     AppColors.primary, // Ganti ke AppColors.primary
                 foregroundColor: Colors.white,
                 elevation: 3,
-                onTap: () {
-                  // TODO transaksi qris ke payment.
-                },
+                onTap: () {},
               ),
             ],
           ),
