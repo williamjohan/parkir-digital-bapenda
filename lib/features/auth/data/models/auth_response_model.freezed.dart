@@ -27,6 +27,7 @@ mixin _$AuthResponseModel {
   int get roleLoginId => throw _privateConstructorUsedError;
   int get pungutTarif => throw _privateConstructorUsedError;
   List<NopModel> get nopList => throw _privateConstructorUsedError;
+  OpPengawasAuthModel? get opPengawas => throw _privateConstructorUsedError;
 
   /// Serializes this AuthResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -52,7 +53,10 @@ abstract class $AuthResponseModelCopyWith<$Res> {
     int roleLoginId,
     int pungutTarif,
     List<NopModel> nopList,
+    OpPengawasAuthModel? opPengawas,
   });
+
+  $OpPengawasAuthModelCopyWith<$Res>? get opPengawas;
 }
 
 /// @nodoc
@@ -76,6 +80,7 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
     Object? roleLoginId = null,
     Object? pungutTarif = null,
     Object? nopList = null,
+    Object? opPengawas = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -103,9 +108,27 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
                 ? _value.nopList
                 : nopList // ignore: cast_nullable_to_non_nullable
                       as List<NopModel>,
+            opPengawas: freezed == opPengawas
+                ? _value.opPengawas
+                : opPengawas // ignore: cast_nullable_to_non_nullable
+                      as OpPengawasAuthModel?,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of AuthResponseModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OpPengawasAuthModelCopyWith<$Res>? get opPengawas {
+    if (_value.opPengawas == null) {
+      return null;
+    }
+
+    return $OpPengawasAuthModelCopyWith<$Res>(_value.opPengawas!, (value) {
+      return _then(_value.copyWith(opPengawas: value) as $Val);
+    });
   }
 }
 
@@ -125,7 +148,11 @@ abstract class _$$AuthResponseModelImplCopyWith<$Res>
     int roleLoginId,
     int pungutTarif,
     List<NopModel> nopList,
+    OpPengawasAuthModel? opPengawas,
   });
+
+  @override
+  $OpPengawasAuthModelCopyWith<$Res>? get opPengawas;
 }
 
 /// @nodoc
@@ -148,6 +175,7 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
     Object? roleLoginId = null,
     Object? pungutTarif = null,
     Object? nopList = null,
+    Object? opPengawas = freezed,
   }) {
     return _then(
       _$AuthResponseModelImpl(
@@ -175,6 +203,10 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
             ? _value._nopList
             : nopList // ignore: cast_nullable_to_non_nullable
                   as List<NopModel>,
+        opPengawas: freezed == opPengawas
+            ? _value.opPengawas
+            : opPengawas // ignore: cast_nullable_to_non_nullable
+                  as OpPengawasAuthModel?,
       ),
     );
   }
@@ -190,6 +222,7 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
     this.roleLoginId = 0,
     this.pungutTarif = 0,
     final List<NopModel> nopList = const [],
+    this.opPengawas,
   }) : _nopList = nopList;
 
   factory _$AuthResponseModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -220,8 +253,11 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
   }
 
   @override
+  final OpPengawasAuthModel? opPengawas;
+
+  @override
   String toString() {
-    return 'AuthResponseModel(accessToken: $accessToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList)';
+    return 'AuthResponseModel(accessToken: $accessToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList, opPengawas: $opPengawas)';
   }
 
   @override
@@ -238,7 +274,9 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
                 other.roleLoginId == roleLoginId) &&
             (identical(other.pungutTarif, pungutTarif) ||
                 other.pungutTarif == pungutTarif) &&
-            const DeepCollectionEquality().equals(other._nopList, _nopList));
+            const DeepCollectionEquality().equals(other._nopList, _nopList) &&
+            (identical(other.opPengawas, opPengawas) ||
+                other.opPengawas == opPengawas));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -251,6 +289,7 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
     roleLoginId,
     pungutTarif,
     const DeepCollectionEquality().hash(_nopList),
+    opPengawas,
   );
 
   /// Create a copy of AuthResponseModel
@@ -278,6 +317,7 @@ abstract class _AuthResponseModel implements AuthResponseModel {
     final int roleLoginId,
     final int pungutTarif,
     final List<NopModel> nopList,
+    final OpPengawasAuthModel? opPengawas,
   }) = _$AuthResponseModelImpl;
 
   factory _AuthResponseModel.fromJson(Map<String, dynamic> json) =
@@ -295,6 +335,8 @@ abstract class _AuthResponseModel implements AuthResponseModel {
   int get pungutTarif;
   @override
   List<NopModel> get nopList;
+  @override
+  OpPengawasAuthModel? get opPengawas;
 
   /// Create a copy of AuthResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -667,5 +709,226 @@ abstract class _NopModel implements NopModel {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NopModelImplCopyWith<_$NopModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+OpPengawasAuthModel _$OpPengawasAuthModelFromJson(Map<String, dynamic> json) {
+  return _OpPengawasAuthModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$OpPengawasAuthModel {
+  int get idEvent => throw _privateConstructorUsedError;
+  String get op => throw _privateConstructorUsedError;
+  String get nip => throw _privateConstructorUsedError;
+  bool get isPresent => throw _privateConstructorUsedError;
+
+  /// Serializes this OpPengawasAuthModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of OpPengawasAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $OpPengawasAuthModelCopyWith<OpPengawasAuthModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $OpPengawasAuthModelCopyWith<$Res> {
+  factory $OpPengawasAuthModelCopyWith(
+    OpPengawasAuthModel value,
+    $Res Function(OpPengawasAuthModel) then,
+  ) = _$OpPengawasAuthModelCopyWithImpl<$Res, OpPengawasAuthModel>;
+  @useResult
+  $Res call({int idEvent, String op, String nip, bool isPresent});
+}
+
+/// @nodoc
+class _$OpPengawasAuthModelCopyWithImpl<$Res, $Val extends OpPengawasAuthModel>
+    implements $OpPengawasAuthModelCopyWith<$Res> {
+  _$OpPengawasAuthModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of OpPengawasAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? idEvent = null,
+    Object? op = null,
+    Object? nip = null,
+    Object? isPresent = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            idEvent: null == idEvent
+                ? _value.idEvent
+                : idEvent // ignore: cast_nullable_to_non_nullable
+                      as int,
+            op: null == op
+                ? _value.op
+                : op // ignore: cast_nullable_to_non_nullable
+                      as String,
+            nip: null == nip
+                ? _value.nip
+                : nip // ignore: cast_nullable_to_non_nullable
+                      as String,
+            isPresent: null == isPresent
+                ? _value.isPresent
+                : isPresent // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$OpPengawasAuthModelImplCopyWith<$Res>
+    implements $OpPengawasAuthModelCopyWith<$Res> {
+  factory _$$OpPengawasAuthModelImplCopyWith(
+    _$OpPengawasAuthModelImpl value,
+    $Res Function(_$OpPengawasAuthModelImpl) then,
+  ) = __$$OpPengawasAuthModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int idEvent, String op, String nip, bool isPresent});
+}
+
+/// @nodoc
+class __$$OpPengawasAuthModelImplCopyWithImpl<$Res>
+    extends _$OpPengawasAuthModelCopyWithImpl<$Res, _$OpPengawasAuthModelImpl>
+    implements _$$OpPengawasAuthModelImplCopyWith<$Res> {
+  __$$OpPengawasAuthModelImplCopyWithImpl(
+    _$OpPengawasAuthModelImpl _value,
+    $Res Function(_$OpPengawasAuthModelImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of OpPengawasAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? idEvent = null,
+    Object? op = null,
+    Object? nip = null,
+    Object? isPresent = null,
+  }) {
+    return _then(
+      _$OpPengawasAuthModelImpl(
+        idEvent: null == idEvent
+            ? _value.idEvent
+            : idEvent // ignore: cast_nullable_to_non_nullable
+                  as int,
+        op: null == op
+            ? _value.op
+            : op // ignore: cast_nullable_to_non_nullable
+                  as String,
+        nip: null == nip
+            ? _value.nip
+            : nip // ignore: cast_nullable_to_non_nullable
+                  as String,
+        isPresent: null == isPresent
+            ? _value.isPresent
+            : isPresent // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$OpPengawasAuthModelImpl implements _OpPengawasAuthModel {
+  const _$OpPengawasAuthModelImpl({
+    this.idEvent = 0,
+    this.op = '',
+    this.nip = '',
+    this.isPresent = false,
+  });
+
+  factory _$OpPengawasAuthModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OpPengawasAuthModelImplFromJson(json);
+
+  @override
+  @JsonKey()
+  final int idEvent;
+  @override
+  @JsonKey()
+  final String op;
+  @override
+  @JsonKey()
+  final String nip;
+  @override
+  @JsonKey()
+  final bool isPresent;
+
+  @override
+  String toString() {
+    return 'OpPengawasAuthModel(idEvent: $idEvent, op: $op, nip: $nip, isPresent: $isPresent)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$OpPengawasAuthModelImpl &&
+            (identical(other.idEvent, idEvent) || other.idEvent == idEvent) &&
+            (identical(other.op, op) || other.op == op) &&
+            (identical(other.nip, nip) || other.nip == nip) &&
+            (identical(other.isPresent, isPresent) ||
+                other.isPresent == isPresent));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, idEvent, op, nip, isPresent);
+
+  /// Create a copy of OpPengawasAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$OpPengawasAuthModelImplCopyWith<_$OpPengawasAuthModelImpl> get copyWith =>
+      __$$OpPengawasAuthModelImplCopyWithImpl<_$OpPengawasAuthModelImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$OpPengawasAuthModelImplToJson(this);
+  }
+}
+
+abstract class _OpPengawasAuthModel implements OpPengawasAuthModel {
+  const factory _OpPengawasAuthModel({
+    final int idEvent,
+    final String op,
+    final String nip,
+    final bool isPresent,
+  }) = _$OpPengawasAuthModelImpl;
+
+  factory _OpPengawasAuthModel.fromJson(Map<String, dynamic> json) =
+      _$OpPengawasAuthModelImpl.fromJson;
+
+  @override
+  int get idEvent;
+  @override
+  String get op;
+  @override
+  String get nip;
+  @override
+  bool get isPresent;
+
+  /// Create a copy of OpPengawasAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$OpPengawasAuthModelImplCopyWith<_$OpPengawasAuthModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

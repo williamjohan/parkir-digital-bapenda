@@ -78,11 +78,9 @@ class CheckInOutModel with _$CheckInOutModel {
 @freezed
 class DetailAlatModel with _$DetailAlatModel {
   const factory DetailAlatModel({
-    @JsonKey(name: 'alatId') @Default(0) int id,
-    @JsonKey(name: 'nama') @Default('') String namaAlat,
-    @Default(true)
-    bool
-    isBawa, // gak ada di JSON, tapi kalau item ini muncul di list = otomatis dibawa
+    @Default(0) int alatId,
+    @Default('') String nama,
+    @Default(true) bool isBawa,
   }) = _DetailAlatModel;
 
   factory DetailAlatModel.fromJson(Map<String, dynamic> json) =>
@@ -154,8 +152,9 @@ extension CheckInOutModelExt on CheckInOutModel {
     );
   }
 }
+
 extension DetailAlatModelExt on DetailAlatModel {
   DetailAlatEntity toEntity() {
-    return DetailAlatEntity(id: id, namaAlat: namaAlat, isBawa: isBawa);
+    return DetailAlatEntity(id: alatId, namaAlat: nama, isBawa: isBawa);
   }
 }

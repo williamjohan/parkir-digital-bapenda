@@ -19,6 +19,11 @@ _$AuthResponseModelImpl _$$AuthResponseModelImplFromJson(
           ?.map((e) => NopModel.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
+  opPengawas: json['opPengawas'] == null
+      ? null
+      : OpPengawasAuthModel.fromJson(
+          json['opPengawas'] as Map<String, dynamic>,
+        ),
 );
 
 Map<String, dynamic> _$$AuthResponseModelImplToJson(
@@ -30,6 +35,7 @@ Map<String, dynamic> _$$AuthResponseModelImplToJson(
   'roleLoginId': instance.roleLoginId,
   'pungutTarif': instance.pungutTarif,
   'nopList': instance.nopList,
+  'opPengawas': instance.opPengawas,
 };
 
 _$NopModelImpl _$$NopModelImplFromJson(Map<String, dynamic> json) =>
@@ -59,3 +65,21 @@ Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
       'kdLurah': instance.kdLurah,
       'nmLurah': instance.nmLurah,
     };
+
+_$OpPengawasAuthModelImpl _$$OpPengawasAuthModelImplFromJson(
+  Map<String, dynamic> json,
+) => _$OpPengawasAuthModelImpl(
+  idEvent: (json['idEvent'] as num?)?.toInt() ?? 0,
+  op: json['op'] as String? ?? '',
+  nip: json['nip'] as String? ?? '',
+  isPresent: json['isPresent'] as bool? ?? false,
+);
+
+Map<String, dynamic> _$$OpPengawasAuthModelImplToJson(
+  _$OpPengawasAuthModelImpl instance,
+) => <String, dynamic>{
+  'idEvent': instance.idEvent,
+  'op': instance.op,
+  'nip': instance.nip,
+  'isPresent': instance.isPresent,
+};

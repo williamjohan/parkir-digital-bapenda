@@ -128,15 +128,15 @@ Map<String, dynamic> _$$CheckInOutModelImplToJson(
 _$DetailAlatModelImpl _$$DetailAlatModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$DetailAlatModelImpl(
-  id: (json['alatId'] as num?)?.toInt() ?? 0,
-  namaAlat: json['nama'] as String? ?? '',
+  alatId: (json['alatId'] as num?)?.toInt() ?? 0,
+  nama: json['nama'] as String? ?? '',
   isBawa: json['isBawa'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$$DetailAlatModelImplToJson(
   _$DetailAlatModelImpl instance,
 ) => <String, dynamic>{
-  'alatId': instance.id,
-  'nama': instance.namaAlat,
+  'alatId': instance.alatId,
+  'nama': instance.nama,
   'isBawa': instance.isBawa,
 };

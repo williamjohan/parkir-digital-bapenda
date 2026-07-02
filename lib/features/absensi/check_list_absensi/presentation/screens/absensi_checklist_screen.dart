@@ -654,7 +654,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(4), 
+        LengthLimitingTextInputFormatter(4),
       ],
       validator: (v) {
         if (v == null || v.isEmpty) return "$label wajib diisi";

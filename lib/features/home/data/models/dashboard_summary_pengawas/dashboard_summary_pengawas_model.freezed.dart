@@ -1405,10 +1405,8 @@ DetailAlatModel _$DetailAlatModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$DetailAlatModel {
-  @JsonKey(name: 'alatId')
-  int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'nama')
-  String get namaAlat => throw _privateConstructorUsedError;
+  int get alatId => throw _privateConstructorUsedError;
+  String get nama => throw _privateConstructorUsedError;
   bool get isBawa => throw _privateConstructorUsedError;
 
   /// Serializes this DetailAlatModel to a JSON map.
@@ -1428,11 +1426,7 @@ abstract class $DetailAlatModelCopyWith<$Res> {
     $Res Function(DetailAlatModel) then,
   ) = _$DetailAlatModelCopyWithImpl<$Res, DetailAlatModel>;
   @useResult
-  $Res call({
-    @JsonKey(name: 'alatId') int id,
-    @JsonKey(name: 'nama') String namaAlat,
-    bool isBawa,
-  });
+  $Res call({int alatId, String nama, bool isBawa});
 }
 
 /// @nodoc
@@ -1450,19 +1444,19 @@ class _$DetailAlatModelCopyWithImpl<$Res, $Val extends DetailAlatModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? namaAlat = null,
+    Object? alatId = null,
+    Object? nama = null,
     Object? isBawa = null,
   }) {
     return _then(
       _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
+            alatId: null == alatId
+                ? _value.alatId
+                : alatId // ignore: cast_nullable_to_non_nullable
                       as int,
-            namaAlat: null == namaAlat
-                ? _value.namaAlat
-                : namaAlat // ignore: cast_nullable_to_non_nullable
+            nama: null == nama
+                ? _value.nama
+                : nama // ignore: cast_nullable_to_non_nullable
                       as String,
             isBawa: null == isBawa
                 ? _value.isBawa
@@ -1483,11 +1477,7 @@ abstract class _$$DetailAlatModelImplCopyWith<$Res>
   ) = __$$DetailAlatModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    @JsonKey(name: 'alatId') int id,
-    @JsonKey(name: 'nama') String namaAlat,
-    bool isBawa,
-  });
+  $Res call({int alatId, String nama, bool isBawa});
 }
 
 /// @nodoc
@@ -1504,19 +1494,19 @@ class __$$DetailAlatModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? namaAlat = null,
+    Object? alatId = null,
+    Object? nama = null,
     Object? isBawa = null,
   }) {
     return _then(
       _$DetailAlatModelImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
+        alatId: null == alatId
+            ? _value.alatId
+            : alatId // ignore: cast_nullable_to_non_nullable
                   as int,
-        namaAlat: null == namaAlat
-            ? _value.namaAlat
-            : namaAlat // ignore: cast_nullable_to_non_nullable
+        nama: null == nama
+            ? _value.nama
+            : nama // ignore: cast_nullable_to_non_nullable
                   as String,
         isBawa: null == isBawa
             ? _value.isBawa
@@ -1531,8 +1521,8 @@ class __$$DetailAlatModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DetailAlatModelImpl implements _DetailAlatModel {
   const _$DetailAlatModelImpl({
-    @JsonKey(name: 'alatId') this.id = 0,
-    @JsonKey(name: 'nama') this.namaAlat = '',
+    this.alatId = 0,
+    this.nama = '',
     this.isBawa = true,
   });
 
@@ -1540,18 +1530,18 @@ class _$DetailAlatModelImpl implements _DetailAlatModel {
       _$$DetailAlatModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'alatId')
-  final int id;
+  @JsonKey()
+  final int alatId;
   @override
-  @JsonKey(name: 'nama')
-  final String namaAlat;
+  @JsonKey()
+  final String nama;
   @override
   @JsonKey()
   final bool isBawa;
 
   @override
   String toString() {
-    return 'DetailAlatModel(id: $id, namaAlat: $namaAlat, isBawa: $isBawa)';
+    return 'DetailAlatModel(alatId: $alatId, nama: $nama, isBawa: $isBawa)';
   }
 
   @override
@@ -1559,15 +1549,14 @@ class _$DetailAlatModelImpl implements _DetailAlatModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$DetailAlatModelImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.namaAlat, namaAlat) ||
-                other.namaAlat == namaAlat) &&
+            (identical(other.alatId, alatId) || other.alatId == alatId) &&
+            (identical(other.nama, nama) || other.nama == nama) &&
             (identical(other.isBawa, isBawa) || other.isBawa == isBawa));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, namaAlat, isBawa);
+  int get hashCode => Object.hash(runtimeType, alatId, nama, isBawa);
 
   /// Create a copy of DetailAlatModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1588,8 +1577,8 @@ class _$DetailAlatModelImpl implements _DetailAlatModel {
 
 abstract class _DetailAlatModel implements DetailAlatModel {
   const factory _DetailAlatModel({
-    @JsonKey(name: 'alatId') final int id,
-    @JsonKey(name: 'nama') final String namaAlat,
+    final int alatId,
+    final String nama,
     final bool isBawa,
   }) = _$DetailAlatModelImpl;
 
@@ -1597,11 +1586,9 @@ abstract class _DetailAlatModel implements DetailAlatModel {
       _$DetailAlatModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'alatId')
-  int get id;
+  int get alatId;
   @override
-  @JsonKey(name: 'nama')
-  String get namaAlat;
+  String get nama;
   @override
   bool get isBawa;
 

@@ -12,6 +12,7 @@ class AuthResponseModel with _$AuthResponseModel {
     @Default(0) int roleLoginId,
     @Default(0) int pungutTarif,
     @Default([]) List<NopModel> nopList,
+    OpPengawasAuthModel? opPengawas,
   }) = _AuthResponseModel;
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -35,4 +36,18 @@ class NopModel with _$NopModel {
 
   factory NopModel.fromJson(Map<String, dynamic> json) =>
       _$NopModelFromJson(json);
+}
+
+@freezed
+class OpPengawasAuthModel with _$OpPengawasAuthModel {
+  const factory OpPengawasAuthModel({
+    @Default(0) int idEvent,
+    @Default('') String op,
+    @Default('') String nip,
+    @Default(false) bool isPresent,
+    // (Bisa tambahkan field lain jika memang diperlukan untuk logic UI Auth/Splash)
+  }) = _OpPengawasAuthModel;
+
+  factory OpPengawasAuthModel.fromJson(Map<String, dynamic> json) =>
+      _$OpPengawasAuthModelFromJson(json);
 }

@@ -10,7 +10,7 @@ class CheckInCardWidget extends StatelessWidget {
   final int totalMotor;
   final int totalMobil;
   final List<DetailAlatEntity> detailAlat;
-  final VoidCallback? onTapCheckIn; // 🔥 jadi nullable
+  final VoidCallback? onTapCheckIn;
 
   const CheckInCardWidget({
     super.key,

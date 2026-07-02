@@ -100,7 +100,6 @@ class CheckInOutEntity extends Equatable {
     required this.detailAlatCheckOut,
   });
 
-  // 🔥 Tambahin ini — dipakai buat cek apakah user punya jadwal roster hari ini
   bool get hasJadwal => idEvent != 0 && op.isNotEmpty;
 
   @override

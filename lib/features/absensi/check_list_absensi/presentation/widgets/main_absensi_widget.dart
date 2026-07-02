@@ -32,7 +32,7 @@ class MainAbsensiWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isCheckedIn = absensiData.checkInString.isNotEmpty;
     final bool isCheckedOut = absensiData.checkOutString.isNotEmpty;
-    final bool hasJadwal = absensiData.hasJadwal; // 🔥
+    final bool hasJadwal = absensiData.hasJadwal; //
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +79,7 @@ class MainAbsensiWidget extends StatelessWidget {
           detailAlat: absensiData.detailAlatCheckIn,
           onTapCheckIn: hasJadwal
               ? () => _openForm(context, ShiftFormType.checkIn)
-              : null, // 🔥 disable kalau belum ada jadwal
+              : null,
         ),
 
         const SizedBox(height: 10),
@@ -94,7 +94,7 @@ class MainAbsensiWidget extends StatelessWidget {
           detailAlat: absensiData.detailAlatCheckOut,
           onTapCheckOut: hasJadwal
               ? () => _openForm(context, ShiftFormType.checkOut)
-              : null, 
+              : null,
         ),
       ],
     );

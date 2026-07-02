@@ -63,6 +63,7 @@ class ProfileRepositoryImpl implements IProfileRepository {
         idUserStorage: userModel.idUser,
         namaUserStorage: userModel.namaUser,
         username: userModel.username,
+        roleId: userModel.roleId,
         nopStorage: userModel.nop,
         pungutTarif: userModel.pungutTarif,
         pungutTarifDescription: userModel.pungutTarifDescription,

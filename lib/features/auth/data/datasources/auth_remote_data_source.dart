@@ -42,25 +42,25 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
       if (responseData['isSuccess'] == true) {
         final beData = responseData['data'];
 
-        final mappedJson = {
-          'accessToken': beData['accessToken']?.toString() ?? '',
-          'refreshToken': beData['refreshToken']?.toString() ?? '',
-          'nop': beData['nop']?.toString() ?? '',
-          'uuidStatic': beData['uuidStatic']?.toString() ?? '',
-          'roleLoginId': beData['roleLoginId'] ?? 0,
-          'nopList': beData['nopList'] ?? [],
-          'user': {
-            'idUser': beData['idJukir'] ?? 0,
-            'namaUser': beData['namaUser'] ?? '',
-            'nop': beData['nop'] ?? '',
-            'namaObjekPajak': '',
-            'alamat': '',
-            'pungutTarif': 0,
-            'lokasiId': 0,
-          },
-        };
+        // final mappedJson = {
+        //   'accessToken': beData['accessToken']?.toString() ?? '',
+        //   'refreshToken': beData['refreshToken']?.toString() ?? '',
+        //   'nop': beData['nop']?.toString() ?? '',
+        //   'uuidStatic': beData['uuidStatic']?.toString() ?? '',
+        //   'roleLoginId': beData['roleLoginId'] ?? 0,
+        //   'nopList': beData['nopList'] ?? [],
+        //   'user': {
+        //     'idUser': beData['idJukir'] ?? 0,
+        //     'namaUser': beData['namaUser'] ?? '',
+        //     'nop': beData['nop'] ?? '',
+        //     'namaObjekPajak': '',
+        //     'alamat': '',
+        //     'pungutTarif': 0,
+        //     'lokasiId': 0,
+        //   },
+        // };
 
-        return AuthResponseModel.fromJson(mappedJson);
+        return AuthResponseModel.fromJson(beData);
       } else {
         throw AuthException(
           message:
