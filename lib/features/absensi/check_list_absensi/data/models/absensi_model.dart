@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/absensi_entity.dart';
@@ -45,28 +47,26 @@ extension AbsensiRequestModelExt on AbsensiRequestModel {
 
     final formData = FormData();
 
+    // 1. Data Kendaraan & Lokasi
     formData.fields.add(MapEntry('${prefix}JmlMobil', totalMobil.toString()));
-
     formData.fields.add(MapEntry('${prefix}JmlMotor', totalMotor.toString()));
-
     formData.fields.add(MapEntry('Latitude', latitude.toString()));
-
     formData.fields.add(MapEntry('Longitude', longitude.toString()));
 
-    // DetailAlatList=1
-    // DetailAlatList=2
-    // DetailAlatList=3
+    // 2. Data List Alat (Key diulang sesuai standar form-data array)
+    // Contoh output HTTP: DetailAlatList=1, DetailAlatList=2
     for (final id in detailAlatIds) {
       formData.fields.add(MapEntry('DetailAlatList', id.toString()));
     }
 
+    // 🚀 3. PERBAIKAN ANTI-CRASH RETRY: Baca sebagai Bytes!
+    // Membaca ke RAM/Bytes memastikan file bisa dikirim berulang kali saat Dio melakukan retry
+    final bytes = await File(fotoPath).readAsBytes();
+
     formData.files.add(
       MapEntry(
-        'Foto$prefix',
-        await MultipartFile.fromFile(
-          fotoPath,
-          filename: fotoPath.split('/').last,
-        ),
+        'Foto$prefix', // Hasilnya: FotoCheckIn atau FotoCheckOut
+        MultipartFile.fromBytes(bytes, filename: fotoPath.split('/').last),
       ),
     );
 

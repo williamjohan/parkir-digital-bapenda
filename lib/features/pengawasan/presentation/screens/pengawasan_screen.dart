@@ -33,11 +33,20 @@ class _LaporanPelanggaranScreenState extends State<LaporanPelanggaranScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: Text('Laporan Pelanggaran', style: AppTypography.heading5),
+        title: Text(
+          'Laporan Pelanggaran',
+          style: AppTypography.heading5.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: AppColors.surface,
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
+        iconTheme: IconThemeData(color: AppColors.primary),
       ),
       body: BlocConsumer<PengawasanCubit, PengawasanState>(
         listener: (context, state) {

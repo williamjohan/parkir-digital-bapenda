@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/design_system/tokens/app_typography.dart';
 import '../cubit/jadwal_cubit.dart';
 import '../cubit/jadwal_state.dart';
 import '../widget/jadwal_card_item.dart';
@@ -24,15 +25,28 @@ class _JadwalScreenState extends State<JadwalScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          'Jadwal & Kehadiran',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        title: Text(
+          'Jadwal & Kehadiran ',
+          style: AppTypography.heading5.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(gradient: AppColors.headerGradient),
+        centerTitle: true,
+        backgroundColor: AppColors.surface,
+        scrolledUnderElevation:
+            0, // 🚀 Wajib di M3 agar warna tidak berubah saat scroll
+        // 🚀 BEST PRACTICE 1: Gunakan shape dengan Border.bottom
+        shape: Border(
+          bottom: BorderSide(
+            color:
+                AppColors.primary, // Gunakan warna border soft (abu-abu tipis)
+            width: 1.0, // Ketebalan 1px sudah cukup untuk kesan elegan
+          ),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
+        foregroundColor: Colors.black,
+        iconTheme: IconThemeData(color: AppColors.primary),
       ),
       body: const JadwalContentView(),
     );
