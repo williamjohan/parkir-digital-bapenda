@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../../core/errors/exception.dart';
@@ -61,12 +63,14 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
   Future<void> addPengawasan(RequestLaporanPengawasanEntity request) async {
     try {
       AppLogger.info('Request Add Pengawasan');
+      final file = File(request.buktiFoto!.path);
+      final bytes = await file.readAsBytes();
 
       final formData = FormData.fromMap({
         'JenisPel': request.jenisPel,
         'KetPel': request.ketPel,
-        'BuktiFoto': await MultipartFile.fromFile(
-          request.buktiFoto!.path,
+        'BuktiFoto': MultipartFile.fromBytes(
+          bytes,
           filename: request.buktiFoto!.path.split('/').last,
           contentType: DioMediaType('image', 'png'),
         ),
