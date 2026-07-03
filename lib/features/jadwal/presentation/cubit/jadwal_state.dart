@@ -10,6 +10,7 @@ class JadwalState with _$JadwalState {
   const factory JadwalState({
     @Default(JadwalStatus.initial) JadwalStatus status,
     List<JadwalEntity>? jadwal,
+    List<JadwalEntity>? jadwalFake,
     @Default('') String message,
   }) = _JadwalState;
 }

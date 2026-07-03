@@ -19,6 +19,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$JadwalState {
   JadwalStatus get status => throw _privateConstructorUsedError;
   List<JadwalEntity>? get jadwal => throw _privateConstructorUsedError;
+  List<JadwalEntity>? get jadwalFake => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
 
   /// Create a copy of JadwalState
@@ -35,7 +36,12 @@ abstract class $JadwalStateCopyWith<$Res> {
     $Res Function(JadwalState) then,
   ) = _$JadwalStateCopyWithImpl<$Res, JadwalState>;
   @useResult
-  $Res call({JadwalStatus status, List<JadwalEntity>? jadwal, String message});
+  $Res call({
+    JadwalStatus status,
+    List<JadwalEntity>? jadwal,
+    List<JadwalEntity>? jadwalFake,
+    String message,
+  });
 }
 
 /// @nodoc
@@ -55,6 +61,7 @@ class _$JadwalStateCopyWithImpl<$Res, $Val extends JadwalState>
   $Res call({
     Object? status = null,
     Object? jadwal = freezed,
+    Object? jadwalFake = freezed,
     Object? message = null,
   }) {
     return _then(
@@ -66,6 +73,10 @@ class _$JadwalStateCopyWithImpl<$Res, $Val extends JadwalState>
             jadwal: freezed == jadwal
                 ? _value.jadwal
                 : jadwal // ignore: cast_nullable_to_non_nullable
+                      as List<JadwalEntity>?,
+            jadwalFake: freezed == jadwalFake
+                ? _value.jadwalFake
+                : jadwalFake // ignore: cast_nullable_to_non_nullable
                       as List<JadwalEntity>?,
             message: null == message
                 ? _value.message
@@ -86,7 +97,12 @@ abstract class _$$JadwalStateImplCopyWith<$Res>
   ) = __$$JadwalStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({JadwalStatus status, List<JadwalEntity>? jadwal, String message});
+  $Res call({
+    JadwalStatus status,
+    List<JadwalEntity>? jadwal,
+    List<JadwalEntity>? jadwalFake,
+    String message,
+  });
 }
 
 /// @nodoc
@@ -105,6 +121,7 @@ class __$$JadwalStateImplCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
     Object? jadwal = freezed,
+    Object? jadwalFake = freezed,
     Object? message = null,
   }) {
     return _then(
@@ -116,6 +133,10 @@ class __$$JadwalStateImplCopyWithImpl<$Res>
         jadwal: freezed == jadwal
             ? _value._jadwal
             : jadwal // ignore: cast_nullable_to_non_nullable
+                  as List<JadwalEntity>?,
+        jadwalFake: freezed == jadwalFake
+            ? _value._jadwalFake
+            : jadwalFake // ignore: cast_nullable_to_non_nullable
                   as List<JadwalEntity>?,
         message: null == message
             ? _value.message
@@ -132,8 +153,10 @@ class _$JadwalStateImpl implements _JadwalState {
   const _$JadwalStateImpl({
     this.status = JadwalStatus.initial,
     final List<JadwalEntity>? jadwal,
+    final List<JadwalEntity>? jadwalFake,
     this.message = '',
-  }) : _jadwal = jadwal;
+  }) : _jadwal = jadwal,
+       _jadwalFake = jadwalFake;
 
   @override
   @JsonKey()
@@ -148,13 +171,23 @@ class _$JadwalStateImpl implements _JadwalState {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<JadwalEntity>? _jadwalFake;
+  @override
+  List<JadwalEntity>? get jadwalFake {
+    final value = _jadwalFake;
+    if (value == null) return null;
+    if (_jadwalFake is EqualUnmodifiableListView) return _jadwalFake;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey()
   final String message;
 
   @override
   String toString() {
-    return 'JadwalState(status: $status, jadwal: $jadwal, message: $message)';
+    return 'JadwalState(status: $status, jadwal: $jadwal, jadwalFake: $jadwalFake, message: $message)';
   }
 
   @override
@@ -164,6 +197,10 @@ class _$JadwalStateImpl implements _JadwalState {
             other is _$JadwalStateImpl &&
             (identical(other.status, status) || other.status == status) &&
             const DeepCollectionEquality().equals(other._jadwal, _jadwal) &&
+            const DeepCollectionEquality().equals(
+              other._jadwalFake,
+              _jadwalFake,
+            ) &&
             (identical(other.message, message) || other.message == message));
   }
 
@@ -172,6 +209,7 @@ class _$JadwalStateImpl implements _JadwalState {
     runtimeType,
     status,
     const DeepCollectionEquality().hash(_jadwal),
+    const DeepCollectionEquality().hash(_jadwalFake),
     message,
   );
 
@@ -188,6 +226,7 @@ abstract class _JadwalState implements JadwalState {
   const factory _JadwalState({
     final JadwalStatus status,
     final List<JadwalEntity>? jadwal,
+    final List<JadwalEntity>? jadwalFake,
     final String message,
   }) = _$JadwalStateImpl;
 
@@ -195,6 +234,8 @@ abstract class _JadwalState implements JadwalState {
   JadwalStatus get status;
   @override
   List<JadwalEntity>? get jadwal;
+  @override
+  List<JadwalEntity>? get jadwalFake;
   @override
   String get message;
 
