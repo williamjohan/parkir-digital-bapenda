@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/laporan_section_card.dart';
@@ -8,11 +6,6 @@ import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/
 class DetailLaporanPengawasanScreen extends StatelessWidget {
   final String namaJenisPelanggaran;
   final String keterangan;
-
-  /// Bisa berupa:
-  /// - Path file lokal (/storage/...)
-  /// - Base64
-  /// - null
   final String? foto;
 
   const DetailLaporanPengawasanScreen({
@@ -60,46 +53,29 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
             LaporanSectionCard(
               title: 'Foto Bukti',
               icon: Icons.image_outlined,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: AspectRatio(aspectRatio: 16 / 10, child: _buildImage()),
+              child: GestureDetector(
+                onTap: () => _showImagePreview(context),
+                child: Hero(
+                  tag: 'laporan-image',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 10,
+                      child: Image.memory(
+                        base64Decode(foto!),
+                        fit: BoxFit.cover,
+                        gaplessPlayback: true,
+                        errorBuilder: (_, __, ___) => _brokenImage(),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
         ],
       ),
     );
-  }
-
-  Widget _buildImage() {
-    if (foto == null || foto!.isEmpty) {
-      return _brokenImage();
-    }
-
-    // File hasil kamera
-    if (foto!.startsWith('/')) {
-      return Image.file(
-        File(foto!),
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _brokenImage(),
-      );
-    }
-
-    try {
-      // Base64 dengan prefix data:image
-      final base64String = foto!.startsWith('data:image')
-          ? foto!.substring(foto!.indexOf(',') + 1)
-          : foto!;
-
-      return Image.memory(
-        base64Decode(base64String),
-        fit: BoxFit.cover,
-        gaplessPlayback: true,
-        errorBuilder: (_, __, ___) => _brokenImage(),
-      );
-    } catch (_) {
-      return _brokenImage();
-    }
   }
 
   Widget _brokenImage() {
@@ -123,6 +99,49 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showImagePreview(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (_) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(12),
+          child: Stack(
+            children: [
+              InteractiveViewer(
+                minScale: 0.8,
+                maxScale: 5,
+                child: Hero(
+                  tag: 'laporan-image',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.memory(
+                      base64Decode(foto!),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+
+              Positioned(
+                top: 12,
+                right: 12,
+                child: CircleAvatar(
+                  backgroundColor: Colors.black54,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

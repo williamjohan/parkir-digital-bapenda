@@ -30,7 +30,7 @@ class HomeState with _$HomeState {
     @Default("") String namaLokasi,
     @Default("") String namaJukir,
     @Default("") String namaOp,
-    @Default("") String namaJukirFormatted,
+    @Default("") String? namaJukirFormatted,
     @Default("") String profilePicturePath,
 
     @Default(0) int totalOp,
@@ -106,8 +106,8 @@ class HomeState with _$HomeState {
         checkOutJmlMotor: 0,
         latitude: '',
         longitude: '',
-        detailAlatCheckIn: [],   // ⬅️ ganti dari detailAlat
-        detailAlatCheckOut: [], 
+        detailAlatCheckIn: [], // ⬅️ ganti dari detailAlat
+        detailAlatCheckOut: [],
       ),
     )
     CheckInOutEntity checkInOutData,

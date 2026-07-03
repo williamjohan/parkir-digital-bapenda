@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/di/injection.dart';
 import '../cubit/check_update_cubit.dart';
 import '../cubit/check_update_state.dart';
-import '../widgets/update_progress_dialog.dart';
+import '../widgets/update_progress_dialog.dart'; // 🚀 Panggil File 2
 
 class UpdatePage extends StatelessWidget {
   const UpdatePage({super.key});
@@ -15,157 +16,229 @@ class UpdatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => locator<CheckUpdateCubit>()..checkNow(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Pembaruan Aplikasi",
-            style: AppTypography.heading5,
+      child: const _UpdatePageContent(),
+    );
+  }
+}
+
+class _UpdatePageContent extends StatelessWidget {
+  const _UpdatePageContent();
+
+  Future<String> _getCurrentVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    return "${info.version} (Build ${info.buildNumber})";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: Text(
+          'Pembaruan Sistem',
+          style: AppTypography.heading5.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
           ),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          foregroundColor: Colors.black,
         ),
-        body: SafeArea(
-          bottom: true,
-          top: false,
-          child: BlocBuilder<CheckUpdateCubit, CheckUpdateState>(
-            builder: (context, state) {
-              if (state is CheckUpdateLoading) {
-                return const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        centerTitle: true,
+        backgroundColor: AppColors.surface,
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        elevation: 0,
+        foregroundColor: Colors.black,
+        iconTheme: IconThemeData(color: AppColors.primary),
+      ),
+      body: FutureBuilder<String>(
+        future: _getCurrentVersion(),
+        builder: (context, snapshot) {
+          final currentVersion = snapshot.data ?? "Memuat...";
+
+          return RefreshIndicator(
+            color: AppColors.primary,
+            onRefresh: () async {
+              context.read<CheckUpdateCubit>().checkNow();
+            },
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                // STATUS KARTU DEVICE
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Row(
                     children: [
-                      CircularProgressIndicator(color: AppColors.primary),
-                      SizedBox(height: 16),
-                      Text(
-                        "Mengecek versi terbaru...",
-                        style: AppTypography.bodyRegular,
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryLight.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.verified_user_rounded,
+                          color: AppColors.primaryDark,
+                          size: 32,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Parkir Digital Bapenda",
+                              style: AppTypography.bodySemiBold.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Versi Terpasang: $currentVersion",
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                );
-              }
+                ),
+                const SizedBox(height: 24),
 
-              if (state is CheckUpdateUpToDate) {
-                return _buildUpToDate(context, state);
-              }
-
-              if (state is CheckUpdateAvailable) {
-                return _buildUpdateAvailable(context, state);
-              }
-
-              if (state is CheckUpdateError) {
-                return _buildError(context, state.message);
-              }
-
-              return const SizedBox.shrink();
-            },
-          ),
-        ),
+                // AREA HASIL CEK UPDATE
+                BlocBuilder<CheckUpdateCubit, CheckUpdateState>(
+                  builder: (context, state) {
+                    if (state is CheckUpdateLoading) {
+                      return _buildLoadingState();
+                    } else if (state is CheckUpdateUpToDate) {
+                      return _buildUpToDateState();
+                    } else if (state is CheckUpdateAvailable) {
+                      return _buildUpdateAvailableState(context, state);
+                    } else if (state is CheckUpdateError) {
+                      return _buildErrorState(context, state.message);
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildUpToDate(BuildContext context, CheckUpdateUpToDate state) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
+  Widget _buildLoadingState() {
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(
-            Icons.verified_user_rounded,
-            size: 80,
-            color: Colors.green.shade400,
+          const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(AppColors.primary),
           ),
           const SizedBox(height: 16),
-          const Text(
-            "Sistem Mutakhir!",
-            style: AppTypography.heading3,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
           Text(
-            "Aplikasi Bapenda Anda sudah menggunakan versi terbaru (${state.versionName}).",
-            style: AppTypography.bodyRegular,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          const Text("Catatan Rilis Saat Ini:", style: AppTypography.heading5),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.green.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green.shade200),
-              ),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Text(
-                  state.changelog,
-                  style: AppTypography.bodyRegular.copyWith(height: 1.6),
-                ),
-              ),
+            "Mengecek pembaruan ke server Bapenda...",
+            style: AppTypography.caption.copyWith(
+              color: AppColors.textSecondary,
             ),
-          ),
-          const SizedBox(height: 24),
-
-          PbPrimaryButton(
-            text: "Cek Ulang Pembaruan",
-            onPressed: () => context.read<CheckUpdateCubit>().checkNow(),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildUpdateAvailable(
+  Widget _buildUpToDateState() {
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.check_circle_rounded,
+            color: AppColors.success,
+            size: 64,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "Aplikasi Sudah Versi Terbaru",
+            style: AppTypography.bodySemiBold,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Anda sudah menggunakan versi terbaru dan paling stabil saat ini.",
+            textAlign: TextAlign.center,
+            style: AppTypography.caption.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUpdateAvailableState(
     BuildContext context,
     CheckUpdateAvailable state,
   ) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.primary, width: 1.5),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.system_update_tv_rounded,
-            size: 80,
-            color: AppColors.primary,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            "Versi ${state.update.versionName} Tersedia!",
-            textAlign: TextAlign.center,
-            style: AppTypography.heading3,
-          ),
-          const SizedBox(height: 24),
-          const Text("Apa yang baru?", style: AppTypography.heading5),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Pembaruan Tersedia", style: AppTypography.heading5),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Text(
-                  state.update.changelog,
-                  style: AppTypography.bodyRegular.copyWith(height: 1.6),
+                  "v${state.update.versionName}",
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.primaryDark,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            state.update.changelog,
+            style: AppTypography.caption.copyWith(
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 24),
           PbPrimaryButton(
-            text: "Unduh & Install",
+            text: "Unduh & Pasang Sekarang",
             onPressed: () {
+              // 🚀 PANGGIL DIALOG DARI FILE 2 SECARA AMAN
               UpdateProgressDialog.show(
                 context,
                 state.update.downloadUrl,
@@ -178,26 +251,30 @@ class UpdatePage extends StatelessWidget {
     );
   }
 
-  Widget _buildError(BuildContext context, String message) {
-    return Center(
+  Widget _buildErrorState(BuildContext context, String message) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 80, color: AppColors.error),
-          const SizedBox(height: 16),
+          const Icon(
+            Icons.cloud_off_rounded,
+            color: AppColors.textHint,
+            size: 48,
+          ),
+          const SizedBox(height: 12),
           Text(
             message,
             textAlign: TextAlign.center,
-            style: AppTypography.bodyRegular,
+            style: AppTypography.caption,
           ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+          const SizedBox(height: 16),
+          OutlinedButton(
             onPressed: () => context.read<CheckUpdateCubit>().checkNow(),
-            child: const Text(
-              "Coba Lagi",
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text("Coba Lagi"),
           ),
         ],
       ),

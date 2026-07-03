@@ -90,11 +90,22 @@ class _SearchOpPageState extends State<SearchOpPage> {
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
         appBar: AppBar(
-          title: const Text('Objek Pajak', style: AppTypography.heading5),
+          title: Text(
+            'Objek Pajak',
+            style: AppTypography.heading5.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           centerTitle: true,
           backgroundColor: AppColors.surface,
+          scrolledUnderElevation: 0,
+          shape: Border(
+            bottom: BorderSide(color: AppColors.primary, width: 1.0),
+          ),
           elevation: 0,
           foregroundColor: Colors.black,
+          iconTheme: IconThemeData(color: AppColors.primary),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 16, right: 16, left: 16),

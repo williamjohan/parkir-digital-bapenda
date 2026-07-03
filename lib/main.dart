@@ -11,6 +11,11 @@ import 'core/network/network_cubit.dart';
 import 'core/routes/app_router.dart';
 import 'features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 
+// 🚀 1. Import Cubit, State, dan Dialog Update Anda
+import 'features/update/presentation/cubit/check_update_cubit.dart';
+import 'features/update/presentation/cubit/check_update_state.dart';
+import 'features/update/presentation/widgets/force_update_overlay_card.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = BapendaHttpOverrides();
@@ -34,8 +39,14 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (_) => appAuthCubit..checkStatus(isFromSplash: true),
         ),
-
         BlocProvider<NetworkCubit>(create: (_) => locator<NetworkCubit>()),
+
+        // 🚀 2. Daftarkan CheckUpdateCubit di level teratas
+        // lazy: false + checkNow() memastikan pengecekan berjalan instan saat Cold Boot
+        BlocProvider<CheckUpdateCubit>(
+          lazy: false,
+          create: (_) => locator<CheckUpdateCubit>()..checkNow(),
+        ),
       ],
       child: MaterialApp.router(
         title: 'Parkir Digital Bapenda',
@@ -58,7 +69,10 @@ class MyApp extends StatelessWidget {
             child: SafeArea(
               child: Stack(
                 children: [
+                  // 1. Aplikasi Utama (GoRouter Navigation)
                   child ?? const SizedBox.shrink(),
+
+                  // 2. Banner No Internet
                   BlocBuilder<NetworkCubit, NetworkState>(
                     builder: (context, state) {
                       if (state is NetworkDisconnected) {
@@ -67,6 +81,27 @@ class MyApp extends StatelessWidget {
                           left: 0,
                           right: 0,
                           child: GlobalNoInternetBanner(),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+
+                  // 🚀 3. FORCE UPDATE OVERLAY (Mengunci Total Layar)
+                  // Karena berada di Stack paling atas, dia menutupi seluruh aplikasi
+                  // Tanpa perlu showDialog, tanpa Navigator, 100% anti-crash!
+                  BlocBuilder<CheckUpdateCubit, CheckUpdateState>(
+                    builder: (context, state) {
+                      if (state is CheckUpdateAvailable &&
+                          state.update.isForceUpdate) {
+                        return Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withValues(
+                              alpha: 0.85,
+                            ), // Backdrop gelap
+                            alignment: Alignment.center,
+                            child: ForceUpdateOverlayCard(update: state.update),
+                          ),
                         );
                       }
                       return const SizedBox.shrink();

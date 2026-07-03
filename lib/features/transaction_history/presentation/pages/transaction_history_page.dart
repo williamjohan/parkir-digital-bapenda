@@ -110,18 +110,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     });
   }
 
-  // void _showPreviewKarcis(
-  //   BuildContext context,
-  //   HistoryItemModel item,
-  //   Map<String, dynamic> profile,
-  // ) {
-  //   PbTicketPrintDialog.showFromHistory(
-  //     context: context,
-  //     historyTx: item,
-  //     profile: profile,
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TransactionHistoryCubit, TransactionHistoryState>(
@@ -140,14 +128,18 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             child: Scaffold(
               backgroundColor: Colors.grey.shade50,
               appBar: AppBar(
-                title: const Text(
+                title: Text(
                   'Riwayat Pendapatan',
-                  style: AppTypography.heading5,
+                  style: AppTypography.heading5.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 centerTitle: true,
                 backgroundColor: AppColors.surface,
                 elevation: 0,
                 foregroundColor: Colors.black,
+                iconTheme: IconThemeData(color: AppColors.primary),
               ),
               body: Column(
                 children: [
