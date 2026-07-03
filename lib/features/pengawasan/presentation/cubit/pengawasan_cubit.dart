@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/pengawasan/domain/entities/laporan_pengawasan/laporan_pengawasan_entity.dart';
 import '../../domain/constants/jenis_pelanggaran_dummy.dart';
 import '../../domain/usecases/pengawasan_usecase.dart';
 import 'pengawasan_state.dart';
@@ -80,7 +81,27 @@ class PengawasanCubit extends Cubit<PengawasanState> {
 
   Future<void> getLaporanPengawasan() async {
     if (!isClosed) {
-      emit(state.copyWith(isLoadingLaporan: true, errorMessage: null));
+      emit(
+        state.copyWith(
+          isLoadingLaporan: true,
+          errorMessage: null,
+          laporanFake: List<LaporanPengawasanEntity>.generate(
+            4,
+            (_) => LaporanPengawasanEntity(
+              idEvent: 0,
+              op: "",
+              nip: "",
+              tglRoster: DateTime(2000, 1, 1),
+              jadwalMasuk: DateTime(2000, 1, 1),
+              jenisPel: 0,
+              ketPel: "",
+              insDate: DateTime(2000, 1, 1),
+              insBy: "",
+              seq: 0,
+            ),
+          ),
+        ),
+      );
     }
 
     try {
