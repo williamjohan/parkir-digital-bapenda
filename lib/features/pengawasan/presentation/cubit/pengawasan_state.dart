@@ -17,6 +17,8 @@ class PengawasanState with _$PengawasanState {
     String? errorMessage,
 
     @Default([]) List<JenisPelanggaranEntity> jenisPelanggaran,
-    @Default([]) List<LaporanPengawasanEntity> laporan,
+    @Default(<LaporanPengawasanEntity>[]) List<LaporanPengawasanEntity> laporan,
+    @Default(<LaporanPengawasanEntity>[])
+    List<LaporanPengawasanEntity> laporanFake,
   }) = _PengawasanState;
 }

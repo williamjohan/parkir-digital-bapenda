@@ -72,119 +72,113 @@ class _JukirCard extends StatelessWidget {
       ),
       child: Material(
         color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            // TODO: Tambahkan aksi jika card di-tap (misal ke halaman detail)
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 1. Profile Image dengan ring border, CLICKABLE
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(
-                      28 + 2.5,
-                    ), // Area ripple sesuai ukuran avatar+border
-                    onTap: () {
-                      final bytes = _ProfileImage._decodeImage(item.fotoBase64);
-                      if (bytes != null) {
-                        _showPhotoPreviewModal(context, bytes);
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        // border: BorderSide(color: Colors.blue.shade100, width: 2.5),
-                      ),
-                      child: _ProfileImage(base64: item.fotoBase64),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // 1. Profile Image dengan ring border, CLICKABLE
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(
+                    28 + 2.5,
+                  ), // Area ripple sesuai ukuran avatar+border
+                  onTap: () {
+                    final bytes = _ProfileImage._decodeImage(item.fotoBase64);
+                    if (bytes != null) {
+                      _showPhotoPreviewModal(context, bytes);
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      // border: BorderSide(color: Colors.blue.shade100, width: 2.5),
                     ),
+                    child: _ProfileImage(base64: item.fotoBase64),
                   ),
                 ),
+              ),
 
-                const SizedBox(width: 16),
+              const SizedBox(width: 16),
 
-                // 2. Info Text (Nama & Username)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.namaPetugas,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
-                        ),
-                        // CHANGED: Namanya max 2 line
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+              // 2. Info Text (Nama & Username)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.namaPetugas,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.badge_outlined,
-                            size: 14,
-                            color: Colors.grey.shade500,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              item.username,
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                      // CHANGED: Namanya max 2 line
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.badge_outlined,
+                          size: 14,
+                          color: Colors.grey.shade500,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            item.username,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                // 3. Shift Badge dipindah ke kanan
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    // border: BorderSide(color: Colors.blue.shade100, width: 1),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.access_time_filled,
-                        size: 14,
-                        color: Colors.blue.shade700,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Shift $shift',
-                        style: TextStyle(
-                          color: Colors.blue.shade700,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // 3. Shift Badge dipindah ke kanan
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  // border: BorderSide(color: Colors.blue.shade100, width: 1),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.access_time_filled,
+                      size: 14,
+                      color: Colors.blue.shade700,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Shift $shift',
+                      style: TextStyle(
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

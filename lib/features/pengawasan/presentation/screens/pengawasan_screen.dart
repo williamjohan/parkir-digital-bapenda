@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -48,41 +49,43 @@ class _LaporanPelanggaranScreenState extends State<LaporanPelanggaranScreen> {
           }
         },
         builder: (context, state) {
-          if (state.isLoadingLaporan) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          final items = state.isLoadingLaporan
+              ? state.laporanFake
+              : state.laporan;
 
-          if (state.laporan.isEmpty) {
+          if (state.laporan.isEmpty && !state.isLoadingLaporan) {
             return const Center(child: Text('Belum ada laporan.'));
           }
 
           return RefreshIndicator(
             onRefresh: () =>
                 context.read<PengawasanCubit>().getLaporanPengawasan(),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.laporan.length,
-              itemBuilder: (_, index) {
-                final laporan = state.laporan[index];
+            child: Skeletonizer(
+              enabled: state.isLoadingLaporan,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: items.length,
+                itemBuilder: (_, index) {
+                  final laporan = items[index];
 
-                final jenisPelanggaran = dummyJenisPelanggaran.firstWhere(
-                  (e) => e.id == laporan.jenisPel,
-                );
-
-                return CardLaporanPelanggaran(
-                  item: state.laporan[index],
-                  onTapLaporan: () {
-                    context.pushNamed(
-                      AppRoutes.detailLaporanPelanggaran,
-                      extra: {
-                        'namaJenisPelanggaran': jenisPelanggaran.nama,
-                        'keterangan': laporan.ketPel,
-                        'foto': laporan.fotoPelaporan,
-                      },
-                    );
-                  },
-                );
-              },
+                  return CardLaporanPelanggaran(
+                    item: laporan,
+                    onTapLaporan: () {
+                      final jenisPelanggaran = dummyJenisPelanggaran.firstWhere(
+                        (e) => e.id == laporan.jenisPel,
+                      );
+                      context.pushNamed(
+                        AppRoutes.detailLaporanPelanggaran,
+                        extra: {
+                          'namaJenisPelanggaran': jenisPelanggaran.nama,
+                          'keterangan': laporan.ketPel,
+                          'foto': laporan.fotoPelaporan,
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           );
         },
