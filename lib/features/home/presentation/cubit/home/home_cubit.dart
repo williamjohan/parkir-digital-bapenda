@@ -116,7 +116,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> loadDashboardPengawas() async {
-    emit(state.copyWith(status: HomeStatus.loading)); 
+    emit(state.copyWith(status: HomeStatus.loading));
 
     final result = await _homeUsecase.getDashboardSummaryPengawas();
 
@@ -329,23 +329,20 @@ class HomeCubit extends Cubit<HomeState> {
     final userName = state.namaJukir;
     final upper = userName.toUpperCase();
 
-    String formattedName;
+    String? formattedName;
 
-    // Prioritas pertama
     final uptbMatch = RegExp(r'UPTB(\d+)').firstMatch(upper);
+
     if (uptbMatch != null) {
       formattedName = 'UPTB-${uptbMatch.group(1)}';
-    }
-    // Prioritas kedua
-    else if (upper.startsWith('PD')) {
+    } else if (upper.startsWith('PD')) {
       formattedName = userName.substring(2);
-    }
-    // Default
-    else {
-      formattedName = userName;
+    } else {
+      formattedName = null;
     }
 
     AppLogger.debug("isi namaJukirFormatted : $formattedName");
+
     emit(state.copyWith(namaJukirFormatted: formattedName));
   }
 }

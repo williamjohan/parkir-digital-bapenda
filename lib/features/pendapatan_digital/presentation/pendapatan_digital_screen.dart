@@ -30,15 +30,23 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                widget.namaUPTB == null
+                widget.namaUPTB == null || widget.namaUPTB!.isEmpty
                     ? 'Pendapatan Digital'
-                    : 'Pendapatan Digital ${widget.namaUPTB}',
-                style: AppTypography.heading5,
+                    : 'Pendapatan Digital $widget.namaUPTB',
+                style: AppTypography.heading5.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               centerTitle: true,
               backgroundColor: AppColors.surface,
+              scrolledUnderElevation: 0,
+              shape: Border(
+                bottom: BorderSide(color: AppColors.primary, width: 1.0),
+              ),
               elevation: 0,
               foregroundColor: Colors.black,
+              iconTheme: IconThemeData(color: AppColors.primary),
             ),
             body: BlocBuilder<PendapatanDigitalCubit, PendapatanDigitalState>(
               builder: (context, state) {

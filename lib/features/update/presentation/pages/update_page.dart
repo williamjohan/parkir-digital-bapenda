@@ -43,16 +43,8 @@ class _UpdatePageContent extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: AppColors.surface,
-        scrolledUnderElevation:
-            0, // 🚀 Wajib di M3 agar warna tidak berubah saat scroll
-        // 🚀 BEST PRACTICE 1: Gunakan shape dengan Border.bottom
-        shape: Border(
-          bottom: BorderSide(
-            color:
-                AppColors.primary, // Gunakan warna border soft (abu-abu tipis)
-            width: 1.0, // Ketebalan 1px sudah cukup untuk kesan elegan
-          ),
-        ),
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
         iconTheme: IconThemeData(color: AppColors.primary),

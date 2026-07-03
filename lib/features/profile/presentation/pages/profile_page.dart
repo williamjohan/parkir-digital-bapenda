@@ -37,14 +37,22 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
-          elevation: 0,
-          centerTitle: true,
-          title: Text('Profil Saya', style: AppTypography.heading5),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-            onPressed: () => context.pop(),
+          title: Text(
+            'Profile Saya',
+            style: AppTypography.heading5.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          centerTitle: true,
+          backgroundColor: AppColors.surface,
+          scrolledUnderElevation: 0,
+          shape: Border(
+            bottom: BorderSide(color: AppColors.primary, width: 1.0),
+          ),
+          elevation: 0,
+          foregroundColor: Colors.black,
+          iconTheme: IconThemeData(color: AppColors.primary),
         ),
         bottomNavigationBar: Container(
           color: AppColors.background,
