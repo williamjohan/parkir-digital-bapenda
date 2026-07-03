@@ -39,9 +39,20 @@ class AbsensiRemoteDataSourceImpl implements IAbsensiRemoteDataSource {
         );
       }
     } on DioException catch (e) {
+      // 🔥 Ambil message dari body response server dulu (misal error 400/422 validasi)
+      final responseData = e.response?.data;
+      String? serverMessage;
+
+      if (responseData is Map<String, dynamic>) {
+        serverMessage = responseData['message']?.toString();
+      }
+
       throw ServerException(
         statusCode: e.response?.statusCode ?? 500,
-        message: e.message ?? 'Terjadi kesalahan koneksi saat absensi',
+        message:
+            serverMessage ??
+            e.message ??
+            'Terjadi kesalahan koneksi saat absensi',
       );
     } catch (e) {
       throw ServerException(

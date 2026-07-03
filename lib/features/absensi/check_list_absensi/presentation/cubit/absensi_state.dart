@@ -6,9 +6,12 @@ enum AbsensiStatus { initial, loading, success, failure }
 
 @freezed
 class AbsensiState with _$AbsensiState {
+  const AbsensiState._(); // 🔥 wajib ditambah biar bisa punya getter custom
+
   const factory AbsensiState({
     @Default(AbsensiStatus.initial) AbsensiStatus status,
-    @Default(false) bool isLoading,
     @Default('') String errorMessage,
   }) = _AbsensiState;
+
+  bool get isLoading => status == AbsensiStatus.loading; // 🔥 getter, bukan field
 }

@@ -18,7 +18,6 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$AbsensiState {
   AbsensiStatus get status => throw _privateConstructorUsedError;
-  bool get isLoading => throw _privateConstructorUsedError;
   String get errorMessage => throw _privateConstructorUsedError;
 
   /// Create a copy of AbsensiState
@@ -35,7 +34,7 @@ abstract class $AbsensiStateCopyWith<$Res> {
     $Res Function(AbsensiState) then,
   ) = _$AbsensiStateCopyWithImpl<$Res, AbsensiState>;
   @useResult
-  $Res call({AbsensiStatus status, bool isLoading, String errorMessage});
+  $Res call({AbsensiStatus status, String errorMessage});
 }
 
 /// @nodoc
@@ -52,21 +51,13 @@ class _$AbsensiStateCopyWithImpl<$Res, $Val extends AbsensiState>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? status = null,
-    Object? isLoading = null,
-    Object? errorMessage = null,
-  }) {
+  $Res call({Object? status = null, Object? errorMessage = null}) {
     return _then(
       _value.copyWith(
             status: null == status
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as AbsensiStatus,
-            isLoading: null == isLoading
-                ? _value.isLoading
-                : isLoading // ignore: cast_nullable_to_non_nullable
-                      as bool,
             errorMessage: null == errorMessage
                 ? _value.errorMessage
                 : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -86,7 +77,7 @@ abstract class _$$AbsensiStateImplCopyWith<$Res>
   ) = __$$AbsensiStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({AbsensiStatus status, bool isLoading, String errorMessage});
+  $Res call({AbsensiStatus status, String errorMessage});
 }
 
 /// @nodoc
@@ -102,21 +93,13 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? status = null,
-    Object? isLoading = null,
-    Object? errorMessage = null,
-  }) {
+  $Res call({Object? status = null, Object? errorMessage = null}) {
     return _then(
       _$AbsensiStateImpl(
         status: null == status
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as AbsensiStatus,
-        isLoading: null == isLoading
-            ? _value.isLoading
-            : isLoading // ignore: cast_nullable_to_non_nullable
-                  as bool,
         errorMessage: null == errorMessage
             ? _value.errorMessage
             : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -128,26 +111,22 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AbsensiStateImpl implements _AbsensiState {
+class _$AbsensiStateImpl extends _AbsensiState {
   const _$AbsensiStateImpl({
     this.status = AbsensiStatus.initial,
-    this.isLoading = false,
     this.errorMessage = '',
-  });
+  }) : super._();
 
   @override
   @JsonKey()
   final AbsensiStatus status;
   @override
   @JsonKey()
-  final bool isLoading;
-  @override
-  @JsonKey()
   final String errorMessage;
 
   @override
   String toString() {
-    return 'AbsensiState(status: $status, isLoading: $isLoading, errorMessage: $errorMessage)';
+    return 'AbsensiState(status: $status, errorMessage: $errorMessage)';
   }
 
   @override
@@ -156,14 +135,12 @@ class _$AbsensiStateImpl implements _AbsensiState {
         (other.runtimeType == runtimeType &&
             other is _$AbsensiStateImpl &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.isLoading, isLoading) ||
-                other.isLoading == isLoading) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, status, isLoading, errorMessage);
+  int get hashCode => Object.hash(runtimeType, status, errorMessage);
 
   /// Create a copy of AbsensiState
   /// with the given fields replaced by the non-null parameter values.
@@ -174,17 +151,15 @@ class _$AbsensiStateImpl implements _AbsensiState {
       __$$AbsensiStateImplCopyWithImpl<_$AbsensiStateImpl>(this, _$identity);
 }
 
-abstract class _AbsensiState implements AbsensiState {
+abstract class _AbsensiState extends AbsensiState {
   const factory _AbsensiState({
     final AbsensiStatus status,
-    final bool isLoading,
     final String errorMessage,
   }) = _$AbsensiStateImpl;
+  const _AbsensiState._() : super._();
 
   @override
   AbsensiStatus get status;
-  @override
-  bool get isLoading;
   @override
   String get errorMessage;
 
