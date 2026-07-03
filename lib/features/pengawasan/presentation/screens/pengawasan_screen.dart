@@ -103,6 +103,7 @@ class _LaporanPelanggaranScreenState extends State<LaporanPelanggaranScreen> {
           }
 
           return RefreshIndicator(
+            color: AppColors.primary,
             onRefresh: () =>
                 context.read<PengawasanCubit>().getLaporanPengawasan(),
             child: Skeletonizer(
