@@ -21,7 +21,6 @@ class AbsensiCubit extends Cubit<AbsensiState> {
 
     // 2. Panggil Usecase Facade kita
     final result = await _usecase.postAbsensi(absensi);
-
     // 3. Handle kembalian dari Left (Failure) atau Right (Success)
     result.fold(
       (failure) {

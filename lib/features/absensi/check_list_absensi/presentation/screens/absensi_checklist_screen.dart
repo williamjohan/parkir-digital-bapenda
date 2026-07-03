@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
@@ -317,48 +318,53 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
         ),
         bottomNavigationBar: Container(
           color: Colors.white,
-          padding: EdgeInsets.fromLTRB(16, 12, 16,MediaQuery.of(context).padding.bottom > 0 ? MediaQuery.of(context).padding.bottom : 16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            12,
+            16,
+            MediaQuery.of(context).padding.bottom > 0
+                ? MediaQuery.of(context).padding.bottom
+                : 16,
+          ),
           child: BlocBuilder<AbsensiCubit, AbsensiState>(
             builder: (context, state) {
-              final isLoading = state.status == AbsensiStatus.loading || _isCapturing;
-              return SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: isLoading ? null : _submit, 
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+              return LoadingOverlay(
+                isLoading: state.isLoading,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: state.isLoading ? null : _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
-                  ),
-                  child: isLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.4,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              _headerIcon,
-                              size: 18,
+                    child: state.isLoading
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.4,
                               color: Colors.white,
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _submitLabel,
-                              style: AppTypography.bodySemiBold.copyWith(
-                                color: Colors.white,
-                                fontSize: 16,
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(_headerIcon, size: 18, color: Colors.white),
+                              const SizedBox(width: 8),
+                              Text(
+                                _submitLabel,
+                                style: AppTypography.bodySemiBold.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                          ]
-                        ),
+                            ],
+                          ),
+                  ),
                 ),
               );
             },
