@@ -235,101 +235,101 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
           );
         }
       },
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
-        appBar: AppBar(
-          title: Text(
-            _title,
-            style: AppTypography.heading5.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          centerTitle: true,
-          backgroundColor: AppColors.surface,
-          scrolledUnderElevation: 0,
-          shape: Border(
-            bottom: BorderSide(color: AppColors.primary, width: 1.0),
-          ),
-          elevation: 0,
-          foregroundColor: Colors.black,
-          iconTheme: IconThemeData(color: AppColors.primary),
-        ),
-        body: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              _buildHeaderCard(),
-              const SizedBox(height: 16),
-              _buildPhotoSection(),
-              const SizedBox(height: 16),
-              _buildSectionCard(
-                title: "Data Kendaraan",
-                icon: Icons.directions_car_rounded,
-                child: Column(
+      child: BlocBuilder<AbsensiCubit, AbsensiState>(
+        builder: (context, state) {
+          return LoadingOverlay(
+            isLoading: state.isLoading, // 🔥 pindah ke sini
+            child: Scaffold(
+              backgroundColor: Colors.grey.shade50,
+              appBar: AppBar(
+                title: Text(
+                  _title,
+                  style: AppTypography.heading5.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                centerTitle: true,
+                backgroundColor: AppColors.surface,
+                scrolledUnderElevation: 0,
+                shape: Border(
+                  bottom: BorderSide(color: AppColors.primary, width: 1.0),
+                ),
+                elevation: 0,
+                foregroundColor: Colors.black,
+                iconTheme: IconThemeData(color: AppColors.primary),
+              ),
+              body: Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
                   children: [
-                    _buildNumberField(
-                      controller: _motorController,
-                      label: "Jumlah Motor",
-                      icon: Icons.two_wheeler_rounded,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildNumberField(
-                      controller: _mobilController,
-                      label: "Jumlah Mobil",
+                    _buildHeaderCard(),
+                    const SizedBox(height: 16),
+                    _buildPhotoSection(),
+                    const SizedBox(height: 16),
+                    _buildSectionCard(
+                      title: "Data Kendaraan",
                       icon: Icons.directions_car_rounded,
+                      child: Column(
+                        children: [
+                          _buildNumberField(
+                            controller: _motorController,
+                            label: "Jumlah Motor",
+                            icon: Icons.two_wheeler_rounded,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildNumberField(
+                            controller: _mobilController,
+                            label: "Jumlah Mobil",
+                            icon: Icons.directions_car_rounded,
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(height: 16),
+                    _buildSectionCard(
+                      title: "Status Instrumen",
+                      icon: Icons.devices_rounded,
+                      child: Column(
+                        children: [
+                          InstrumentToggleWidget(
+                            label: "EDC",
+                            icon: Icons.credit_card_rounded,
+                            isActive: _edc,
+                            onChanged: (v) => setState(() => _edc = v),
+                          ),
+                          const SizedBox(height: 8),
+                          InstrumentToggleWidget(
+                            label: "QRIS",
+                            icon: Icons.qr_code_2_rounded,
+                            isActive: _qris,
+                            onChanged: (v) => setState(() => _qris = v),
+                          ),
+                          const SizedBox(height: 8),
+                          InstrumentToggleWidget(
+                            label: "TSpark",
+                            icon: Icons.touch_app_rounded,
+                            isActive: _tsPark,
+                            onChanged: (v) => setState(() => _tsPark = v),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              _buildSectionCard(
-                title: "Status Instrumen",
-                icon: Icons.devices_rounded,
-                child: Column(
-                  children: [
-                    InstrumentToggleWidget(
-                      label: "EDC",
-                      icon: Icons.credit_card_rounded,
-                      isActive: _edc,
-                      onChanged: (v) => setState(() => _edc = v),
-                    ),
-                    const SizedBox(height: 8),
-                    InstrumentToggleWidget(
-                      label: "QRIS",
-                      icon: Icons.qr_code_2_rounded,
-                      isActive: _qris,
-                      onChanged: (v) => setState(() => _qris = v),
-                    ),
-                    const SizedBox(height: 8),
-                    InstrumentToggleWidget(
-                      label: "TSpark",
-                      icon: Icons.touch_app_rounded,
-                      isActive: _tsPark,
-                      onChanged: (v) => setState(() => _tsPark = v),
-                    ),
-                  ],
+              bottomNavigationBar: Container(
+                color: Colors.white,
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  12,
+                  16,
+                  MediaQuery.of(context).padding.bottom > 0
+                      ? MediaQuery.of(context).padding.bottom
+                      : 16,
                 ),
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          padding: EdgeInsets.fromLTRB(
-            16,
-            12,
-            16,
-            MediaQuery.of(context).padding.bottom > 0
-                ? MediaQuery.of(context).padding.bottom
-                : 16,
-          ),
-          child: BlocBuilder<AbsensiCubit, AbsensiState>(
-            builder: (context, state) {
-              return LoadingOverlay(
-                isLoading: state.isLoading,
                 child: SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -366,10 +366,10 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                           ),
                   ),
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
