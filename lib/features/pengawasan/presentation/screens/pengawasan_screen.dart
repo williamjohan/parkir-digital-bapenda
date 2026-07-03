@@ -63,7 +63,43 @@ class _LaporanPelanggaranScreenState extends State<LaporanPelanggaranScreen> {
               : state.laporan;
 
           if (state.laporan.isEmpty && !state.isLoadingLaporan) {
-            return const Center(child: Text('Belum ada laporan.'));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.08),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.receipt_long_rounded,
+                        size: 48,
+                        color: AppColors.primary.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Belum ada laporan",
+                      style: AppTypography.bodySemiBold.copyWith(
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Laporan yang kamu buat akan muncul di sini",
+                      textAlign: TextAlign.center,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           return RefreshIndicator(

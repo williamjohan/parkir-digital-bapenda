@@ -48,7 +48,43 @@ class _DataJukirListScreenState extends State<DataJukirListScreen> {
         child: BlocBuilder<DataJukirCubit, DataJukirState>(
           builder: (context, state) {
             if (state.data.isEmpty && !state.isLoading) {
-              return const Center(child: Text("Tidak ada data"));
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.08),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.inbox_rounded,
+                          size: 48,
+                          color: AppColors.primary.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Tidak ada data",
+                        style: AppTypography.bodySemiBold.copyWith(
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Data akan muncul di sini setelah tersedia",
+                        textAlign: TextAlign.center,
+                        style: AppTypography.bodySmall.copyWith(
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
 
             // final data = state.data.first;
