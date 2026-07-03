@@ -8,6 +8,7 @@ enum AbsensiStatus { initial, loading, success, failure }
 class AbsensiState with _$AbsensiState {
   const factory AbsensiState({
     @Default(AbsensiStatus.initial) AbsensiStatus status,
+    @Default(false) bool isLoading,
     @Default('') String errorMessage,
   }) = _AbsensiState;
 }
