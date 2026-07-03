@@ -17,7 +17,7 @@ class DataJukirCubit extends Cubit<DataJukirState> {
           isLoading: true,
           errorMessage: null,
           dataFake: List<DataJukirEntity>.generate(
-            4,
+            5,
             (_) => const DataJukirEntity(
               idDevice: '',
               petugas: 'Loading...',

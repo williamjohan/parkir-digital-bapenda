@@ -3,13 +3,25 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/cubit/data_jukir_cubit.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../../domain/entities/data_jukir_entity.dart';
 import '../cubit/data_jukir_state.dart';
 
-class DataJukirListScreen extends StatelessWidget {
-  const DataJukirListScreen({super.key});
+class DataJukirListScreen extends StatefulWidget {
+  final String nop;
+
+  const DataJukirListScreen({super.key, required this.nop});
+
+  @override
+  State<DataJukirListScreen> createState() => _DataJukirListScreenState();
+}
+
+class _DataJukirListScreenState extends State<DataJukirListScreen> {
+  Future<void> _loadData() async {
+    await context.read<DataJukirCubit>().getDataJukir(widget.nop);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,28 +43,32 @@ class DataJukirListScreen extends StatelessWidget {
         foregroundColor: Colors.black,
         iconTheme: IconThemeData(color: AppColors.primary),
       ),
-      body: BlocBuilder<DataJukirCubit, DataJukirState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: RefreshIndicator(
+        onRefresh: _loadData,
+        child: BlocBuilder<DataJukirCubit, DataJukirState>(
+          builder: (context, state) {
+            if (state.data.isEmpty && !state.isLoading) {
+              return const Center(child: Text("Tidak ada data"));
+            }
 
-          if (state.data.isEmpty) {
-            return const Center(child: Text("Tidak ada data"));
-          }
+            // final data = state.data.first;
+            final items = state.isLoading ? state.dataFake : state.data;
+            final data = items.first;
+            return Skeletonizer(
+              enabled: state.isLoading,
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: data.usernameList.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (_, index) {
+                  final item = data.usernameList[index];
 
-          final data = state.data.first;
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: data.usernameList.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, index) {
-              final item = data.usernameList[index];
-
-              return _JukirCard(item: item, shift: data.shift);
-            },
-          );
-        },
+                  return _JukirCard(item: item, shift: data.shift);
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
