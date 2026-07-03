@@ -233,7 +233,7 @@ class AppRouter {
 
             return BlocProvider(
               create: (_) => locator<DataJukirCubit>()..getDataJukir(nop),
-              child: DataJukirListScreen(),
+              child: DataJukirListScreen(nop: nop),
             );
           },
         ),

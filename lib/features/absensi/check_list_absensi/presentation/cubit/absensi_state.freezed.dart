@@ -111,11 +111,11 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AbsensiStateImpl implements _AbsensiState {
+class _$AbsensiStateImpl extends _AbsensiState {
   const _$AbsensiStateImpl({
     this.status = AbsensiStatus.initial,
     this.errorMessage = '',
-  });
+  }) : super._();
 
   @override
   @JsonKey()
@@ -151,11 +151,12 @@ class _$AbsensiStateImpl implements _AbsensiState {
       __$$AbsensiStateImplCopyWithImpl<_$AbsensiStateImpl>(this, _$identity);
 }
 
-abstract class _AbsensiState implements AbsensiState {
+abstract class _AbsensiState extends AbsensiState {
   const factory _AbsensiState({
     final AbsensiStatus status,
     final String errorMessage,
   }) = _$AbsensiStateImpl;
+  const _AbsensiState._() : super._();
 
   @override
   AbsensiStatus get status;

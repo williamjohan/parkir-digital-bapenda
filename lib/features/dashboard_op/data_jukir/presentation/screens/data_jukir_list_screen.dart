@@ -3,13 +3,25 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/cubit/data_jukir_cubit.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../../domain/entities/data_jukir_entity.dart';
 import '../cubit/data_jukir_state.dart';
 
-class DataJukirListScreen extends StatelessWidget {
-  const DataJukirListScreen({super.key});
+class DataJukirListScreen extends StatefulWidget {
+  final String nop;
+
+  const DataJukirListScreen({super.key, required this.nop});
+
+  @override
+  State<DataJukirListScreen> createState() => _DataJukirListScreenState();
+}
+
+class _DataJukirListScreenState extends State<DataJukirListScreen> {
+  Future<void> _loadData() async {
+    await context.read<DataJukirCubit>().getDataJukir(widget.nop);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,28 +43,79 @@ class DataJukirListScreen extends StatelessWidget {
         foregroundColor: Colors.black,
         iconTheme: IconThemeData(color: AppColors.primary),
       ),
-      body: BlocBuilder<DataJukirCubit, DataJukirState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: _loadData,
+        child: BlocBuilder<DataJukirCubit, DataJukirState>(
+          builder: (context, state) {
+            if (state.data.isEmpty && !state.isLoading) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.08),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.inbox_rounded,
+                          size: 48,
+                          color: AppColors.primary.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Tidak ada data",
+                        style: AppTypography.bodySemiBold.copyWith(
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Data akan muncul di sini setelah tersedia",
+                        textAlign: TextAlign.center,
+                        style: AppTypography.bodySmall.copyWith(
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
 
-          if (state.data.isEmpty) {
-            return const Center(child: Text("Tidak ada data"));
-          }
+            final items = state.isLoading ? state.dataFake : state.data;
 
-          final data = state.data.first;
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: data.usernameList.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, index) {
-              final item = data.usernameList[index];
+            // Menggabungkan (flatten) semua Jukir dari berbagai shift menjadi satu list
+            final allJukir = items.expand((dataJukir) {
+              return dataJukir.usernameList.map(
+                (user) => (user: user, shift: dataJukir.shift),
+              );
+            }).toList();
 
-              return _JukirCard(item: item, shift: data.shift);
-            },
-          );
-        },
+            return Skeletonizer(
+              enabled: state.isLoading,
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: allJukir.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (_, index) {
+                  final jukirData = allJukir[index];
+
+                  // Mengakses record menggunakan nama variabel yang didefinisikan di map
+                  return _JukirCard(
+                    item: jukirData.user,
+                    shift: jukirData.shift,
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

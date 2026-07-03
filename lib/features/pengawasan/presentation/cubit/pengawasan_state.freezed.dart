@@ -230,8 +230,10 @@ class _$PengawasanStateImpl implements _PengawasanState {
     this.isSuccess = false,
     this.errorMessage,
     final List<JenisPelanggaranEntity> jenisPelanggaran = const [],
-    final List<LaporanPengawasanEntity> laporan = const [],
-    final List<LaporanPengawasanEntity> laporanFake = const [],
+    final List<LaporanPengawasanEntity> laporan =
+        const <LaporanPengawasanEntity>[],
+    final List<LaporanPengawasanEntity> laporanFake =
+        const <LaporanPengawasanEntity>[],
   }) : _jenisPelanggaran = jenisPelanggaran,
        _laporan = laporan,
        _laporanFake = laporanFake;
