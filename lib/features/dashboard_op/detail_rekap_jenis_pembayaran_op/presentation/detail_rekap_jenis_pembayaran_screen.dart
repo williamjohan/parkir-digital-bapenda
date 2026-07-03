@@ -14,11 +14,20 @@ class DetailRekapJenisPembayaranScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rekap Jenis Pembayaran', style: AppTypography.heading5),
+        title: Text(
+          'Rekap Jenis Pembayaran',
+          style: AppTypography.heading5.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: AppColors.surface,
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
+        iconTheme: IconThemeData(color: AppColors.primary),
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),

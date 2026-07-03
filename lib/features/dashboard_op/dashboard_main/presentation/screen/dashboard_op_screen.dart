@@ -28,11 +28,20 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: Text('Detail Objek Pajak', style: AppTypography.heading5),
+        title: Text(
+          'Detail Objek Pajak',
+          style: AppTypography.heading5.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: AppColors.surface,
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
+        iconTheme: IconThemeData(color: AppColors.primary),
       ),
       body: BlocBuilder<DashboardOpCubit, DashboardOpState>(
         builder: (context, state) {

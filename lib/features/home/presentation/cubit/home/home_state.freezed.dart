@@ -37,7 +37,7 @@ mixin _$HomeState {
   String get namaLokasi => throw _privateConstructorUsedError;
   String get namaJukir => throw _privateConstructorUsedError;
   String get namaOp => throw _privateConstructorUsedError;
-  String get namaJukirFormatted => throw _privateConstructorUsedError;
+  String? get namaJukirFormatted => throw _privateConstructorUsedError;
   String get profilePicturePath => throw _privateConstructorUsedError;
   int get totalOp => throw _privateConstructorUsedError;
   int get totalOpDigital => throw _privateConstructorUsedError;
@@ -88,7 +88,7 @@ abstract class $HomeStateCopyWith<$Res> {
     String namaLokasi,
     String namaJukir,
     String namaOp,
-    String namaJukirFormatted,
+    String? namaJukirFormatted,
     String profilePicturePath,
     int totalOp,
     int totalOpDigital,
@@ -146,7 +146,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? namaLokasi = null,
     Object? namaJukir = null,
     Object? namaOp = null,
-    Object? namaJukirFormatted = null,
+    Object? namaJukirFormatted = freezed,
     Object? profilePicturePath = null,
     Object? totalOp = null,
     Object? totalOpDigital = null,
@@ -235,10 +235,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.namaOp
                 : namaOp // ignore: cast_nullable_to_non_nullable
                       as String,
-            namaJukirFormatted: null == namaJukirFormatted
+            namaJukirFormatted: freezed == namaJukirFormatted
                 ? _value.namaJukirFormatted
                 : namaJukirFormatted // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             profilePicturePath: null == profilePicturePath
                 ? _value.profilePicturePath
                 : profilePicturePath // ignore: cast_nullable_to_non_nullable
@@ -380,7 +380,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     String namaLokasi,
     String namaJukir,
     String namaOp,
-    String namaJukirFormatted,
+    String? namaJukirFormatted,
     String profilePicturePath,
     int totalOp,
     int totalOpDigital,
@@ -441,7 +441,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? namaLokasi = null,
     Object? namaJukir = null,
     Object? namaOp = null,
-    Object? namaJukirFormatted = null,
+    Object? namaJukirFormatted = freezed,
     Object? profilePicturePath = null,
     Object? totalOp = null,
     Object? totalOpDigital = null,
@@ -530,10 +530,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.namaOp
             : namaOp // ignore: cast_nullable_to_non_nullable
                   as String,
-        namaJukirFormatted: null == namaJukirFormatted
+        namaJukirFormatted: freezed == namaJukirFormatted
             ? _value.namaJukirFormatted
             : namaJukirFormatted // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         profilePicturePath: null == profilePicturePath
             ? _value.profilePicturePath
             : profilePicturePath // ignore: cast_nullable_to_non_nullable
@@ -760,7 +760,7 @@ class _$HomeStateImpl implements _HomeState {
   final String namaOp;
   @override
   @JsonKey()
-  final String namaJukirFormatted;
+  final String? namaJukirFormatted;
   @override
   @JsonKey()
   final String profilePicturePath;
@@ -975,7 +975,7 @@ abstract class _HomeState implements HomeState {
     final String namaLokasi,
     final String namaJukir,
     final String namaOp,
-    final String namaJukirFormatted,
+    final String? namaJukirFormatted,
     final String profilePicturePath,
     final int totalOp,
     final int totalOpDigital,
@@ -1030,7 +1030,7 @@ abstract class _HomeState implements HomeState {
   @override
   String get namaOp;
   @override
-  String get namaJukirFormatted;
+  String? get namaJukirFormatted;
   @override
   String get profilePicturePath;
   @override

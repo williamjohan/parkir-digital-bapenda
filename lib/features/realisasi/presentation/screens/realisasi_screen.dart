@@ -24,15 +24,23 @@ class RealisasiScreen extends StatelessWidget {
             backgroundColor: const Color(0xFFFAFAFA),
             appBar: AppBar(
               title: Text(
-                namaUPTB == null
+                namaUPTB == null || namaUPTB!.isEmpty
                     ? 'Realisasi Pajak'
                     : 'Realisasi Pajak $namaUPTB',
-                style: AppTypography.heading5,
+                style: AppTypography.heading5.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               centerTitle: true,
               backgroundColor: AppColors.surface,
+              scrolledUnderElevation: 0,
+              shape: Border(
+                bottom: BorderSide(color: AppColors.primary, width: 1.0),
+              ),
               elevation: 0,
               foregroundColor: Colors.black,
+              iconTheme: IconThemeData(color: AppColors.primary),
             ),
             body: Column(
               children: [

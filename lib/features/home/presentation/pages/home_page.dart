@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                 child: HomeDrawer(
                   isFree: state.isFree,
                   role: state.role,
-                  namaUPTB: state.namaJukir.shortName,
+                  namaUPTB: state.namaJukirFormatted?.shortName,
                 ),
               ),
               body: Stack(
