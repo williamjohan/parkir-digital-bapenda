@@ -44,6 +44,7 @@ class _DataJukirListScreenState extends State<DataJukirListScreen> {
         iconTheme: IconThemeData(color: AppColors.primary),
       ),
       body: RefreshIndicator(
+        color: AppColors.primary,
         onRefresh: _loadData,
         child: BlocBuilder<DataJukirCubit, DataJukirState>(
           builder: (context, state) {
@@ -51,19 +52,29 @@ class _DataJukirListScreenState extends State<DataJukirListScreen> {
               return const Center(child: Text("Tidak ada data"));
             }
 
-            // final data = state.data.first;
             final items = state.isLoading ? state.dataFake : state.data;
-            final data = items.first;
+
+            // Menggabungkan (flatten) semua Jukir dari berbagai shift menjadi satu list
+            final allJukir = items.expand((dataJukir) {
+              return dataJukir.usernameList.map(
+                (user) => (user: user, shift: dataJukir.shift),
+              );
+            }).toList();
+
             return Skeletonizer(
               enabled: state.isLoading,
               child: ListView.separated(
                 padding: const EdgeInsets.all(16),
-                itemCount: data.usernameList.length,
+                itemCount: allJukir.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (_, index) {
-                  final item = data.usernameList[index];
+                  final jukirData = allJukir[index];
 
-                  return _JukirCard(item: item, shift: data.shift);
+                  // Mengakses record menggunakan nama variabel yang didefinisikan di map
+                  return _JukirCard(
+                    item: jukirData.user,
+                    shift: jukirData.shift,
+                  );
                 },
               ),
             );

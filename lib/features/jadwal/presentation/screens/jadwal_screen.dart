@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../cubit/jadwal_cubit.dart';
@@ -69,33 +70,40 @@ class JadwalContentView extends StatelessWidget {
       },
       child: BlocBuilder<JadwalCubit, JadwalState>(
         builder: (context, state) {
+          final jadwal = state.status == JadwalStatus.loading
+              ? state.jadwalFake
+              : state.jadwal;
+
           switch (state.status) {
             case JadwalStatus.initial:
             case JadwalStatus.loading:
-              return const Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
-              );
+            // return const Center(
+            //   child: CircularProgressIndicator(color: AppColors.primary),
+            // );
 
             case JadwalStatus.failure:
               return _buildErrorState(context, state.message);
 
             case JadwalStatus.success:
-              final jadwalList = state.jadwal ?? [];
+              // final jadwalList = state.jadwal ?? [];
 
-              if (jadwalList.isEmpty) {
+              if (jadwal!.isEmpty) {
                 return _buildEmptyState(context);
               }
 
-              return ListView.separated(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16.0),
-                itemCount: jadwalList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  // Render per item menggunakan Card yang sudah kita buat
-                  return JadwalCardItem(jadwal: jadwalList[index]);
-                },
+              return Skeletonizer(
+                enabled: state.status == JadwalStatus.loading,
+                child: ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: jadwal.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    // Render per item menggunakan Card yang sudah kita buat
+                    return JadwalCardItem(jadwal: jadwal[index]);
+                  },
+                ),
               );
           }
         },
