@@ -35,19 +35,13 @@ class _JadwalScreenState extends State<JadwalScreen> {
         ),
         centerTitle: true,
         backgroundColor: AppColors.surface,
-        scrolledUnderElevation:
-            0, // 🚀 Wajib di M3 agar warna tidak berubah saat scroll
-        // 🚀 BEST PRACTICE 1: Gunakan shape dengan Border.bottom
-        shape: Border(
-          bottom: BorderSide(
-            color:
-                AppColors.primary, // Gunakan warna border soft (abu-abu tipis)
-            width: 1.0, // Ketebalan 1px sudah cukup untuk kesan elegan
-          ),
+        scrolledUnderElevation: 0,
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.primary, width: 1.0),
         ),
         elevation: 0,
         foregroundColor: Colors.black,
-        iconTheme: IconThemeData(color: AppColors.primary),
+        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: const JadwalContentView(),
     );
@@ -56,7 +50,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
 
 // ==========================================
 // 2. WIDGET ANAK (VIEW / CONTENT)
-// Bertugas membaca BLoC dan merender list atau error
 // ==========================================
 class JadwalContentView extends StatelessWidget {
   const JadwalContentView({super.key});
@@ -70,42 +63,40 @@ class JadwalContentView extends StatelessWidget {
       },
       child: BlocBuilder<JadwalCubit, JadwalState>(
         builder: (context, state) {
-          final jadwal = state.status == JadwalStatus.loading
+          // 1. Tentukan status apakah sedang proses loading
+          final isLoading =
+              state.status == JadwalStatus.initial ||
+              state.status == JadwalStatus.loading;
+
+          // 2. Gunakan jadwalFake saat loading, dan jadwal asli saat success
+          final jadwalList = isLoading
               ? state.jadwalFake
-              : state.jadwal;
+              : (state.jadwal ?? []);
 
-          switch (state.status) {
-            case JadwalStatus.initial:
-            case JadwalStatus.loading:
-            // return const Center(
-            //   child: CircularProgressIndicator(color: AppColors.primary),
-            // );
-
-            case JadwalStatus.failure:
-              return _buildErrorState(context, state.message);
-
-            case JadwalStatus.success:
-              // final jadwalList = state.jadwal ?? [];
-
-              if (jadwal!.isEmpty) {
-                return _buildEmptyState(context);
-              }
-
-              return Skeletonizer(
-                enabled: state.status == JadwalStatus.loading,
-                child: ListView.separated(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: jadwal.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    // Render per item menggunakan Card yang sudah kita buat
-                    return JadwalCardItem(jadwal: jadwal[index]);
-                  },
-                ),
-              );
+          // 3. Tangani kondisi Failure/Error terlebih dahulu
+          if (state.status == JadwalStatus.failure && !isLoading) {
+            return _buildErrorState(context, state.message);
           }
+
+          // 4. Tangani kondisi Success namun datanya kosong
+          if (!isLoading && jadwalList!.isEmpty) {
+            return _buildEmptyState(context);
+          }
+
+          // 5. Render List dengan Skeletonizer
+          // (Menampilkan skeleton saat isLoading, dan list asli saat success)
+          return Skeletonizer(
+            enabled: isLoading,
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16.0),
+              itemCount: jadwalList?.length ?? 0,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                return JadwalCardItem(jadwal: jadwalList![index]);
+              },
+            ),
+          );
         },
       ),
     );
