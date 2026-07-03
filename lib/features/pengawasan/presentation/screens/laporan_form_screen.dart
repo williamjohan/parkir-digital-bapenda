@@ -103,33 +103,87 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                     PbBasicBottomSheet.show(
                       context: context,
                       title: 'Pilih Jenis Pelanggaran',
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: state.jenisPelanggaran.length,
-                        separatorBuilder: (_, __) => const Divider(height: 1),
-                        itemBuilder: (_, index) {
-                          final item = state.jenisPelanggaran[index];
+                      child: SizedBox(
+                        height: 350,
+                        child: ListView.builder(
+                          padding: EdgeInsets.only(top: 16),
+                          shrinkWrap: true,
+                          itemCount: state.jenisPelanggaran.length,
+                          // separatorBuilder: (_, __) => const Divider(height: 1),
+                          itemBuilder: (_, index) {
+                            final item = state.jenisPelanggaran[index];
 
-                          final isSelected = item.id == state.request.jenisPel;
+                            final isSelected =
+                                item.id == state.request.jenisPel;
 
-                          return ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(item.nama),
-                            trailing: isSelected
-                                ? const Icon(
-                                    Icons.check_circle,
-                                    color: AppColors.primary,
-                                  )
-                                : null,
-                            onTap: () {
-                              context
-                                  .read<PengawasanCubit>()
-                                  .setJenisPelanggaran(item.id);
+                            return GestureDetector(
+                              child: Container(
+                                padding: EdgeInsets.all(16),
+                                margin: EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColors.primary
+                                        : AppColors.disabled,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        item.nama,
+                                        style: AppTypography.caption.copyWith(
+                                          color: isSelected
+                                              ? AppColors.primary
+                                              : AppColors.disabled,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      isSelected
+                                          ? Icons.radio_button_checked_outlined
+                                          : Icons.radio_button_off_outlined,
+                                      color: isSelected
+                                          ? AppColors.primary
+                                          : AppColors.disabled,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                context
+                                    .read<PengawasanCubit>()
+                                    .setJenisPelanggaran(item.id);
 
-                              Navigator.pop(context);
-                            },
-                          );
-                        },
+                                Navigator.pop(context);
+                              },
+                            );
+
+                            // return ListTile(
+                            //   contentPadding: EdgeInsets.zero,
+                            //   title: Text(item.nama),
+                            //   trailing: isSelected
+                            //       ? const Icon(
+                            //           Icons.check_circle,
+                            //           color: AppColors.primary,
+                            //         )
+                            //       : null,
+                            //   onTap: () {
+                            //     context
+                            //         .read<PengawasanCubit>()
+                            //         .setJenisPelanggaran(item.id);
+
+                            //     Navigator.pop(context);
+                            //   },
+                            // );
+                          },
+                        ),
                       ),
                     );
                   },
