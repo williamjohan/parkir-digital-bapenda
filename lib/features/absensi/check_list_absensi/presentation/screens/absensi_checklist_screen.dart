@@ -304,53 +304,56 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              BlocBuilder<AbsensiCubit, AbsensiState>(
-                builder: (context, state) {
-                  final isLoading =
-                      state.status == AbsensiStatus.loading || _isCapturing;
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: isLoading ? null : _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: isLoading
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.4,
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  _headerIcon,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  _submitLabel,
-                                  style: AppTypography.bodySemiBold.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
             ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          color: Colors.white,
+          padding: EdgeInsets.fromLTRB(16, 12, 16,MediaQuery.of(context).padding.bottom > 0 ? MediaQuery.of(context).padding.bottom : 16),
+          child: BlocBuilder<AbsensiCubit, AbsensiState>(
+            builder: (context, state) {
+              final isLoading = state.status == AbsensiStatus.loading || _isCapturing;
+              return SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: isLoading ? null : _submit, 
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.4,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              _headerIcon,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _submitLabel,
+                              style: AppTypography.bodySemiBold.copyWith(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ]
+                        ),
+                ),
+              );
+            },
           ),
         ),
       ),
