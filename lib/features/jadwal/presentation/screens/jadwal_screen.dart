@@ -134,13 +134,45 @@ class JadwalContentView extends StatelessWidget {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
-        SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-        const Icon(Icons.event_note, size: 64, color: AppColors.disabled),
-        const SizedBox(height: 16),
-        const Text(
-          'Jadwal belum tersedia.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.28),
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.event_note_rounded,
+                  size: 56,
+                  color: AppColors.primary.withValues(alpha: 0.55),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Jadwal belum tersedia',
+                style: AppTypography.bodySemiBold.copyWith(
+                  color: AppColors.textPrimary,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Text(
+                  'Jadwal roster kamu akan tampil di sini setelah tersedia',
+                  textAlign: TextAlign.center,
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
