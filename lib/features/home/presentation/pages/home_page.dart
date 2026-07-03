@@ -66,33 +66,76 @@ class _HomePageState extends State<HomePage> {
                 body: Stack(
                   children: [
                     Container(
-                      height: 300,
+                      height:
+                          330, // Sedikit dipertinggi agar aman untuk kartu Jukir/Pengawas
+                      width: double.infinity,
                       decoration: const BoxDecoration(
                         gradient: AppColors.headerGradient,
                       ),
-                    ),
-                    Positioned(
-                      top: -15,
-                      right: -20,
-                      child: Opacity(
-                        opacity: 0.2,
-                        child: Image.asset(
-                          AppAssetImages.logosurabayasiloute,
-                          height: 230,
-                          width: 230,
-                        ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            top: -40,
+                            left: -40,
+                            child: Container(
+                              width: 180,
+                              height: 180,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                  width: 30,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          Positioned(
+                            top: -10,
+                            right: -15,
+                            child: ShaderMask(
+                              // ShaderMask melarutkan gambar dari jelas di atas -> transparan di bawah
+                              shaderCallback: (Rect bounds) {
+                                return const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.white, // Atas: Jelas
+                                    Colors.white, // Tengah: Jelas
+                                    Colors
+                                        .transparent, // Bawah: Hilang total (agar tidak menabrak kartu!)
+                                  ],
+                                  stops: [0.0, 0.4, 0.85],
+                                ).createShader(bounds);
+                              },
+                              blendMode: BlendMode.dstIn,
+                              child: Opacity(
+                                opacity:
+                                    0.18, // Opacity pas, tidak terlalu terang & tidak gelap
+                                child: Image.asset(
+                                  AppAssetImages.logosurabayasiloute,
+                                  height: 240,
+                                  width: 240,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+
                     SafeArea(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(),
+                            padding: const EdgeInsets.only(bottom: 0),
                             child: HomeHeaderWidget(
                               role: state.role,
                               namaJukir: state.namaJukir,
                               nop: state.nop,
+                              namalokasi: state.namaLokasi,
                               namaObjekPajak: state.namaOp,
                               onPressed: () {
                                 context.pushNamed(
@@ -104,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Expanded(
                             child: Container(
-                              margin: const EdgeInsets.only(top: 25),
+                              margin: const EdgeInsets.only(top: 14),
                               width: double.infinity,
                               clipBehavior: Clip.antiAlias,
                               decoration: const BoxDecoration(

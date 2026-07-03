@@ -7,6 +7,7 @@ class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
   final String nop;
   final String? namaObjekPajak;
+  final String? namalokasi; // Properti baru untuk alamat OP
   final RoleLoginDigitalParkir role;
   final VoidCallback? onPressed;
 
@@ -15,6 +16,7 @@ class HomeHeaderWidget extends StatelessWidget {
     required this.namaJukir,
     required this.nop,
     this.namaObjekPajak,
+    this.namalokasi,
     required this.role,
     required this.onPressed,
   });
@@ -22,86 +24,249 @@ class HomeHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 29),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 🚀 1. AREA UTAMA: GREETING & DRAWER BUTTON (Tinggi selalu konsisten)
           Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment
-                .start, // Atur ke center jika ingin teks berada di tengah area secara vertikal
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment
-                      .center, // Membantu teks tetap seimbang di tengah ruang SizedBox
                   children: [
-                    if (role != RoleLoginDigitalParkir.jukir) ...[
-                      Text(
-                        "TS PARK",
-                        style: AppTypography.heading1.copyWith(
-                          color: Colors.white,
-                        ),
+                    Text(
+                      "TS PARK SURABAYA",
+                      style: AppTypography.caption.copyWith(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.2,
                       ),
-                      Text(
-                        "BAPENDA KOTA SURABAYA",
-                        style: AppTypography.caption.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                    ),
+                    const SizedBox(height: 4),
                     Text(
                       "Hallo, $namaJukir !",
                       style: AppTypography.heading1.copyWith(
                         color: Colors.white,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (role == RoleLoginDigitalParkir.jukir) ...[
-                      Text(
-                        "NOP : $nop",
-                        style: AppTypography.bodyRegular.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        namaObjekPajak ?? '',
-                        style: AppTypography.bodySemiBold.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-
-                    // SizedBox(height: 8),
                   ],
                 ),
               ),
-              // const SizedBox(width: 16),
-              Builder(
-                builder: (context) => Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.menu, color: Colors.white, size: 20),
-                    onPressed: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                  ),
+              const SizedBox(width: 16),
+              _buildMenuButton(context),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          _buildDynamicRoleSection(),
+        ],
+      ),
+    );
+  }
+
+  // Tombol Menu melingkar
+  Widget _buildMenuButton(BuildContext context) {
+    return Builder(
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.2),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.menu_rounded, color: Colors.white, size: 22),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
+      ),
+    );
+  }
+
+  // Pengecekan Slot Dinamis
+  Widget _buildDynamicRoleSection() {
+    switch (role) {
+      case RoleLoginDigitalParkir.jukir:
+        return _buildJukirMetadataCard();
+      case RoleLoginDigitalParkir.pengawas:
+        return _buildPengawasActionCard();
+      default:
+        return _buildBapendaInstitutionalCard();
+    }
+  }
+
+  // 🔹 SLOT 1: KARTU METADATA JUKIR (NOP, OP, Lokasi)
+  Widget _buildJukirMetadataCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.qr_code_rounded,
+                size: 16,
+                color: Colors.white.withValues(alpha: 0.9),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "NOP : $nop",
+                style: AppTypography.caption.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          if (role == RoleLoginDigitalParkir.pengawas) ...[
-            SizedBox(height: 16),
-            PbPrimaryButton(
-              text: "Lihat Data Jukir",
-              variant: PbButtonVariant.outlinedSecondaryLight,
-              onPressed: onPressed,
+          const SizedBox(height: 8),
+          if (namaObjekPajak != null && namaObjekPajak!.isNotEmpty)
+            Row(
+              children: [
+                const Icon(
+                  Icons.storefront_rounded,
+                  size: 16,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    namaObjekPajak!,
+                    style: AppTypography.bodySemiBold.copyWith(
+                      color: Colors.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          if (namalokasi != null && namalokasi!.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.location_on_rounded,
+                  size: 16,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    namalokasi!,
+                    style: AppTypography.caption.copyWith(
+                      color: Colors.white.withValues(alpha: 0.9),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  // 🔹 SLOT 2: KARTU AKSI PENGAWAS
+  Widget _buildPengawasActionCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(width: 8),
+              Text(
+                "Lokasi : $namaObjekPajak",
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.bodySemiBold.copyWith(
+                  fontSize: 12,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "NOP : $nop",
+                style: AppTypography.bodySemiBold.copyWith(
+                  fontSize: 12,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          PbPrimaryButton(
+            text: "Lihat Data Jukir",
+            variant: PbButtonVariant.outlinedSecondaryLight,
+            onPressed: onPressed,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 🔹 SLOT 3: KARTU INSTANSI BAPENDA (Default)
+  Widget _buildBapendaInstitutionalCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.account_balance_rounded,
+            color: Colors.white,
+            size: 24,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "BAPENDA KOTA SURABAYA",
+                  style: AppTypography.bodySemiBold.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  "Sistem Pengelolaan Parkir Digital",
+                  style: AppTypography.caption.copyWith(
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
