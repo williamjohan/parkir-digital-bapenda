@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
                     },
                   ),
 
-                  // 🚀 3. FORCE UPDATE OVERLAY (Mengunci Total Layar)
+                  // 3. FORCE UPDATE OVERLAY (Mengunci Total Layar)
                   // Karena berada di Stack paling atas, dia menutupi seluruh aplikasi
                   // Tanpa perlu showDialog, tanpa Navigator, 100% anti-crash!
                   BlocBuilder<CheckUpdateCubit, CheckUpdateState>(
