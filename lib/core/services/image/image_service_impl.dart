@@ -11,13 +11,19 @@ class ImageServiceImpl implements IImageService {
   Future<String?> compressAndSaveImage({
     required File originalFile,
     required String fileName,
+    int maxTargetBytes = 300000, // Default 300 KB
+    int minResolution = 1024,
   }) async {
     try {
       final tempDir = await getTemporaryDirectory();
-      int currentQuality = 35;
-      int currentSize = 350;
+
+      // 🚀 Algoritma Step-Down yang Lebih Manusiawi & Menjaga Kualitas Visual
+      int currentQuality = 85;
+      int currentSize = minResolution;
       String? bestPath;
-      for (int i = 1; i <= 4; i++) {
+
+      // Maksimal 3 kali percobaan agar CPU tidak bekerja terlalu keras
+      for (int i = 1; i <= 3; i++) {
         final targetPath = '${tempDir.path}/${fileName}_v$i.jpg';
 
         final compressedXFile = await FlutterImageCompress.compressAndGetFile(
@@ -26,6 +32,7 @@ class ImageServiceImpl implements IImageService {
           quality: currentQuality,
           minWidth: currentSize,
           minHeight: currentSize,
+          format: CompressFormat.jpeg,
         );
 
         if (compressedXFile == null) break;
@@ -34,23 +41,38 @@ class ImageServiceImpl implements IImageService {
         bestPath = compressedXFile.path;
 
         AppLogger.debug(
-          '>>> [COMPRESSION v$i] Ukuran: $fileLength bytes (Target: < 10000)',
+          '>>> [COMPRESSION v$i] Ukuran: ${(fileLength / 1024).toStringAsFixed(2)} KB (Target: < ${(maxTargetBytes / 1024).toStringAsFixed(0)} KB)',
         );
-        if (fileLength <= 10000) {
+
+        // Jika ukuran sudah di bawah target, langsung kembalikan path
+        if (fileLength <= maxTargetBytes) {
           AppLogger.debug(
-            '>>> [COMPRESSION SUCCESS] Foto lolos sensor Bapenda!',
+            '>>> [COMPRESSION SUCCESS] Foto tajam & lolos sensor Bapenda!',
           );
           return bestPath;
         }
-        if (i < 4) {
-          File(bestPath).deleteSync();
+
+        // 🚀 Asynchronous Deletion (Tidak me-lock UI Event Loop)
+        if (i < 3) {
+          final oldFile = File(bestPath);
+          if (await oldFile.exists()) {
+            await oldFile.delete();
+          }
         }
-        currentQuality -= 10; // Kualitas turun (35 -> 25 -> 15 -> 5)
-        currentSize -= 80; // Resolusi turun (350 -> 270 -> 190 -> 110)
+
+        // Penurunan bertahap yang aman (misal: 85 -> 65 -> 45)
+        currentQuality -= 20;
+        // Resolusi sedikit diturunkan namun tidak boleh di bawah 600px
+        if (currentSize > 600) {
+          currentSize = (currentSize * 0.8).toInt();
+        }
       }
+
+      // Jika setelah 3 loop masih sedikit di atas target, tetap kembalikan hasil terbaik
+      // daripada mengorbankan foto menjadi blur total.
       return bestPath;
-    } catch (e) {
-      AppLogger.error('Gagal kompresi gambar', e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Gagal kompresi gambar', e, stackTrace);
       return null;
     }
   }
@@ -60,7 +82,7 @@ class ImageServiceImpl implements IImageService {
     try {
       final file = File(path);
       if (await file.exists()) {
-        await file.delete();
+        await file.delete(); // 🚀 Ganti ke async
         AppLogger.debug('File cache dihapus: $path');
       }
     } catch (e) {

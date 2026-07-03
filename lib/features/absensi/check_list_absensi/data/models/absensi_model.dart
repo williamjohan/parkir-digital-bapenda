@@ -42,7 +42,8 @@ extension AbsensiEntityExt on AbsensiEntity {
 }
 
 extension AbsensiRequestModelExt on AbsensiRequestModel {
-  Future<FormData> toFormData() async {
+  // 🚀 1. Terima parameter opsional compressedFotoPath
+  Future<FormData> toFormData({String? compressedFotoPath}) async {
     final prefix = isCheckIn ? 'CheckIn' : 'CheckOut';
 
     final formData = FormData();
@@ -53,23 +54,51 @@ extension AbsensiRequestModelExt on AbsensiRequestModel {
     formData.fields.add(MapEntry('Latitude', latitude.toString()));
     formData.fields.add(MapEntry('Longitude', longitude.toString()));
 
-    // 2. Data List Alat (Key diulang sesuai standar form-data array)
-    // Contoh output HTTP: DetailAlatList=1, DetailAlatList=2
+    // 2. Data List Alat
     for (final id in detailAlatIds) {
       formData.fields.add(MapEntry('DetailAlatList', id.toString()));
     }
 
+    // 🚀 2. Tentukan foto mana yang dikirim (Prioritas: foto kompresi > foto mentah HP)
+    final pathToUpload = compressedFotoPath ?? fotoPath;
+    final file = File(pathToUpload);
+
+    if (!await file.exists()) {
+      throw Exception('File foto absensi tidak ditemukan di perangkat');
+    }
+
     // 🚀 3. PERBAIKAN ANTI-CRASH RETRY: Baca sebagai Bytes!
-    // Membaca ke RAM/Bytes memastikan file bisa dikirim berulang kali saat Dio melakukan retry
-    final bytes = await File(fotoPath).readAsBytes();
+    final bytes = await file.readAsBytes();
 
     formData.files.add(
       MapEntry(
         'Foto$prefix', // Hasilnya: FotoCheckIn atau FotoCheckOut
-        MultipartFile.fromBytes(bytes, filename: fotoPath.split('/').last),
+        MultipartFile.fromBytes(
+          bytes,
+          filename: file.path.split('/').last,
+          // 🚀 4. DYNAMIC MIME TYPE: Aman di HP Samsung, Xiaomi, iPhone, dll.
+          contentType: _getMediaType(file.path),
+        ),
       ),
     );
 
     return formData;
+  }
+}
+
+DioMediaType _getMediaType(String filePath) {
+  final ext = filePath.split('.').last.toLowerCase();
+  switch (ext) {
+    case 'png':
+      return DioMediaType('image', 'png');
+    case 'webp':
+      return DioMediaType('image', 'webp');
+    case 'heic':
+    case 'heif':
+      return DioMediaType('image', 'heic');
+    case 'jpg':
+    case 'jpeg':
+    default:
+      return DioMediaType('image', 'jpeg');
   }
 }

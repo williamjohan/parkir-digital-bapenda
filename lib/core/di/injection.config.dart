@@ -274,9 +274,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i135.RealisasiRemoteDataSource>(
     () => _i135.RealisasiRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i926.PengawasanDatasource>(
-    () => _i926.PengawasanDatasourceImpl(gh<_i361.Dio>()),
-  );
   gh.lazySingleton<_i263.IAbsensiRepository>(
     () => _i482.AbsensiRepositoryImpl(
       remoteDataSource: gh<_i606.IAbsensiRemoteDataSource>(),
@@ -329,6 +326,12 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(
     () => _i847.ProfileRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i926.PengawasanDatasource>(
+    () => _i926.PengawasanDatasourceImpl(
+      gh<_i361.Dio>(),
+      gh<_i37.IImageService>(),
+    ),
   );
   gh.lazySingleton<_i879.IProfileRepository>(
     () => _i334.ProfileRepositoryImpl(
