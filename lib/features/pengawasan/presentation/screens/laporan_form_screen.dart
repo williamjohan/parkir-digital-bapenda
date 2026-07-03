@@ -67,15 +67,20 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back_ios_rounded, size: 18),
+        title: Text(
+          'Buat Laporan',
+          style: AppTypography.heading5.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        title: Text("Buat Laporan", style: AppTypography.bodySemiBold),
         centerTitle: true,
+        backgroundColor: AppColors.surface,
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        elevation: 0,
+        foregroundColor: Colors.black,
+        iconTheme: IconThemeData(color: AppColors.primary),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

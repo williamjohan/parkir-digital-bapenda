@@ -79,18 +79,22 @@ class _TransactionPageState extends State<TransactionPage> {
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
             appBar: AppBar(
-              title: GestureDetector(
-                onDoubleTap: () {
-                  if (kDebugMode) ChuckerFlutter.showChuckerScreen();
-                },
-                child: const Text(
-                  'Transaksi Parkir',
-                  style: AppTypography.heading5,
+              title: Text(
+                'Transaksi Parkir',
+                style: AppTypography.heading5.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              backgroundColor: AppColors.surface,
-              elevation: 0,
               centerTitle: true,
+              backgroundColor: AppColors.surface,
+              scrolledUnderElevation: 0,
+              shape: Border(
+                bottom: BorderSide(color: AppColors.primary, width: 1.0),
+              ),
+              elevation: 0,
+              foregroundColor: Colors.black,
+              iconTheme: IconThemeData(color: AppColors.primary),
             ),
             body: isLoading
                 ? const Center(
@@ -149,7 +153,6 @@ class _TransactionPageState extends State<TransactionPage> {
                                           .proceedToPayment(_requiresJukir)
                                     : null,
                               ),
-                              const SizedBox(height: 16),
                             ],
                           ),
                   ),

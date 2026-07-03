@@ -53,13 +53,15 @@ import 'go_router_refresh_stream.dart';
 
 class AppRouter {
   AppRouter._();
-
+  static final GlobalKey<NavigatorState> rootNavigatorKey =
+      GlobalKey<NavigatorState>();
   static GoRouter? _router;
 
   static GoRouter getRouter(AppAuthCubit appAuthCubit) {
     if (_router != null) return _router!;
 
     _router = GoRouter(
+      navigatorKey: rootNavigatorKey,
       initialLocation: AppRoutes.splash,
       observers: [ChuckerFlutter.navigatorObserver],
       refreshListenable: GoRouterRefreshStream(appAuthCubit.stream),

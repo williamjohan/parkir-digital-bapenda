@@ -25,11 +25,20 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: Text('Daftar Jukir', style: AppTypography.heading5),
+        title: Text(
+          'Daftar Jukir',
+          style: AppTypography.heading5.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: AppColors.surface,
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
+        iconTheme: IconThemeData(color: AppColors.primary),
       ),
       body: BlocBuilder<DataJukirCubit, DataJukirState>(
         builder: (context, state) {
