@@ -275,13 +275,13 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                         children: [
                           _buildNumberField(
                             controller: _motorController,
-                            label: "Jumlah Motor",
+                            label: "Jumlah Motor di Lapangan",
                             icon: Icons.two_wheeler_rounded,
                           ),
                           const SizedBox(height: 12),
                           _buildNumberField(
                             controller: _mobilController,
-                            label: "Jumlah Mobil",
+                            label: "Jumlah Mobil di Lapangan",
                             icon: Icons.directions_car_rounded,
                           ),
                         ],
