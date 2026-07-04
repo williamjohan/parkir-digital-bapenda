@@ -100,7 +100,7 @@ class CheckInOutEntity extends Equatable {
     required this.detailAlatCheckOut,
   });
 
-  bool get hasJadwal => idEvent != 0 && op.isNotEmpty;
+  bool get hasJadwal => status != 0 ;
 
   @override
   List<Object?> get props => [

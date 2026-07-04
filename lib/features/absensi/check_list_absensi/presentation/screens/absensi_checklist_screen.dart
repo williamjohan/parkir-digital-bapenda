@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
@@ -208,27 +209,23 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
       listenWhen: (prev, curr) => prev.status != curr.status,
       listener: (context, state) {
         if (state.status == AbsensiStatus.failure) {
-          PbShowDialog.show(
+          FormResultDialog.showError(
             context,
             title: "Gagal",
-            description: state.errorMessage,
-            icon: Icons.error_outline_rounded,
-            iconColor: AppColors.error,
-            buttonText: "OK",
+            description: state.errorMessage.isNotEmpty
+                ? state.errorMessage
+                : "Terjadi kesalahan, silakan coba lagi",
             onConfirm: () {
               // tetap di screen ini biar user bisa coba lagi
             },
           );
         } else if (state.status == AbsensiStatus.success) {
-          PbShowDialog.show(
+          FormResultDialog.showSuccess(
             context,
             title: _isCheckIn ? "Check In Berhasil" : "Check Out Berhasil",
             description: _isCheckIn
                 ? "Absensi check in kamu sudah tersimpan"
                 : "Absensi check out kamu sudah tersimpan",
-            icon: Icons.check_circle_outline_rounded,
-            iconColor: AppColors.success,
-            buttonText: "OK",
             onConfirm: () {
               Navigator.of(context).pop(true);
             },

@@ -10,7 +10,7 @@ class PbShowDialog {
     required String description,
     bool showBtnKeluar = false,
     IconData icon = Icons.warning_amber_outlined,
-    Color iconColor = AppColors.success, // Default hijau untuk sukses
+    Color iconColor = AppColors.error, // Default hijau untuk sukses
     String buttonText = 'Keluar',
     VoidCallback? onConfirm, // Aksi tambahan saat tombol ditekan
   }) {
@@ -51,7 +51,7 @@ class PbShowDialog {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: iconColor,
+                          backgroundColor: Colors.transparent,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -75,7 +75,7 @@ class PbShowDialog {
                   Expanded(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: iconColor,
+                        backgroundColor: AppColors.error,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
