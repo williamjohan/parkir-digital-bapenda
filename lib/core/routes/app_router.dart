@@ -133,7 +133,10 @@ class AppRouter {
           name: AppRoutes.addLaporanPelanggaran,
           builder: (context, state) => BlocProvider(
             create: (_) => locator<PengawasanCubit>(),
-            child: const LaporanFormScreen(),
+            child: LaporanFormScreen(
+              locationService:
+                  locator<IAppLocationService>(), // 🔥 tambahin ini
+            ),
           ),
         ),
         GoRoute(
