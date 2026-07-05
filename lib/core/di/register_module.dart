@@ -8,6 +8,8 @@ import 'package:injectable/injectable.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import '../network/dio_auth_interceptor.dart';
 import '../network/env_config.dart';
+import '../network/resilent_dns_resolver.dart';
+import '../utils/app_logger.dart';
 
 @module
 abstract class RegisterModule {
@@ -25,52 +27,125 @@ abstract class RegisterModule {
         },
       ),
     );
+
+    // 🚀 1. HTTP CLIENT ADAPTER (Solusi Tuntas Android <= 10)
     dio.httpClientAdapter = IOHttpClientAdapter(
       createHttpClient: () {
         final client = HttpClient();
         client.connectionTimeout = const Duration(seconds: 30);
 
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) {
-              final baseUrl = EnvConfig.baseUrl;
+        // Helper: Cek otoritas bypass sertifikat
+        bool isCertBypassAllowed(String host) {
+          final parsedBaseHost = Uri.tryParse(EnvConfig.baseUrl)?.host ?? '';
+          const allowedHosts = [
+            'drivebapenda.surabaya.go.id',
+            'apibapenda.surabaya.go.id',
+          ];
+          return host == parsedBaseHost || allowedHosts.contains(host);
+        }
 
-              const allowedBypassHosts = <String>[
-                'drivebapenda.surabaya.go.id',
-              ];
+        // 🛡️ ANTI-REGRESI: Modifikasi alur pembuatan Socket untuk mem-bypass DNS OS bawaan.
+        // Jika DNS gagal (kasus Android 10 kebawah), gunakan IP dari DoH.
+        // Kemudian, socket mentah dibungkus manual dengan SecureSocket (TLS).
+        client.connectionFactory =
+            (Uri uri, String? proxyHost, int? proxyPort) async {
+              final originalHost = uri.host;
+              var targetHost = originalHost;
 
-              if (baseUrl.contains(host)) return true;
-              if (allowedBypassHosts.contains(host)) return true;
+              try {
+                // Resolusi DNS dengan budget 4 detik
+                final resolvedIp = await ResilientDnsResolver.resolveIp(
+                  originalHost,
+                ).timeout(const Duration(seconds: 4));
+                if (resolvedIp != null) targetHost = resolvedIp;
+              } catch (_) {
+                // Fallback aman ke hostname asli
+              }
 
-              return false;
+              // Budget TCP connection 15 detik
+              final connectTask = await Socket.startConnect(
+                targetHost,
+                uri.port,
+              ).timeout(const Duration(seconds: 15));
+              final rawSocket = await connectTask.socket;
+
+              if (uri.scheme != 'https') {
+                return ConnectionTask.fromSocket(
+                  Future.value(rawSocket),
+                  () => rawSocket.destroy(),
+                );
+              }
+
+              try {
+                // Budget TLS Handshake 10 detik
+                final secureSocket = await SecureSocket.secure(
+                  rawSocket,
+                  host: originalHost,
+                  onBadCertificate: (cert) => isCertBypassAllowed(originalHost),
+                ).timeout(const Duration(seconds: 10));
+
+                return ConnectionTask.fromSocket(
+                  Future.value(secureSocket),
+                  () => secureSocket.destroy(),
+                );
+              } catch (e) {
+                // 🧹 Hancurkan soket mentah jika TLS Handshake gagal/timeout!
+                rawSocket.destroy();
+                rethrow;
+              }
             };
+
         return client;
       },
     );
+
+    // 🚀 2. RETRY INTERCEPTOR (Otomatis mengetuk ulang endpoint jika gagal/delay lama)
     dio.interceptors.add(
       RetryInterceptor(
         dio: dio,
-        logPrint: print, // Bisa diganti dengan AppLogger.debug nantinya
-        retries: 3, // Coba ulang 3 kali jika gagal koneksi
+        logPrint: (message) {
+          if (kDebugMode) AppLogger.debug('>>> [DIO RETRY] 🔄 $message');
+        },
+        retries: 3, // Coba hingga 3x[cite: 5]
         retryDelays: const [
-          Duration(seconds: 2),
-          Duration(seconds: 5),
-          Duration(seconds: 10),
+          Duration(seconds: 2), // Ketukan pertama cepat
+          Duration(seconds: 5), // Ketukan kedua agak direnggangkan
+          Duration(seconds: 10), // Ketukan terakhir
         ],
-        retryableExtraStatuses: {status408RequestTimeout},
-      ),
-    );
-    dio.interceptors.add(authInterceptor);
-    dio.interceptors.add(
-      LogInterceptor(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        error: true,
+        retryEvaluator: (error, attempt) {
+          // 🛡️ ANTI-REGRESI FORMDATA: Jika request adalah upload gambar (FormData),
+          // JANGAN di-retry otomatis untuk mencegah error double-stream / crash[cite: 5].
+          if (error.requestOptions.data is FormData) {
+            if (kDebugMode) {
+              AppLogger.warning(
+                '>>> [DIO RETRY] 🛑 Skip auto-retry untuk FormData (Anti-Crash)[cite: 5]',
+              );
+            }
+            return false;
+          }
+          return DefaultRetryEvaluator({
+            ...defaultRetryableStatuses,
+            status408RequestTimeout,
+          }).evaluate(error, attempt);
+        },
       ),
     );
 
+    // 🚀 3. INTERCEPTOR LAINNYA
+    // (Opsional: DnsDiagnosticInterceptor bisa dilepas karena ResilientDnsResolver sudah cukup memberikan log[cite: 3, 4])
+    dio.interceptors.add(authInterceptor);
+
     if (kDebugMode) {
+      dio.interceptors.add(
+        LogInterceptor(
+          requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: false,
+          error: true,
+          logPrint: (object) => AppLogger.debug(object.toString()),
+        ),
+      );
       dio.interceptors.add(ChuckerDioInterceptor());
     }
 

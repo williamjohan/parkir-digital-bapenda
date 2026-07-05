@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Secara eksplisit mendaftarkan domain Bapenda dan mengizinkan trust anchor -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">apibapenda.surabaya.go.id</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </domain-config>
+    
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
