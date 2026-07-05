@@ -76,7 +76,7 @@ extension AbsensiRequestModelExt on AbsensiRequestModel {
         MultipartFile.fromBytes(
           bytes,
           filename: file.path.split('/').last,
-          // 🚀 4. DYNAMIC MIME TYPE: Aman di HP Samsung, Xiaomi, iPhone, dll.
+          // 4. DYNAMIC MIME TYPE: Aman di HP Samsung, Xiaomi, iPhone, dll.
           contentType: _getMediaType(file.path),
         ),
       ),

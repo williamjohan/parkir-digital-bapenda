@@ -53,10 +53,15 @@ abstract class RegisterModule {
               var targetHost = originalHost;
 
               try {
-                // Resolusi DNS dengan budget 4 detik
+                //  FIX: naik dari 4s -> 8s. System resolver (3s) + 2 provider
+                // DoH (3s masing-masing, sequential) butuh budget hingga ~9s
+                // worst-case. Timeout 4s sebelumnya memotong DoH fallback
+                // sebelum sempat jalan, sehingga fallback yang justru
+                // dirancang untuk device/jaringan bermasalah nyaris tidak
+                // pernah efektif.
                 final resolvedIp = await ResilientDnsResolver.resolveIp(
                   originalHost,
-                ).timeout(const Duration(seconds: 4));
+                ).timeout(const Duration(seconds: 8));
                 if (resolvedIp != null) targetHost = resolvedIp;
               } catch (_) {
                 // Fallback aman ke hostname asli
@@ -113,15 +118,29 @@ abstract class RegisterModule {
           Duration(seconds: 10), // Ketukan terakhir
         ],
         retryEvaluator: (error, attempt) {
-          // 🛡️ ANTI-REGRESI FORMDATA: Jika request adalah upload gambar (FormData),
-          // JANGAN di-retry otomatis untuk mencegah error double-stream / crash[cite: 5].
+          //  FIX: request FormData sekarang dibangun dari MultipartFile.fromBytes
+          // (lihat absensi_model.dart & pengawasan_datasource.dart), bukan lagi
+          // dari file stream — jadi risiko "double-stream crash" yang jadi
+          // alasan blokir total retry sebelumnya sudah tidak berlaku.
+          //
+          // Tapi tetap perlu hati-hati soal DUPLIKAT submission: retry hanya
+          // aman kalau dipastikan request BELUM SAMPAI ke server sama sekali
+          // (gagal connect). Kalau sudah sempat kirim body lalu timeout
+          // menunggu balasan (sendTimeout/receiveTimeout), retry berisiko
+          // check-in/check-out tercatat dua kali di backend selama belum ada
+          // idempotency key — jadi untuk fase ini kita TIDAK retry otomatis.
           if (error.requestOptions.data is FormData) {
+            final safeToRetry =
+                error.type == DioExceptionType.connectionError ||
+                error.type == DioExceptionType.connectionTimeout;
+
             if (kDebugMode) {
               AppLogger.warning(
-                '>>> [DIO RETRY] 🛑 Skip auto-retry untuk FormData (Anti-Crash)[cite: 5]',
+                '>>> [DIO RETRY] FormData (${error.type}): '
+                '${safeToRetry ? "🔄 retry (belum sampai server)" : "🛑 skip (ambigu, cegah duplikat)"}',
               );
             }
-            return false;
+            return safeToRetry;
           }
           return DefaultRetryEvaluator({
             ...defaultRetryableStatuses,

@@ -22,11 +22,15 @@ class ResilientDnsResolver {
       return cached.ip;
     }
 
-    // 1) System resolver — Jalur normal/cepat[cite: 4].
+    // 1) System resolver — Jalur normal/cepat.
+    // 🚀 FIX: turun dari 5s -> 3s. Pemanggil (register_module.dart) membungkus
+    // seluruh resolveIp() dengan outer timeout; kalau system resolver sendiri
+    // sudah pakai 5s, DoH fallback di bawah nyaris tidak pernah kebagian
+    // kesempatan jalan sampai selesai sebelum outer timeout terpotong.
     try {
       final result = await InternetAddress.lookup(
         host,
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 3));
       if (result.isNotEmpty) {
         final ip = result.first.address;
         _cache[host] = _CachedIp(ip);
@@ -39,13 +43,13 @@ class ResilientDnsResolver {
       }
     }
 
-    // 2) Fallback DoH — Hanya ditempuh kalau system resolver gagal (Device lawas)[cite: 4].
+    // 2) Fallback DoH — Hanya ditempuh kalau system resolver gagal (Device lawas)
     for (final provider in _dohProviders) {
       try {
         final ip = await _resolveViaDoh(
           provider,
           host,
-        ).timeout(const Duration(seconds: 5));
+        ).timeout(const Duration(seconds: 3));
         if (ip != null) {
           if (kDebugMode) {
             AppLogger.warning(
@@ -60,9 +64,7 @@ class ResilientDnsResolver {
       }
     }
 
-    AppLogger.error(
-      '>>> [DNS FATAL] Semua resolver gagal memetakan: $host[cite: 4]',
-    );
+    AppLogger.error('>>> [DNS FATAL] Semua resolver gagal memetakan: $host');
     return null;
   }
 

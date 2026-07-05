@@ -47,12 +47,12 @@ class ImageServiceImpl implements IImageService {
         // Jika ukuran sudah di bawah target, langsung kembalikan path
         if (fileLength <= maxTargetBytes) {
           AppLogger.debug(
-            '>>> [COMPRESSION SUCCESS] Foto tajam & lolos sensor Bapenda!',
+            '>>> [COMPRESSION SUCCESS] Gambar Berhasil di compress',
           );
           return bestPath;
         }
 
-        // 🚀 Asynchronous Deletion (Tidak me-lock UI Event Loop)
+        //  Asynchronous Deletion (Tidak me-lock UI Event Loop)
         if (i < 3) {
           final oldFile = File(bestPath);
           if (await oldFile.exists()) {
