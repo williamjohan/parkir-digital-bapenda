@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ota_update/ota_update.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'update_progress_state.dart';
 
 class UpdateProgressCubit extends Cubit<UpdateProgressState> {
@@ -21,54 +22,79 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
   int _stuckTicks = 0;
   bool _isRetrying = false;
   bool _hasReceivedFirstEvent = false;
+  bool _downloadCompleted = false;
+  bool _lastErrorWasPermission = false;
 
-  // 🚀 Tuning stuck-detector: cek tiap 10 detik.
-  // - 2 tick (~20s) tanpa perubahan -> SOFT WARNING (ubah pesan, TIDAK gagal).
-  //   Sinyal lapangan lemah wajar diam beberapa saat tapi sebenarnya masih jalan.
-  // - 5 tick (~50s) tanpa perubahan -> HARD FAIL (baru dianggap benar-benar macet).
   static const _tickInterval = Duration(seconds: 10);
   static const _softWarnTicks = 2;
   static const _hardFailTicks = 5;
-
-  // 🚀 Kalau dalam 20 detik pertama belum ada OtaEvent SAMA SEKALI
-  // (native belum sempat mulai download / DNS gagal / hang di awal),
-  // jangan biarkan user terjebak selamanya di "Menghubungkan...".
   static const _initialConnectTimeout = Duration(seconds: 20);
 
-  /// Entry point
-  void start() {
+  Future<void> start() async {
     if (Platform.isIOS) return;
-
-    // 🚀 FIX: guard double-start (misal user tap "Coba Lagi" dua kali cepat,
-    // atau widget rebuild sebelum sub lama sempat di-cancel). Tanpa guard ini
-    // ota_update plugin bisa balas ALREADY_RUNNING_ERROR yang sebelumnya
-    // tidak ditangani sama sekali (jatuh ke default: break, diam saja).
     if (_otaSub != null) return;
 
-    _hasReceivedFirstEvent = false;
-    _lastProgress = -1;
-    _stuckTicks = 0;
+    final hasPermission = await _ensureInstallPermission();
+    if (!hasPermission) return;
 
+    _resetTrackingState();
     _startMonitoring();
     _startDownload();
   }
 
+  Future<bool> _ensureInstallPermission() async {
+    final status = await Permission.requestInstallPackages.status;
+    if (status.isGranted) return true;
+
+    // 🚀 Berikan UX yang halus saat OS meminta izin (tidak freeze mendadak)
+    emit(
+      const UpdateDownloading(
+        progress: 0.0,
+        message: "Memeriksa izin sistem...",
+      ),
+    );
+
+    final result = await Permission.requestInstallPackages.request();
+    if (result.isGranted) return true;
+
+    _lastErrorWasPermission = true;
+    emit(
+      const UpdateError(
+        message:
+            'Instalasi tidak dapat dilanjutkan: izin "Instal aplikasi '
+            'tidak dikenal" belum diaktifkan untuk aplikasi ini. '
+            'Tekan "Coba Lagi" untuk membuka Pengaturan.',
+      ),
+    );
+    return false;
+  }
+
+  void _resetTrackingState() {
+    _hasReceivedFirstEvent = false;
+    _lastProgress = -1;
+    _stuckTicks = 0;
+    _downloadCompleted = false;
+    _lastErrorWasPermission = false;
+  }
+
   void _startMonitoring() {
-    _connectivitySub?.cancel();
-    _stuckTimer?.cancel();
-    _initialConnectTimer?.cancel();
+    _disposeMonitoring(); // 🚀 Pastikan timer lama benar-benar mati sebelum bikin baru
 
     _connectivitySub = Connectivity().onConnectivityChanged.listen((results) {
       if (results.contains(ConnectivityResult.none)) {
-        _emitError("Koneksi internet terputus.");
+        _emitError(
+          _downloadCompleted
+              ? "Pemasangan terhenti: koneksi internet terputus."
+              : "Unduhan terhenti: koneksi internet terputus.",
+        );
       }
     });
 
-    // Fase "Menghubungkan..." sebelum event pertama datang
     _initialConnectTimer = Timer(_initialConnectTimeout, () {
       if (!_hasReceivedFirstEvent) {
         _emitError(
-          "Gagal terhubung ke server unduhan. Periksa koneksi internet Anda.",
+          "Gagal memulai unduhan: tidak dapat terhubung ke server. "
+          "Periksa koneksi internet Anda.",
         );
       }
     });
@@ -81,13 +107,11 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
         _stuckTicks++;
 
         if (_stuckTicks >= _hardFailTicks) {
-          _emitError("Koneksi terlalu lambat / terputus. Coba lagi.");
+          _emitError("Unduhan terhenti: koneksi terlalu lambat. Coba lagi.");
           return;
         }
 
         if (_stuckTicks >= _softWarnTicks) {
-          // Soft warning: kasih tahu user, TAPI JANGAN gagalkan proses.
-          // Sinyal lapangan yang lemah masih wajar diam beberapa saat.
           emit(
             UpdateDownloading(
               progress: state.progress,
@@ -112,12 +136,34 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
             downloadUrl,
             destinationFilename:
                 'cek_reklame_v${version.replaceAll(" ", "_")}.apk',
+            usePackageInstaller: true,
           )
           .listen(
             _onOtaEvent,
             onError: (_) {
-              _emitError("Terjadi kesalahan koneksi.");
+              _emitError(
+                _downloadCompleted
+                    ? "Pemasangan gagal: terjadi kesalahan tak terduga."
+                    : "Unduhan gagal: terjadi kesalahan koneksi.",
+              );
             },
+            onDone: () {
+              final current = state;
+              final alreadyTerminal =
+                  current is UpdateInstalling ||
+                  current is UpdateCompleted ||
+                  current is UpdateError;
+
+              if (!alreadyTerminal) {
+                _emitError(
+                  _downloadCompleted
+                      ? 'Pemasangan terhenti tak terduga. Pastikan izin '
+                            '"Instal aplikasi tidak dikenal" sudah aktif, lalu coba lagi.'
+                      : 'Unduhan terhenti tak terduga. Coba lagi.',
+                );
+              }
+            },
+            cancelOnError: true,
           );
     } catch (_) {
       _emitError("Gagal memulai unduhan.");
@@ -141,6 +187,7 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
         break;
 
       case OtaStatus.INSTALLING:
+        _downloadCompleted = true;
         _disposeMonitoring();
         emit(const UpdateInstalling());
 
@@ -150,33 +197,31 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
         break;
 
       case OtaStatus.PERMISSION_NOT_GRANTED_ERROR:
-        _emitError("Izin instalasi ditolak. Aktifkan izin lalu coba lagi.");
+        _lastErrorWasPermission = true;
+        _emitError(
+          'Pemasangan dibatalkan: izin "Instal aplikasi tidak dikenal" '
+          'belum diaktifkan. Tekan "Coba Lagi" untuk membuka Pengaturan.',
+        );
         break;
 
       case OtaStatus.INTERNAL_ERROR:
-        _emitError("Gagal mengunduh file (kesalahan internal).");
+        _emitError(
+          _downloadCompleted
+              ? "Pemasangan gagal (kesalahan internal)."
+              : "Unduhan gagal (kesalahan internal).",
+        );
         break;
 
-      // 🚀 FIX: sebelumnya jatuh ke default (diam) -> user stuck permanen.
-      // DOWNLOAD_ERROR terjadi kalau HTTP response gagal (404/500/link
-      // kadaluarsa/file sudah dipindah dari server) — sangat mungkin terjadi
-      // untuk update yang belum ada di Play Store (link download manual).
       case OtaStatus.DOWNLOAD_ERROR:
         _emitError(
           "Gagal mengunduh berkas pembaruan dari server. Coba lagi beberapa saat.",
         );
         break;
 
-      // 🚀 FIX: sebelumnya jatuh ke default (diam). Ini menandakan ada
-      // proses download lain yang masih aktif — bukan error fatal untuk
-      // user, cukup abaikan (download yang sedang berjalan tetap lanjut).
       case OtaStatus.ALREADY_RUNNING_ERROR:
         break;
 
       default:
-        // Status baru dari versi plugin yang lebih baru & belum kita kenal.
-        // Jangan biarkan diam total tanpa jejak — minimal tercatat di log,
-        // tapi TIDAK menggagalkan proses yang mungkin masih berjalan normal.
         break;
     }
   }
@@ -189,9 +234,24 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
   }
 
   Future<void> retry() async {
+    if (_lastErrorWasPermission) {
+      // 🚀 FIX ANTI-JEBAKAN: Reset flag setelah melempar ke Settings!
+      // Agar saat user kembali ke app dan klik "Coba Lagi", proses download ulang benar-benar berjalan.
+      _lastErrorWasPermission = false;
+      await openAppSettings();
+
+      // Ubah UI agar terlihat sedang menunggu user bertindak, bukan error mati
+      emit(
+        const UpdateDownloading(
+          progress: 0.0,
+          message: "Menunggu izin dari sistem operasi...",
+        ),
+      );
+      return;
+    }
+
     _isRetrying = true;
-    _otaSub?.cancel();
-    _otaSub = null;
+    _disposeMonitoring(); // Bersihkan yang lama sebelum retry
 
     emit(
       const UpdateDownloading(
@@ -202,18 +262,21 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
 
     await Future.delayed(const Duration(seconds: 2));
 
-    final result = await Connectivity().checkConnectivity();
-    if (result.contains(ConnectivityResult.none)) {
+    final connectivity = await Connectivity().checkConnectivity();
+    if (connectivity.contains(ConnectivityResult.none)) {
       _isRetrying = false;
       emit(const UpdateError(message: "Koneksi masih terputus."));
       return;
     }
 
-    _isRetrying = false;
-    _hasReceivedFirstEvent = false;
-    _lastProgress = -1;
-    _stuckTicks = 0;
+    final hasPermission = await _ensureInstallPermission();
+    if (!hasPermission) {
+      _isRetrying = false;
+      return;
+    }
 
+    _isRetrying = false;
+    _resetTrackingState();
     _startMonitoring();
     _startDownload();
   }
@@ -229,6 +292,11 @@ class UpdateProgressCubit extends Cubit<UpdateProgressState> {
   @override
   Future<void> close() {
     _disposeMonitoring();
+    // 🚀 Bantu Garbage Collector bersihkan memori seutuhnya
+    _isRetrying = false;
+    _lastErrorWasPermission = false;
+    _downloadCompleted = false;
+    _hasReceivedFirstEvent = false;
     return super.close();
   }
 }

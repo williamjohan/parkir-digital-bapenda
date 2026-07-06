@@ -29,6 +29,7 @@ class UpdateProgressDialog extends StatelessWidget {
       create: (context) =>
           UpdateProgressCubit(downloadUrl: url, version: version)..start(),
       child: PopScope(
+        // Tetap false agar user tidak tidak sengaja membatalkan saat proses download berjalan.
         canPop: false,
         child: Dialog(
           shape: RoundedRectangleBorder(
@@ -36,7 +37,19 @@ class UpdateProgressDialog extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: BlocBuilder<UpdateProgressCubit, UpdateProgressState>(
+            // 🚀 PERBAIKAN ARSITEKTUR: Gunakan BlocConsumer menggantikan BlocBuilder[cite: 6]
+            child: BlocConsumer<UpdateProgressCubit, UpdateProgressState>(
+              // 1. LISTENER: Khusus mengeksekusi perintah non-UI (Side Effects)
+              listener: (context, state) {
+                // Ketika Cubit memancarkan UpdateCompleted (setelah delay 2 detik dari INSTALLING),
+                // kita cabut/tutup dialog Flutter secara otomatis dari stack Navigator.
+                if (state is UpdateCompleted) {
+                  // 🚀 BEST PRACTICE: Gunakan rootNavigator: true agar yang ditutup
+                  // pasti instance showDialog di atas, bukan route halaman di bawahnya.
+                  Navigator.of(context, rootNavigator: true).pop();
+                }
+              },
+              // 2. BUILDER: Murni hanya menggambar tampilan[cite: 6]
               builder: (context, state) {
                 if (state is UpdateError) {
                   return Column(
