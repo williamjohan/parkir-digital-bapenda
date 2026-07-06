@@ -32,7 +32,7 @@ class MainAbsensiWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isCheckedIn = absensiData.checkInString.isNotEmpty;
     final bool isCheckedOut = absensiData.checkOutString.isNotEmpty;
-    final bool hasJadwal = true; //
+    final bool hasJadwal = absensiData.hasJadwal; //
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

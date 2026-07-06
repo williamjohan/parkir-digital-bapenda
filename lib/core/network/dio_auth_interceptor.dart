@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../storage/secure_storage_manager.dart';
-import '../utils/app_logger.dart'; // 🚀 Tetap pertahankan CCTV kita
+import '../utils/app_logger.dart';
 
 @lazySingleton
 class DioAuthInterceptor extends Interceptor {
@@ -16,7 +16,6 @@ class DioAuthInterceptor extends Interceptor {
   ) async {
     final accessToken = await _storage.getAccessToken();
 
-    // 🚀 TEMPEL: Jika ada token di brankas, tempelkan ke header
     if (accessToken != null && accessToken.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
@@ -29,23 +28,18 @@ class DioAuthInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    // 🚀 TENDANG: Jika Backend membalas dengan 401 (Token Expired / Invalid)
+    // TENDANG: Jika Backend membalas dengan 401 (Token Expired / Invalid)[cite: 2]
     if (err.response?.statusCode == 401) {
       AppLogger.error(
-        '>>> [AuthInterceptor] 🚨 401 Unauthorized terdeteksi pada: ${err.requestOptions.path}',
+        '>>> [AUTH] 🚨 401 Unauthorized pada: ${err.requestOptions.path}',
       );
-      AppLogger.warning(
-        '>>> [AuthInterceptor] 🧹 Sesi berakhir! Membersihkan brankas token...',
-      );
+      AppLogger.warning('>>> [AUTH] 🧹 Membersihkan sesi aktif...');
 
-      // 1. Catat alasan logout untuk keperluan debugging / tracking
       await _storage.saveLogoutReason('SESSION_EXPIRED');
-
-      // 2. Sapu bersih token agar sistem (AppAuthCubit) tahu sesi sudah mati
-      await _storage.clearAllTokens();
+      await _storage
+          .clearAllTokens(); // AppAuthCubit akan menangkap ini[cite: 2]
     }
 
-    // Lanjutkan lempar error ke Repository agar ditangkap sebagai ServerException / AuthException
     return super.onError(err, handler);
   }
 }

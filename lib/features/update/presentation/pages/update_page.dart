@@ -116,7 +116,7 @@ class _UpdatePageContent extends StatelessWidget {
                     if (state is CheckUpdateLoading) {
                       return _buildLoadingState();
                     } else if (state is CheckUpdateUpToDate) {
-                      return _buildUpToDateState();
+                      return _buildUpToDateState(state);
                     } else if (state is CheckUpdateAvailable) {
                       return _buildUpdateAvailableState(context, state);
                     } else if (state is CheckUpdateError) {
@@ -157,9 +157,9 @@ class _UpdatePageContent extends StatelessWidget {
     );
   }
 
-  Widget _buildUpToDateState() {
+  Widget _buildUpToDateState(CheckUpdateUpToDate state) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -177,7 +177,22 @@ class _UpdatePageContent extends StatelessWidget {
             "Aplikasi Sudah Versi Terbaru",
             style: AppTypography.bodySemiBold,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              "v${state.versionName}",
+              style: AppTypography.caption.copyWith(
+                color: AppColors.primaryDark,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
           Text(
             "Anda sudah menggunakan versi terbaru dan paling stabil saat ini.",
             textAlign: TextAlign.center,
@@ -185,6 +200,53 @@ class _UpdatePageContent extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
           ),
+          // 🚀 FITUR BARU: tampilkan apa yang berubah di versi ini,
+          // bukan cuma status "sudah terbaru". Data changelog sudah
+          // tersedia dari server, sebelumnya tidak dipakai di UI.
+          if (state.changelog.trim().isNotEmpty &&
+              state.changelog.trim() != '-') ...[
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(12),
+                border: const Border(
+                  left: BorderSide(color: AppColors.success, width: 4),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.history_edu_rounded,
+                        size: 16,
+                        color: AppColors.textPrimary,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        "Pembaruan pada versi ini:",
+                        style: AppTypography.caption.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    state.changelog,
+                    style: AppTypography.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

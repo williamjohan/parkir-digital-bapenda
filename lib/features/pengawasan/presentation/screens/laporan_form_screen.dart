@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
@@ -17,7 +18,6 @@ import '../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
 import '../../domain/entities/jenis_pelanggaran/jenis_pelanggaran_entity.dart';
 import '../cubit/pengawasan_cubit.dart';
 import '../cubit/pengawasan_state.dart';
-import 'package:parkir_digital_bapenda/core/design_system/components/pb_show_dialog.dart';
 
 class LaporanFormScreen extends StatefulWidget {
   final IAppLocationService locationService;
@@ -352,28 +352,20 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                     prev.errorMessage != curr.errorMessage,
                 listener: (context, state) {
                   if (state.isSuccess) {
-                    PbShowDialog.show(
+                    FormResultDialog.showSuccess(
                       context,
                       title: "Laporan Berhasil",
                       description: "Laporan pelanggaran kamu sudah tersimpan",
-                      icon: Icons.check_circle_outline_rounded,
-                      iconColor: AppColors.success,
-                      buttonText: "OK",
-                      onConfirm: () {
-                        Navigator.of(context).pop(true);
-                      },
+                      onConfirm: () => Navigator.of(context).pop(true),
                     );
                     return;
                   }
 
                   if (state.errorMessage != null) {
-                    PbShowDialog.show(
+                    FormResultDialog.showError(
                       context,
                       title: "Gagal",
                       description: state.errorMessage!,
-                      icon: Icons.error_outline_rounded,
-                      iconColor: AppColors.error,
-                      buttonText: "OK",
                       onConfirm: () {
                         // tetap di screen ini biar user bisa coba lagi
                       },

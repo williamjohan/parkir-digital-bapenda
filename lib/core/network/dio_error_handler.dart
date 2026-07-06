@@ -5,17 +5,29 @@ import '../utils/app_logger.dart';
 
 class DioErrorHandler {
   static ServerException handle(DioException e) {
-    if (e.type == DioExceptionType.connectionError ||
+    //  FIX: sebelumnya hanya menangkap connectionError/connectionTimeout.
+    // sendTimeout & receiveTimeout (paling sering terjadi saat upload foto
+    // absensi/pengawasan di sinyal lapangan yang lemah) jatuh ke branch
+    // server-error di bawah dan user dapat pesan generik yang membingungkan.
+    final isConnectivityIssue =
+        e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout ||
-        e.error is SocketException) {
+        e.error is SocketException;
+
+    final isSlowUploadIssue =
+        e.type == DioExceptionType.sendTimeout ||
+        e.type == DioExceptionType.receiveTimeout;
+
+    if (isConnectivityIssue || isSlowUploadIssue) {
       AppLogger.warning(
-        'Koneksi terputus saat mengakses: ${e.requestOptions.path}',
+        'Koneksi bermasalah (${e.type}) saat mengakses: ${e.requestOptions.path}',
       );
 
-      return const ServerException(
+      return ServerException(
         statusCode: 0,
-        message:
-            'Koneksi internet terputus. Pastikan paket data atau Wi-Fi aktif.',
+        message: isSlowUploadIssue
+            ? 'Koneksi terlalu lambat untuk mengirim data. Coba cari lokasi dengan sinyal lebih baik, lalu ulangi.'
+            : 'Koneksi internet terputus. Pastikan paket data atau Wi-Fi aktif.',
       );
     }
 
@@ -31,7 +43,7 @@ class DioErrorHandler {
     return ServerException(statusCode: statusCode, message: message);
   }
 
-  /// 🔥 Ekstrak message dengan aman, apapun bentuk response body-nya
+  ///  Ekstrak message dengan aman, apapun bentuk response body-nya
   static String _extractMessage(dynamic data) {
     try {
       if (data is Map) {

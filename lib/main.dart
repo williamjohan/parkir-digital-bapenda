@@ -10,8 +10,6 @@ import 'core/di/injection.dart';
 import 'core/network/network_cubit.dart';
 import 'core/routes/app_router.dart';
 import 'features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
-
-// 🚀 1. Import Cubit, State, dan Dialog Update Anda
 import 'features/update/presentation/cubit/check_update_cubit.dart';
 import 'features/update/presentation/cubit/check_update_state.dart';
 import 'features/update/presentation/widgets/force_update_overlay_card.dart';
