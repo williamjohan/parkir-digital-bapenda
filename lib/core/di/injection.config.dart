@@ -248,11 +248,11 @@ _i174.GetIt init(
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1042.ISecureStorageManager>()),
   );
-  gh.lazySingleton<_i11.NetworkCubit>(
-    () => _i11.NetworkCubit(gh<_i895.Connectivity>()),
-  );
   gh.lazySingleton<_i344.ConnectivityCheckInterceptor>(
     () => _i344.ConnectivityCheckInterceptor(gh<_i895.Connectivity>()),
+  );
+  gh.lazySingleton<_i11.NetworkCubit>(
+    () => _i11.NetworkCubit(gh<_i895.Connectivity>()),
   );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
