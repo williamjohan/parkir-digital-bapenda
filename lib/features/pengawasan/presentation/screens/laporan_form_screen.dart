@@ -173,6 +173,7 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                 // 3. Seksi Keterangan
                 KeteranganSectionCard(
                   keteranganController: _keteranganController,
+                  onChanged: context.read<PengawasanCubit>().setKeterangan,
                 ),
                 const SizedBox(height: 24),
                 // const Positioned(
@@ -185,35 +186,12 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(8.0),
               // Gunakan ValueListenableBuilder untuk mendengarkan ketikan pada controller
-              child: ValueListenableBuilder<TextEditingValue>(
-                valueListenable: _keteranganController,
-                builder: (context, keteranganValue, child) {
-                  // Pindahkan pengecekan validasi ke dalam sini
-                  final isFotoAda = state.rawPhoto != null;
-                  final isLokasiAda =
-                      state.latitude != null && state.longitude != null;
-                  final isJenisPelanggaranAda = state.request.jenisPel != 0;
-                  // Gunakan keteranganValue dari builder, BUKAN dari _keteranganController langsung
-                  final isKeteranganAda = keteranganValue.text
-                      .trim()
-                      .isNotEmpty;
-
-                  // Form dianggap valid jika semua syarat terpenuhi
-                  final isFormValid =
-                      isFotoAda &&
-                      isLokasiAda &&
-                      isJenisPelanggaranAda &&
-                      isKeteranganAda;
-
-                  return PbPrimaryButton(
-                    text: "Kirim Laporan",
-                    isDisabled:
-                        !isFormValid, // Tombol disable otomatis update secara real-time
-                    onPressed: (state.isLoading || state.isCapturing)
-                        ? null
-                        : _submitLaporan,
-                  );
-                },
+              child: PbPrimaryButton(
+                text: "Kirim Laporan",
+                isDisabled: !state.canSubmit,
+                onPressed: (state.isLoading || state.isCapturing)
+                    ? null
+                    : _submitLaporan,
               ),
             ),
           ),

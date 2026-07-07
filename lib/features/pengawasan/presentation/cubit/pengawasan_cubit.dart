@@ -26,9 +26,21 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     emit(state.copyWith(request: state.request.copyWith(jenisPel: jenisPel)));
   }
 
+  void setKeterangan(String value) {
+    emit(state.copyWith(keteranganText: value));
+  }
+
   // --- LOGIC LOKASI ---
   Future<void> fetchLocation(IAppLocationService locationService) async {
-    emit(state.copyWith(isFetchingLocation: true, locationError: null));
+    emit(
+      state.copyWith(
+        isFetchingLocation: true,
+        locationError: null,
+        latitude: null,
+        longitude: null,
+        placeName: null,
+      ),
+    );
     try {
       final result = await locationService.getCurrentLocation();
       if (isClosed) return;

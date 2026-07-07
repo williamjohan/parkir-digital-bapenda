@@ -34,7 +34,7 @@ class AuthException extends AppException {
 
 class LocationDisabledException extends AppException {
   const LocationDisabledException({
-    super.message = 'GPS (Lokasi) tidak aktif.',
+    super.message = 'GPS tidak aktif, mohon aktifkan GPS anda.',
   });
 }
 

@@ -6,8 +6,13 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 
 class KeteranganSectionCard extends StatelessWidget {
   final TextEditingController keteranganController;
+  final ValueChanged<String> onChanged;
 
-  const KeteranganSectionCard({super.key, required this.keteranganController});
+  const KeteranganSectionCard({
+    super.key, 
+    required this.keteranganController,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +22,7 @@ class KeteranganSectionCard extends StatelessWidget {
       child: TextFormField(
         controller: keteranganController,
         maxLines: 4,
+        onChanged: onChanged,
         decoration: InputDecoration(
           hintText: "Jelaskan detail kejadian di sini...",
           hintStyle: AppTypography.bodySmall.copyWith(

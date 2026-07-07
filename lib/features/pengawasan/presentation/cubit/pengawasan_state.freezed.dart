@@ -22,18 +22,17 @@ mixin _$PengawasanState {
   bool get isLoading => throw _privateConstructorUsedError;
   bool get isLoadingLaporan => throw _privateConstructorUsedError;
   bool get isSuccess => throw _privateConstructorUsedError;
-  String? get errorMessage =>
-      throw _privateConstructorUsedError; // --- TAMBAHAN STATE UNTUK UI FORM ---
-  File? get rawPhoto =>
-      throw _privateConstructorUsedError; // Foto asli sebelum di-watermark
+  String? get errorMessage => throw _privateConstructorUsedError;
+  File? get rawPhoto => throw _privateConstructorUsedError;
   DateTime? get photoTakenAt => throw _privateConstructorUsedError;
   double? get latitude => throw _privateConstructorUsedError;
   double? get longitude => throw _privateConstructorUsedError;
   String? get placeName => throw _privateConstructorUsedError;
   String? get locationError => throw _privateConstructorUsedError;
   bool get isFetchingLocation => throw _privateConstructorUsedError;
-  bool get isCapturing =>
-      throw _privateConstructorUsedError; // ------------------------------------
+  bool get isCapturing => throw _privateConstructorUsedError;
+  String get keteranganText =>
+      throw _privateConstructorUsedError; // 🔑 pindahin dari controller lokal
   List<JenisPelanggaranEntity> get jenisPelanggaran =>
       throw _privateConstructorUsedError;
   List<LaporanPengawasanEntity> get laporan =>
@@ -69,6 +68,7 @@ abstract class $PengawasanStateCopyWith<$Res> {
     String? locationError,
     bool isFetchingLocation,
     bool isCapturing,
+    String keteranganText,
     List<JenisPelanggaranEntity> jenisPelanggaran,
     List<LaporanPengawasanEntity> laporan,
     List<LaporanPengawasanEntity> laporanFake,
@@ -105,6 +105,7 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
     Object? locationError = freezed,
     Object? isFetchingLocation = null,
     Object? isCapturing = null,
+    Object? keteranganText = null,
     Object? jenisPelanggaran = null,
     Object? laporan = null,
     Object? laporanFake = null,
@@ -163,6 +164,10 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
                 ? _value.isCapturing
                 : isCapturing // ignore: cast_nullable_to_non_nullable
                       as bool,
+            keteranganText: null == keteranganText
+                ? _value.keteranganText
+                : keteranganText // ignore: cast_nullable_to_non_nullable
+                      as String,
             jenisPelanggaran: null == jenisPelanggaran
                 ? _value.jenisPelanggaran
                 : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
@@ -216,6 +221,7 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
     String? locationError,
     bool isFetchingLocation,
     bool isCapturing,
+    String keteranganText,
     List<JenisPelanggaranEntity> jenisPelanggaran,
     List<LaporanPengawasanEntity> laporan,
     List<LaporanPengawasanEntity> laporanFake,
@@ -252,6 +258,7 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
     Object? locationError = freezed,
     Object? isFetchingLocation = null,
     Object? isCapturing = null,
+    Object? keteranganText = null,
     Object? jenisPelanggaran = null,
     Object? laporan = null,
     Object? laporanFake = null,
@@ -310,6 +317,10 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
             ? _value.isCapturing
             : isCapturing // ignore: cast_nullable_to_non_nullable
                   as bool,
+        keteranganText: null == keteranganText
+            ? _value.keteranganText
+            : keteranganText // ignore: cast_nullable_to_non_nullable
+                  as String,
         jenisPelanggaran: null == jenisPelanggaran
             ? _value._jenisPelanggaran
             : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
@@ -329,7 +340,7 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$PengawasanStateImpl implements _PengawasanState {
+class _$PengawasanStateImpl extends _PengawasanState {
   const _$PengawasanStateImpl({
     this.request = const RequestLaporanPengawasanEntity(),
     this.isLoading = false,
@@ -344,6 +355,7 @@ class _$PengawasanStateImpl implements _PengawasanState {
     this.locationError,
     this.isFetchingLocation = false,
     this.isCapturing = false,
+    this.keteranganText = '',
     final List<JenisPelanggaranEntity> jenisPelanggaran = const [],
     final List<LaporanPengawasanEntity> laporan =
         const <LaporanPengawasanEntity>[],
@@ -351,7 +363,8 @@ class _$PengawasanStateImpl implements _PengawasanState {
         const <LaporanPengawasanEntity>[],
   }) : _jenisPelanggaran = jenisPelanggaran,
        _laporan = laporan,
-       _laporanFake = laporanFake;
+       _laporanFake = laporanFake,
+       super._();
 
   @override
   @JsonKey()
@@ -367,10 +380,8 @@ class _$PengawasanStateImpl implements _PengawasanState {
   final bool isSuccess;
   @override
   final String? errorMessage;
-  // --- TAMBAHAN STATE UNTUK UI FORM ---
   @override
   final File? rawPhoto;
-  // Foto asli sebelum di-watermark
   @override
   final DateTime? photoTakenAt;
   @override
@@ -387,9 +398,12 @@ class _$PengawasanStateImpl implements _PengawasanState {
   @override
   @JsonKey()
   final bool isCapturing;
-  // ------------------------------------
+  @override
+  @JsonKey()
+  final String keteranganText;
+  // 🔑 pindahin dari controller lokal
   final List<JenisPelanggaranEntity> _jenisPelanggaran;
-  // ------------------------------------
+  // 🔑 pindahin dari controller lokal
   @override
   @JsonKey()
   List<JenisPelanggaranEntity> get jenisPelanggaran {
@@ -419,7 +433,7 @@ class _$PengawasanStateImpl implements _PengawasanState {
 
   @override
   String toString() {
-    return 'PengawasanState(request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
+    return 'PengawasanState(request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, keteranganText: $keteranganText, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
   }
 
   @override
@@ -452,6 +466,8 @@ class _$PengawasanStateImpl implements _PengawasanState {
                 other.isFetchingLocation == isFetchingLocation) &&
             (identical(other.isCapturing, isCapturing) ||
                 other.isCapturing == isCapturing) &&
+            (identical(other.keteranganText, keteranganText) ||
+                other.keteranganText == keteranganText) &&
             const DeepCollectionEquality().equals(
               other._jenisPelanggaran,
               _jenisPelanggaran,
@@ -479,6 +495,7 @@ class _$PengawasanStateImpl implements _PengawasanState {
     locationError,
     isFetchingLocation,
     isCapturing,
+    keteranganText,
     const DeepCollectionEquality().hash(_jenisPelanggaran),
     const DeepCollectionEquality().hash(_laporan),
     const DeepCollectionEquality().hash(_laporanFake),
@@ -496,7 +513,7 @@ class _$PengawasanStateImpl implements _PengawasanState {
       );
 }
 
-abstract class _PengawasanState implements PengawasanState {
+abstract class _PengawasanState extends PengawasanState {
   const factory _PengawasanState({
     final RequestLaporanPengawasanEntity request,
     final bool isLoading,
@@ -511,10 +528,12 @@ abstract class _PengawasanState implements PengawasanState {
     final String? locationError,
     final bool isFetchingLocation,
     final bool isCapturing,
+    final String keteranganText,
     final List<JenisPelanggaranEntity> jenisPelanggaran,
     final List<LaporanPengawasanEntity> laporan,
     final List<LaporanPengawasanEntity> laporanFake,
   }) = _$PengawasanStateImpl;
+  const _PengawasanState._() : super._();
 
   @override
   RequestLaporanPengawasanEntity get request;
@@ -525,9 +544,9 @@ abstract class _PengawasanState implements PengawasanState {
   @override
   bool get isSuccess;
   @override
-  String? get errorMessage; // --- TAMBAHAN STATE UNTUK UI FORM ---
+  String? get errorMessage;
   @override
-  File? get rawPhoto; // Foto asli sebelum di-watermark
+  File? get rawPhoto;
   @override
   DateTime? get photoTakenAt;
   @override
@@ -541,7 +560,9 @@ abstract class _PengawasanState implements PengawasanState {
   @override
   bool get isFetchingLocation;
   @override
-  bool get isCapturing; // ------------------------------------
+  bool get isCapturing;
+  @override
+  String get keteranganText; // 🔑 pindahin dari controller lokal
   @override
   List<JenisPelanggaranEntity> get jenisPelanggaran;
   @override

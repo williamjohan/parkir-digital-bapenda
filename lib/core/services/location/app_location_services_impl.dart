@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
@@ -50,9 +51,6 @@ class AppLocationServiceImpl implements IAppLocationService {
       final lat = position.latitude.toString();
       final lng = position.longitude.toString();
 
-      // Simpan koordinat presisi ke cache
-      await _secureStorage.saveLastLocation(lat, lng);
-
       String? placeName;
       try {
         final placemarks = await placemarkFromCoordinates(
@@ -81,11 +79,18 @@ class AppLocationServiceImpl implements IAppLocationService {
           ].where((e) => e != null && e.isNotEmpty).toList();
 
           placeName = parts.isNotEmpty ? parts.join(', ') : null;
+        } else {
+            debugPrint('[GEOCODING] placemarks list is empty for $lat, $lng');
         }
-      } catch (_) {
+      } catch (e, st) {
         // Jika internet mati sehingga geocoding gagal, biarkan placeName null.
         // Nanti UI akan secara otomatis hanya menampilkan koordinat Lat/Long.
+          debugPrint('[GEOCODING] failed: $e');
       }
+
+      await _secureStorage.saveLastLocation(lat, lng, placeName ?? '');
+      final cached = await _secureStorage.getLastLocation();
+      debugPrint('[CACHE CHECK] $cached');
 
       return AppLocationData(latitude: lat, longitude: lng, address: placeName);
     } on TimeoutException {
@@ -108,7 +113,7 @@ class AppLocationServiceImpl implements IAppLocationService {
       return AppLocationData(
         latitude: cachedLocation['latitude']!,
         longitude: cachedLocation['longitude']!,
-        address: 'Lokasi Terakhir (Cache)',
+        address: cachedLocation['address'],
       );
     }
     return AppLocationData(
@@ -117,4 +122,5 @@ class AppLocationServiceImpl implements IAppLocationService {
       address: 'Lokasi Tidak Diketahui',
     );
   }
+
 }
