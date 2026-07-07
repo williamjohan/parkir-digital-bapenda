@@ -157,7 +157,7 @@ abstract class RegisterModule {
 
     if (kDebugMode) {
       dio.interceptors.add(ConnectivityCheckInterceptor(connectivity));
-      // dio.interceptors.add(DebugMockInterceptor());
+      //dio.interceptors.add(DebugMockInterceptor());
       dio.interceptors.add(
         LogInterceptor(
           requestHeader: true,

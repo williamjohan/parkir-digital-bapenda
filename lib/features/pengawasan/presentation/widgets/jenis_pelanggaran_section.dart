@@ -4,7 +4,7 @@ import 'package:parkir_digital_bapenda/core/design_system/components/pb_basic_bo
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/domain/entities/jenis_pelanggaran/jenis_pelanggaran_entity.dart';
-import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/laporan_section_card.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 
 class JenisPelanggaranSection extends StatelessWidget {
   final List<JenisPelanggaranEntity> jenisPelanggaranList;
@@ -25,7 +25,7 @@ class JenisPelanggaranSection extends StatelessWidget {
         .where((e) => e.id == selectedJenisPelId)
         .firstOrNull;
 
-    return LaporanSectionCard(
+    return FormSectionCard(
       title: 'Jenis Pelanggaran',
       icon: Icons.report_problem_outlined,
       child: PbDropdown<JenisPelanggaranEntity>(

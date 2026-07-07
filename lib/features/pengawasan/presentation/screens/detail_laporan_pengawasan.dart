@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/laporan_section_card.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 
 class DetailLaporanPengawasanScreen extends StatelessWidget {
   final String namaJenisPelanggaran;
@@ -33,7 +33,7 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          LaporanSectionCard(
+          FormSectionCard(
             title: 'Jenis Pelanggaran',
             icon: Icons.report_problem_outlined,
             child: Text(namaJenisPelanggaran, style: AppTypography.bodyRegular),
@@ -41,7 +41,7 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          LaporanSectionCard(
+          FormSectionCard(
             title: 'Keterangan',
             icon: Icons.notes_rounded,
             child: Text(keterangan, style: AppTypography.bodyRegular),
@@ -50,7 +50,7 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
           if (foto != null && foto!.isNotEmpty) ...[
             const SizedBox(height: 16),
 
-            LaporanSectionCard(
+            FormSectionCard(
               title: 'Foto Bukti',
               icon: Icons.image_outlined,
               child: GestureDetector(

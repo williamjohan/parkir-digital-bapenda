@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/laporan_section_card.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 // Sesuaikan path import ini ke tempat kamu menaruh photo_utils.dart
 import '../../../../core/utils/photo_utils.dart';
 
@@ -33,7 +33,7 @@ class PhotoSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LaporanSectionCard(
+    return FormSectionCard(
       title: "Foto Bukti Pelanggaran",
       icon: Icons.camera_alt_rounded,
       child: GestureDetector(

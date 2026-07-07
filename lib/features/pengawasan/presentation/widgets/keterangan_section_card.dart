@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/laporan_section_card.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -11,7 +11,7 @@ class KeteranganSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LaporanSectionCard(
+    return FormSectionCard(
       title: "Keterangan",
       icon: Icons.notes_rounded,
       child: TextFormField(

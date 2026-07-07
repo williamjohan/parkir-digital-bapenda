@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 
-class LaporanSectionCard extends StatelessWidget {
+class FormSectionCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final Widget child;
 
-  const LaporanSectionCard({
+  const FormSectionCard({
     super.key,
     required this.title,
     required this.icon,

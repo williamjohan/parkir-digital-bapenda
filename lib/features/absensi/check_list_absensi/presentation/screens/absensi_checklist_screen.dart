@@ -262,7 +262,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                     const SizedBox(height: 16),
                     _buildPhotoSection(),
                     const SizedBox(height: 16),
-                    _buildSectionCard(
+                    FormSectionCard(
                       title: "Data Kendaraan",
                       icon: Icons.directions_car_rounded,
                       child: Column(
@@ -282,7 +282,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildSectionCard(
+                    FormSectionCard(
                       title: "Status Instrumen",
                       icon: Icons.devices_rounded,
                       child: Column(
@@ -430,7 +430,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   }
 
   Widget _buildPhotoSection() {
-    return _buildSectionCard(
+    return FormSectionCard(
       title: "Foto & Lokasi",
       icon: Icons.camera_alt_rounded,
       child: GestureDetector(
@@ -611,49 +611,6 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionCard({
-    required String title,
-    required IconData icon,
-    required Widget child,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 16, color: AppColors.primary),
-              const SizedBox(width: 6),
-              Text(
-                title,
-                style: AppTypography.bodySmall.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Divider(height: 1, color: Colors.grey.shade100),
-          const SizedBox(height: 12),
-          child,
-        ],
       ),
     );
   }
