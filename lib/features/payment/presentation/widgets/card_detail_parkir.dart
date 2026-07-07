@@ -19,7 +19,7 @@ class CardDetailParkirWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -28,8 +28,8 @@ class CardDetailParkirWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("DETAIL PARKIR", style: AppTypography.heading4),
-          SizedBox(height: 16),
+          const Text("DETAIL PARKIR", style: AppTypography.heading4),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -42,7 +42,7 @@ class CardDetailParkirWidget extends StatelessWidget {
               Text(platNomor),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -55,7 +55,7 @@ class CardDetailParkirWidget extends StatelessWidget {
               Text(kategoriKendaraan == 'motor' ? 'Motor' : 'Mobil'),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -67,7 +67,7 @@ class CardDetailParkirWidget extends StatelessWidget {
               ),
               Text(
                 CurrencyFormatter.toIdr(nominal),
-                style: TextStyle(color: AppColors.primaryDark),
+                style: const TextStyle(color: AppColors.primaryDark),
               ),
             ],
           ),

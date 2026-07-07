@@ -24,7 +24,7 @@ class CheckUpdateCubit extends Cubit<CheckUpdateState> {
         updateEntity,
       ) {
         if (updateEntity == null) {
-          emit(CheckUpdateError("Data pembaruan tidak ditemukan."));
+          emit(const CheckUpdateError("Data pembaruan tidak ditemukan."));
           return;
         }
         if (localVersionCode < updateEntity.buildNumber) {
@@ -40,7 +40,7 @@ class CheckUpdateCubit extends Cubit<CheckUpdateState> {
       });
     } catch (e) {
       if (!isClosed) {
-        emit(CheckUpdateError("Terjadi kesalahan sistem saat mengecek versi."));
+        emit(const CheckUpdateError("Terjadi kesalahan sistem saat mengecek versi."));
       }
     }
   }

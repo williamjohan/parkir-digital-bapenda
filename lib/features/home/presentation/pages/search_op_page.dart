@@ -100,12 +100,12 @@ class _SearchOpPageState extends State<SearchOpPage> {
           centerTitle: true,
           backgroundColor: AppColors.surface,
           scrolledUnderElevation: 0,
-          shape: Border(
+          shape: const Border(
             bottom: BorderSide(color: AppColors.primary, width: 1.0),
           ),
           elevation: 0,
           foregroundColor: Colors.black,
-          iconTheme: IconThemeData(color: AppColors.primary),
+          iconTheme: const IconThemeData(color: AppColors.primary),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 16, right: 16, left: 16),

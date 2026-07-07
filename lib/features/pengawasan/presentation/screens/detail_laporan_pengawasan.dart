@@ -27,7 +27,7 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back_ios_rounded, size: 18),
         ),
-        title: Text('Detail Laporan', style: AppTypography.bodySemiBold),
+        title: const Text('Detail Laporan', style: AppTypography.bodySemiBold),
         centerTitle: true,
       ),
       body: ListView(

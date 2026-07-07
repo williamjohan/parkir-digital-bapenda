@@ -89,7 +89,7 @@ class DashboardIncomeSummary extends StatelessWidget {
 
           const SizedBox(height: 4),
 
-          Divider(color: AppColors.border),
+          const Divider(color: AppColors.border),
 
           const SizedBox(height: 4),
 

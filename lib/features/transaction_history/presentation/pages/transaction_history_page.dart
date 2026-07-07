@@ -139,7 +139,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                 backgroundColor: AppColors.surface,
                 elevation: 0,
                 foregroundColor: Colors.black,
-                iconTheme: IconThemeData(color: AppColors.primary),
+                iconTheme: const IconThemeData(color: AppColors.primary),
               ),
               body: Column(
                 children: [
@@ -212,19 +212,19 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             ),
           ),
         ),
-        Divider(color: AppColors.textHint),
+        const Divider(color: AppColors.textHint),
       ],
     );
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.receipt_long, size: 80, color: AppColors.textHint),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: 16),
+          Text(
             'Tidak ada transaksi untuk filter ini.',
             style: TextStyle(color: AppColors.textHint),
           ),

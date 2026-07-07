@@ -52,15 +52,15 @@ class CardTotalPendapatan extends StatelessWidget {
                         color: AppColors.success.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.money,
                         color: AppColors.success,
                         size: 20,
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                   ],
-                  Text("TOTAL PENDAPATAN", style: AppTypography.bodySemiBold),
+                  const Text("TOTAL PENDAPATAN", style: AppTypography.bodySemiBold),
                 ],
               ),
               if (isShowHariIni)
@@ -83,8 +83,8 @@ class CardTotalPendapatan extends StatelessWidget {
             ],
           ),
           if (isShowHariIni)
-            Text("Hari ini", style: AppTypography.bodySemiBold),
-          if (!isShowHariIni) SizedBox(height: 8),
+            const Text("Hari ini", style: AppTypography.bodySemiBold),
+          if (!isShowHariIni) const SizedBox(height: 8),
           Text(
             "Pendapatan Kotor",
             style: AppTypography.caption.copyWith(

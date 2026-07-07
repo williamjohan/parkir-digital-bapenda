@@ -87,12 +87,12 @@ class _TransactionPageState extends State<TransactionPage> {
               centerTitle: true,
               backgroundColor: AppColors.surface,
               scrolledUnderElevation: 0,
-              shape: Border(
+              shape: const Border(
                 bottom: BorderSide(color: AppColors.primary, width: 1.0),
               ),
               elevation: 0,
               foregroundColor: Colors.black,
-              iconTheme: IconThemeData(color: AppColors.primary),
+              iconTheme: const IconThemeData(color: AppColors.primary),
             ),
             body: isLoading
                 ? const Center(
@@ -174,7 +174,7 @@ class _TransactionPageState extends State<TransactionPage> {
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline, color: AppColors.warning, size: 20),
+          const Icon(Icons.info_outline, color: AppColors.warning, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

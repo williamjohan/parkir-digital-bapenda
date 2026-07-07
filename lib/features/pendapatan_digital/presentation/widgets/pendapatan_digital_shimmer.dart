@@ -126,9 +126,9 @@ class PendapatanDigitalShimmer extends StatelessWidget {
 
                   ...List.generate(
                     5,
-                    (index) => Padding(
-                      padding: const EdgeInsets.only(bottom: 18),
-                      child: const Row(
+                    (index) => const Padding(
+                      padding: EdgeInsets.only(bottom: 18),
+                      child: Row(
                         children: [
                           Expanded(flex: 3, child: ShimmerBox(height: 20)),
                           SizedBox(width: 12),

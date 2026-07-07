@@ -101,7 +101,7 @@ class _RangeFilterWidgetState extends State<RangeFilterWidget> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primaryDark, AppColors.primaryLight],
           begin: Alignment.topLeft,

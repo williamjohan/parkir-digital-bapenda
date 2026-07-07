@@ -31,7 +31,7 @@ class TarifRemoteDataSourceImpl implements ITarifRemoteDataSource {
       throw DioErrorHandler.handle(e);
     } catch (e, stackTrace) {
       AppLogger.error('Internal Error di Tarif DataSource', e, stackTrace);
-      throw ServerException(
+      throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal saat memproses tarif}',
       );

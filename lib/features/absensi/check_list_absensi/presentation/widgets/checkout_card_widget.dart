@@ -51,7 +51,7 @@ class CheckOutCardWidget extends StatelessWidget {
                     color: AppColors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.logout_rounded,
                     size: 18,
                     color: AppColors.error,
@@ -91,7 +91,7 @@ class CheckOutCardWidget extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle_rounded,
                 size: 14,
                 color: AppColors.error,

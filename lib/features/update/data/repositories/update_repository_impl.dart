@@ -28,7 +28,7 @@ class UpdateRepositoryImpl implements IUpdateRepository {
         ),
       );
     } catch (e) {
-      return Left(
+      return const Left(
         ServerFailure("Gagal memeriksa pembaruan. Pastikan internet stabil."),
       );
     }

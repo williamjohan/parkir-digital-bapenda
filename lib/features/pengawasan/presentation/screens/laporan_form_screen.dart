@@ -194,12 +194,12 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
               centerTitle: true,
               backgroundColor: AppColors.surface,
               scrolledUnderElevation: 0,
-              shape: Border(
+              shape: const Border(
                 bottom: BorderSide(color: AppColors.primary, width: 1.0),
               ),
               elevation: 0,
               foregroundColor: Colors.black,
-              iconTheme: IconThemeData(color: AppColors.primary),
+              iconTheme: const IconThemeData(color: AppColors.primary),
             ),
             body: ListView(
               padding: const EdgeInsets.all(16),
@@ -234,7 +234,7 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                             child: SizedBox(
                               height: 350,
                               child: ListView.builder(
-                                padding: EdgeInsets.only(top: 16),
+                                padding: const EdgeInsets.only(top: 16),
                                 shrinkWrap: true,
                                 itemCount: state.jenisPelanggaran.length,
                                 itemBuilder: (_, index) {
@@ -245,8 +245,8 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
 
                                   return GestureDetector(
                                     child: Container(
-                                      padding: EdgeInsets.all(16),
-                                      margin: EdgeInsets.only(bottom: 8),
+                                      padding: const EdgeInsets.all(16),
+                                      margin: const EdgeInsets.only(bottom: 8),
                                       decoration: BoxDecoration(
                                         border: Border.all(
                                           color: isSelected
@@ -272,7 +272,7 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          SizedBox(width: 8),
+                                          const SizedBox(width: 8),
                                           Icon(
                                             isSelected
                                                 ? Icons
@@ -328,14 +328,14 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: AppColors.primary,
                           width: 1.5,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: AppColors.error),
+                        borderSide: const BorderSide(color: AppColors.error),
                       ),
                       contentPadding: const EdgeInsets.all(14),
                     ),
@@ -495,9 +495,9 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 2.0),
-                                      child: const Icon(
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 2.0),
+                                      child: Icon(
                                         Icons.location_on_rounded,
                                         size: 13,
                                         color: Colors.white,

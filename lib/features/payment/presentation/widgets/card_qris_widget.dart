@@ -29,7 +29,7 @@ class _CardQrisWidgetState extends State<CardQrisWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -56,8 +56,8 @@ class _CardQrisWidgetState extends State<CardQrisWidget> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 10, right: 20, left: 20),
-            decoration: BoxDecoration(color: Colors.white),
+            margin: const EdgeInsets.only(top: 10, right: 20, left: 20),
+            decoration: const BoxDecoration(color: Colors.white),
             child: Image.memory(
               width: 300,
               height: 300,
@@ -77,18 +77,18 @@ class _CardQrisWidgetState extends State<CardQrisWidget> {
               },
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Divider(color: AppColors.border)),
-              SizedBox(width: 8),
+              const Expanded(child: Divider(color: AppColors.border)),
+              const SizedBox(width: 8),
               TimerWidget(durasi: widget.durasi, onFinish: widget.onFinish),
-              SizedBox(width: 8),
-              Expanded(child: Divider(color: AppColors.border)),
+              const SizedBox(width: 8),
+              const Expanded(child: Divider(color: AppColors.border)),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(widget.objekPajak, style: AppTypography.heading5),
           Text("ID : ${widget.idTransaksi}", style: AppTypography.caption),
         ],

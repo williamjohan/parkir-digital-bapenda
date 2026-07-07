@@ -17,7 +17,7 @@ import 'features/update/presentation/widgets/force_update_overlay_card.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = BapendaHttpOverrides();
-  final String envFileName = appFlavor == 'demo' ? '.env.demo' : '.env.prod';
+  const String envFileName = appFlavor == 'demo' ? '.env.demo' : '.env.prod';
   await dotenv.load(fileName: envFileName);
   await initializeDateFormatting('id_ID', null);
   configureDependencies();
@@ -123,18 +123,18 @@ class GlobalNoInternetBanner extends StatelessWidget {
     return Material(
       color: Colors.red.shade600,
       elevation: 4,
-      child: SafeArea(
+      child: const SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.wifi_off, color: Colors.white, size: 16),
-              const SizedBox(width: 8),
+              Icon(Icons.wifi_off, color: Colors.white, size: 16),
+              SizedBox(width: 8),
               Text(
                 'Koneksi internet terputus',
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+                style: TextStyle(color: Colors.white, fontSize: 12),
               ),
             ],
           ),

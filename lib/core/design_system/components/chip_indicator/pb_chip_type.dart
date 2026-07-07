@@ -37,15 +37,15 @@ extension PbChipTypeExtension on PbChipType {
   BorderSide? get border {
     switch (this) {
       case PbChipType.success:
-        return BorderSide(color: AppColors.success);
+        return const BorderSide(color: AppColors.success);
       case PbChipType.warning:
-        return BorderSide(color: AppColors.warning);
+        return const BorderSide(color: AppColors.warning);
       case PbChipType.error:
-        return BorderSide(color: AppColors.error);
+        return const BorderSide(color: AppColors.error);
       case PbChipType.info:
-        return BorderSide(color: AppColors.info);
+        return const BorderSide(color: AppColors.info);
       case PbChipType.idle:
-        return BorderSide(color: AppColors.disabled);
+        return const BorderSide(color: AppColors.disabled);
     }
   }
 }

@@ -78,7 +78,7 @@ class PBForgotPasswordDialog extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.info_outline_rounded,
                     size: 18,
                     color: AppColors.primary,

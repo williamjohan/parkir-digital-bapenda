@@ -32,18 +32,14 @@ class AuthException extends AppException {
   const AuthException({required super.message});
 }
 
-class LocationDisabledException implements Exception {
-  final String message;
-  LocationDisabledException([this.message = 'GPS (Lokasi) tidak aktif.']);
-
-  @override
-  String toString() =>message; 
+class LocationDisabledException extends AppException {
+  const LocationDisabledException({
+    super.message = 'GPS (Lokasi) tidak aktif.',
+  });
 }
 
-class LocationPermissionDeniedException implements Exception {
-  final String message;
-  LocationPermissionDeniedException([this.message = 'Izin lokasi ditolak.']);
-
-  @override
-  String toString() =>message; 
+class LocationPermissionDeniedException extends AppException {
+  const LocationPermissionDeniedException({
+    super.message = 'Izin lokasi ditolak.',
+  });
 }

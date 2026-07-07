@@ -38,10 +38,10 @@ class _DataJukirListScreenState extends State<DataJukirListScreen> {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
-        iconTheme: IconThemeData(color: AppColors.primary),
+        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: RefreshIndicator(
         color: AppColors.primary,
@@ -163,7 +163,7 @@ class _JukirCard extends StatelessWidget {
                     }
                   },
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       // border: BorderSide(color: Colors.blue.shade100, width: 2.5),
                     ),

@@ -38,10 +38,10 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
-        iconTheme: IconThemeData(color: AppColors.primary),
+        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: BlocBuilder<DashboardOpCubit, DashboardOpState>(
         builder: (context, state) {
@@ -63,7 +63,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -97,7 +97,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                             riwayat: state.data?.riwayatList ?? [],
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Skeletonizer(
                           enabled: state.loading,
                           child: CardRealisasiOp(
@@ -116,7 +116,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                           ),
                         ),
                         if (state.data?.isDigital == true) ...[
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Skeletonizer(
                             enabled: state.loading,
                             child: CardRekapJenisPembayaranOp(
@@ -130,7 +130,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                             ),
                           ),
                         ],
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),

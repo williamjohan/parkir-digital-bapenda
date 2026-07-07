@@ -17,18 +17,18 @@ class AppLocationServiceImpl implements IAppLocationService {
   Future<AppLocationData> getCurrentLocation() async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) throw LocationDisabledException();
+      if (!serviceEnabled) throw const LocationDisabledException();
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
       if (permission == LocationPermission.denied) {
-        throw LocationPermissionDeniedException("Izin lokasi ditolak.");
+        throw const LocationPermissionDeniedException();
       }
       if (permission == LocationPermission.deniedForever) {
-        throw LocationPermissionDeniedException(
-          "Mohon aktifkan perizinan lokasi anda.",
+        throw const LocationPermissionDeniedException(
+          message: "Mohon aktifkan perizinan lokasi Anda di pengaturan sistem.",
         );
       }
 
@@ -89,17 +89,10 @@ class AppLocationServiceImpl implements IAppLocationService {
 
       return AppLocationData(latitude: lat, longitude: lng, address: placeName);
     } on TimeoutException {
-      // Jika setelah 15 detik GPS tetap gagal mengunci, baru gunakan Cache
       return await _fallbackLocation();
+    } on AppException {
+      rethrow;
     } catch (e) {
-      final errorString = e.toString().toLowerCase();
-      if (e is LocationDisabledException ||
-          e is LocationPermissionDeniedException ||
-          errorString.contains('permission')) {
-        throw LocationPermissionDeniedException(
-          "Harap nayalakan GPS anda.",
-        );
-      }
       return await _fallbackLocation();
     }
   }

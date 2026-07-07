@@ -59,8 +59,8 @@ class CardRealisasiOp extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
-                    SizedBox(width: 2),
-                    Icon(Icons.chevron_right, size: 18, color: Colors.orange),
+                    const SizedBox(width: 2),
+                    const Icon(Icons.chevron_right, size: 18, color: Colors.orange),
                   ],
                 ),
               ),
@@ -111,7 +111,7 @@ class CardRealisasiOp extends StatelessWidget {
                 Text(
                   CurrencyFormatter.toIdr(totalRealisasi),
                   style: AppTypography.heading1.copyWith(
-                    color: Color(0xFF009688),
+                    color: const Color(0xFF009688),
                   ),
                 ),
               ],

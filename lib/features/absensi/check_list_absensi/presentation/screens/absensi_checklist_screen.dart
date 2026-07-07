@@ -5,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
-import 'package:parkir_digital_bapenda/core/utils/debug_mock_scenario.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
@@ -52,7 +51,6 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   String? _locationError;
   bool _isFetchingLocation = false;
   bool _isCapturing = false;
-
   bool _edc = false;
   bool _qris = false;
   bool _tsPark = false;
@@ -248,12 +246,12 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                 centerTitle: true,
                 backgroundColor: AppColors.surface,
                 scrolledUnderElevation: 0,
-                shape: Border(
+                shape: const Border(
                   bottom: BorderSide(color: AppColors.primary, width: 1.0),
                 ),
                 elevation: 0,
                 foregroundColor: Colors.black,
-                iconTheme: IconThemeData(color: AppColors.primary),
+                iconTheme: const IconThemeData(color: AppColors.primary),
               ),
               body: Form(
                 key: _formKey,
@@ -537,9 +535,9 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 2.0),
-                                      child: const Icon(
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 2.0),
+                                      child: Icon(
                                         Icons.location_on_rounded,
                                         size: 13,
                                         color: Colors.white,
@@ -605,7 +603,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                         ),
                       ),
                     ),
-                    //const Positioned(bottom: 16, right: 16, child: MockScenarioFab()),
+                  //const Positioned(bottom: 16, right: 16, child: MockScenarioFab()),
                 ],
               ),
             ),
@@ -692,11 +690,11 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.error),
+          borderSide: const BorderSide(color: AppColors.error),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,

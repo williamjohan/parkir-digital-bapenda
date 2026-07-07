@@ -48,16 +48,16 @@ class CardRekapJenisPembayaranOp extends StatelessWidget {
               ),
               const SizedBox(width: 8),
 
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Jenis Pembayaran',
                       style: AppTypography.bodySemiBold,
                     ),
-                    const SizedBox(height: 2),
-                    const Text('Hari Ini', style: AppTypography.bodySemiBold),
+                    SizedBox(height: 2),
+                    Text('Hari Ini', style: AppTypography.bodySemiBold),
                   ],
                 ),
               ),
@@ -195,7 +195,7 @@ class _BarRow extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         SizedBox(
           width: 60,
           child: Text(

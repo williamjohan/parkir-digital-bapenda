@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:parkir_digital_bapenda/core/utils/debug_mock_scenario.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/di/injection.dart';
@@ -40,7 +39,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
   @override
   void initState() {
     super.initState();
-    _loadInitialData(); // 🚀 [ENHANCEMENT]: Tarik data saat layar dirender
+    _loadInitialData();
   }
 
   Future<void> _loadInitialData() async {

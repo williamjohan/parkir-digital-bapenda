@@ -33,12 +33,12 @@ class DetailRealisasiOpPage extends StatelessWidget {
               centerTitle: true,
               backgroundColor: AppColors.surface,
               scrolledUnderElevation: 0,
-              shape: Border(
+              shape: const Border(
                 bottom: BorderSide(color: AppColors.primary, width: 1.0),
               ),
               elevation: 0,
               foregroundColor: Colors.black,
-              iconTheme: IconThemeData(color: AppColors.primary),
+              iconTheme: const IconThemeData(color: AppColors.primary),
             ),
             body: BlocBuilder<DetailRealisasiOpCubit, DetailRealisasiOpState>(
               builder: (context, state) {

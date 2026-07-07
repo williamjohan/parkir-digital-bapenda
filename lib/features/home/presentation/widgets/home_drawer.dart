@@ -109,7 +109,7 @@ class HomeDrawer extends StatelessWidget {
                   },
                 ),
                 PbPermissionGate(
-                  allowedRoles: [RoleLoginDigitalParkir.bapenda],
+                  allowedRoles: const [RoleLoginDigitalParkir.bapenda],
                   currentRole: role,
                   child: ListTile(
                     leading: const Icon(
@@ -131,7 +131,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
 
                 PbPermissionGate(
-                  allowedRoles: [RoleLoginDigitalParkir.bapenda],
+                  allowedRoles: const [RoleLoginDigitalParkir.bapenda],
                   currentRole: role,
                   child: ListTile(
                     leading: const Icon(
@@ -154,7 +154,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
 
                 PbPermissionGate(
-                  allowedRoles: [
+                  allowedRoles: const [
                     RoleLoginDigitalParkir.bapenda,
                     RoleLoginDigitalParkir.jukir,
                     RoleLoginDigitalParkir.wp,
