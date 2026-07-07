@@ -22,7 +22,18 @@ mixin _$PengawasanState {
   bool get isLoading => throw _privateConstructorUsedError;
   bool get isLoadingLaporan => throw _privateConstructorUsedError;
   bool get isSuccess => throw _privateConstructorUsedError;
-  String? get errorMessage => throw _privateConstructorUsedError;
+  String? get errorMessage =>
+      throw _privateConstructorUsedError; // --- TAMBAHAN STATE UNTUK UI FORM ---
+  File? get rawPhoto =>
+      throw _privateConstructorUsedError; // Foto asli sebelum di-watermark
+  DateTime? get photoTakenAt => throw _privateConstructorUsedError;
+  double? get latitude => throw _privateConstructorUsedError;
+  double? get longitude => throw _privateConstructorUsedError;
+  String? get placeName => throw _privateConstructorUsedError;
+  String? get locationError => throw _privateConstructorUsedError;
+  bool get isFetchingLocation => throw _privateConstructorUsedError;
+  bool get isCapturing =>
+      throw _privateConstructorUsedError; // ------------------------------------
   List<JenisPelanggaranEntity> get jenisPelanggaran =>
       throw _privateConstructorUsedError;
   List<LaporanPengawasanEntity> get laporan =>
@@ -50,6 +61,14 @@ abstract class $PengawasanStateCopyWith<$Res> {
     bool isLoadingLaporan,
     bool isSuccess,
     String? errorMessage,
+    File? rawPhoto,
+    DateTime? photoTakenAt,
+    double? latitude,
+    double? longitude,
+    String? placeName,
+    String? locationError,
+    bool isFetchingLocation,
+    bool isCapturing,
     List<JenisPelanggaranEntity> jenisPelanggaran,
     List<LaporanPengawasanEntity> laporan,
     List<LaporanPengawasanEntity> laporanFake,
@@ -78,6 +97,14 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
     Object? isLoadingLaporan = null,
     Object? isSuccess = null,
     Object? errorMessage = freezed,
+    Object? rawPhoto = freezed,
+    Object? photoTakenAt = freezed,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
+    Object? placeName = freezed,
+    Object? locationError = freezed,
+    Object? isFetchingLocation = null,
+    Object? isCapturing = null,
     Object? jenisPelanggaran = null,
     Object? laporan = null,
     Object? laporanFake = null,
@@ -104,6 +131,38 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
                 ? _value.errorMessage
                 : errorMessage // ignore: cast_nullable_to_non_nullable
                       as String?,
+            rawPhoto: freezed == rawPhoto
+                ? _value.rawPhoto
+                : rawPhoto // ignore: cast_nullable_to_non_nullable
+                      as File?,
+            photoTakenAt: freezed == photoTakenAt
+                ? _value.photoTakenAt
+                : photoTakenAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            latitude: freezed == latitude
+                ? _value.latitude
+                : latitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            longitude: freezed == longitude
+                ? _value.longitude
+                : longitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            placeName: freezed == placeName
+                ? _value.placeName
+                : placeName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            locationError: freezed == locationError
+                ? _value.locationError
+                : locationError // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isFetchingLocation: null == isFetchingLocation
+                ? _value.isFetchingLocation
+                : isFetchingLocation // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isCapturing: null == isCapturing
+                ? _value.isCapturing
+                : isCapturing // ignore: cast_nullable_to_non_nullable
+                      as bool,
             jenisPelanggaran: null == jenisPelanggaran
                 ? _value.jenisPelanggaran
                 : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
@@ -149,6 +208,14 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
     bool isLoadingLaporan,
     bool isSuccess,
     String? errorMessage,
+    File? rawPhoto,
+    DateTime? photoTakenAt,
+    double? latitude,
+    double? longitude,
+    String? placeName,
+    String? locationError,
+    bool isFetchingLocation,
+    bool isCapturing,
     List<JenisPelanggaranEntity> jenisPelanggaran,
     List<LaporanPengawasanEntity> laporan,
     List<LaporanPengawasanEntity> laporanFake,
@@ -177,6 +244,14 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
     Object? isLoadingLaporan = null,
     Object? isSuccess = null,
     Object? errorMessage = freezed,
+    Object? rawPhoto = freezed,
+    Object? photoTakenAt = freezed,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
+    Object? placeName = freezed,
+    Object? locationError = freezed,
+    Object? isFetchingLocation = null,
+    Object? isCapturing = null,
     Object? jenisPelanggaran = null,
     Object? laporan = null,
     Object? laporanFake = null,
@@ -203,6 +278,38 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
             ? _value.errorMessage
             : errorMessage // ignore: cast_nullable_to_non_nullable
                   as String?,
+        rawPhoto: freezed == rawPhoto
+            ? _value.rawPhoto
+            : rawPhoto // ignore: cast_nullable_to_non_nullable
+                  as File?,
+        photoTakenAt: freezed == photoTakenAt
+            ? _value.photoTakenAt
+            : photoTakenAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        latitude: freezed == latitude
+            ? _value.latitude
+            : latitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        longitude: freezed == longitude
+            ? _value.longitude
+            : longitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        placeName: freezed == placeName
+            ? _value.placeName
+            : placeName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        locationError: freezed == locationError
+            ? _value.locationError
+            : locationError // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isFetchingLocation: null == isFetchingLocation
+            ? _value.isFetchingLocation
+            : isFetchingLocation // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isCapturing: null == isCapturing
+            ? _value.isCapturing
+            : isCapturing // ignore: cast_nullable_to_non_nullable
+                  as bool,
         jenisPelanggaran: null == jenisPelanggaran
             ? _value._jenisPelanggaran
             : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
@@ -229,6 +336,14 @@ class _$PengawasanStateImpl implements _PengawasanState {
     this.isLoadingLaporan = false,
     this.isSuccess = false,
     this.errorMessage,
+    this.rawPhoto,
+    this.photoTakenAt,
+    this.latitude,
+    this.longitude,
+    this.placeName,
+    this.locationError,
+    this.isFetchingLocation = false,
+    this.isCapturing = false,
     final List<JenisPelanggaranEntity> jenisPelanggaran = const [],
     final List<LaporanPengawasanEntity> laporan =
         const <LaporanPengawasanEntity>[],
@@ -252,7 +367,29 @@ class _$PengawasanStateImpl implements _PengawasanState {
   final bool isSuccess;
   @override
   final String? errorMessage;
+  // --- TAMBAHAN STATE UNTUK UI FORM ---
+  @override
+  final File? rawPhoto;
+  // Foto asli sebelum di-watermark
+  @override
+  final DateTime? photoTakenAt;
+  @override
+  final double? latitude;
+  @override
+  final double? longitude;
+  @override
+  final String? placeName;
+  @override
+  final String? locationError;
+  @override
+  @JsonKey()
+  final bool isFetchingLocation;
+  @override
+  @JsonKey()
+  final bool isCapturing;
+  // ------------------------------------
   final List<JenisPelanggaranEntity> _jenisPelanggaran;
+  // ------------------------------------
   @override
   @JsonKey()
   List<JenisPelanggaranEntity> get jenisPelanggaran {
@@ -282,7 +419,7 @@ class _$PengawasanStateImpl implements _PengawasanState {
 
   @override
   String toString() {
-    return 'PengawasanState(request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
+    return 'PengawasanState(request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
   }
 
   @override
@@ -299,6 +436,22 @@ class _$PengawasanStateImpl implements _PengawasanState {
                 other.isSuccess == isSuccess) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
+            (identical(other.rawPhoto, rawPhoto) ||
+                other.rawPhoto == rawPhoto) &&
+            (identical(other.photoTakenAt, photoTakenAt) ||
+                other.photoTakenAt == photoTakenAt) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
+            (identical(other.placeName, placeName) ||
+                other.placeName == placeName) &&
+            (identical(other.locationError, locationError) ||
+                other.locationError == locationError) &&
+            (identical(other.isFetchingLocation, isFetchingLocation) ||
+                other.isFetchingLocation == isFetchingLocation) &&
+            (identical(other.isCapturing, isCapturing) ||
+                other.isCapturing == isCapturing) &&
             const DeepCollectionEquality().equals(
               other._jenisPelanggaran,
               _jenisPelanggaran,
@@ -318,6 +471,14 @@ class _$PengawasanStateImpl implements _PengawasanState {
     isLoadingLaporan,
     isSuccess,
     errorMessage,
+    rawPhoto,
+    photoTakenAt,
+    latitude,
+    longitude,
+    placeName,
+    locationError,
+    isFetchingLocation,
+    isCapturing,
     const DeepCollectionEquality().hash(_jenisPelanggaran),
     const DeepCollectionEquality().hash(_laporan),
     const DeepCollectionEquality().hash(_laporanFake),
@@ -342,6 +503,14 @@ abstract class _PengawasanState implements PengawasanState {
     final bool isLoadingLaporan,
     final bool isSuccess,
     final String? errorMessage,
+    final File? rawPhoto,
+    final DateTime? photoTakenAt,
+    final double? latitude,
+    final double? longitude,
+    final String? placeName,
+    final String? locationError,
+    final bool isFetchingLocation,
+    final bool isCapturing,
     final List<JenisPelanggaranEntity> jenisPelanggaran,
     final List<LaporanPengawasanEntity> laporan,
     final List<LaporanPengawasanEntity> laporanFake,
@@ -356,7 +525,23 @@ abstract class _PengawasanState implements PengawasanState {
   @override
   bool get isSuccess;
   @override
-  String? get errorMessage;
+  String? get errorMessage; // --- TAMBAHAN STATE UNTUK UI FORM ---
+  @override
+  File? get rawPhoto; // Foto asli sebelum di-watermark
+  @override
+  DateTime? get photoTakenAt;
+  @override
+  double? get latitude;
+  @override
+  double? get longitude;
+  @override
+  String? get placeName;
+  @override
+  String? get locationError;
+  @override
+  bool get isFetchingLocation;
+  @override
+  bool get isCapturing; // ------------------------------------
   @override
   List<JenisPelanggaranEntity> get jenisPelanggaran;
   @override

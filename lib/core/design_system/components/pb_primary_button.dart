@@ -20,6 +20,7 @@ class PbPrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
+  final bool isDisabled; // 🔥 Parameter opsional baru ditambahkan di sini
   final IconData? iconLeft;
   final IconData? iconRight;
   final PbButtonVariant variant;
@@ -30,6 +31,7 @@ class PbPrimaryButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.isLoading = false,
+    this.isDisabled = false, // 🔥 Set default-nya ke false
     this.iconLeft,
     this.iconRight,
     this.variant = PbButtonVariant.primary,
@@ -106,6 +108,9 @@ class PbPrimaryButton extends StatelessWidget {
         ? BorderRadius.circular(100)
         : BorderRadius.circular(12);
 
+    // 🔥 Buat variabel penanda state button sedang disable
+    final bool isButtonDisabled = isLoading || isDisabled;
+
     return SizedBox(
       width: double.infinity,
       height: height,
@@ -138,7 +143,8 @@ class PbPrimaryButton extends StatelessWidget {
                     ),
                     child: InkWell(
                       borderRadius: buttonRadius,
-                      onTap: isLoading ? null : onPressed,
+                      // 🔥 Implementasikan logika disable pada onTap
+                      onTap: isButtonDisabled ? null : onPressed,
                       child: Center(
                         child: _buildChild(
                           textColor,
@@ -154,7 +160,8 @@ class PbPrimaryButton extends StatelessWidget {
               ),
             )
           : ElevatedButton(
-              onPressed: isLoading ? null : onPressed,
+              // 🔥 Implementasikan logika disable pada onPressed
+              onPressed: isButtonDisabled ? null : onPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: backgroundColor,
                 disabledBackgroundColor: isOutlined
@@ -164,14 +171,18 @@ class PbPrimaryButton extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: buttonRadius,
                   side: BorderSide(
-                    color: borderColor,
+                    // Ubah border menjadi warna hint ketika tombol ter-disable dan tipe tombol adalah outlined
+                    color: isButtonDisabled && isOutlined
+                        ? AppColors.textHint
+                        : borderColor,
                     width: isOutlined ? 1.5 : 0,
                   ),
                 ),
                 elevation: 0,
               ),
               child: _buildChild(
-                textColor,
+                // Ubah text color menjadi abu-abu jika tombol disable pada variant outlined
+                isButtonDisabled && isOutlined ? AppColors.textHint : textColor,
                 fontSize,
                 iconSize,
                 useSpaceBetween,

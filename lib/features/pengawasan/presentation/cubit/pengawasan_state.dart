@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/jenis_pelanggaran/jenis_pelanggaran_entity.dart';
 import '../../domain/entities/laporan_pengawasan/laporan_pengawasan_entity.dart';
@@ -16,6 +18,17 @@ class PengawasanState with _$PengawasanState {
     @Default(false) bool isSuccess,
     String? errorMessage,
 
+    // --- TAMBAHAN STATE UNTUK UI FORM ---
+    File? rawPhoto, // Foto asli sebelum di-watermark
+    DateTime? photoTakenAt,
+    double? latitude,
+    double? longitude,
+    String? placeName,
+    String? locationError,
+    @Default(false) bool isFetchingLocation,
+    @Default(false) bool isCapturing,
+
+    // ------------------------------------
     @Default([]) List<JenisPelanggaranEntity> jenisPelanggaran,
     @Default(<LaporanPengawasanEntity>[]) List<LaporanPengawasanEntity> laporan,
     @Default(<LaporanPengawasanEntity>[])
