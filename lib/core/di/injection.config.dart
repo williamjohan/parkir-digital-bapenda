@@ -200,6 +200,7 @@ import '../../features/update/domain/usecases/check_update_usecase.dart'
     as _i506;
 import '../../features/update/presentation/cubit/check_update_cubit.dart'
     as _i1020;
+import '../network/connectivity_check_interceptor.dart' as _i344;
 import '../network/dio_auth_interceptor.dart' as _i817;
 import '../network/network_cubit.dart' as _i11;
 import '../services/image/i_image_service.dart' as _i37;
@@ -249,6 +250,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i11.NetworkCubit>(
     () => _i11.NetworkCubit(gh<_i895.Connectivity>()),
+  );
+  gh.lazySingleton<_i344.ConnectivityCheckInterceptor>(
+    () => _i344.ConnectivityCheckInterceptor(gh<_i895.Connectivity>()),
   );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
