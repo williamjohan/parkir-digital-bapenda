@@ -3,6 +3,10 @@
 abstract class AppException implements Exception {
   final String message;
   const AppException({required this.message});
+
+  //override untuk savety net ketika tempat lain lupa e.message biar ga instance of exception
+  @override
+  String toString() => message;
 }
 
 class ServerException extends AppException {
@@ -31,9 +35,15 @@ class AuthException extends AppException {
 class LocationDisabledException implements Exception {
   final String message;
   LocationDisabledException([this.message = 'GPS (Lokasi) tidak aktif.']);
+
+  @override
+  String toString() =>message; 
 }
 
 class LocationPermissionDeniedException implements Exception {
   final String message;
   LocationPermissionDeniedException([this.message = 'Izin lokasi ditolak.']);
+
+  @override
+  String toString() =>message; 
 }

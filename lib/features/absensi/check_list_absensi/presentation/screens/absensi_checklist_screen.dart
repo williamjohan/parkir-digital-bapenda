@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
+import 'package:parkir_digital_bapenda/core/utils/debug_mock_scenario.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
@@ -604,6 +605,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                         ),
                       ),
                     ),
+                    //const Positioned(bottom: 16, right: 16, child: MockScenarioFab()),
                 ],
               ),
             ),

@@ -6,6 +6,8 @@ import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:parkir_digital_bapenda/core/network/connectivity_check_interceptor.dart';
+import 'package:parkir_digital_bapenda/core/network/debug_mock_interceptor.dart';
 import '../network/dio_auth_interceptor.dart';
 import '../network/env_config.dart';
 import '../network/resilent_dns_resolver.dart';
@@ -155,6 +157,8 @@ abstract class RegisterModule {
     dio.interceptors.add(authInterceptor);
 
     if (kDebugMode) {
+      dio.interceptors.add(ConnectivityCheckInterceptor(connectivity));
+      // dio.interceptors.add(DebugMockInterceptor());
       dio.interceptors.add(
         LogInterceptor(
           requestHeader: true,

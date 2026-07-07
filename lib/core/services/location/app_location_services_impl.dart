@@ -28,7 +28,7 @@ class AppLocationServiceImpl implements IAppLocationService {
       }
       if (permission == LocationPermission.deniedForever) {
         throw LocationPermissionDeniedException(
-          "Izin lokasi diblokir sistem. Silakan buka Pengaturan.",
+          "Mohon aktifkan perizinan lokasi anda.",
         );
       }
 
@@ -97,7 +97,7 @@ class AppLocationServiceImpl implements IAppLocationService {
           e is LocationPermissionDeniedException ||
           errorString.contains('permission')) {
         throw LocationPermissionDeniedException(
-          "Izin lokasi telah dicabut oleh sistem.",
+          "Harap nayalakan GPS anda.",
         );
       }
       return await _fallbackLocation();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:parkir_digital_bapenda/core/utils/debug_mock_scenario.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/di/injection.dart';
@@ -162,6 +163,11 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                         },
                       ),
                     ),
+                    // const Positioned(
+                    //   bottom: 16,
+                    //   right: 16,
+                    //   child: MockScenarioFab(),
+                    // ),
                   ],
                 ),
               ),
