@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../../core/errors/exception.dart';
 import '../../../../../../core/utils/app_logger.dart';
@@ -106,7 +104,7 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
           final bytes = await finalFile.readAsBytes();
 
           // 🚀 2. DYNAMIC MEDIA TYPE: Berjalan otomatis untuk JPG, JPEG, PNG, WEBP!
-          buktiFotoMultipart = MultipartFileRecreatable.fromBytes(
+          buktiFotoMultipart = MultipartFile.fromBytes(
             bytes,
             filename: finalFile.path.split('/').last,
             contentType: _getMediaType(

@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/absensi_entity.dart';
 
@@ -74,7 +72,7 @@ extension AbsensiRequestModelExt on AbsensiRequestModel {
     formData.files.add(
       MapEntry(
         'Foto$prefix', // Hasilnya: FotoCheckIn atau FotoCheckOut
-        MultipartFileRecreatable.fromBytes(
+        MultipartFile.fromBytes(
           bytes,
           filename: file.path.split('/').last,
           // 4. DYNAMIC MIME TYPE: Aman di HP Samsung, Xiaomi, iPhone, dll.

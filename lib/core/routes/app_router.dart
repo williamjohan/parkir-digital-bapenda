@@ -55,6 +55,7 @@ class AppRouter {
   AppRouter._();
   static final GlobalKey<NavigatorState> rootNavigatorKey =
       GlobalKey<NavigatorState>();
+
   static GoRouter? _router;
 
   static GoRouter getRouter(AppAuthCubit appAuthCubit) {
@@ -63,7 +64,10 @@ class AppRouter {
     _router = GoRouter(
       navigatorKey: rootNavigatorKey,
       initialLocation: AppRoutes.splash,
-      observers: [ChuckerFlutter.navigatorObserver],
+      observers: [
+        // ignore: deprecated_member_use
+        ChuckerFlutter.navigatorObserver,
+      ],
       refreshListenable: GoRouterRefreshStream(appAuthCubit.stream),
       redirect: (context, state) {
         final authState = appAuthCubit.state;
