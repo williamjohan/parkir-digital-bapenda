@@ -49,7 +49,7 @@ class CardObjekPajakWidget extends StatelessWidget {
                 ),
                 child: const Icon(Icons.store, size: 32, color: Colors.white),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,7 +62,7 @@ class CardObjekPajakWidget extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
@@ -74,7 +74,7 @@ class CardObjekPajakWidget extends StatelessWidget {
                   onPressed: onPressedGantiObjek,
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: PbPrimaryButton(
                   text: "Lihat Detail",

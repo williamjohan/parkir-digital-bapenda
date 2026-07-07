@@ -63,7 +63,7 @@ class BottomSheetTarifParkir extends StatelessWidget {
             ),
           ),
 
-          Text("Pilih Tarif Parkir", style: AppTypography.heading5),
+          const Text("Pilih Tarif Parkir", style: AppTypography.heading5),
           const SizedBox(height: 16),
           ConstrainedBox(
             constraints: BoxConstraints(

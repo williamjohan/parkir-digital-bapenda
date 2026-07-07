@@ -122,7 +122,7 @@ class HeaderDashboardOp extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 10),
-                Row(
+                const Row(
                   children: [Expanded(child: Divider(color: AppColors.border))],
                 ),
                 const SizedBox(height: 10),

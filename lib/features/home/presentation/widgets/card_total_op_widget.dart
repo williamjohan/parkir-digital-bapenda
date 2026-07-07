@@ -94,7 +94,7 @@ class CardTotalOpWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   color: AppColors.primary.withValues(alpha: 0.1),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.domain_outlined,
                   color: AppColors.primary,
                   size: 28,
@@ -133,7 +133,7 @@ class CardTotalOpWidget extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: digitalPercent / 100,
                   backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                   minHeight: 10,
                 ),
               ),
@@ -300,7 +300,7 @@ class CardTotalOpWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(

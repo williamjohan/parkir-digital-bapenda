@@ -19,7 +19,7 @@ class JadwalCubit extends Cubit<JadwalState> {
         status: JadwalStatus.loading,
         jadwalFake: List<JadwalEntity>.generate(
           5,
-          (_) => JadwalEntity(
+          (_) => const JadwalEntity(
             hari: 0,
             hariNama: "",
             bulan: 0,

@@ -16,7 +16,7 @@ class PbQrCodeGenerateWidget extends StatelessWidget {
 
     final qrImage = QrImage(qrCode);
 
-    final decoration = const PrettyQrDecoration(
+    const decoration = PrettyQrDecoration(
       shape: PrettyQrSmoothSymbol(color: Colors.black),
       background: Colors.white,
       quietZone: PrettyQrQuietZone.standard,

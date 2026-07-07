@@ -44,10 +44,10 @@ class _UpdatePageContent extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
-        iconTheme: IconThemeData(color: AppColors.primary),
+        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: FutureBuilder<String>(
         future: _getCurrentVersion(),
@@ -221,7 +221,7 @@ class _UpdatePageContent extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.history_edu_rounded,
                         size: 16,
                         color: AppColors.textPrimary,

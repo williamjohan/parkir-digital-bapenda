@@ -60,16 +60,16 @@ class PbShowDialog {
                         onPressed: () {
                           Navigator.of(dialogContext).pop();
                         },
-                        child: Text(
+                        child: const Text(
                           "Batal",
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                   ],
 
                   Expanded(

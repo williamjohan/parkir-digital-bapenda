@@ -23,7 +23,7 @@ class ModeItemWidget extends StatelessWidget {
       onTap: onTap,
       child: Expanded(
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           decoration: BoxDecoration(
             border: Border.all(color: AppColors.border),
             color: AppColors.textHint.withValues(alpha: 0.3),
@@ -32,10 +32,10 @@ class ModeItemWidget extends StatelessWidget {
           child: Column(
             children: [
               Icon(icon, color: AppColors.primaryDark),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(title, style: AppTypography.bodySemiBold),
               Text(subTitle, style: AppTypography.caption),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   Text(
@@ -44,8 +44,8 @@ class ModeItemWidget extends StatelessWidget {
                       color: AppColors.primaryDark,
                     ),
                   ),
-                  SizedBox(width: 2),
-                  Icon(
+                  const SizedBox(width: 2),
+                  const Icon(
                     Icons.arrow_forward,
                     color: AppColors.primaryDark,
                     size: 15,

@@ -45,12 +45,12 @@ class _ProfilePageState extends State<ProfilePage> {
           centerTitle: true,
           backgroundColor: AppColors.surface,
           scrolledUnderElevation: 0,
-          shape: Border(
+          shape: const Border(
             bottom: BorderSide(color: AppColors.primary, width: 1.0),
           ),
           elevation: 0,
           foregroundColor: Colors.black,
-          iconTheme: IconThemeData(color: AppColors.primary),
+          iconTheme: const IconThemeData(color: AppColors.primary),
         ),
         bottomNavigationBar: Container(
           color: AppColors.background,
@@ -238,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'Identitas',
                                   style: AppTypography.heading3,
                                 ),

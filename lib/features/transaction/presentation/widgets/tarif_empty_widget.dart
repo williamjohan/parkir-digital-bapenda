@@ -6,13 +6,13 @@ class TarifEmptyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisSize: MainAxisSize.min, // ✅ penting
         children: [
           Icon(Icons.no_transfer_outlined, size: 80, color: AppColors.textHint),
 
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           Text(
             "Kendaraan & tarif belum diatur",
             style: TextStyle(color: AppColors.textHint),

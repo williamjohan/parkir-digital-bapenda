@@ -55,7 +55,7 @@ class LastActivityWidget extends StatelessWidget {
           const SizedBox(height: 16),
 
           if (transactions.isEmpty)
-            Center(
+            const Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 32),
                 child: Text(

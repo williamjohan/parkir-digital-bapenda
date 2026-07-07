@@ -52,7 +52,7 @@ class BarDiagramWithLabels extends StatelessWidget {
     final todayIndex = _getTodayIndex();
 
     const double maxY = 500000;
-    final double step = maxY / 4;
+    const double step = maxY / 4;
     final List<double> yLabels = [0, step, step * 2, step * 3, maxY];
 
     return Container(
@@ -68,12 +68,12 @@ class BarDiagramWithLabels extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
+              const Expanded(
                 child: Text(
                   'Pendapatan Mingguan',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -238,7 +238,7 @@ class BarDiagramWithLabels extends StatelessWidget {
                   enabled: false,
 
                   touchTooltipData: BarTouchTooltipData(
-                    tooltipPadding: EdgeInsets.symmetric(
+                    tooltipPadding: const EdgeInsets.symmetric(
                       horizontal: 6,
                       vertical: 2,
                     ),

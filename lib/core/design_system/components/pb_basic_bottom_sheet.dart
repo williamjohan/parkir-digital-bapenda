@@ -26,9 +26,9 @@ class PbBasicBottomSheet {
               : EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: AppColors.background,
-            borderRadius: const BorderRadius.only(
+            borderRadius: BorderRadius.only(
               topLeft: Radius.circular(24),
               topRight: Radius.circular(24),
             ),
@@ -52,7 +52,7 @@ class PbBasicBottomSheet {
                     color: AppColors.primary,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
 
               if (subTitle != null) ...[
@@ -62,9 +62,9 @@ class PbBasicBottomSheet {
                     color: AppColors.textHint,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
               ],
-              if (showDivider == true) Divider(),
+              if (showDivider == true) const Divider(),
 
               child,
             ],

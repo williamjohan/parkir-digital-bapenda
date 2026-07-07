@@ -35,10 +35,10 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
-        iconTheme: IconThemeData(color: AppColors.primary),
+        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: BlocBuilder<DataJukirCubit, DataJukirState>(
         builder: (context, state) {
@@ -55,7 +55,7 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
                   ),
                   child: Skeletonizer(
                     enabled: state.isLoading,
-                    child: PendapatanInfoCard(),
+                    child: const PendapatanInfoCard(),
                   ),
                 ),
                 Expanded(

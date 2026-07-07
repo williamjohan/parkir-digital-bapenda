@@ -46,7 +46,7 @@ class ProfileRemoteDataSourceImpl implements IProfileRemoteDataSource {
             parseError,
             stackTrace,
           );
-          throw ServerException(
+          throw const ServerException(
             statusCode: 500,
             message:
                 'Struktur data profil dari server tidak sesuai format aplikasi.',

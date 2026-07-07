@@ -29,9 +29,9 @@ class DashboardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [AppColors.primaryDark, AppColors.primaryLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -75,7 +75,7 @@ class DashboardWidget extends StatelessWidget {
               ),
               if (isFree && isSuccess)
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     border: Border.all(color: Colors.white),
@@ -88,7 +88,7 @@ class DashboardWidget extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           if (!isFree && isSuccess) ...[
             Row(
@@ -101,7 +101,7 @@ class DashboardWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     border: Border.all(color: Colors.white),
@@ -115,7 +115,7 @@ class DashboardWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Divider(color: AppColors.surface),
+            const Divider(color: AppColors.surface),
             const SizedBox(height: 8),
           ],
           Row(
@@ -126,7 +126,7 @@ class DashboardWidget extends StatelessWidget {
                 icon: Icons.two_wheeler,
               ),
 
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               DashboardItem(
                 title: "Roda 4",
                 value: mobilCount.toString(),

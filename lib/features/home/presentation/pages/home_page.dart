@@ -195,7 +195,7 @@ class _HomePageState extends State<HomePage> {
 
                                     // CARD TOTAL PENDAPATAN
                                     PbPermissionGate(
-                                      allowedRoles: [
+                                      allowedRoles: const [
                                         RoleLoginDigitalParkir.jukir,
                                         RoleLoginDigitalParkir.wp,
                                         RoleLoginDigitalParkir.bapenda,
@@ -203,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                                       ],
                                       currentRole: state.role,
                                       child: Padding(
-                                        padding: EdgeInsetsGeometry.only(
+                                        padding: const EdgeInsetsGeometry.only(
                                           bottom: 16,
                                         ),
                                         child: Skeletonizer(
@@ -252,7 +252,7 @@ class _HomePageState extends State<HomePage> {
 
                                     // CARD TOTAL OP
                                     PbPermissionGate(
-                                      allowedRoles: [
+                                      allowedRoles: const [
                                         RoleLoginDigitalParkir.bapenda,
                                         RoleLoginDigitalParkir.wp,
                                       ],

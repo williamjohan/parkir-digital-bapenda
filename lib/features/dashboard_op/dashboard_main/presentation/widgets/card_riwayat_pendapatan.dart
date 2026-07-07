@@ -52,16 +52,16 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Riwayat Pendapatan',
                       style: AppTypography.bodySemiBold,
                     ),
-                    const SizedBox(height: 2),
-                    const Text('Hari Ini', style: AppTypography.bodySemiBold),
+                    SizedBox(height: 2),
+                    Text('Hari Ini', style: AppTypography.bodySemiBold),
                   ],
                 ),
               ),
@@ -102,7 +102,7 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
                     ),
                   ),
                 ),
-                Divider(color: AppColors.border),
+                const Divider(color: AppColors.border),
                 const SizedBox(height: 6),
 
                 /// Summary kendaraan
@@ -126,16 +126,16 @@ class CardRiwayatPendapatanOp extends StatelessWidget {
               ],
 
               if (riwayat.isEmpty) ...[
-                SizedBox(height: 16),
-                Icon(Icons.receipt_long, color: AppColors.textSecondary),
-                SizedBox(height: 4),
-                Center(
+                const SizedBox(height: 16),
+                const Icon(Icons.receipt_long, color: AppColors.textSecondary),
+                const SizedBox(height: 4),
+                const Center(
                   child: Text(
                     "Belum ada transkasi",
                     style: AppTypography.caption,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
               ],
             ],
           ),
@@ -167,7 +167,7 @@ class _VehicleSummaryCard extends StatelessWidget {
             size: 20,
             color: isRoda2 ? Colors.teal.shade600 : Colors.blue.shade700,
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Column(
             children: [
               Text(
@@ -208,14 +208,14 @@ class _RiwayatItem extends StatelessWidget {
             color: AppColors.textSecondary,
           ),
         ),
-        Text('|', style: TextStyle(color: AppColors.textSecondary)),
+        const Text('|', style: TextStyle(color: AppColors.textSecondary)),
         Text(
           item.tgl,
           style: AppTypography.bodyRegular.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
-        Text('|', style: TextStyle(color: AppColors.textSecondary)),
+        const Text('|', style: TextStyle(color: AppColors.textSecondary)),
         Text(
           currency(item.kredit),
           textAlign: TextAlign.end,

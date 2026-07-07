@@ -49,7 +49,7 @@ class JadwalRemoteDataSourceImpl implements IJadwalRemoteDataSource {
             parseError,
             stackTrace,
           );
-          throw ServerException(
+          throw const ServerException(
             statusCode: 500,
             message:
                 'Struktur data jadwal dari server tidak sesuai format aplikasi.',

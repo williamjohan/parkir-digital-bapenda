@@ -24,10 +24,10 @@ class DetailRekapJenisPembayaranScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
         elevation: 0,
         foregroundColor: Colors.black,
-        iconTheme: IconThemeData(color: AppColors.primary),
+        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),

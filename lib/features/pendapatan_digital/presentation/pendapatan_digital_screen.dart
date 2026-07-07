@@ -41,17 +41,17 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
               centerTitle: true,
               backgroundColor: AppColors.surface,
               scrolledUnderElevation: 0,
-              shape: Border(
+              shape: const Border(
                 bottom: BorderSide(color: AppColors.primary, width: 1.0),
               ),
               elevation: 0,
               foregroundColor: Colors.black,
-              iconTheme: IconThemeData(color: AppColors.primary),
+              iconTheme: const IconThemeData(color: AppColors.primary),
             ),
             body: BlocBuilder<PendapatanDigitalCubit, PendapatanDigitalState>(
               builder: (context, state) {
                 if (state.isLoading) {
-                  return PendapatanDigitalShimmer();
+                  return const PendapatanDigitalShimmer();
                 }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -99,7 +99,7 @@ class _PendapatanDigitalScreenState extends State<PendapatanDigitalScreen> {
                                         .toString() ??
                                     '0',
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               CardRekapKendaraanWidget(
                                 isShowPelanggaran: false,
                                 motorCount:
