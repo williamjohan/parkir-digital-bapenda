@@ -76,12 +76,13 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
     cubit.setCapturing(false);
 
     if (capturedFile == null) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Gagal memproses foto, coba ambil ulang"),
           ),
         );
+      }
       return;
     }
 

@@ -232,7 +232,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
       child: BlocBuilder<AbsensiCubit, AbsensiState>(
         builder: (context, state) {
           return LoadingOverlay(
-            isLoading: state.isLoading, // 🔥 pindah ke sini
+            isLoading: state.isLoading || _isCapturing,
             child: Scaffold(
               backgroundColor: Colors.grey.shade50,
               appBar: AppBar(
@@ -328,14 +328,16 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: state.isLoading ? null : _submit,
+                    onPressed: (state.isLoading || _isCapturing)
+                        ? null
+                        : _submit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: state.isLoading
+                    child: (state.isLoading || _isCapturing)
                         ? const SizedBox(
                             width: 22,
                             height: 22,

@@ -138,9 +138,9 @@ class PhotoSectionCard extends StatelessWidget {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 2.0),
-                                      child: const Icon(
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 2.0),
+                                      child: Icon(
                                         Icons.location_on_rounded,
                                         size: 13,
                                         color: Colors.white,
