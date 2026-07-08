@@ -218,7 +218,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
         return {
           'latitude': decodedData['latitude'].toString(),
           'longitude': decodedData['longitude'].toString(),
-          'address': decodedData['address'].toString(),
+          'address': (decodedData['address'] ?? '').toString(),
         };
       }
     } catch (e) {
