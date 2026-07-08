@@ -35,27 +35,17 @@ class HomeCubit extends Cubit<HomeState> {
 
     formatUserName();
 
-    await _ensureValidToken();
-
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboarJukir();
       await _profileUseCase.getProfilePicturePath();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
       await loadDashboardPengawas();
     } else {
-      // await _ensureValidToken();
       await _loadDashboardNonJukir();
       return;
     }
 
     await _syncQrisUseCase.execute();
-  }
-
-  Future<void> _ensureValidToken() async {
-    final token = await _secureStorage.getAccessToken();
-    if (token == null || token.isEmpty) {
-      AppLogger.warning('Token is null or empty, attempting refresh...');
-    }
   }
 
   Future<void> loadDashboarJukir() async {

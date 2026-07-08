@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../../../core/enums/app_enums.dart';
 import '../../../../../core/utils/permission_utils.dart';
 import '../../../../transaction_history/data/models/history_item_model.dart';
-import '../../../data/models/weekly_chart_item_model.dart';
 import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
 
@@ -24,7 +23,6 @@ class HomeState with _$HomeState {
     @Default(0.0) double totalBersih,
     int? selectedModePlat,
     @Default([]) List<HistoryItemModel> recentTransactions,
-    @Default([]) List<WeeklyChartItemModel> weeklyChartData,
     @Default(false) bool isFree,
     @Default("") String nop,
     @Default("") String namaLokasi,

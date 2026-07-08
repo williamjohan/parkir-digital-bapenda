@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 
 part 'dashboard_summary_non_jukir_model.freezed.dart';
 part 'dashboard_summary_non_jukir_model.g.dart';
@@ -20,7 +21,6 @@ class DashboardSummaryNonJukirModel with _$DashboardSummaryNonJukirModel {
     @Default([]) List<SofParkirResultModel> sofParkirResults,
     @Default(OpCategoryModel()) OpCategoryModel digital,
     @Default(OpCategoryModel()) OpCategoryModel nonDigital,
-
     @Default(0.0) double persentaseDigital,
     @Default(0.0) double persentaseNonDigital,
     @Default(DetailModel()) DetailModel detail,
@@ -91,4 +91,93 @@ class BerbayarModel with _$BerbayarModel {
 
   factory BerbayarModel.fromJson(Map<String, dynamic> json) =>
       _$BerbayarModelFromJson(json);
+}
+
+extension DashboardSummaryNonJukirMapper on DashboardSummaryNonJukirModel {
+  DashboardSummaryNonJukirEntity toEntity() {
+    return DashboardSummaryNonJukirEntity(
+      totalOp: totalOp,
+      totalOpDigital: totalOpDigital,
+      totalOpNonDigital: totalOpNonDigital,
+
+      totalBertarif: totalBertarif,
+      totalNonTarif: totalNonTarif,
+      totalTarifTidakDiketahui: totalTarifTidakDiketahui,
+
+      totalOpFree: totalNonTarif,
+      totalOpNonFree: totalBertarif,
+
+      jumlahMotorHariIni: jumlahMotorHariIni,
+      jumlahMobilHariIni: jumlahMobilHariIni,
+
+      totalNominalHariIni: totalNominalHariIni,
+      totalNominalBersihUntukWajibPajak: totalNominalBersihUntukWajibPajak,
+      totalNominalBersihUntukBapenda: totalNominalBersihUntukBapenda,
+
+      sofParkirResults: sofParkirResults.map((e) => e.toEntity()).toList(),
+
+      digital: digital.toEntity(),
+      nonDigital: nonDigital.toEntity(),
+
+      detail: detail.toEntity(),
+      berbayar: berbayar.toEntity(),
+
+      persentaseDigital: persentaseDigital,
+      persentaseNonDigital: persentaseNonDigital,
+    );
+  }
+}
+
+extension SofParkirResultMapper on SofParkirResultModel {
+  SofParkirResultEntity toEntity() {
+    return SofParkirResultEntity(
+      sof: sof,
+      nominalMotor: nominalMotor,
+      nominalMobil: nominalMobil,
+      nominalBersihUntukWajibPajakMotor: nominalBersihUntukWajibPajakMotor,
+      nominalBersihUntukWajibPajakMobil: nominalBersihUntukWajibPajakMobil,
+      nominalBersihUntukBapendaMotor: nominalBersihUntukBapendaMotor,
+      nominalBersihUntukBapendaMobil: nominalBersihUntukBapendaMobil,
+      jumlahMotor: jumlahMotor,
+      jumlahMobil: jumlahMobil,
+    );
+  }
+}
+
+extension OpCategoryMapper on OpCategoryModel {
+  OpCategoryEntity toEntity() {
+    return OpCategoryEntity(
+      total: total,
+      totalBertarif: totalBertarif,
+      totalNonTarif: totalNonTarif,
+      totalTidakDiketahui: totalTidakDiketahui,
+      persentaseBertarif: persentaseBertarif,
+      persentaseNonTarif: persentaseNonTarif,
+      persentaseTidakDiketahui: persentaseTidakDiketahui,
+    );
+  }
+}
+
+extension DetailMapper on DetailModel {
+  DetailEntity toEntity() {
+    return DetailEntity(
+      totalEdc: totalEdc,
+      totalRompiQris: totalRompiQris,
+      totalCctvCounting: totalCctvCounting,
+      totalTs: totalTs,
+      totalBebasParkir: totalBebasParkir,
+      totalNonDigital: totalNonDigital,
+    );
+  }
+}
+
+extension BerbayarMapper on BerbayarModel {
+  BerbayarEntity toEntity() {
+    return BerbayarEntity(
+      digital: digital,
+      nonDigital: nonDigital,
+      total: total,
+      persentase: persentase,
+    );
+  }
 }

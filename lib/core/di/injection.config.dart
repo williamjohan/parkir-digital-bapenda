@@ -81,10 +81,6 @@ import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detai
     as _i468;
 import '../../features/home/data/datasources/dashboard_summary_remote_datasource.dart'
     as _i535;
-import '../../features/home/data/datasources/i_tarif_remote_datasource.dart'
-    as _i59;
-import '../../features/home/data/datasources/tarif_remote_datasource_impl.dart'
-    as _i565;
 import '../../features/home/data/repositories/home_repository_impl.dart'
     as _i76;
 import '../../features/home/domain/repositories/i_home_repository.dart'
@@ -263,9 +259,6 @@ _i174.GetIt init(
       gh<_i1042.ISecureStorageManager>(),
     ),
   );
-  gh.lazySingleton<_i59.ITarifRemoteDataSource>(
-    () => _i565.TarifRemoteDataSourceImpl(gh<_i361.Dio>()),
-  );
   gh.lazySingleton<_i905.DashboardOpDatasource>(
     () => _i905.DashboardOpDatasourceImpl(gh<_i361.Dio>()),
   );
@@ -361,6 +354,9 @@ _i174.GetIt init(
       gh<_i676.DetailRealisasiOpRemoteDataSource>(),
     ),
   );
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(gh<_i535.ISummaryRemoteDataSource>()),
+  );
   gh.factory<_i506.CheckUpdateUseCase>(
     () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
   );
@@ -387,13 +383,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i165.PengawasanRepository>(
     () => _i365.PengawasanRepositoryImpl(gh<_i926.PengawasanDatasource>()),
-  );
-  gh.lazySingleton<_i274.IHomeRepository>(
-    () => _i76.HomeRepositoryImpl(
-      gh<_i59.ITarifRemoteDataSource>(),
-      gh<_i535.ISummaryRemoteDataSource>(),
-      gh<_i1042.ISecureStorageManager>(),
-    ),
   );
   gh.lazySingleton<_i751.GetQrisRompiUseCase>(
     () => _i751.GetQrisRompiUseCase(gh<_i24.QrisRompiRepository>()),

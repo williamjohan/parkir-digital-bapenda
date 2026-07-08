@@ -80,12 +80,12 @@ class AppLocationServiceImpl implements IAppLocationService {
 
           placeName = parts.isNotEmpty ? parts.join(', ') : null;
         } else {
-            debugPrint('[GEOCODING] placemarks list is empty for $lat, $lng');
+          debugPrint('[GEOCODING] placemarks list is empty for $lat, $lng');
         }
-      } catch (e, st) {
+      } catch (_) {
         // Jika internet mati sehingga geocoding gagal, biarkan placeName null.
         // Nanti UI akan secara otomatis hanya menampilkan koordinat Lat/Long.
-          debugPrint('[GEOCODING] failed: $e');
+        // debugPrint('[GEOCODING] failed: $e');
       }
 
       await _secureStorage.saveLastLocation(lat, lng, placeName ?? '');
@@ -122,5 +122,4 @@ class AppLocationServiceImpl implements IAppLocationService {
       address: 'Lokasi Tidak Diketahui',
     );
   }
-
 }

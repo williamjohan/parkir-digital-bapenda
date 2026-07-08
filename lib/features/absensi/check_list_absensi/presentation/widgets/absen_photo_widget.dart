@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
-import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/utils/photo_utils.dart';
 import '../cubit/absensi_state.dart';
@@ -108,14 +107,18 @@ class AbsenPhotoWidget extends StatelessWidget {
             else if (state.locationError != null)
               Row(
                 children: [
-                  const Icon(Icons.error_outline_rounded,
-                      size: 12, color: Colors.orangeAccent),
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    size: 12,
+                    color: Colors.orangeAccent,
+                  ),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       state.locationError!,
-                      style: AppTypography.caption
-                          .copyWith(color: Colors.orangeAccent),
+                      style: AppTypography.caption.copyWith(
+                        color: Colors.orangeAccent,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -129,8 +132,11 @@ class AbsenPhotoWidget extends StatelessWidget {
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(top: 2.0),
-                      child: Icon(Icons.location_on_rounded,
-                          size: 13, color: Colors.white),
+                      child: Icon(
+                        Icons.location_on_rounded,
+                        size: 13,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(width: 4),
                     Expanded(

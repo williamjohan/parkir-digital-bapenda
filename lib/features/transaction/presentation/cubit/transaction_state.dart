@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/domain/entities/data_jukir_entity.dart';
-import '../../../home/data/models/tarif_model.dart';
+import '../../../home/data/models/tarif/tarif_model.dart';
 
 part 'transaction_state.freezed.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
-import '../../../home/data/models/tarif_model.dart';
+import '../../../home/data/models/tarif/tarif_model.dart';
 
 class BottomSheetTarifParkir extends StatelessWidget {
   final List<TarifModel> tarifList;

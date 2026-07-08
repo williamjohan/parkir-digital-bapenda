@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/domain/entities/data_jukir_entity.dart';
 import '../../domain/usecases/get_local_qris_usecase.dart';
 import 'transaction_state.dart';
-import '../../../home/data/models/tarif_model.dart';
+import '../../../home/data/models/tarif/tarif_model.dart';
 
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {

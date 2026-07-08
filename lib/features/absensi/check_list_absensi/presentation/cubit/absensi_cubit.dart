@@ -1,10 +1,8 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/services/camera/camera_service.dart';
 import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
-import 'package:parkir_digital_bapenda/core/utils/photo_utils.dart';
 import '../../domain/entities/absensi_entity.dart';
 import '../../domain/usecases/absensi_usecase.dart';
 import 'absensi_state.dart';
@@ -19,13 +17,15 @@ class AbsensiCubit extends Cubit<AbsensiState> {
 
   // --- LOGIC LOKASI ---
   Future<void> fetchLocation(IAppLocationService locationService) async {
-    emit(state.copyWith(
-      isFetchingLocation: true, 
-      locationError: null,
-      latitude: null,
-      longitude: null,
-      placeName: null,
-    ));
+    emit(
+      state.copyWith(
+        isFetchingLocation: true,
+        locationError: null,
+        latitude: null,
+        longitude: null,
+        placeName: null,
+      ),
+    );
     try {
       final result = await locationService.getCurrentLocation();
       if (isClosed) return;

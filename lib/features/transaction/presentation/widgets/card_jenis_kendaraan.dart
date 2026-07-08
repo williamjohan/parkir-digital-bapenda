@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
-import '../../../home/data/models/tarif_model.dart';
+import '../../../home/data/models/tarif/tarif_model.dart';
 
 class CardJenisKendaraan extends StatelessWidget {
   final List<TarifModel> tarifList;
@@ -107,7 +107,9 @@ class CardJenisKendaraan extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(9),
                   ),
-                  border: const Border(bottom: BorderSide(color: AppColors.border)),
+                  border: const Border(
+                    bottom: BorderSide(color: AppColors.border),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -277,7 +279,11 @@ class _EmptyVehicleState extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-            const Icon(Icons.sync_problem_rounded, size: 36, color: AppColors.border),
+            const Icon(
+              Icons.sync_problem_rounded,
+              size: 36,
+              color: AppColors.border,
+            ),
             const SizedBox(height: 8),
             Text(
               'Data kendaraan belum tersedia',

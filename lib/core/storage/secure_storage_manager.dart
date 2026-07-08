@@ -23,7 +23,11 @@ abstract class ISecureStorageManager {
   Future<void> savePrinterMacAddress(String macAdress);
   Future<String?> getPrinterMacAddress();
   Future<void> clearPrinterMacAddress();
-  Future<void> saveLastLocation(String latitude, String longitude, String address);
+  Future<void> saveLastLocation(
+    String latitude,
+    String longitude,
+    String address,
+  );
   Future<Map<String, String>?> getLastLocation();
   Future<void> saveJukirProfile({
     required String idUserStorage,
@@ -191,8 +195,16 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   }
 
   @override
-  Future<void> saveLastLocation(String latitude, String longitude, String address) async {
-    final locationMap = {'latitude': latitude, 'longitude': longitude, 'address': address};
+  Future<void> saveLastLocation(
+    String latitude,
+    String longitude,
+    String address,
+  ) async {
+    final locationMap = {
+      'latitude': latitude,
+      'longitude': longitude,
+      'address': address,
+    };
     final jsonString = jsonEncode(locationMap);
     await _storage.write(key: _keyDeviceLocation, value: jsonString);
   }
@@ -206,7 +218,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
         return {
           'latitude': decodedData['latitude'].toString(),
           'longitude': decodedData['longitude'].toString(),
-          'address': decodedData['address'].toString() ?? '',
+          'address': decodedData['address'].toString(),
         };
       }
     } catch (e) {

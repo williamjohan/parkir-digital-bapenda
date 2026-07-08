@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 
 class AbsenHeaderWidget extends StatelessWidget {

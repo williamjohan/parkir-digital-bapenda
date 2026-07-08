@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/home/domain/entities/dashboard_summary_jukir_entity.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 import '../../../transaction_history/domain/repositories/i_transaction_history_repository.dart';
-import '../../data/models/dashboard_summary_jukir/dashboard_summary_jukir_model.dart';
 import '../entities/dashboard_summary_non_jukir_entity.dart';
 import '../entities/dashboard_summary_pengawas.entity.dart';
 import '../repositories/i_home_repository.dart';
@@ -16,9 +16,8 @@ class HomeUsecase {
 
   HomeUsecase(this._repository, this._historyRepository);
 
-  Future<Either<Failure, DashboardSummaryJukirModel>> getDashboardSummaryJukir({
-    required String nop,
-  }) {
+  Future<Either<Failure, DashboardSummaryJukirEntity>>
+  getDashboardSummaryJukir({required String nop}) {
     return _repository.getDashboardSummaryJukir(nop: nop);
   }
 

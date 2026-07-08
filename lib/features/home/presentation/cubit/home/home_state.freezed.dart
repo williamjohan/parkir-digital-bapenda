@@ -30,8 +30,6 @@ mixin _$HomeState {
   int? get selectedModePlat => throw _privateConstructorUsedError;
   List<HistoryItemModel> get recentTransactions =>
       throw _privateConstructorUsedError;
-  List<WeeklyChartItemModel> get weeklyChartData =>
-      throw _privateConstructorUsedError;
   bool get isFree => throw _privateConstructorUsedError;
   String get nop => throw _privateConstructorUsedError;
   String get namaLokasi => throw _privateConstructorUsedError;
@@ -82,7 +80,6 @@ abstract class $HomeStateCopyWith<$Res> {
     double totalBersih,
     int? selectedModePlat,
     List<HistoryItemModel> recentTransactions,
-    List<WeeklyChartItemModel> weeklyChartData,
     bool isFree,
     String nop,
     String namaLokasi,
@@ -140,7 +137,6 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? totalBersih = null,
     Object? selectedModePlat = freezed,
     Object? recentTransactions = null,
-    Object? weeklyChartData = null,
     Object? isFree = null,
     Object? nop = null,
     Object? namaLokasi = null,
@@ -211,10 +207,6 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.recentTransactions
                 : recentTransactions // ignore: cast_nullable_to_non_nullable
                       as List<HistoryItemModel>,
-            weeklyChartData: null == weeklyChartData
-                ? _value.weeklyChartData
-                : weeklyChartData // ignore: cast_nullable_to_non_nullable
-                      as List<WeeklyChartItemModel>,
             isFree: null == isFree
                 ? _value.isFree
                 : isFree // ignore: cast_nullable_to_non_nullable
@@ -374,7 +366,6 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     double totalBersih,
     int? selectedModePlat,
     List<HistoryItemModel> recentTransactions,
-    List<WeeklyChartItemModel> weeklyChartData,
     bool isFree,
     String nop,
     String namaLokasi,
@@ -435,7 +426,6 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? totalBersih = null,
     Object? selectedModePlat = freezed,
     Object? recentTransactions = null,
-    Object? weeklyChartData = null,
     Object? isFree = null,
     Object? nop = null,
     Object? namaLokasi = null,
@@ -506,10 +496,6 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value._recentTransactions
             : recentTransactions // ignore: cast_nullable_to_non_nullable
                   as List<HistoryItemModel>,
-        weeklyChartData: null == weeklyChartData
-            ? _value._weeklyChartData
-            : weeklyChartData // ignore: cast_nullable_to_non_nullable
-                  as List<WeeklyChartItemModel>,
         isFree: null == isFree
             ? _value.isFree
             : isFree // ignore: cast_nullable_to_non_nullable
@@ -622,7 +608,6 @@ class _$HomeStateImpl implements _HomeState {
     this.totalBersih = 0.0,
     this.selectedModePlat,
     final List<HistoryItemModel> recentTransactions = const [],
-    final List<WeeklyChartItemModel> weeklyChartData = const [],
     this.isFree = false,
     this.nop = "",
     this.namaLokasi = "",
@@ -695,7 +680,6 @@ class _$HomeStateImpl implements _HomeState {
       detailAlatCheckOut: [],
     ),
   }) : _recentTransactions = recentTransactions,
-       _weeklyChartData = weeklyChartData,
        _sofParkirResults = sofParkirResults;
 
   @override
@@ -732,15 +716,6 @@ class _$HomeStateImpl implements _HomeState {
       return _recentTransactions;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_recentTransactions);
-  }
-
-  final List<WeeklyChartItemModel> _weeklyChartData;
-  @override
-  @JsonKey()
-  List<WeeklyChartItemModel> get weeklyChartData {
-    if (_weeklyChartData is EqualUnmodifiableListView) return _weeklyChartData;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_weeklyChartData);
   }
 
   @override
@@ -823,7 +798,7 @@ class _$HomeStateImpl implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, weeklyChartData: $weeklyChartData, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, checkInOutData: $checkInOutData)';
+    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, checkInOutData: $checkInOutData)';
   }
 
   @override
@@ -856,10 +831,6 @@ class _$HomeStateImpl implements _HomeState {
             const DeepCollectionEquality().equals(
               other._recentTransactions,
               _recentTransactions,
-            ) &&
-            const DeepCollectionEquality().equals(
-              other._weeklyChartData,
-              _weeklyChartData,
             ) &&
             (identical(other.isFree, isFree) || other.isFree == isFree) &&
             (identical(other.nop, nop) || other.nop == nop) &&
@@ -921,7 +892,6 @@ class _$HomeStateImpl implements _HomeState {
     totalBersih,
     selectedModePlat,
     const DeepCollectionEquality().hash(_recentTransactions),
-    const DeepCollectionEquality().hash(_weeklyChartData),
     isFree,
     nop,
     namaLokasi,
@@ -969,7 +939,6 @@ abstract class _HomeState implements HomeState {
     final double totalBersih,
     final int? selectedModePlat,
     final List<HistoryItemModel> recentTransactions,
-    final List<WeeklyChartItemModel> weeklyChartData,
     final bool isFree,
     final String nop,
     final String namaLokasi,
@@ -1017,8 +986,6 @@ abstract class _HomeState implements HomeState {
   int? get selectedModePlat;
   @override
   List<HistoryItemModel> get recentTransactions;
-  @override
-  List<WeeklyChartItemModel> get weeklyChartData;
   @override
   bool get isFree;
   @override
