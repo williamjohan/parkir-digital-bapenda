@@ -14,17 +14,10 @@ class UpdateRepositoryImpl implements IUpdateRepository {
   @override
   Future<Either<Failure, UpdateEntity?>> checkUpdate() async {
     try {
-      // 1. Ambil JSON dari Nextcloud (Sudah pasti berupa Map berkat DataSource Anda)
       final data = await _remoteDataSource.fetchUpdateJson();
 
       final serverBuildNumber =
           int.tryParse(data['buildNumber'].toString()) ?? 0;
-
-      print(
-        ">>> AUDIT REPO: Berhasil parsing! Build Number Server: $serverBuildNumber",
-      );
-
-      // 2. 🚀 LANGSUNG RETURN ENTITY-NYA UTUH!
       return Right(
         UpdateEntity(
           versionName: data['versionName'] ?? 'Unknown',
@@ -35,7 +28,7 @@ class UpdateRepositoryImpl implements IUpdateRepository {
         ),
       );
     } catch (e) {
-      return Left(
+      return const Left(
         ServerFailure("Gagal memeriksa pembaruan. Pastikan internet stabil."),
       );
     }

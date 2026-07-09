@@ -1,0 +1,23 @@
+import '../models/auth_response_model.dart';
+
+class AuthMapper {
+  /// Transformasi dari DTO API ke format Map SQLite
+  static List<Map<String, dynamic>> toSqliteList(List<NopModel> nopList) {
+    return nopList
+        .map(
+          (e) => {
+            'nop': e.nop.trim(),
+            'nama_op': e.namaOp,
+            'alamat_op': e.alamatOp,
+            'is_digital': e.isDigital ? 1 : 0,
+            'pungut_tarif': e.pungutTarif,
+            "uptb": e.uptb,
+            "kdCamat": e.kdCamat,
+            "nmCamat": e.nmCamat,
+            "kdLurah": e.kdLurah,
+            "nmLurah": e.nmLurah,
+          },
+        )
+        .toList();
+  }
+}

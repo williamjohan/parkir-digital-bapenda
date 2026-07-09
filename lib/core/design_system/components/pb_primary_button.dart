@@ -1,4 +1,4 @@
-// lib/core/design_system/components/primary_button.dart
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import '../tokens/app_colors.dart';
@@ -7,17 +7,20 @@ import '../tokens/app_typography.dart';
 enum PbButtonVariant {
   primary,
   secondary,
+  secondaryLight, // Varian baru yang ditambahkan
   outlinedPrimary,
   outlinedSecondaryLight,
   outlinedSecondaryDark,
+  glassmorphism,
 }
 
-enum PbButtonSize { regular, small }
+enum PbButtonSize { regular, small, medium }
 
 class PbPrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
+  final bool isDisabled; // 🔥 Parameter opsional baru ditambahkan di sini
   final IconData? iconLeft;
   final IconData? iconRight;
   final PbButtonVariant variant;
@@ -28,6 +31,7 @@ class PbPrimaryButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.isLoading = false,
+    this.isDisabled = false, // 🔥 Set default-nya ke false
     this.iconLeft,
     this.iconRight,
     this.variant = PbButtonVariant.primary,
@@ -40,7 +44,6 @@ class PbPrimaryButton extends StatelessWidget {
     late Color textColor;
     late Color borderColor;
 
-    // 🎨 Variant styling
     switch (variant) {
       case PbButtonVariant.primary:
         backgroundColor = AppColors.primary;
@@ -51,6 +54,14 @@ class PbPrimaryButton extends StatelessWidget {
       case PbButtonVariant.secondary:
         backgroundColor = AppColors.background;
         textColor = AppColors.primary;
+        borderColor = Colors.transparent;
+        break;
+
+      case PbButtonVariant.secondaryLight:
+        backgroundColor = Colors.white.withValues(
+          alpha: 0.2,
+        ); // Putih dengan opacity 0.2
+        textColor = Colors.white;
         borderColor = Colors.transparent;
         break;
 
@@ -71,9 +82,14 @@ class PbPrimaryButton extends StatelessWidget {
         textColor = Colors.grey.shade700;
         borderColor = Colors.grey.shade400;
         break;
+
+      case PbButtonVariant.glassmorphism:
+        backgroundColor = Colors.transparent;
+        textColor = Colors.white;
+        borderColor = Colors.white.withValues(alpha: 0.3);
+        break;
     }
 
-    // 📏 Size config
     final double height = size == PbButtonSize.small ? 40 : 52;
     final double fontSize = size == PbButtonSize.small ? 12 : 14;
     final double iconSize = size == PbButtonSize.small ? 16 : 20;
@@ -83,68 +99,149 @@ class PbPrimaryButton extends StatelessWidget {
         variant == PbButtonVariant.outlinedSecondaryLight ||
         variant == PbButtonVariant.outlinedSecondaryDark;
 
+    final bool isGlass = variant == PbButtonVariant.glassmorphism;
+
     final bool isTextEmpty = text.trim().isEmpty;
+    final bool useSpaceBetween = iconRight != null;
+
+    final BorderRadius buttonRadius = isGlass
+        ? BorderRadius.circular(100)
+        : BorderRadius.circular(12);
+
+    // 🔥 Buat variabel penanda state button sedang disable
+    final bool isButtonDisabled = isLoading || isDisabled;
 
     return SizedBox(
       width: double.infinity,
       height: height,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          disabledBackgroundColor: isOutlined
-              ? Colors.transparent
-              : AppColors.textHint,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: borderColor, width: isOutlined ? 1.5 : 0),
-          ),
-          elevation: 0,
-        ),
-        child: isLoading
-            ? SizedBox(
-                height: iconSize,
-                width: iconSize,
-                child: CircularProgressIndicator(
-                  color: textColor,
-                  strokeWidth: 3,
-                ),
-              )
-            : isTextEmpty
-            ? Center(
-                child: iconLeft != null
-                    ? Icon(iconLeft, color: textColor, size: iconSize)
-                    : iconRight != null
-                    ? Icon(iconRight, color: textColor, size: iconSize)
-                    : const SizedBox(),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      if (iconLeft != null) ...[
-                        Icon(iconLeft, color: textColor, size: iconSize),
-                        const SizedBox(width: 8),
-                      ],
-                      Text(
-                        text,
-                        style: AppTypography.buttonText.copyWith(
-                          color: textColor,
-                          fontSize: fontSize,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+      child: isGlass
+          ? ClipRRect(
+              borderRadius: buttonRadius,
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withValues(alpha: 0.15),
+                          Colors.white.withValues(alpha: 0.02),
+                        ],
                       ),
-                    ],
+                      borderRadius: buttonRadius,
+                      border: Border.all(color: borderColor, width: 1.2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: InkWell(
+                      borderRadius: buttonRadius,
+                      // 🔥 Implementasikan logika disable pada onTap
+                      onTap: isButtonDisabled ? null : onPressed,
+                      child: Center(
+                        child: _buildChild(
+                          textColor,
+                          fontSize,
+                          iconSize,
+                          useSpaceBetween,
+                          isTextEmpty,
+                        ),
+                      ),
+                    ),
                   ),
-                  if (iconRight != null) ...[
-                    SizedBox(width: 8),
-                    Icon(iconRight, color: textColor, size: iconSize),
-                  ],
-                ],
+                ),
               ),
-      ),
+            )
+          : ElevatedButton(
+              // 🔥 Implementasikan logika disable pada onPressed
+              onPressed: isButtonDisabled ? null : onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: backgroundColor,
+                disabledBackgroundColor: isOutlined
+                    ? Colors.transparent
+                    : AppColors.textHint,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: buttonRadius,
+                  side: BorderSide(
+                    // Ubah border menjadi warna hint ketika tombol ter-disable dan tipe tombol adalah outlined
+                    color: isButtonDisabled && isOutlined
+                        ? AppColors.textHint
+                        : borderColor,
+                    width: isOutlined ? 1.5 : 0,
+                  ),
+                ),
+                elevation: 0,
+              ),
+              child: _buildChild(
+                // Ubah text color menjadi abu-abu jika tombol disable pada variant outlined
+                isButtonDisabled && isOutlined ? AppColors.textHint : textColor,
+                fontSize,
+                iconSize,
+                useSpaceBetween,
+                isTextEmpty,
+              ),
+            ),
+    );
+  }
+
+  Widget _buildChild(
+    Color textColor,
+    double fontSize,
+    double iconSize,
+    bool useSpaceBetween,
+    bool isTextEmpty,
+  ) {
+    if (isLoading) {
+      return SizedBox(
+        height: iconSize,
+        width: iconSize,
+        child: CircularProgressIndicator(color: textColor, strokeWidth: 3),
+      );
+    }
+
+    if (isTextEmpty) {
+      return Center(
+        child: iconLeft != null
+            ? Icon(iconLeft, color: textColor, size: iconSize)
+            : iconRight != null
+            ? Icon(iconRight, color: textColor, size: iconSize)
+            : const SizedBox(),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: useSpaceBetween
+          ? MainAxisAlignment.spaceBetween
+          : MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (iconLeft != null) ...[
+              Icon(iconLeft, color: textColor, size: iconSize),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              text,
+              style: AppTypography.buttonText.copyWith(
+                color: textColor,
+                fontSize: fontSize,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+        if (iconRight != null)
+          Icon(iconRight, color: textColor, size: iconSize),
+      ],
     );
   }
 }

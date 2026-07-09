@@ -1,6 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _profileCubit = locator<ProfileCubit>();
-    _profileCubit.loadProfile(); // Load profile saat page terbuka
+    _profileCubit.loadProfile();
   }
 
   @override
@@ -35,24 +35,29 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
-          elevation: 0,
-          centerTitle: true,
-          title: Text('Profil Saya', style: AppTypography.heading5),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-            onPressed: () => context.pop(),
+          title: Text(
+            'Profile Saya',
+            style: AppTypography.heading5.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          centerTitle: true,
+          backgroundColor: AppColors.surface,
+          scrolledUnderElevation: 0,
+          shape: const Border(
+            bottom: BorderSide(color: AppColors.primary, width: 1.0),
+          ),
+          elevation: 0,
+          foregroundColor: Colors.black,
+          iconTheme: const IconThemeData(color: AppColors.primary),
         ),
-
-        //  1. TOMBOL BAWAH DIPINDAHKAN KE SINI AGAR AMAN DARI SCROLL
         bottomNavigationBar: Container(
-          color: AppColors.background, // Samakan dengan background
+          color: AppColors.background,
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // === TOMBOL LOGOUT ===
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -94,22 +99,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 12),
-              // === VERSION APP ===
               Center(
                 child: FutureBuilder<PackageInfo>(
                   future: PackageInfo.fromPlatform(),
                   builder: (context, snapshot) {
-                    // Nilai sementara saat sedang mengambil data dari Native
                     String versionText = 'Version ...';
 
                     if (snapshot.hasData) {
-                      // Mengambil versi langsung dari pubspec.yaml
                       versionText = 'Version ${snapshot.data!.version}';
                     }
 
                     return Text(
                       versionText,
-                      // const digeser ke dalam Text Style
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     );
                   },
@@ -118,10 +119,21 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ),
-
-        //  2. KONTEN UTAMA
-        body: BlocBuilder<ProfileCubit, ProfileState>(
+        // --- PERUBAHAN UTAMA DI SINI ---
+        body: BlocConsumer<ProfileCubit, ProfileState>(
           bloc: _profileCubit,
+          listener: (context, state) {
+            // Jika refresh gagal tapi masih ada data lama, munculkan SnackBar
+            if (state is ProfileRefreshError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Gagal memperbarui profil: ${state.message}'),
+                  backgroundColor: AppColors.error,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
           builder: (context, state) {
             if (state is ProfileLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -154,176 +166,103 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             }
 
-            if (state is ProfileLoaded) {
-              final user = state.user;
+            // Gabungkan kondisi untuk menampilkan UI Profil
+            if (state is ProfileLoaded || state is ProfileRefreshError) {
+              // Ambil data user dari state yang sesuai
+              final user = state is ProfileLoaded
+                  ? state.user
+                  : (state as ProfileRefreshError).oldUser;
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // === HEADER PROFIL ===
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.primary.withValues(alpha: 0.2),
+              final photoPath = state is ProfileLoaded
+                  ? state.photoPath
+                  : (state as ProfileRefreshError).oldPhotoPath;
+
+              return RefreshIndicator(
+                onRefresh: () => _profileCubit.refreshProfile(),
+                // Tambahkan AlwaysScrollableScrollPhysics agar selalu bisa ditarik
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.primary.withValues(alpha: 0.2),
+                                image:
+                                    (photoPath != null && photoPath.isNotEmpty)
+                                    ? DecorationImage(
+                                        image: FileImage(File(photoPath)),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                              ),
+                              child: (photoPath == null || photoPath.isEmpty)
+                                  ? const Icon(
+                                      Icons.person,
+                                      size: 40,
+                                      color: AppColors.primary,
+                                    )
+                                  : null,
                             ),
-                            child: const Icon(
-                              Icons.person,
-                              size: 40,
-                              color: AppColors.primary,
+                            const SizedBox(height: 16),
+                            Text(
+                              user.namaUser, // Menggunakan variabel 'user' yang sudah difilter
+                              style: AppTypography.heading3,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Card(
+                          color: AppColors.surface,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: const BorderSide(
+                              color: AppColors.border,
+                              width: 1,
                             ),
                           ),
-                          // Avatar & Nama
-                          const SizedBox(height: 16),
-                          Text(
-                            user.namaUser,
-                            style: AppTypography.heading3,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          //TODO : perbaiki ini next (panggil NIK)
-
-                          // Text(
-                          //   'ID: ${user.idUser}',
-                          //   style: AppTypography.bodySmall.copyWith(
-                          //     color: AppColors.textSecondary,
-                          //   ),
-                          // ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      // === CARD IDENTITAS ===
-                      Card(
-                        color: AppColors.surface,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: const BorderSide(
-                            color: AppColors.border,
-                            width: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Identitas',
+                                  style: AppTypography.heading3,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildInfoRow(
+                                  label: 'NOP (Nomor Objek Pajak)',
+                                  value: user.nop,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildInfoRow(
+                                  label: 'Nama Objek Pajak',
+                                  value: user.namaObjekPajak,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildInfoRow(
+                                  label: 'Alamat',
+                                  value: user.alamat,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Identitas', style: AppTypography.heading3),
-                              const SizedBox(height: 12),
-                              // Info Identitas
-                              _buildInfoRow(
-                                label: 'NOP (Nomor Objek Pajak)',
-                                value: user.nop,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Nama Objek Pajak',
-                                value: user.namaObjekPajak,
-                              ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow(
-                                label: 'Alamat',
-                                value: user.alamat,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // // === CARD LOKASI & GATE === (Di-hidden sementara)
-                      // // const SizedBox(height: 16),
-                      // Card(
-                      //   color: AppColors.surface,
-                      //   elevation: 0,
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(12),
-                      //     side: const BorderSide(
-                      //       color: AppColors.border,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(16),
-                      //     child: Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         Text(
-                      //           'Lokasi & Gate',
-                      //           style: AppTypography.heading3,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Lokasi',
-                      //           value: user.namaLokasi,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Kode Gate',
-                      //           value: user.kodeGate,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Nama Gate',
-                      //           value: user.namaGate,
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      // const SizedBox(height: 20),
-
-                      // // === CARD PERANGKAT & SHIFT ===
-                      // Card(
-                      //   color: AppColors.surface,
-                      //   elevation: 0,
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(12),
-                      //     side: const BorderSide(
-                      //       color: AppColors.border,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(16),
-                      //     child: Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         Text(
-                      //           'Perangkat & Shift',
-                      //           style: AppTypography.heading3,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'ID Perangkat',
-                      //           value: user.idDevice,
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Shift',
-                      //           value: user.shift.isEmpty
-                      //               ? '-'
-                      //               : 'Shift ${user.shift}',
-                      //         ),
-                      //         const SizedBox(height: 12),
-                      //         _buildInfoRow(
-                      //           label: 'Pungut Tarif',
-                      //           value: user.pungutTarif == 1
-                      //               ? 'Gratis'
-                      //               : 'Berbayar',
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );

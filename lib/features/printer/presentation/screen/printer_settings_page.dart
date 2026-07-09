@@ -1,5 +1,3 @@
-// lib/features/printer/presentation/screen/printer_settings_page.dart
-
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +20,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PrinterCubit>().scanDevices();
+      context.read<PrinterCubit>().scanDevices(context);
     });
   }
 
@@ -45,7 +43,8 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: () => context.read<PrinterCubit>().scanDevices(),
+              onPressed: () =>
+                  context.read<PrinterCubit>().scanDevices(context),
             ),
           ],
         ),
@@ -124,8 +123,6 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                       ],
                     ),
                   ),
-
-                  // 🚀 SECTION 2: BANNER EDUKASI UX (Pre-Permission Education)
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
@@ -153,8 +150,6 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                       ],
                     ),
                   ),
-
-                  // 🚀 SECTION 3: AREA LIST & PULL TO REFRESH
                   const Padding(
                     padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: Text(
@@ -162,16 +157,11 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-
-                  // List Device Anak yang di-maintain terpisah
                   Expanded(
                     child: ListDeviceWidget(
                       devices: devices,
                       connectedDevice: connectedDevice,
                       isLoading: isLoading,
-                      // onRefresh: () async {
-                      //   await context.read<PrinterCubit>().scanDevices();
-                      // },
                       onConnect: (device) {
                         context.read<PrinterCubit>().connectDevice(device);
                       },

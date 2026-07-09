@@ -6,5 +6,10 @@ abstract class ITransactionHistoryRepository {
   Future<Either<Failure, HistoryResponseData>> getHistory({
     required DateTime startDate,
     required DateTime endDate,
+    required String nop,
+    required int page,
+    required int pageSize,
+    required int jenisKendaraan,
+    String? idDevice,
   });
 }

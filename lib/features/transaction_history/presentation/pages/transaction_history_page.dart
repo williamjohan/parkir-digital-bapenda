@@ -1,14 +1,13 @@
-// lib/features/transaction_history/presentation/pages/transaction_history_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
-import '../../../../core/design_system/components/pb_ticket_print_dialog.dart';
+import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../shared/loading/loading_overlay.dart';
-import '../../data/models/history_item_model.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
@@ -17,11 +16,17 @@ import '../widgets/history_recap_widget.dart'; // 🚀 IMPORT WIDGET ASLI
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
   final bool isFree;
+  final String? nop;
+  final String? idDevice;
+  final Map<String, dynamic>? item;
 
   const TransactionHistoryPage({
     super.key,
     this.initialDate,
     required this.isFree,
+    this.nop,
+    this.idDevice,
+    this.item,
   });
 
   @override
@@ -63,18 +68,14 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     ];
 
     if (start == end) {
-      // Jika pilih 1 hari yang bukan hari ini
       return "REKAP ${start.day} ${months[start.month - 1]} ${start.year}";
     }
 
     if (start.month == end.month && start.year == end.year) {
-      // Jika rentang di bulan dan tahun yang sama (Contoh: 1 - 12 Jun 2026)
       return "REKAP ${start.day} - ${end.day} ${months[end.month - 1]} ${end.year}";
     } else if (start.year == end.year) {
-      // Jika beda bulan tapi tahun sama (Contoh: 28 Mei - 2 Jun 2026)
       return "REKAP ${start.day} ${months[start.month - 1]} - ${end.day} ${months[end.month - 1]} ${end.year}";
     } else {
-      // Jika melintas ganti tahun
       return "REKAP ${start.day} ${months[start.month - 1]} ${start.year} - ${end.day} ${months[end.month - 1]} ${end.year}";
     }
   }
@@ -95,11 +96,13 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       59,
     );
 
-    context.read<TransactionHistoryCubit>().fetchHistory(_startDate, _endDate);
-
-    // 🚀 SCROLL LISTENER BARU YANG LEBIH CERDAS
+    context.read<TransactionHistoryCubit>().fetchHistory(
+      _startDate,
+      _endDate,
+      widget.nop ?? '',
+      widget.idDevice ?? '',
+    );
     _scrollController.addListener(() {
-      // Angka 180 adalah perkiraan tinggi HistoryRecapWidget
       if (_scrollController.offset > 180 && !_isScrolledPastRecap) {
         setState(() => _isScrolledPastRecap = true);
       } else if (_scrollController.offset <= 180 && _isScrolledPastRecap) {
@@ -109,19 +112,15 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               false; // Otomatis tutup overlay jika user manual scroll ke paling atas
         });
       }
-    });
-  }
 
-  void _showPreviewKarcis(
-    BuildContext context,
-    HistoryItemModel item,
-    Map<String, dynamic> profile,
-  ) {
-    PbTicketPrintDialog.showFromHistory(
-      context: context,
-      historyTx: item,
-      profile: profile,
-    );
+      if (_scrollController.hasClients) {
+        final maxScroll = _scrollController.position.maxScrollExtent;
+        final current = _scrollController.position.pixels;
+        if (current >= maxScroll * 0.9) {
+          context.read<TransactionHistoryCubit>().loadMoreItems();
+        }
+      }
+    });
   }
 
   @override
@@ -142,18 +141,21 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             child: Scaffold(
               backgroundColor: Colors.grey.shade50,
               appBar: AppBar(
-                title: const Text(
+                title: Text(
                   'Riwayat Pendapatan',
-                  style: AppTypography.heading5,
+                  style: AppTypography.heading5.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 centerTitle: true,
                 backgroundColor: AppColors.surface,
                 elevation: 0,
                 foregroundColor: Colors.black,
+                iconTheme: const IconThemeData(color: AppColors.primary),
               ),
               body: Column(
                 children: [
-                  // 🔹 FILTER TANGGAL (TETAP STATIS DI ATAS)
                   RangeFilterWidget(
                     onApply:
                         ({
@@ -171,15 +173,13 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                           context.read<TransactionHistoryCubit>().fetchHistory(
                             start,
                             end,
+                            widget.nop ?? '',
+                            widget.idDevice ?? '',
                           );
                         },
                   ),
-
-                  // 🔹 FILTER KATEGORI (TETAP STATIS DI ATAS)
-                  if (state is TransactionHistoryLoaded)
+                  if (state is TransactionHistoryLoaded && widget.nop != null)
                     _buildFilterSection(state),
-
-                  // 🔹 SCROLL AREA DENGAN MAGIC STACK OVERLAY
                   Expanded(child: _buildScrollContent(state)),
                 ],
               ),
@@ -191,6 +191,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   }
 
   Widget _buildFilterSection(TransactionHistoryLoaded state) {
+    final bool isFiltering = state.isFilterLoading;
     return Column(
       children: [
         Container(
@@ -206,6 +207,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   'SEMUA',
                   state.selectedKategori,
                   'Semua',
+                  isFiltering,
                 ),
                 const SizedBox(width: 8),
                 _buildFilterChip(
@@ -213,6 +215,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   'MOBIL',
                   state.selectedKategori,
                   'Mobil',
+                  isFiltering,
                 ),
                 const SizedBox(width: 8),
                 _buildFilterChip(
@@ -220,24 +223,25 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   'MOTOR',
                   state.selectedKategori,
                   'Motor',
+                  isFiltering,
                 ),
               ],
             ),
           ),
         ),
-        Divider(color: AppColors.textHint),
+        const Divider(color: AppColors.textHint),
       ],
     );
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.receipt_long, size: 80, color: AppColors.textHint),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: 16),
+          Text(
             'Tidak ada transaksi untuk filter ini.',
             style: TextStyle(color: AppColors.textHint),
           ),
@@ -246,72 +250,129 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     );
   }
 
-  // 🚀 MAGIC LAYER DIMULAI DI SINI
   Widget _buildScrollContent(TransactionHistoryState state) {
     if (state is TransactionHistoryError) {
       return Center(child: Text(state.message));
     }
     if (state is TransactionHistoryLoaded) {
-      final data = state.filteredTransactions;
+      final allFiltered = state.filteredTransactions;
+      final data = state.visibleTransactions;
+      final isFiltering = state.isFilterLoading;
 
       return Stack(
         children: [
-          // ==========================================
-          // LAYER 1: BASE SCROLL VIEW (BACKGROUND)
-          // ==========================================
           RefreshIndicator(
-            onRefresh: () => context
-                .read<TransactionHistoryCubit>()
-                .fetchHistory(_startDate, _endDate),
+            onRefresh: () =>
+                context.read<TransactionHistoryCubit>().fetchHistory(
+                  _startDate,
+                  _endDate,
+                  widget.nop ?? '',
+                  widget.idDevice ?? '',
+                ),
             child: CustomScrollView(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                //  REKAP NORMAL: Akan ter-scroll ke atas secara alami
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 8),
-                    // Masukkan ke dalam parameter child
-                    child: (() {
-                      //TODO disini juga perlu adjustment
-                      // Pastikan double
-                      // final int persentase = 10;
-
-                      // 2. Return Widget-nya
-                      return HistoryRecapWidget(
+                    child: Skeletonizer(
+                      // 🆕 bungkus recap
+                      enabled: isFiltering,
+                      child: HistoryRecapWidget(
                         title: _getDynamicRecapTitle(),
                         roda2: state.roda2.toString(),
                         roda4: state.roda4.toString(),
-
                         totalPendapatan: state.totalPendapatan.toString(),
                         persentasePajak: state.persentasePajak.toString(),
                         nominalPajak: state.totalPajak.toString(),
                         totalBersih: state.totalBersih.toString(),
-
+                        sofBreakdown: state.sofBreakdown,
                         isFree: widget.isFree,
-                      );
-                    })(),
+                      ),
+                    ),
                   ),
                 ),
-
-                // 🔹 LIST TRANSAKSI
-                data.isEmpty
+                allFiltered.isEmpty
                     ? SliverFillRemaining(
                         hasScrollBody: false,
                         child: _buildEmptyState(),
                       )
-                    : SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          return HistoryCardWidget(
-                            item: data[index],
-                            onPreviewTap: () => _showPreviewKarcis(
-                              context,
-                              data[index],
-                              state.jukirProfile,
-                            ),
-                          );
-                        }, childCount: data.length),
+                    : Skeletonizer.sliver(
+                        enabled: isFiltering,
+                        child: SliverList(
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            return HistoryCardWidget(
+                              item: data[index],
+                              onPrint: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) {
+                                    return Dialog(
+                                      insetPadding: const EdgeInsets.all(24),
+                                      child: PbPreviewTicketWidget(
+                                        item: data[index],
+                                        isPrinterReady: true,
+                                        okPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        printPressed: () async {
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (_) {
+                                              return Dialog(
+                                                insetPadding:
+                                                    const EdgeInsets.all(24),
+                                                child: PbPreviewTicketWidget(
+                                                  item: data[index],
+                                                  isPrinterReady: true,
+                                                  okPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  printPressed: () async {
+                                                    // Navigator.pop(context);
+
+                                                    // proses print di sini
+                                                    await context
+                                                        .read<PrinterCubit>()
+                                                        .printReceipt(
+                                                          context,
+                                                          data[index],
+                                                        );
+                                                  },
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }, childCount: data.length),
+                        ),
                       ),
+
+                if (state.isLoadingMore)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    ),
+                  ),
                 const SliverToBoxAdapter(child: SizedBox(height: 80)),
               ],
             ),
@@ -321,7 +382,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             ignoring: !_showOverlayRecap,
             child: GestureDetector(
               onTap: () {
-                // Jika user klik di area gelap (di luar recap), tutup recap-nya
                 setState(() => _showOverlayRecap = false);
               },
               child: AnimatedContainer(
@@ -336,9 +396,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               ),
             ),
           ),
-          // ==========================================
-          // LAYER 2: THE FLOATING RECAP OVERLAY (SLIDE DOWN)
-          // ==========================================
           AnimatedPositioned(
             duration: const Duration(milliseconds: 350),
             curve: Curves.easeOutBack, // Animasi memantul elegan
@@ -349,7 +406,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             right: 0,
             child: GestureDetector(
               onVerticalDragEnd: (details) {
-                // Bisa di-swipe ke atas untuk menutup
                 if (details.primaryVelocity! < 0) {
                   setState(() => _showOverlayRecap = false);
                 }
@@ -357,10 +413,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               child: Column(
                 children: [
                   (() {
-                    //TODO untuk persentase pajak nya perlu adjustment
-                    //dari endpoint sendiri.
-                    // final int persentase = 10;
-
                     return HistoryRecapWidget(
                       title: _getDynamicRecapTitle(),
                       roda2: state.roda2.toString(),
@@ -374,7 +426,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                       isFree: widget.isFree,
                     );
                   })(),
-                  // Tombol Panah Atas (Tutup)
                   GestureDetector(
                     onTap: () => setState(() => _showOverlayRecap = false),
                     child: Container(
@@ -401,14 +452,9 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               ),
             ),
           ),
-
-          // ==========================================
-          // LAYER 3: HANDLE TOMBOL PANAH BAWAH
-          // ==========================================
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            // Muncul HANYA jika sudah discroll melewati rekap DAN overlay sedang ditutup
             top: (_isScrolledPastRecap && !_showOverlayRecap) ? 0 : -50,
             left: 0,
             right: 0,
@@ -467,6 +513,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     String value,
     String selectedValue,
     String label,
+    bool isDisabled,
   ) {
     final bool isSelected = value == selectedValue;
     return ChoiceChip(
@@ -479,13 +526,15 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       ),
       backgroundColor: Colors.grey.shade100,
       side: BorderSide(color: isSelected ? Colors.blue : Colors.grey.shade300),
-      onSelected: (bool selected) {
-        if (selected) {
-          context.read<TransactionHistoryCubit>().applyLocalFilter(
-            kategori: value,
-          );
-        }
-      },
+      onSelected: isDisabled
+          ? null
+          : (bool selected) {
+              if (selected) {
+                context.read<TransactionHistoryCubit>().applyFilter(
+                  kategori: value,
+                );
+              }
+            },
     );
   }
 }

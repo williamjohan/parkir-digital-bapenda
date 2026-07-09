@@ -1,5 +1,3 @@
-// lib/features/init/presentation/cubit/init_state.dart
-
 import 'package:equatable/equatable.dart';
 
 abstract class InitState extends Equatable {
@@ -13,7 +11,6 @@ class InitInitial extends InitState {}
 
 class InitLoading extends InitState {}
 
-// [PERBAIKAN]: Tambahkan variabel isLoggedIn untuk memberi tahu rute selanjutnya
 class InitSuccess extends InitState {
   final bool isLoggedIn;
 

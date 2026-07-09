@@ -1,75 +1,103 @@
-// lib/core/services/location/app_location_service_impl.dart
-
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/services/location/app_location_data.dart';
 import '../../errors/exception.dart';
-import '../../storage/secure_storage_manager.dart'; // 🚀 Import Secure Storage
+import '../../storage/i_secure_storage_manager.dart';
 import 'i_app_location_service.dart';
 
 @LazySingleton(as: IAppLocationService)
 class AppLocationServiceImpl implements IAppLocationService {
-  final ISecureStorageManager _secureStorage; // 🚀 Injeksi Storage
+  final ISecureStorageManager _secureStorage;
 
   AppLocationServiceImpl(this._secureStorage);
 
   @override
-  Future<Map<String, String>> getCurrentLocation() async {
+  Future<AppLocationData> getCurrentLocation() async {
     try {
-      // 1. Cek Hardware
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) throw LocationDisabledException();
+      if (!serviceEnabled) throw const LocationDisabledException();
 
-      // 2. Cek Izin
       LocationPermission permission = await Geolocator.checkPermission();
-
-      // Jika ditolak (termasuk jika OS baru saja mencabut izin "Sementara"), minta lagi!
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
-
-      // Evaluasi hasil permintaan
       if (permission == LocationPermission.denied) {
-        throw LocationPermissionDeniedException("Izin lokasi ditolak.");
+        throw const LocationPermissionDeniedException();
       }
       if (permission == LocationPermission.deniedForever) {
-        // Jika Android memblokir pop-up, paksa lempar error agar UI mengarahkan ke Setting App
-        throw LocationPermissionDeniedException(
-          "Izin lokasi diblokir sistem. Silakan buka Pengaturan.",
+        throw const LocationPermissionDeniedException(
+          message: "Mohon aktifkan perizinan lokasi Anda di pengaturan sistem.",
         );
       }
 
-      // 3. Ambil Lokasi (Real-time)
+      // 1. PERBAIKAN AKURASI & TIMEOUT
+      // Ubah ke 'high' untuk absensi, dan beri toleransi waktu 15 detik agar GPS HP sempat mencari satelit
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-          timeLimit: Duration(seconds: 3),
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 15),
         ),
       );
+
+      if (position.isMocked) {
+        throw Exception(
+          "TERDETEKSI FAKE GPS: Harap matikan aplikasi lokasi palsu untuk melakukan absensi.",
+        );
+      }
 
       final lat = position.latitude.toString();
       final lng = position.longitude.toString();
 
-      // 4. Simpan ke Cache
-      await _secureStorage.saveLastLocation(lat, lng);
-      return {'latitude': lat, 'longitude': lng};
-    } on TimeoutException {
-      return await _fallbackLocation();
-    } catch (e) {
-      // 🚀 THE FIX: Tambalan Kebocoran Exception Geolocator!
-      // Jika error mengandung kata 'permission', JANGAN biarkan masuk ke fallback!
-      final errorString = e.toString().toLowerCase();
-
-      if (e is LocationDisabledException ||
-          e is LocationPermissionDeniedException ||
-          errorString.contains('permission')) {
-        // Lempar ulang agar Satpam (Cubit) mencegat Jukir
-        throw LocationPermissionDeniedException(
-          "Izin lokasi telah dicabut oleh sistem.",
+      String? placeName;
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
         );
+
+        if (placemarks.isNotEmpty) {
+          final p = placemarks.first;
+          String namaJalan = p.thoroughfare ?? p.street ?? '';
+          if (namaJalan.contains('+')) {
+            // Jika isinya Plus Code, kita kosongkan saja daripada aneh dibaca
+            namaJalan = '';
+          } else if (p.subThoroughfare != null &&
+              p.subThoroughfare!.isNotEmpty) {
+            //  3. Gabungkan dengan Nomor Bangunan jika tersedia
+            // Hasil: "Jl. Jimerto No.19"
+            namaJalan = '$namaJalan No.${p.subThoroughfare}';
+          }
+          // 2. PERBAIKAN FORMAT ALAMAT (Memasukkan Nama Jalan)
+          // Contoh hasil: "Jl. Pemuda No. 1, Embong Kaliasin, Surabaya"
+          final parts = [
+            namaJalan,
+            p.subLocality,
+            p.locality,
+          ].where((e) => e != null && e.isNotEmpty).toList();
+
+          placeName = parts.isNotEmpty ? parts.join(', ') : null;
+        } else {
+          debugPrint('[GEOCODING] placemarks list is empty for $lat, $lng');
+        }
+      } catch (_) {
+        // Jika internet mati sehingga geocoding gagal, biarkan placeName null.
+        // Nanti UI akan secara otomatis hanya menampilkan koordinat Lat/Long.
+        // debugPrint('[GEOCODING] failed: $e');
       }
 
-      // Hanya error hardware murni atau file corrupt yang boleh pakai fallback
+      await _secureStorage.saveLastLocation(lat, lng, placeName ?? '');
+      final cached = await _secureStorage.getLastLocation();
+      debugPrint('[CACHE CHECK] $cached');
+
+      return AppLocationData(latitude: lat, longitude: lng, address: placeName);
+    } on TimeoutException {
+      return await _fallbackLocation();
+    } on AppException {
+      rethrow;
+    } catch (e) {
       return await _fallbackLocation();
     }
   }
@@ -79,12 +107,19 @@ class AppLocationServiceImpl implements IAppLocationService {
     return await Geolocator.isLocationServiceEnabled();
   }
 
-  // 🚀 FUNGSI FALLBACK CERDAS
-  Future<Map<String, String>> _fallbackLocation() async {
+  Future<AppLocationData> _fallbackLocation() async {
     final cachedLocation = await _secureStorage.getLastLocation();
-    if (cachedLocation != null) {
-      return cachedLocation; // Kembalikan lokasi terakhir di atas tanah
+    if (cachedLocation != null && cachedLocation['latitude'] != null) {
+      return AppLocationData(
+        latitude: cachedLocation['latitude']!,
+        longitude: cachedLocation['longitude']!,
+        address: cachedLocation['address'],
+      );
     }
-    return {'latitude': '0', 'longitude': '0'}; // Opsi terakhir
+    return AppLocationData(
+      latitude: '0',
+      longitude: '0',
+      address: 'Lokasi Tidak Diketahui',
+    );
   }
 }

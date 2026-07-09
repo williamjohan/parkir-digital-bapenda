@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "📱 Debug: TS Park (DEMO)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": ["--flavor", "demo"]
+        },
+        {
+            "name": "📱 Debug: TS Park (PROD)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": ["--flavor", "prod"]
+        }
+    ]
+}

@@ -1,31 +1,28 @@
-// lib/features/auth/presentation/cubit/app_auth/app_auth_cubit.dart
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../../core/storage/secure_storage_manager.dart';
+import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
+import '../../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
 import '../../../domain/usecases/check_auth_status_usecase.dart';
 import '../../../domain/usecases/check_device_uuid_usecase.dart';
 import '../../../domain/usecases/logout_usecase.dart';
-import '../../../../profile/domain/usecases/get_profile_usecase.dart'; // [TAMBAHAN]: Import UseCase Profile
 import 'app_auth_state.dart';
 
 @lazySingleton
 class AppAuthCubit extends Cubit<AppAuthState> {
   final CheckAuthStatusUseCase _checkAuthStatus;
   final LogoutUseCase _logout;
-  final GetProfileUseCase _getProfile;
+  final ProfileUseCase _profileUseCase;
   final CheckDeviceUuidUseCase _checkDeviceUuid;
 
   AppAuthCubit(
     this._checkAuthStatus,
     this._logout,
-    this._getProfile,
+    this._profileUseCase,
     this._checkDeviceUuid,
   ) : super(AppAuthInitial());
 
-  /// Dipanggil saat Splash Screen muncul ATAU setelah Login sukses
   Future<void> checkStatus({bool isFromSplash = false}) async {
     AppLogger.debug(">>> [AppAuthCubit] Mengecek status autentikasi...");
 
@@ -34,86 +31,90 @@ class AppAuthCubit extends Cubit<AppAuthState> {
     }
 
     try {
-      // =====================================================
-      // 1. CEK TOKEN
-      // =====================================================
+      // 1. Cek apakah Token JWT masih ada/valid di lokal
       final hasValidToken = await _checkAuthStatus();
-
-      AppLogger.debug(">>> [AppAuthCubit] Hasil cek token: $hasValidToken");
-
       if (!hasValidToken) {
         emit(AppUnauthenticated());
         return;
       }
 
-      // =====================================================
-      // 2. CEK UUID PERANGKAT
-      // =====================================================
-      AppLogger.debug(">>> [AppAuthCubit] Memverifikasi UUID perangkat...");
+      // 2. Ambil & Sinkronisasi Profil (Agar Role Terbaru Masuk ke Storage)
+      final profileResult = await _profileUseCase.getProfileInfo();
 
-      final isDeviceValid = await _checkDeviceUuid();
+      bool isOnline = false;
+      bool isProfileValid = false;
 
-      AppLogger.debug(">>> [AppAuthCubit] Hasil cek UUID: $isDeviceValid");
+      await profileResult.fold(
+        (failure) async {
+          AppLogger.warning(
+            ">>> [AppAuthCubit] Offline/Gagal sync profil: ${failure.message}",
+          );
 
-      if (!isDeviceValid) {
-        AppLogger.error(
-          ">>> [AppAuthCubit] UUID perangkat tidak cocok dengan server. Logout paksa.",
-        );
+          // Cek fallback profil lokal
+          final localProfile = await GetIt.instance<ISecureStorageManager>()
+              .getJukirProfile();
+          if (localProfile != null) {
+            isProfileValid = true;
+            isOnline = false; // Tandai bahwa kita sedang mode OFFLINE
+          }
+        },
+        (userModel) async {
+          AppLogger.debug(">>> [AppAuthCubit] Profil berhasil disinkronkan.");
+          isProfileValid = true;
+          isOnline = true; // Tandai bahwa kita ONLINE
+        },
+      );
 
-        final storage = GetIt.instance<ISecureStorageManager>();
-        await storage.saveLogoutReason('DEVICE_MISMATCH');
-        await storage.clearPasswordOnly();
-
-        await _logout();
-
+      // Jika profil lokal pun tidak ada, tendang ke Login
+      if (!isProfileValid) {
         emit(AppUnauthenticated());
         return;
       }
 
-      // =====================================================
-      // 3. SINKRONISASI PROFIL
-      // =====================================================
-      AppLogger.debug(">>> [AppAuthCubit] UUID valid, sinkronisasi profil...");
+      // 3. Verifikasi UUID Perangkat (Hanya dilakukan jika ONLINE)
+      // Jika offline, kita percayai sesi lokal terlebih dahulu demi kelancaran Jukir di lapangan
+      if (isOnline) {
+        AppLogger.debug(
+          ">>> [AppAuthCubit] Memverifikasi UUID perangkat ke server...",
+        );
+        final isDeviceValid = await _checkDeviceUuid();
 
-      final profileResult = await _getProfile();
-
-      await profileResult.fold(
-        (failure) async {
+        if (!isDeviceValid) {
           AppLogger.error(
-            ">>> [AppAuthCubit] Gagal sinkronisasi profil: ${failure.message}",
+            ">>> [AppAuthCubit] UUID tidak cocok! Melakukan Force Logout.",
           );
+          await _executeForceLogoutProcedure();
+          return;
+        }
+      } else {
+        AppLogger.debug(
+          ">>> [AppAuthCubit] Mode Offline: Melewati pengecekan UUID server.",
+        );
+      }
 
-          final localProfile = await GetIt.instance<ISecureStorageManager>()
-              .getJukirProfile();
-
-          if (localProfile != null) {
-            AppLogger.debug(">>> [AppAuthCubit] Menggunakan profil lokal.");
-
-            emit(AppAuthenticated());
-          } else {
-            AppLogger.error(">>> [AppAuthCubit] Profil lokal tidak ditemukan.");
-
-            emit(AppUnauthenticated());
-          }
-        },
-        (userModel) async {
-          AppLogger.debug(
-            ">>> [AppAuthCubit] Profil berhasil disinkronkan: ${userModel.namaUser}",
-          );
-
-          emit(AppAuthenticated());
-        },
-      );
+      // Lolos semua sensor
+      emit(AppAuthenticated());
     } catch (e, stackTrace) {
-      AppLogger.error(">>> [AppAuthCubit] ERROR checkStatus", e, stackTrace);
-
+      AppLogger.error(
+        ">>> [AppAuthCubit] ERROR fatal di checkStatus",
+        e,
+        stackTrace,
+      );
       emit(AppUnauthenticated());
     }
   }
 
-  /// Dipanggil jika token basi, atau Jukir klik tombol Logout
+  /// Helper untuk merapikan kode logout agar Cubit tidak kepanjangan
+  Future<void> _executeForceLogoutProcedure() async {
+    final storage = GetIt.instance<ISecureStorageManager>();
+    await storage.saveLogoutReason('DEVICE_MISMATCH');
+    await storage.clearPasswordOnly();
+    await _logout();
+    emit(AppUnauthenticated());
+  }
+
   Future<void> forceLogout() async {
-    await _logout(); // Bersihkan brankas (Token & Profil)
-    emit(AppUnauthenticated()); // Tendang ke halaman Login
+    await _logout();
+    emit(AppUnauthenticated());
   }
 }

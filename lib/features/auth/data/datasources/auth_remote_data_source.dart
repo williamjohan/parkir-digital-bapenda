@@ -1,18 +1,16 @@
-// lib/features/auth/data/datasources/auth_remote_data_source.dart
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../../core/utils/device_id_utils.dart';
 import '../models/auth_response_model.dart';
 
 abstract class IAuthRemoteDataSource {
   Future<AuthResponseModel> login(String username, String password);
-  // BARU
   Future<bool> checkDeviceUuid();
 }
 
@@ -29,7 +27,7 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
       final deviceId = await DeviceIdUtils.getSecureDeviceId(_secureStorage);
 
       final response = await _dio.post(
-        ApiEndpoints.login,
+        ApiEndpoints.loginDev,
         data: {
           'username': username,
           'password': password,
@@ -44,21 +42,25 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
       if (responseData['isSuccess'] == true) {
         final beData = responseData['data'];
 
-        final mappedJson = {
-          'accessToken': beData['accessToken']?.toString() ?? '',
-          'refreshToken': beData['refreshToken']?.toString() ?? '',
-          'user': {
-            'idUser': beData['idJukir'] ?? 0,
-            'namaUser': beData['namaUser'] ?? '',
-            'nop': beData['nop'] ?? '',
-            'namaObjekPajak': '',
-            'alamat': '',
-            'pungutTarif': 0,
-            'lokasiId': 0,
-          },
-        };
+        // final mappedJson = {
+        //   'accessToken': beData['accessToken']?.toString() ?? '',
+        //   'refreshToken': beData['refreshToken']?.toString() ?? '',
+        //   'nop': beData['nop']?.toString() ?? '',
+        //   'uuidStatic': beData['uuidStatic']?.toString() ?? '',
+        //   'roleLoginId': beData['roleLoginId'] ?? 0,
+        //   'nopList': beData['nopList'] ?? [],
+        //   'user': {
+        //     'idUser': beData['idJukir'] ?? 0,
+        //     'namaUser': beData['namaUser'] ?? '',
+        //     'nop': beData['nop'] ?? '',
+        //     'namaObjekPajak': '',
+        //     'alamat': '',
+        //     'pungutTarif': 0,
+        //     'lokasiId': 0,
+        //   },
+        // };
 
-        return AuthResponseModel.fromJson(mappedJson);
+        return AuthResponseModel.fromJson(beData);
       } else {
         throw AuthException(
           message:
@@ -67,7 +69,6 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      // Cek apakah ini murni karena salah password/username
       final int statusCode = e.response?.statusCode ?? 500;
       if (statusCode == 401 || statusCode == 404 || statusCode == 400) {
         final String? backendMessage = e.response?.data?['message'];
@@ -75,8 +76,6 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
           message: backendMessage ?? 'Username atau password Jukir salah.',
         );
       }
-
-      // Jika bukan masalah password (misal: Internet Mati atau Error 500),
       throw DioErrorHandler.handle(e);
     } catch (e, stackTrace) {
       if (e is AuthException) rethrow;
@@ -92,8 +91,10 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
   Future<bool> checkDeviceUuid() async {
     final deviceId = await DeviceIdUtils.getSecureDeviceId(_secureStorage);
 
+    AppLogger.debug("device id : $deviceId");
+
     final response = await _dio.post(
-      ApiEndpoints.cekUuid,
+      ApiEndpoints.cekUuidDev,
       data: {'uuidPerangkat': deviceId},
     );
 

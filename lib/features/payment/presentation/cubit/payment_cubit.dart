@@ -2,127 +2,120 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../transaction/domain/usecases/get_local_qris_usecase.dart';
-
-// ── LEGACY IMPORTS — uncomment saat flow lama diaktifkan kembali ─────────────
-// import '../../domain/entities/payment_status.dart';
-// import '../../domain/usecases/check_payment_status_usecase.dart';
-// import '../../domain/usecases/generate_qris_usecase.dart';
-// import '../../domain/usecases/stop_monitoring_payment_usecase.dart';
-// import '../../domain/usecases/watch_payment_status_usecase.dart';
-// import '../../../parking_transaction/domain/usecases/save_parking_transaction_usecase.dart';
-// import '../pages/payment_page.dart';
-
+import 'package:parkir_digital_bapenda/features/transaction/domain/usecases/qris_usecase.dart';
+import '../../domain/constant/qris_contants.dart';
+import '../../domain/usecases/payment_usecase.dart';
 import 'payment_state.dart';
 
-// @injectable = factory → setiap BlocProvider(create:) menghasilkan instance baru.
-// Dispose terjadi otomatis saat route di-pop karena BlocProvider ada di router.
 @injectable
 class PaymentCubit extends Cubit<PaymentState> {
-  final GetLocalQrisUseCase _getLocalQrisUseCase;
+  final QrisUsecase _qrisUsecase;
+  final PaymentUseCase _paymentUsecase;
 
-  // ── LEGACY FIELDS — uncomment saat dibutuhkan ────────────────────────────
-  // final GenerateQrisUseCase _generateQrisUseCase;
-  // final WatchPaymentStatusUseCase _watchPaymentStatusUseCase;
-  // final CheckPaymentStatusUseCase _checkPaymentStatusUseCase;
-  // final StopMonitoringPaymentUseCase _stopMonitoringPaymentUseCase;
-  // final SaveParkingTransactionUseCase _saveTransactionUseCase;
-  // StreamSubscription<PaymentStatus>? _statusSubscription;
-  // String? _activeKodeQris;
+  StreamSubscription<String>? _signalRSubscription;
 
-  PaymentCubit(this._getLocalQrisUseCase) : super(PaymentInitial());
+  PaymentCubit(this._qrisUsecase, this._paymentUsecase)
+    : super(const PaymentState.initial());
 
-  // ─── LOAD QRIS LOKAL ─────────────────────────────────────────────────────
-
-  Future<void> loadLocalQris(int jenisKendaraanId) async {
-    // Guard: jangan emit jika cubit sudah di-dispose
-    // (bisa terjadi jika user back sangat cepat sebelum Future selesai)
+  Future<void> loadQris({
+    required int jenisKendaraanId,
+    required bool isDemoMode,
+  }) async {
     if (isClosed) return;
 
-    emit(PaymentLocalQrisLoading());
+    emit(const PaymentState.loading());
 
-    final result = await _getLocalQrisUseCase.execute();
+    if (isDemoMode) {
+      final qrisString = QrisDemoConstants.getQrisByVehicleType(
+        jenisKendaraanId,
+      );
+      if (!isClosed) {
+        emit(PaymentState.demoQrisReady(rawQrisString: qrisString));
+      }
+      return;
+    }
 
-    // Guard setelah await — wajib karena cubit bisa saja sudah closed
-    // saat user back di tengah operasi async
+    final result = await _qrisUsecase.getLocalQris();
     if (isClosed) return;
 
     result.fold(
       (_) => emit(
-        const PaymentLocalQrisError(
-          'Data QRIS belum tersedia. Pastikan perangkat sudah tersinkronisasi.',
-        ),
+        const PaymentState.error(message: 'Data QRIS lokal belum tersedia.'),
       ),
-      (qrisMap) {
+      (qrisMap) async {
         if (isClosed) return;
 
-        final imagePath = qrisMap[jenisKendaraanId.toString()];
+        final qrisEntity = qrisMap[jenisKendaraanId.toString()];
 
-        if (imagePath == null || imagePath.isEmpty) {
+        if (qrisEntity == null ||
+            qrisEntity.path.isEmpty ||
+            !File(qrisEntity.path).existsSync()) {
           emit(
-            const PaymentLocalQrisError(
-              'QRIS untuk jenis kendaraan ini tidak ditemukan.',
-            ),
+            const PaymentState.error(message: 'QRIS / File tidak ditemukan.'),
           );
           return;
         }
 
-        if (!File(imagePath).existsSync()) {
-          emit(
-            const PaymentLocalQrisError(
-              'File QRIS tidak ditemukan. Coba sinkronisasi ulang.',
-            ),
-          );
-          return;
-        }
+        // 1. Tampilkan UI
+        emit(
+          PaymentState.localQrisReady(
+            qrisImagePath: qrisEntity.path,
+            kodeQris: qrisEntity.kodeQris,
+          ),
+        );
 
-        emit(PaymentLocalQrisReady(imagePath));
-
-        // TODO: aktifkan SignalR setelah QRIS berhasil ditampilkan
-        // _startSignalR(_activeKodeQris!);
+        // 2. 🚀 EKSEKUSI SIGNALR VIA USECASE (Cubit cukup mengoper string kodeQris)
+        await _setupSignalR(qrisEntity.kodeQris);
       },
     );
   }
 
-  // ─── TODO: SignalR — aktifkan saat backend siap ──────────────────────────
+  Future<void> _setupSignalR(String kodeQris) async {
+    await _signalRSubscription?.cancel();
 
-  // void _startSignalR(String kodeQris) {
-  //   _statusSubscription?.cancel();
-  //   _statusSubscription = _watchPaymentStatusUseCase
-  //       .execute(kodeQris)
-  //       .listen(
-  //         _handlePaymentStatus,
-  //         onError: (_) {}, // abaikan error background
-  //       );
-  // }
-  //
-  // void _handlePaymentStatus(PaymentStatus status) {
-  //   if (isClosed) return;
-  //   switch (status) {
-  //     case PaymentStatus.lunas:
-  //       _stopSignalR();
-  //       emit(PaymentSuccess(...));
-  //       break;
-  //     case PaymentStatus.timeout:
-  //       _stopSignalR();
-  //       emit(PaymentTimeout(...));
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
-  //
-  // void _stopSignalR() {
-  //   _statusSubscription?.cancel();
-  //   _statusSubscription = null;
-  //   _stopMonitoringPaymentUseCase.execute();
-  // }
+    // 1. Dengarkan stream
+    _signalRSubscription = _paymentUsecase.statusStream.listen((status) {
+      if (isClosed) return;
 
-  // ─── DISPOSE ─────────────────────────────────────────────────────────────
+      if (status == "LUNAS") {
+        emit(const PaymentState.paymentSuccess());
+      } else if (status == "TIMEOUT") {
+        emit(
+          const PaymentState.error(
+            message: 'Waktu pembayaran habis (Timeout).',
+          ),
+        );
+      } else if (status == "ERROR") {
+        emit(
+          const PaymentState.error(
+            message: 'Terjadi gangguan pada sistem pembayaran.',
+          ),
+        );
+      }
+    });
+
+    // 2. 🚀 EKSEKUSI CONNECT DENGAN EITHER
+    final connectResult = await _paymentUsecase.connect(kodeQris);
+
+    if (isClosed) return;
+
+    connectResult.fold(
+      (failure) {
+        // Jika sejak awal gagal connect (misal Jukir no signal),
+        // tampilkan error, tapi UI masih bisa menampilkan QRIS lokal untuk di-scan manual
+        emit(PaymentState.error(message: failure.message));
+      },
+      (_) {
+        // Sukses terhubung, biarkan listener Stream yang bekerja selanjutnya
+      },
+    );
+  }
 
   @override
-  Future<void> close() {
-    // _stopSignalR(); // uncomment saat SignalR aktif
+  Future<void> close() async {
+    await _signalRSubscription?.cancel();
+    // 🚀 Putus koneksi dengan aman via Usecase
+    await _paymentUsecase.disconnect();
     return super.close();
   }
 }

@@ -16,18 +16,29 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
+        
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "id.go.surabaya.tsparkbapenda"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+    flavorDimensions += "env"
+
+    productFlavors {
+        create("prod") {
+            dimension = "env"
+            resValue("string", "app_name", "TS Park Jukir")
+        }
+        create("demo") {
+            dimension = "env"
+            applicationIdSuffix = ".demo"
+            resValue("string", "app_name", "TS Park Bapenda")
+        }
     }
 
     buildTypes {

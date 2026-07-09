@@ -1,14 +1,9 @@
-// lib/features/auth/data/models/user_model.dart
-
 import 'package:json_annotation/json_annotation.dart';
+import '../../domain/entities/user_entity.dart';
 
 part 'user_model.g.dart';
 
-// --- [TAMENG ANTI-PELURU BE] ---
-// Fungsi ini akan memaksa apapun (int, double, null) menjadi String yang aman.
 String _toString(dynamic value) => value?.toString() ?? '';
-
-// Fungsi ini akan memaksa apapun (String, null) menjadi Integer yang aman.
 int _toInt(dynamic value) {
   if (value == null) return 0;
   if (value is int) return value;
@@ -16,15 +11,20 @@ int _toInt(dynamic value) {
   if (value is String) return int.tryParse(value) ?? 0;
   return 0;
 }
-// ------------------------------
 
 @JsonSerializable()
 class UserModel {
   @JsonKey(name: 'idUser', fromJson: _toString)
   final String idUser;
 
+  @JsonKey(name: 'username', fromJson: _toString)
+  final String username;
+
   @JsonKey(name: 'namaUser', fromJson: _toString)
   final String namaUser;
+
+  @JsonKey(name: 'roleId', fromJson: _toInt)
+  final int roleId;
 
   @JsonKey(name: 'nop', fromJson: _toString)
   final String nop;
@@ -38,7 +38,6 @@ class UserModel {
   @JsonKey(name: 'pungutTarif', fromJson: _toInt)
   final int pungutTarif;
 
-  // 🚀 [BARU] Teks Emas dari Backend
   @JsonKey(name: 'pungutTarifDescription', fromJson: _toString)
   final String pungutTarifDescription;
 
@@ -63,6 +62,8 @@ class UserModel {
   UserModel({
     required this.idUser,
     required this.namaUser,
+    required this.username,
+    required this.roleId,
     required this.nop,
     this.namaObjekPajak = '',
     this.alamat = '',
@@ -80,4 +81,26 @@ class UserModel {
       _$UserModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
+}
+
+extension UserModelExt on UserModel {
+  UserEntity toEntity() {
+    return UserEntity(
+      idUser: idUser,
+      namaUser: namaUser,
+      username: username,
+      roleId: roleId,
+      nop: nop,
+      pungutTarif: pungutTarif,
+      pungutTarifDescription: pungutTarifDescription,
+      namaObjekPajak: namaObjekPajak,
+      idDevice: idDevice,
+      lokasiId: lokasiId,
+      namaLokasi: namaLokasi,
+      kodeGate: kodeGate,
+      namaGate: namaGate,
+      shift: shift,
+      alamat: alamat,
+    );
+  }
 }

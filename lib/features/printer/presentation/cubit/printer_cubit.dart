@@ -1,10 +1,12 @@
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/core/storage/secure_storage_manager.dart';
 import '../../../../core/services/printer/i_printer_service.dart';
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../../../../core/utils/permission_utils.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 
 part 'printer_state.dart';
@@ -17,58 +19,258 @@ class PrinterCubit extends Cubit<PrinterState> {
   PrinterCubit(this._printerService, this._secureStorage)
     : super(PrinterInitial());
 
-  // 1. Memindai perangkat Bluetooth di sekitar/yang sudah dipair
-  Future<void> scanDevices() async {
+  // =========================================================================
+  // 🚀 METHOD MANDIRI: Cek & Minta Permission dari Mana Saja (Termasuk Drawer)
+  // =========================================================================
+  Future<bool> checkAndRequestPermissions(BuildContext context) async {
     final currentState = state;
+    try {
+      final granted = await PermissionUtils.requestBluetoothPermission(context);
+
+      if (!granted) {
+        AppLogger.error("Permission Bluetooth ditolak.");
+        emit(PrinterError("Permission Bluetooth belum diberikan."));
+        _restoreLoadedState(currentState);
+        return false;
+      }
+
+      AppLogger.debug("Permission granted via checkAndRequestPermissions");
+      return true;
+    } catch (e, stackTrace) {
+      AppLogger.error("Gagal mengecek permission", e, stackTrace);
+      emit(PrinterError("Gagal memeriksa izin perangkat."));
+      _restoreLoadedState(currentState);
+      return false;
+    }
+  }
+
+  // =========================================================================
+  // 🖨️ METHOD: Scan Devices (Menjadi lebih ringkas dan bersih)
+  // =========================================================================
+  Future<void> scanDevices(BuildContext context) async {
+    final currentState = state;
+
+    AppLogger.debug("========== SCAN DEVICES ==========");
 
     if (currentState is PrinterLoaded) {
       emit(
         PrinterLoaded(
           devices: currentState.devices,
           connectedDevice: currentState.connectedDevice,
-          isLoading: true, // Beri sinyal loading saja
+          isLoading: true,
         ),
       );
     } else {
-      // Jika ini murni pertama kali buka halaman, baru pakai PrinterLoading murni
       emit(PrinterLoading());
     }
 
     try {
-      await Future.delayed(const Duration(milliseconds: 1000));
+      // 🔄 Menggunakan fungsi cek permission mandiri
+      final granted = await checkAndRequestPermissions(context);
+      if (!granted) return; // Berhenti jika tidak diizinkan
+
+      // Cek apakah Bluetooth HP Aktif
+      final bluetoothOn = await _printerService.isBluetoothOn;
+      if (!bluetoothOn) {
+        emit(
+          PrinterLoaded(
+            devices: currentState is PrinterLoaded ? currentState.devices : [],
+            connectedDevice: currentState is PrinterLoaded
+                ? currentState.connectedDevice
+                : null,
+            isLoading: false,
+          ),
+        );
+        emit(
+          PrinterError(
+            "Bluetooth HP Anda mati. Silakan aktifkan Bluetooth terlebih dahulu.",
+          ),
+        );
+        return;
+      }
+
       final devices = await _printerService.getPairedDevices();
+      AppLogger.debug("Jumlah device ditemukan : ${devices.length}");
+
       final isConnected = await _printerService.isConnected;
+      BluetoothDevice? connectedDevice;
+
+      // Cari device berdasarkan MAC Address yang tersimpan
+      if (isConnected && devices.isNotEmpty) {
+        final savedMacAddress = await _secureStorage.getPrinterMacAddress();
+
+        if (savedMacAddress != null && savedMacAddress.isNotEmpty) {
+          for (var device in devices) {
+            if (device.address == savedMacAddress) {
+              connectedDevice = device;
+              break;
+            }
+          }
+        }
+      }
 
       if (isClosed) return;
 
       emit(
         PrinterLoaded(
           devices: devices,
-          connectedDevice: isConnected ? devices.firstOrNull : null,
-          isLoading: false, // Matikan sinyal loading
+          connectedDevice: connectedDevice,
+          isLoading: false,
         ),
       );
-    } catch (e) {
-      if (isClosed) return;
-      emit(PrinterError('Gagal memindai perangkat Bluetooth.'));
 
-      // Kembalikan ke state sebelumnya jika gagal
-      if (currentState is PrinterLoaded) {
+      AppLogger.debug("Scan selesai");
+    } catch (e, stackTrace) {
+      AppLogger.error("Gagal scan printer", e, stackTrace);
+
+      if (isClosed) return;
+
+      emit(
+        PrinterLoaded(
+          devices: currentState is PrinterLoaded ? currentState.devices : [],
+          connectedDevice: currentState is PrinterLoaded
+              ? currentState.connectedDevice
+              : null,
+          isLoading: false,
+        ),
+      );
+
+      emit(PrinterError("Gagal memindai perangkat Bluetooth."));
+    }
+  }
+
+  // =========================================================================
+  // 🖨️ METHOD: Manual Print Receipt (Tombol cetak karcis di halaman riwayat)
+  // =========================================================================
+  Future<bool> printReceipt(
+    BuildContext context,
+    HistoryItemModel transaction,
+  ) async {
+    final currentState = state;
+
+    try {
+      // 🔄 Menggunakan fungsi cek permission mandiri
+      final granted = await checkAndRequestPermissions(context);
+      if (!granted) return false; // Berhenti jika tidak diizinkan
+
+      // Cek apakah Bluetooth HP Aktif
+      final bluetoothOn = await _printerService.isBluetoothOn;
+      if (!bluetoothOn) {
+        emit(
+          PrinterError(
+            "Bluetooth HP Anda mati. Silakan aktifkan Bluetooth terlebih dahulu.",
+          ),
+        );
+        _restoreLoadedState(currentState);
+        return false;
+      }
+
+      // Pengecekan Mandiri: Ambil status koneksi aktual langsung dari hardware/service
+      bool isConnected = await _printerService.isConnected;
+
+      // PEMULIHAN STATE OTOMATIS (Self-Healing)
+      if (isConnected &&
+          (currentState is! PrinterLoaded ||
+              currentState.connectedDevice == null)) {
+        final savedMacAddress = await _secureStorage.getPrinterMacAddress();
+        final pairedDevices = await _printerService.getPairedDevices();
+        BluetoothDevice? connectedDevice;
+
+        if (savedMacAddress != null && savedMacAddress.isNotEmpty) {
+          for (var device in pairedDevices) {
+            if (device.address == savedMacAddress) {
+              connectedDevice = device;
+              break;
+            }
+          }
+        }
+
+        // Sinkronkan kembali state Cubit agar tidak bernilai null/initial lagi
         emit(
           PrinterLoaded(
-            devices: currentState.devices,
-            connectedDevice: currentState.connectedDevice,
+            devices: pairedDevices,
+            connectedDevice:
+                connectedDevice ??
+                (pairedDevices.isNotEmpty ? pairedDevices.first : null),
             isLoading: false,
           ),
         );
       }
+      // AUTO-CONNECT OTOMATIS
+      else if (!isConnected) {
+        final savedMacAddress = await _secureStorage.getPrinterMacAddress();
+        if (savedMacAddress != null && savedMacAddress.isNotEmpty) {
+          final pairedDevices = await _printerService.getPairedDevices();
+          BluetoothDevice? targetDevice;
+          for (var device in pairedDevices) {
+            if (device.address == savedMacAddress) {
+              targetDevice = device;
+              break;
+            }
+          }
+
+          if (targetDevice != null) {
+            final connectSuccess = await _printerService.connect(targetDevice);
+            if (connectSuccess) {
+              isConnected = true;
+              emit(
+                PrinterLoaded(
+                  devices: pairedDevices,
+                  connectedDevice: targetDevice,
+                  isLoading: false,
+                ),
+              );
+            }
+          }
+        }
+      }
+
+      // Jika setelah diusahakan maksimal lewat dua cara di atas tetap tidak terhubung
+      if (!isConnected) {
+        emit(
+          PrinterError(
+            "Belum ada perangkat printer yang terhubung. Pastikan printer dalam kondisi MENYALA.",
+          ),
+        );
+        _restoreLoadedState(currentState);
+        return false;
+      }
+
+      // Jalankan proses cetak jika validasi koneksi aktual berhasil dilewati
+      final success = await _printerService.printReceipt(transaction);
+      if (!success) {
+        emit(
+          PrinterError(
+            "Gagal mencetak karcis. Pastikan kertas tersedia atau printer dalam kondisi baik.",
+          ),
+        );
+        _restoreLoadedState(currentState);
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      AppLogger.error("🖨️ [Print] Terjadi kesalahan fatal: $e");
+      emit(PrinterError("Terjadi kesalahan sistem saat mencoba mencetak."));
+      _restoreLoadedState(currentState);
+      return false;
     }
   }
 
-  // 2. Konek ke Printer yang dipilih Jukir
   Future<void> connectDevice(BluetoothDevice device) async {
     final currentState = state;
     if (currentState is! PrinterLoaded) return;
+
+    // Kondisi 1: Cek Bluetooth HP Aktif sebelum melakukan koneksi manual
+    final bluetoothOn = await _printerService.isBluetoothOn;
+    if (!bluetoothOn) {
+      emit(
+        PrinterError(
+          "Bluetooth HP Anda mati. Silakan aktifkan Bluetooth terlebih dahulu.",
+        ),
+      );
+      return;
+    }
 
     emit(
       PrinterLoaded(
@@ -101,14 +303,11 @@ class PrinterCubit extends Cubit<PrinterState> {
     }
   }
 
-  // 3. Putuskan koneksi
   Future<void> disconnect() async {
     final currentState = state;
     if (currentState is! PrinterLoaded) return;
 
     await _printerService.disconnect();
-
-    // 🚀 HAPUS MAC ADDRESS DARI BRANKAS AGAR AUTO-PRINT BERHENTI!
     await _secureStorage.clearPrinterMacAddress();
 
     if (isClosed) return;
@@ -116,83 +315,16 @@ class PrinterCubit extends Cubit<PrinterState> {
     emit(PrinterLoaded(devices: currentState.devices, connectedDevice: null));
   }
 
-  // 4. Print Karcis
-  Future<bool> printReceipt(
-    HistoryItemModel transaction,
-    String deviceId,
-    Map<String, dynamic> profile,
-  ) async {
-    final success = await _printerService.printReceipt(
-      transaction,
-      deviceId,
-      profile,
-    );
-
-    return success;
-  }
-
-  // 5. Auto connect & Silent Print
-  Future<bool> autoConnectAndPrint(
-    HistoryItemModel transaction,
-    String deviceId,
-    Map<String, dynamic> profile,
-  ) async {
-    try {
-      final isConnected = await _printerService.isConnected;
-      if (isConnected) {
-        AppLogger.debug(
-          "🖨️ [Auto-Print] Printer sudah terhubung. Langsung cetak!",
-        );
-        return await _printerService.printReceipt(
-          transaction,
-          deviceId,
-          profile,
-        );
-      }
-
-      final savedMacAddress = await _secureStorage.getPrinterMacAddress();
-      if (savedMacAddress == null || savedMacAddress.isEmpty) {
-        AppLogger.debug(
-          "🖨️ [Auto-Print] Dibatalkan: Tidak ada Printer yang tersimpan.",
-        );
-        return false;
-      }
-
-      AppLogger.debug(
-        "🖨️ [Auto-Print] Mencoba menyambung siluman ke MAC: $savedMacAddress...",
+  /// Helper untuk mengembalikan ke Loaded state agar data perangkat di UI tidak ter-clear saat melempar error
+  void _restoreLoadedState(PrinterState currentState) {
+    if (currentState is PrinterLoaded) {
+      emit(
+        PrinterLoaded(
+          devices: currentState.devices,
+          connectedDevice: currentState.connectedDevice,
+          isLoading: false,
+        ),
       );
-      final pairedDevices = await _printerService.getPairedDevices();
-
-      BluetoothDevice? targetDevice;
-      for (var device in pairedDevices) {
-        if (device.address == savedMacAddress) {
-          targetDevice = device;
-          break;
-        }
-      }
-
-      if (targetDevice == null) {
-        AppLogger.error(
-          "🖨️ [Auto-Print] Gagal: MAC Address $savedMacAddress tidak ditemukan di daftar Paired Devices HP ini.",
-        );
-        return false;
-      }
-
-      // 4. Lakukan Silent Connect
-      final connectSuccess = await _printerService.connect(targetDevice);
-      if (!connectSuccess) {
-        AppLogger.error(
-          "🖨️ [Auto-Print] Gagal terhubung ke printer $savedMacAddress.",
-        );
-        return false;
-      }
-
-      // 5. Jika sukses nyambung, langsung tembak Karcis!
-      AppLogger.debug("🖨️ [Auto-Print] Konek Siluman Sukses! Mencetak...");
-      return await _printerService.printReceipt(transaction, deviceId, profile);
-    } catch (e) {
-      AppLogger.error("🖨️ [Auto-Print] Terjadi kesalahan fatal: $e");
-      return false;
     }
   }
 }

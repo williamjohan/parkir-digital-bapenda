@@ -1,5 +1,3 @@
-// lib/core/design_system/components/pb_keyboard_dismiss_wrapper.dart
-
 import 'package:flutter/material.dart';
 
 class PbKeyboardDismissWrapper extends StatelessWidget {
@@ -12,7 +10,6 @@ class PbKeyboardDismissWrapper extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        // Cara paling aman & modern untuk dismiss keyboard di Flutter
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: child,

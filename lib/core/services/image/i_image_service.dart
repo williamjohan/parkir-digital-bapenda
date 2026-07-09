@@ -1,13 +1,12 @@
 import 'dart:io';
 
 abstract class IImageService {
-  /// Mengompres gambar dan menyimpannya ke folder temporary/cache.
-  /// Mengembalikan path lokasi file hasil kompresi.
   Future<String?> compressAndSaveImage({
     required File originalFile,
     required String fileName,
+    int maxTargetBytes = 300000,
+    int minResolution = 1024,
   });
 
-  /// Menghapus file fisik dari memori
   Future<void> deleteImage(String path);
 }

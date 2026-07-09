@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class PbSlidePageTransitionsBuilder extends PageTransitionsBuilder {
-  // [PERBAIKAN]: Tambahkan konstruktor const kosong ini
   const PbSlidePageTransitionsBuilder();
 
   @override

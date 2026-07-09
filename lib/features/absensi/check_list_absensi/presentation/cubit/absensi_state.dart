@@ -1,0 +1,47 @@
+import 'dart:io';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'absensi_state.freezed.dart';
+
+enum AbsensiStatus { initial, loading, success, failure }
+
+@freezed
+class AbsensiState with _$AbsensiState {
+  const AbsensiState._();
+
+  const factory AbsensiState({
+    @Default(AbsensiStatus.initial) AbsensiStatus status,
+    @Default('') String errorMessage,
+
+    // --- STATE UNTUK UI FORM ---
+    File? rawPhoto, // Foto asli sebelum di-watermark
+    File? watermarkedPhoto, // Foto hasil watermark, siap dikirim
+    DateTime? photoTakenAt,
+    double? latitude,
+    double? longitude,
+    String? placeName,
+    String? locationError,
+    @Default(false) bool isFetchingLocation,
+    @Default(false) bool isCapturing,
+
+    // --- INPUT FORM ---
+    @Default('') String motorText,
+    @Default('') String mobilText,
+    @Default(false) bool edc,
+    @Default(false) bool qris,
+    @Default(false) bool tsPark,
+  }) = _AbsensiState;
+
+  bool get isLoading => status == AbsensiStatus.loading;
+
+  int get totalMotor => int.tryParse(motorText) ?? 0;
+  int get totalMobil => int.tryParse(mobilText) ?? 0;
+
+  bool get canSubmit =>
+      rawPhoto != null &&
+      latitude != null &&
+      longitude != null &&
+      motorText.isNotEmpty &&
+      mobilText.isNotEmpty &&
+      !isFetchingLocation;
+}

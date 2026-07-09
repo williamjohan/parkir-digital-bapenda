@@ -1,40 +1,26 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// Jika Anda menggunakan go_router, pastikan import ini ada
+import 'package:go_router/go_router.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
 import '../widgets/payment_local_qris_view.dart';
 
-// ─── ARGS ─────────────────────────────────────────────────────────────────────
-
 class PaymentPageArgs {
   final int jenisKendaraanId;
   final String kategoriKendaraan;
-
-  // Field legacy — dipertahankan agar tidak break kode lain.
-  // TODO: hapus setelah semua flow migrasi ke QRIS Rompi.
-  final String idTransaksiLokal;
-  final String platNomor;
-  final int nominal;
-  final String latitude;
-  final String longitude;
+  final bool isDemoMode;
 
   PaymentPageArgs({
     required this.jenisKendaraanId,
     required this.kategoriKendaraan,
-    this.idTransaksiLokal = '',
-    this.platNomor = '',
-    this.nominal = 0,
-    this.latitude = '0',
-    this.longitude = '0',
+    this.isDemoMode = false,
   });
 }
-
-// ─── PAGE ─────────────────────────────────────────────────────────────────────
-// BlocProvider ada di router (app_router.dart), bukan di sini.
-// PaymentPage hanya membaca cubit via context.read — tidak create, tidak dispose.
-// Lifecycle cubit sepenuhnya dikendalikan oleh BlocProvider di router.
 
 class PaymentPage extends StatefulWidget {
   final PaymentPageArgs args;
@@ -48,9 +34,11 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   void initState() {
     super.initState();
-    // Cubit sudah tersedia di context karena BlocProvider ada di router.
-    // Panggil loadLocalQris di sini — aman karena widget sudah mounted.
-    context.read<PaymentCubit>().loadLocalQris(widget.args.jenisKendaraanId);
+    // 🚀 Saat initState, Cubit akan load data dan otomatis start SignalR!
+    context.read<PaymentCubit>().loadQris(
+      jenisKendaraanId: widget.args.jenisKendaraanId,
+      isDemoMode: widget.args.isDemoMode,
+    );
   }
 
   @override
@@ -66,34 +54,82 @@ class _PaymentPageState extends State<PaymentPage> {
           elevation: 0,
           iconTheme: const IconThemeData(color: AppColors.textPrimary),
         ),
-        body: BlocBuilder<PaymentCubit, PaymentState>(
+        // 🚀 UPGRADE: Gunakan BlocConsumer untuk Handle Side-Effects (Navigasi & Snackbar)
+        body: BlocConsumer<PaymentCubit, PaymentState>(
+          listener: (context, state) {
+            // Gunakan whenOrNull agar kita hanya bereaksi pada state tertentu
+            state.whenOrNull(
+              paymentSuccess: () {
+                // 1. Tampilkan notifikasi sukses
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('✅ Pembayaran Berhasil Diterima!'),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                // 2. Tutup halaman dan kembalikan nilai 'true' ke halaman Transaction
+                context.pop(true);
+              },
+              error: (message) {
+                // Opsional: Jika Anda ingin memunculkan toast saat SignalR timeout/error
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+            );
+          },
           builder: (context, state) {
-            if (state is PaymentLocalQrisLoading) {
-              return const Center(
+            // 🚀 UPGRADE: Gunakan maybeWhen karena state 'paymentSuccess'
+            // tidak memiliki UI spesifik (hanya men-trigger pop di listener).
+            return state.maybeWhen(
+              initial: () => const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
-              );
-            }
-
-            if (state is PaymentLocalQrisReady) {
-              return PaymentLocalQrisView(
-                imagePath: state.qrisImagePath,
-                kategoriKendaraan: widget.args.kategoriKendaraan,
-                // TODO: aktifkan saat SignalR siap
-                // onCheckStatus: () => context.read<PaymentCubit>().checkStatus(),
-              );
-            }
-
-            if (state is PaymentLocalQrisError) {
-              return _QrisErrorView(
-                message: state.message,
-                onRetry: () => context.read<PaymentCubit>().loadLocalQris(
-                  widget.args.jenisKendaraanId,
-                ),
-              );
-            }
-
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+              loading: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+              localQrisReady: (qrisImagePath, kodeQris) {
+                return PaymentLocalQrisView(
+                  kategoriKendaraan: widget.args.kategoriKendaraan,
+                  qrWidget: Image.file(
+                    File(qrisImagePath),
+                    width: 220,
+                    height: 220,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.broken_image, size: 48),
+                  ),
+                );
+              },
+              demoQrisReady: (rawQrisString) {
+                return PaymentLocalQrisView(
+                  kategoriKendaraan: '${widget.args.kategoriKendaraan} (Demo)',
+                  qrWidget: QrImageView(
+                    data: rawQrisString,
+                    version: QrVersions.auto,
+                    size: 220,
+                    backgroundColor: Colors.white,
+                  ),
+                );
+              },
+              error: (message) {
+                return _QrisErrorView(
+                  message: message,
+                  onRetry: () => context.read<PaymentCubit>().loadQris(
+                    jenisKendaraanId: widget.args.jenisKendaraanId,
+                    isDemoMode: widget.args.isDemoMode,
+                  ),
+                );
+              },
+              // orElse akan menangkap state 'paymentSuccess' selama sepersekian detik sebelum context.pop dieksekusi.
+              orElse: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
             );
           },
         ),
@@ -101,8 +137,6 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 }
-
-// ─── ERROR VIEW ───────────────────────────────────────────────────────────────
 
 class _QrisErrorView extends StatelessWidget {
   final String message;

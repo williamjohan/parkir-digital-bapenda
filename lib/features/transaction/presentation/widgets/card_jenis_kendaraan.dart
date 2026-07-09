@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
-import '../../../home/data/models/tarif_model.dart';
+import '../../data/models/tarif/tarif_model.dart';
 
 class CardJenisKendaraan extends StatelessWidget {
   final List<TarifModel> tarifList;
@@ -20,8 +20,6 @@ class CardJenisKendaraan extends StatelessWidget {
     required this.op,
     required this.alamat,
   });
-
-  // Icon kendaraan berdasarkan label
   IconData _iconFor(String jenis) {
     final j = jenis.toLowerCase();
     if (j.contains('motor')) return Icons.two_wheeler_rounded;
@@ -39,7 +37,7 @@ class CardJenisKendaraan extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -49,44 +47,46 @@ class CardJenisKendaraan extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: AppColors.primary),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.location_on,
                   color: AppColors.primary,
                   size: 40,
                 ),
               ),
-              SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    op,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.heading3.copyWith(
-                      color: AppColors.primary,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      op,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.heading5.copyWith(
+                        color: AppColors.primary,
+                      ),
                     ),
-                  ),
-                  Text(
-                    alamat,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
+                    Text(
+                      alamat,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -96,7 +96,6 @@ class CardJenisKendaraan extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Header ──────────────────────────────────────────────────────
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -108,7 +107,9 @@ class CardJenisKendaraan extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(9),
                   ),
-                  border: Border(bottom: BorderSide(color: AppColors.border)),
+                  border: const Border(
+                    bottom: BorderSide(color: AppColors.border),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -127,7 +128,7 @@ class CardJenisKendaraan extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Text(
+                    const Text(
                       '*',
                       style: TextStyle(
                         color: AppColors.error,
@@ -137,8 +138,6 @@ class CardJenisKendaraan extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // ── Grid Pilihan ─────────────────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: tarifList.isEmpty
@@ -167,10 +166,8 @@ class CardJenisKendaraan extends StatelessWidget {
                         },
                       ),
               ),
-
-              // ── Selected Indicator ───────────────────────────────────────────
               if (selectedTarif != null) ...[
-                Divider(height: 1, color: AppColors.border),
+                const Divider(height: 1, color: AppColors.border),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -209,8 +206,6 @@ class CardJenisKendaraan extends StatelessWidget {
   }
 }
 
-// ─── CHIP KENDARAAN ───────────────────────────────────────────────────────────
-
 class _VehicleChip extends StatelessWidget {
   final TarifModel tarif;
   final bool isSelected;
@@ -238,15 +233,6 @@ class _VehicleChip extends StatelessWidget {
             color: isSelected ? AppColors.primary : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
-          // boxShadow: isSelected
-          //     ? [
-          //         BoxShadow(
-          //           color: AppColors.primary.withValues(alpha: 0.25),
-          //           blurRadius: 8,
-          //           offset: const Offset(0, 3),
-          //         ),
-          //       ]
-          //     : [],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -285,8 +271,6 @@ class _VehicleChip extends StatelessWidget {
   }
 }
 
-// ─── EMPTY STATE ──────────────────────────────────────────────────────────────
-
 class _EmptyVehicleState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -295,7 +279,11 @@ class _EmptyVehicleState extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-            Icon(Icons.sync_problem_rounded, size: 36, color: AppColors.border),
+            const Icon(
+              Icons.sync_problem_rounded,
+              size: 36,
+              color: AppColors.border,
+            ),
             const SizedBox(height: 8),
             Text(
               'Data kendaraan belum tersedia',

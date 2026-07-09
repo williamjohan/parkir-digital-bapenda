@@ -18,7 +18,7 @@ class UpdateProgressDialog extends StatelessWidget {
   static void show(BuildContext context, String url, String version) {
     showDialog(
       context: context,
-      barrierDismissible: false, // 🚀 Cegah user kabur dengan ketuk di luar
+      barrierDismissible: false,
       builder: (_) => UpdateProgressDialog(url: url, version: version),
     );
   }
@@ -29,66 +29,108 @@ class UpdateProgressDialog extends StatelessWidget {
       create: (context) =>
           UpdateProgressCubit(downloadUrl: url, version: version)..start(),
       child: PopScope(
-        canPop: false, // 🚀 Cegah tombol back HP ditekan saat download
+        // Tetap false agar user tidak tidak sengaja membatalkan saat proses download berjalan.
+        canPop: false,
         child: Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: BlocBuilder<UpdateProgressCubit, UpdateProgressState>(
+            // 🚀 PERBAIKAN ARSITEKTUR: Gunakan BlocConsumer menggantikan BlocBuilder[cite: 6]
+            child: BlocConsumer<UpdateProgressCubit, UpdateProgressState>(
+              // 1. LISTENER: Khusus mengeksekusi perintah non-UI (Side Effects)
+              listener: (context, state) {
+                // Ketika Cubit memancarkan UpdateCompleted (setelah delay 2 detik dari INSTALLING),
+                // kita cabut/tutup dialog Flutter secara otomatis dari stack Navigator.
+                if (state is UpdateCompleted) {
+                  // 🚀 BEST PRACTICE: Gunakan rootNavigator: true agar yang ditutup
+                  // pasti instance showDialog di atas, bukan route halaman di bawahnya.
+                  Navigator.of(context, rootNavigator: true).pop();
+                }
+              },
+              // 2. BUILDER: Murni hanya menggambar tampilan[cite: 6]
               builder: (context, state) {
                 if (state is UpdateError) {
-                  return _buildError(context, state.message);
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.error_outline_rounded,
+                        size: 48,
+                        color: AppColors.error,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Gagal Mengunduh",
+                        style: AppTypography.heading5,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        state.message,
+                        textAlign: TextAlign.center,
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                        ),
+                        onPressed: () =>
+                            context.read<UpdateProgressCubit>().retry(),
+                        child: const Text(
+                          "Coba Lagi",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  );
                 }
 
                 double progress = 0.0;
-                String message = "Memulai unduhan...";
+                String message = "Menghubungkan...";
 
                 if (state is UpdateDownloading) {
                   progress = state.progress;
                   message = state.message;
-                } else if (state is UpdateInstalling) {
+                } else if (state is UpdateInstalling ||
+                    state is UpdateCompleted) {
                   progress = 1.0;
                   message = "Membuka Installer Android...";
-                } else if (state is UpdateCompleted) {
-                  progress = 1.0;
-                  message = "Selesai!";
                 }
 
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
-                      Icons.cloud_download_outlined,
-                      size: 64,
-                      color: AppColors.primary,
+                      Icons.cloud_download_rounded,
+                      size: 56,
+                      color: AppColors.primaryDark,
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      "Mengunduh Pembaruan",
-                      style: AppTypography.heading5.copyWith(
-                        color: Colors.black,
-                      ),
-                    ),
+                    Text("Mengunduh v$version", style: AppTypography.heading5),
                     const SizedBox(height: 8),
                     Text(
                       message,
-                      style: AppTypography.bodyRegular.copyWith(
-                        color: AppColors.textHint,
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.grey.shade200,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.primary,
-                      ),
-                      minHeight: 8,
+                    const SizedBox(height: 20),
+                    ClipRRect(
                       borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 8,
+                        backgroundColor: AppColors.background,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.primary,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Text(
                       "${(progress * 100).toStringAsFixed(0)}%",
                       style: AppTypography.caption.copyWith(
@@ -102,32 +144,6 @@ class UpdateProgressDialog extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildError(BuildContext context, String message) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(Icons.error_outline, size: 64, color: AppColors.error),
-        const SizedBox(height: 16),
-        Text(
-          "Gagal Mengunduh",
-          style: AppTypography.heading5.copyWith(color: Colors.black),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          message,
-          textAlign: TextAlign.center,
-          style: AppTypography.bodyRegular.copyWith(color: AppColors.textHint),
-        ),
-        const SizedBox(height: 24),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-          onPressed: () => context.read<UpdateProgressCubit>().retry(),
-          child: const Text("Coba Lagi", style: TextStyle(color: Colors.white)),
-        ),
-      ],
     );
   }
 }

@@ -1,5 +1,3 @@
-// lib/core/storage/database_helper.dart
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -30,7 +28,6 @@ class DatabaseHelper {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // 🚀 [SKEMA FINAL]: Bersih, ramping, dan 100% sesuai API Bapenda terbaru
     await db.execute('''
       CREATE TABLE $tableTransactions (
         id_transaksi_lokal TEXT PRIMARY KEY,
@@ -53,9 +50,7 @@ class DatabaseHelper {
     ''');
   }
 
-  // [SCRIPT MIGRASI OTOMATIS]
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
-    // Migrasi V1 -> V2 (Biarkan utuh)
     if (oldVersion < 2) {
       await db.execute(
         'ALTER TABLE $tableTransactions RENAME TO tmp_transactions',
@@ -68,8 +63,6 @@ class DatabaseHelper {
       ''');
       await db.execute('DROP TABLE tmp_transactions');
     }
-
-    // Migrasi V2 -> V3 (GPS)
     if (oldVersion == 2) {
       await db.execute(
         'ALTER TABLE $tableTransactions ADD COLUMN latitude TEXT',
@@ -78,24 +71,18 @@ class DatabaseHelper {
         'ALTER TABLE $tableTransactions ADD COLUMN longitude TEXT',
       );
     }
-
-    // Migrasi V3 -> V4 (SAM Card)
     if (oldVersion < 4) {
       await db.execute(
         'ALTER TABLE $tableTransactions ADD COLUMN no_kartu_kue TEXT',
       );
     }
-
-    // 🚀 [MIGRASI BARU: V4 ke V5] (Metode Pembayaran)
     if (oldVersion < 5) {
-      // Kita beri nilai DEFAULT 'UNKNOWN' agar data transaksi lama tidak error / null
       await db.execute(
         'ALTER TABLE $tableTransactions ADD COLUMN metode_pembayaran TEXT NOT NULL DEFAULT "UNKNOWN"',
       );
     }
   }
 
-  // --- FUNGSI CRUD DASAR TETAP SAMA ---
   Future<int> insertTransaction(Map<String, dynamic> row) async {
     final db = await instance.database;
     return await db.insert(
@@ -110,10 +97,7 @@ class DatabaseHelper {
     String newStatus,
   ) async {
     final db = await instance.database;
-
-    // 🚀 [PENJAGA GERBANG]: Jangan biarkan status pembayaran dirusak!
     if (newStatus == 'SYNCED') {
-      // Abaikan secara paksa! Gunakan updateSyncStatus atau markTransactionAsSynced.
       return 0;
     }
 

@@ -1,7 +1,8 @@
-// lib/features/transaction_history/presentation/cubit/transaction_history_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
+import 'package:parkir_digital_bapenda/core/storage/i_secure_storage_manager.dart';
+import 'package:parkir_digital_bapenda/core/utils/app_logger.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
 import '../../domain/usecases/get_transaction_history_usecase.dart';
 import 'transaction_history_state.dart';
 
@@ -10,11 +11,31 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   final GetTransactionHistoryUseCase _useCase;
   final ISecureStorageManager _secureStorage;
 
+  static const int _defaultPageSize = 20;
+  bool _isFetchingMore = false;
+
   TransactionHistoryCubit(this._useCase, this._secureStorage)
     : super(TransactionHistoryInitial());
 
+  int _jenisKendaraanFor(String kategori) {
+    switch (kategori) {
+      case 'MOBIL':
+        return 1;
+      case 'MOTOR':
+        return 2;
+      case 'SEMUA':
+      default:
+        return 0;
+    }
+  }
+
   /// [REMOTE FILTER]: Tembak API Bapenda berdasarkan rentang tanggal
-  Future<void> fetchHistory(DateTime start, DateTime end) async {
+  Future<void> fetchHistory(
+    DateTime start,
+    DateTime end,
+    String nop,
+    String idDevice,
+  ) async {
     final difference = end.difference(start).inDays.abs();
     if (difference > 30) {
       if (!isClosed) {
@@ -28,10 +49,23 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     }
 
     emit(TransactionHistoryLoading());
+    _isFetchingMore = false;
 
-    final profile = await _secureStorage.getJukirProfile() ?? {};
+    String finalNop = nop;
+    if (nop.trim().isEmpty) {
+      final profile = await _secureStorage.getJukirProfile() ?? {};
+      finalNop = profile['nop']?.toString() ?? '';
+    }
 
-    final result = await _useCase.execute(startDate: start, endDate: end);
+    final result = await _useCase.execute(
+      startDate: start,
+      endDate: end,
+      nop: finalNop,
+      idDevice: idDevice,
+      page: 1,
+      pageSize: _defaultPageSize,
+      jenisKendaraan: 0,
+    );
 
     if (isClosed) return;
 
@@ -45,52 +79,164 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           endDate: end,
           selectedKategori: 'SEMUA',
           selectedMode: -1,
-          jukirProfile: profile,
-
-          // Data Rekap Asli (Semua Transaksi)
           roda2: data.roda2,
           roda4: data.roda4,
           totalTransaksi: data.jumlahTransaksi,
           totalPendapatan: data.totalPendapatan,
-
-          //  INJEKSI DATA FINANSIAL KE STATE
           totalPajak: data.totalPendapatanBapenda,
           totalBersih: data.totalPendapatanWajibPajak,
           persentasePajak: data.detail.isNotEmpty
               ? data.detail.first.tarifPajak
               : 0,
+          sofBreakdown: _computeSofBreakdown(data.detail),
+          nop: finalNop,
+          idDevice: idDevice,
+          currentPage: 1,
+          pageSize: _defaultPageSize,
+          hasReachedMax: data.detail.length < _defaultPageSize,
         ),
       ),
     );
   }
 
   /// [LOCAL FILTER]: Menyortir data yang sudah ada di memori secara instan
-  void applyLocalFilter({String? kategori, int? mode}) {
+  Future<void> applyFilter({String? kategori, int? mode}) async {
     if (state is! TransactionHistoryLoaded) return;
-
-    final currentState = state as TransactionHistoryLoaded;
+    var currentState = state as TransactionHistoryLoaded;
 
     final newKategori = kategori ?? currentState.selectedKategori;
     final newMode = mode ?? currentState.selectedMode;
+    final kategoriChanged = newKategori != currentState.selectedKategori;
 
-    // 1. Eksekusi Filter
-    final filteredData = currentState.allTransactions.where((trx) {
-      bool passKategori = true;
-      if (newKategori != 'SEMUA') {
-        passKategori =
-            trx.jenisTarif.toUpperCase() == newKategori.toUpperCase();
+    if (kategoriChanged) {
+      emit(currentState.copyWith(isFilterLoading: true));
+
+      final result = await _useCase.execute(
+        startDate: currentState.startDate,
+        endDate: currentState.endDate,
+        nop: currentState.nop,
+        idDevice: currentState.idDevice,
+        page: 1,
+        pageSize: currentState.pageSize,
+        jenisKendaraan: _jenisKendaraanFor(newKategori),
+      );
+
+      if (isClosed) return;
+
+      final refetched = result.fold<TransactionHistoryLoaded?>(
+        (failure) {
+          AppLogger.error(
+            'Gagal filter kategori $newKategori: ${failure.message}',
+          );
+          return null;
+        },
+        (data) => currentState.copyWith(
+          allTransactions: data.detail,
+          selectedKategori: newKategori,
+          roda2: data.roda2,
+          roda4: data.roda4,
+          totalTransaksi: data.jumlahTransaksi,
+          totalPendapatan: data.totalPendapatan,
+          totalPajak: data.totalPendapatanBapenda,
+          totalBersih: data.totalPendapatanWajibPajak,
+          currentPage: 1,
+          hasReachedMax: data.detail.length < currentState.pageSize,
+          isFilterLoading: false,
+        ),
+      );
+
+      if (refetched == null) {
+        if (!isClosed && state is TransactionHistoryLoaded) {
+          emit(
+            (state as TransactionHistoryLoaded).copyWith(
+              isFilterLoading: false,
+            ),
+          );
+        }
+        return;
       }
+      currentState = refetched;
+    }
 
-      bool passMode = true;
-      if (newMode != -1) {
-        passMode = trx.modePlat == newMode;
-      }
+    if (!isClosed) {
+      emit(_rebuildFilteredState(currentState, mode: newMode));
+    }
+  }
 
-      return passKategori && passMode;
-    }).toList();
+  Future<void> loadMoreItems() async {
+    if (state is! TransactionHistoryLoaded) return;
+    final currentState = state as TransactionHistoryLoaded;
 
-    //  2. REKALKULASI REKAPITULASI (Dinamic Recap)
-    // Agar angka di Header mengikuti hasil filter yang ada di layar
+    if (currentState.hasReachedMax || _isFetchingMore) return;
+
+    _isFetchingMore = true;
+    emit(currentState.copyWith(isLoadingMore: true));
+
+    final nextPage = currentState.currentPage + 1;
+
+    final result = await _useCase.execute(
+      startDate: currentState.startDate,
+      endDate: currentState.endDate,
+      nop: currentState.nop,
+      idDevice: currentState.idDevice,
+      page: nextPage,
+      pageSize: currentState.pageSize,
+      jenisKendaraan: _jenisKendaraanFor(currentState.selectedKategori),
+    );
+
+    _isFetchingMore = false;
+    if (isClosed) return;
+
+    result.fold(
+      (failure) {
+        AppLogger.error(
+          'Gagal load more history (page $nextPage): ${failure.message}',
+        );
+        if (state is TransactionHistoryLoaded) {
+          emit(
+            (state as TransactionHistoryLoaded).copyWith(isLoadingMore: false),
+          );
+        }
+      },
+      (data) {
+        if (state is! TransactionHistoryLoaded) return;
+        final latestState = state as TransactionHistoryLoaded;
+
+        final List<HistoryItemModel> newAllTransactions = [
+          ...latestState.allTransactions,
+          ...data.detail,
+        ];
+
+        final updatedBase = latestState.copyWith(
+          allTransactions: newAllTransactions,
+          currentPage: nextPage,
+          hasReachedMax: data.detail.length < latestState.pageSize,
+          isLoadingMore: false,
+        );
+
+        emit(_rebuildFilteredState(updatedBase));
+      },
+    );
+  }
+
+  TransactionHistoryLoaded _rebuildFilteredState(
+    TransactionHistoryLoaded state, {
+    int? mode,
+  }) {
+    final newMode = mode ?? state.selectedMode;
+
+    if (newMode == -1) {
+      return state.copyWith(
+        filteredTransactions: state.allTransactions,
+        selectedMode: newMode,
+        sofBreakdown: _computeSofBreakdown(state.allTransactions),
+      );
+    }
+
+    final filteredData = state.allTransactions
+        .where((trx) => trx.modePlat == newMode)
+        .toList();
+
     int filterRoda2 = 0;
     int filterRoda4 = 0;
     int filterKotor = 0;
@@ -100,30 +246,31 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     for (final trx in filteredData) {
       if (trx.jenisTarif == 'MOTOR') filterRoda2++;
       if (trx.jenisTarif == 'MOBIL') filterRoda4++;
-
       filterKotor += trx.kredit;
-
-      final double hitungPajak = (trx.kredit * trx.tarifPajak) / 100;
+      final hitungPajak = (trx.kredit * trx.tarifPajak) / 100;
       filterPajak += hitungPajak;
       filterBersih += (trx.kredit - hitungPajak);
     }
 
-    if (!isClosed) {
-      emit(
-        currentState.copyWith(
-          filteredTransactions: filteredData,
-          selectedKategori: newKategori,
-          selectedMode: newMode,
+    return state.copyWith(
+      filteredTransactions: filteredData,
+      selectedMode: newMode,
+      roda2: filterRoda2,
+      roda4: filterRoda4,
+      totalTransaksi: filteredData.length,
+      totalPendapatan: filterKotor,
+      totalPajak: filterPajak,
+      totalBersih: filterBersih,
+      sofBreakdown: _computeSofBreakdown(filteredData),
+    );
+  }
 
-          // 🚀 TIMPA DATA REKAP DENGAN HASIL FILTER
-          roda2: filterRoda2,
-          roda4: filterRoda4,
-          totalTransaksi: filteredData.length,
-          totalPendapatan: filterKotor,
-          totalPajak: filterPajak,
-          totalBersih: filterBersih,
-        ),
-      );
+  Map<String, int> _computeSofBreakdown(List<HistoryItemModel> data) {
+    final Map<String, int> counts = {};
+    for (final trx in data) {
+      final key = trx.sof.trim().isEmpty ? 'LAINNYA' : trx.sof.toUpperCase();
+      counts[key] = (counts[key] ?? 0) + 1;
     }
+    return counts;
   }
 }

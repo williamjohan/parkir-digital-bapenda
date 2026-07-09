@@ -1,5 +1,3 @@
-import 'package:chucker_flutter/chucker_flutter.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -9,16 +7,23 @@ import '../../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../../core/routes/app_routes.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../payment/presentation/pages/payment_page.dart';
 import '../cubit/transaction_cubit.dart';
 import '../cubit/transaction_state.dart';
 import '../widgets/card_jenis_kendaraan.dart';
 
 class TransactionPage extends StatefulWidget {
+  final Map<String, dynamic>? itemOP;
   final bool isFree;
+  final bool isDemoMode;
 
-  const TransactionPage({super.key, required this.isFree});
+  const TransactionPage({
+    super.key,
+    required this.isFree,
+    this.itemOP,
+    this.isDemoMode = false,
+  });
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -26,39 +31,38 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   late Future<Map<String, dynamic>?> _profileFuture;
+  bool get _requiresJukir => widget.itemOP != null;
 
   @override
   void initState() {
     super.initState();
-    context.read<TransactionCubit>().init(widget.isFree);
+    context.read<TransactionCubit>().init(
+      isFree: widget.isFree,
+      isDemoMode: widget.isDemoMode,
+    );
 
     _profileFuture = GetIt.I<ISecureStorageManager>().getJukirProfile();
   }
 
-  void _navigateToPayment(TransactionState state) {
+  Future<void> _navigateToPayment(TransactionState state) async {
     final selected = state.selectedTarif!;
-
     final args = PaymentPageArgs(
       jenisKendaraanId: selected.id,
       kategoriKendaraan: selected.jenisTarif,
+      isDemoMode: widget.isDemoMode,
     );
-
-    context.push(AppRoutes.payment, extra: args).then((result) {
-      if (!context.mounted) return;
-      context.read<TransactionCubit>().resetForm();
-
-      if (result == true) {
-        context.pop(true);
-      }
-    });
+    final result = await context.push(AppRoutes.payment, extra: args);
+    if (!mounted) return;
+    context.read<TransactionCubit>().resetForm();
+    if (result == true) {
+      context.pop(true);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TransactionCubit, TransactionState>(
       listener: (context, state) {
-        // 🚀 Satu-satunya listener: validasi lolos → navigasi ke PaymentPage.
-        // Tidak ada cek lokasi, tidak ada insert transaksi.
         if (state.status == TransactionStatus.success) {
           _navigateToPayment(state);
         }
@@ -73,18 +77,22 @@ class _TransactionPageState extends State<TransactionPage> {
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
             appBar: AppBar(
-              title: GestureDetector(
-                onDoubleTap: () {
-                  if (kDebugMode) ChuckerFlutter.showChuckerScreen();
-                },
-                child: const Text(
-                  'Transaksi Parkir',
-                  style: AppTypography.heading5,
+              title: Text(
+                'Transaksi Parkir',
+                style: AppTypography.heading5.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              backgroundColor: AppColors.surface,
-              elevation: 0,
               centerTitle: true,
+              backgroundColor: AppColors.surface,
+              scrolledUnderElevation: 0,
+              shape: const Border(
+                bottom: BorderSide(color: AppColors.primary, width: 1.0),
+              ),
+              elevation: 0,
+              foregroundColor: Colors.black,
+              iconTheme: const IconThemeData(color: AppColors.primary),
             ),
             body: isLoading
                 ? const Center(
@@ -99,34 +107,26 @@ class _TransactionPageState extends State<TransactionPage> {
                         ? const TarifEmptyWidget()
                         : Column(
                             children: [
+                              _buildDemoModeBanner(),
                               Expanded(
                                 child: SingleChildScrollView(
                                   physics: const BouncingScrollPhysics(),
                                   child: Column(
                                     children: [
                                       const SizedBox(height: 8),
-
-                                      // 🚀 Pilih jenis kendaraan
-                                      // CardJenisKendaraan(
-                                      //   op: "Tes",
-                                      //   alamat: "Tes",
-                                      //   tarifList: state.tarifList,
-                                      //   selectedTarif: state.selectedTarif,
-                                      //   isFree: widget.isFree,
-                                      //   onSelected: (tarif) => context
-                                      //       .read<TransactionCubit>()
-                                      //       .selectTarif(tarif),
-                                      // ),
                                       FutureBuilder<Map<String, dynamic>?>(
                                         future: _profileFuture,
                                         builder: (context, snapshot) {
                                           final profile = snapshot.data;
 
                                           return CardJenisKendaraan(
-                                            op:
-                                                profile?['namaObjekPajak'] ??
-                                                '',
-                                            alamat: profile?['alamat'] ?? '',
+                                            op: widget.itemOP != null
+                                                ? widget.itemOP!['nama_op']
+                                                : profile?['namaObjekPajak'] ??
+                                                      '',
+                                            alamat: widget.itemOP != null
+                                                ? widget.itemOP!['alamat_op']
+                                                : profile?['alamat'] ?? '',
                                             tarifList: state.tarifList,
                                             selectedTarif: state.selectedTarif,
                                             isFree: widget.isFree,
@@ -136,32 +136,54 @@ class _TransactionPageState extends State<TransactionPage> {
                                           );
                                         },
                                       ),
-
-                                      const SizedBox(height: 16),
                                     ],
                                   ),
                                 ),
                               ),
-
-                              // 🚀 Tombol lanjut — aktif hanya jika kendaraan dipilih
                               const SizedBox(height: 8),
                               PbPrimaryButton(
                                 text: widget.isFree
                                     ? 'Simpan Parkir Gratis'
                                     : 'Lanjut Pembayaran',
-                                onPressed: state.selectedTarif != null
+                                onPressed: state.isValid(_requiresJukir)
                                     ? () => context
                                           .read<TransactionCubit>()
-                                          .proceedToPayment()
+                                          .proceedToPayment(_requiresJukir)
                                     : null,
                               ),
-                              const SizedBox(height: 16),
                             ],
                           ),
                   ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildDemoModeBanner() {
+    if (!widget.isDemoMode) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.info_outline, color: AppColors.warning, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Mode Demo — transaksi ini hanya simulasi.',
+              style: AppTypography.bodySmall.copyWith(color: AppColors.warning),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

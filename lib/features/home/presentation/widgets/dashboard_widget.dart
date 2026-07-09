@@ -7,10 +7,9 @@ import 'package:parkir_digital_bapenda/features/home/presentation/widgets/dashbo
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/routes/app_routes.dart';
-import '../cubit/home_cubit.dart';
+import '../cubit/home/home_cubit.dart';
 
 class DashboardWidget extends StatelessWidget {
-  // <--- Public Class
   final double totalPendapatan;
   final int totalTransaksi;
   final int motorCount;
@@ -30,9 +29,9 @@ class DashboardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [AppColors.primaryDark, AppColors.primaryLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -76,7 +75,7 @@ class DashboardWidget extends StatelessWidget {
               ),
               if (isFree && isSuccess)
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     border: Border.all(color: Colors.white),
@@ -89,7 +88,7 @@ class DashboardWidget extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           if (!isFree && isSuccess) ...[
             Row(
@@ -102,7 +101,7 @@ class DashboardWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     border: Border.all(color: Colors.white),
@@ -116,7 +115,7 @@ class DashboardWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Divider(color: AppColors.surface),
+            const Divider(color: AppColors.surface),
             const SizedBox(height: 8),
           ],
           Row(
@@ -127,7 +126,7 @@ class DashboardWidget extends StatelessWidget {
                 icon: Icons.two_wheeler,
               ),
 
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               DashboardItem(
                 title: "Roda 4",
                 value: mobilCount.toString(),
@@ -142,12 +141,12 @@ class DashboardWidget extends StatelessWidget {
             onPressed: () async {
               final result = await context.push<bool?>(
                 AppRoutes.transaction,
-                extra: isFree,
+                extra: {'isFree': isFree},
               );
 
               if (!context.mounted) return;
               if (result == true) {
-                context.read<HomeCubit>().loadDashboardData();
+                context.read<HomeCubit>().loadDashboarJukir();
               }
             },
           ),

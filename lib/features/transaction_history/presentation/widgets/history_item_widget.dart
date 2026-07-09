@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 
-// lib/features/transaction_history/presentation/widgets/history_item_widget.dart
-
 class HistoryRecapItem extends StatelessWidget {
   final String title;
   final String subTitle;

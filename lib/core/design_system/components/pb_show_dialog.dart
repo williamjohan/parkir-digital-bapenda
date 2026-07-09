@@ -1,5 +1,3 @@
-// lib/core/design_system/components/pb_show_dialog.dart
-
 import 'package:flutter/material.dart';
 import '../tokens/app_colors.dart';
 import '../tokens/app_typography.dart';
@@ -60,19 +58,18 @@ class PbShowDialog {
                           ),
                         ),
                         onPressed: () {
-                          // 1. Selalu tutup modalnya terlebih dahulu
                           Navigator.of(dialogContext).pop();
                         },
-                        child: Text(
+                        child: const Text(
                           "Batal",
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                   ],
 
                   Expanded(
@@ -85,10 +82,7 @@ class PbShowDialog {
                         ),
                       ),
                       onPressed: () {
-                        // 1. Selalu tutup modalnya terlebih dahulu
                         Navigator.of(dialogContext).pop();
-
-                        // 2. Eksekusi fungsi tambahan jika ada (misal: kembali ke Home)
                         if (onConfirm != null) {
                           onConfirm();
                         }

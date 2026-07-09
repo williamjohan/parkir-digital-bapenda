@@ -1,9 +1,7 @@
-// lib/features/auth/presentation/cubit/login/login_cubit.dart
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../core/di/injection.dart';
-import '../../../../../core/storage/secure_storage_manager.dart';
+import '../../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../domain/usecases/login_usecase.dart';
 import '../app_auth/app_auth_cubit.dart'; // [TAMBAHAN] Import AppAuthCubit
 import 'login_state.dart';
@@ -21,11 +19,7 @@ class LoginCubit extends Cubit<LoginState> {
     bool rememberMe,
   ) async {
     emit(LoginLoading());
-
-    // 1. Eksekusi API Login
     final result = await _loginUseCase(username, password);
-
-    // 2. Evaluasi Hasil
     await result.fold(
       (failure) async {
         emit(LoginFailure(failure.message));

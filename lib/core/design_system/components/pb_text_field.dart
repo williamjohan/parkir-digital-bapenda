@@ -1,5 +1,3 @@
-// lib/core/design_system/components/bapenda_text_field.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../tokens/app_colors.dart';
@@ -10,8 +8,9 @@ class PbTextField extends StatelessWidget {
   final String hintText;
   final String? labelText;
   final bool isLoading;
-  final bool enabled; // BARU: Properti untuk mengunci input
+  final bool enabled;
   final Function(String)? onChanged;
+  final Widget? suffixIcon; // BARU
 
   const PbTextField({
     super.key,
@@ -19,8 +18,9 @@ class PbTextField extends StatelessWidget {
     required this.hintText,
     this.labelText,
     this.isLoading = false,
-    this.enabled = true, // Default tetap true agar tidak merusak halaman lain
+    this.enabled = true,
     this.onChanged,
+    this.suffixIcon, // BARU
   });
 
   @override
@@ -33,7 +33,6 @@ class PbTextField extends StatelessWidget {
             labelText!,
             style: AppTypography.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
-              // Warna label sedikit memudar jika field di-disable
               color: enabled ? AppColors.textPrimary : AppColors.textHint,
             ),
           ),
@@ -42,13 +41,12 @@ class PbTextField extends StatelessWidget {
         TextField(
           controller: controller,
           onChanged: onChanged,
-          enabled: enabled, // BARU: Lempar status ke TextField bawaan
+          enabled: enabled,
           textCapitalization: TextCapitalization.characters,
           inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9 ]')),
+            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 ]')),
           ],
-          style: AppTypography.heading2.copyWith(
-            fontSize: 20,
+          style: AppTypography.bodySmall.copyWith(
             letterSpacing: 2,
             color: enabled ? AppColors.textPrimary : AppColors.textHint,
           ),
@@ -59,23 +57,22 @@ class PbTextField extends StatelessWidget {
               color: AppColors.textHint,
             ),
             filled: true,
-            // BARU: Jika di-disable, warnanya abu-abu terang (disable state)
             fillColor: enabled ? Colors.white : Colors.grey.shade100,
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
+              horizontal: 8,
+              vertical: 8,
             ),
             suffixIcon: isLoading
                 ? const Padding(
                     padding: EdgeInsets.all(12),
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : Icon(
-                    Icons.edit,
-                    // Warna icon memudar jika disabled
-                    color: enabled ? AppColors.primary : AppColors.textHint,
-                    size: 20,
-                  ),
+                : suffixIcon ??
+                      Icon(
+                        Icons.edit,
+                        color: enabled ? AppColors.primary : AppColors.textHint,
+                        size: 10,
+                      ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.textHint),
@@ -86,7 +83,6 @@ class PbTextField extends StatelessWidget {
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              // Border lebih tipis/pudar saat disabled
               borderSide: BorderSide(color: Colors.grey.shade300),
             ),
             focusedBorder: OutlineInputBorder(

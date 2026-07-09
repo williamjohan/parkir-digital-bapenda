@@ -1,5 +1,3 @@
-// lib/features/update/domain/usecases/check_update_usecase.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';

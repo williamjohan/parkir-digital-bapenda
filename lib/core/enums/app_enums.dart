@@ -1,15 +1,13 @@
 /// Mewakili status pungutan tarif dari Backend (0, 1, 2)
 enum PungutTarifParkir {
   tidakDiketahui(0, "Tidak Diketahui"),
-  tidakBertarif(1, "Tidak Memungut Tarif"), // Ini yang isFree = true
+  tidakBertarif(1, "Tidak Memungut Tarif"),
   bertarif(2, "BerTarif");
 
   final int value;
   final String description;
 
   const PungutTarifParkir(this.value, this.description);
-
-  // Helper untuk parsing dari JSON/API dengan aman
   static PungutTarifParkir fromInt(int value) {
     return PungutTarifParkir.values.firstWhere(
       (e) => e.value == value,
@@ -36,4 +34,36 @@ enum JenisKendaraanId {
       orElse: () => JenisKendaraanId.tidakDiketahui,
     );
   }
+}
+
+enum RoleLoginDigitalParkir {
+  jukir(-1, "Jukir"),
+  wp(1, "Wp"),
+  bapenda(2, "Bapenda"),
+  pengawas(3, "Pengawas"),
+  tidakDiketahui(0, "Tidak Diketahui");
+
+  final int value;
+  final String description;
+
+  const RoleLoginDigitalParkir(this.value, this.description);
+
+  /// Helper untuk parsing dari JSON/API dengan aman
+  static RoleLoginDigitalParkir fromInt(int value) {
+    return RoleLoginDigitalParkir.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => RoleLoginDigitalParkir.tidakDiketahui,
+    );
+  }
+}
+
+enum SearchOpType { digital, nonDigital, free, paid }
+
+enum JenisKendaraan {
+  mobil(1),
+  motor(2);
+
+  final int id;
+
+  const JenisKendaraan(this.id);
 }

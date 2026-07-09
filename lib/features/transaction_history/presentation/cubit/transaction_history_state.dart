@@ -19,16 +19,23 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final DateTime endDate;
   final String selectedKategori;
   final int selectedMode;
-  final Map<String, dynamic> jukirProfile;
   final int roda2;
   final int roda4;
   final int totalTransaksi;
   final int totalPendapatan;
-
-  // 🚀 [BARU] 3 FIELD FINANSIAL DINAMIS
   final double totalPajak;
   final double totalBersih;
   final int persentasePajak;
+
+  final Map<String, int> sofBreakdown;
+
+  final String nop;
+  final String idDevice;
+  final int currentPage;
+  final int pageSize;
+  final bool hasReachedMax;
+  final bool isLoadingMore;
+  final bool isFilterLoading;
 
   const TransactionHistoryLoaded({
     required this.allTransactions,
@@ -37,15 +44,21 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     required this.endDate,
     this.selectedKategori = 'SEMUA',
     this.selectedMode = -1,
-    required this.jukirProfile,
     required this.roda2,
     required this.roda4,
     required this.totalTransaksi,
     required this.totalPendapatan,
-    // 🚀 WAJIB DIISI
     required this.totalPajak,
     required this.totalBersih,
     required this.persentasePajak,
+    this.sofBreakdown = const {},
+    required this.nop,
+    required this.idDevice,
+    this.currentPage = 1,
+    this.pageSize = 20,
+    this.hasReachedMax = false,
+    this.isLoadingMore = false,
+    this.isFilterLoading = false,
   });
 
   TransactionHistoryLoaded copyWith({
@@ -55,15 +68,21 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     DateTime? endDate,
     String? selectedKategori,
     int? selectedMode,
-    Map<String, dynamic>? jukirProfile,
     int? roda2,
     int? roda4,
     int? totalTransaksi,
     int? totalPendapatan,
-    // 🚀 WAJIB DIISI
     double? totalPajak,
     double? totalBersih,
     int? persentasePajak,
+    Map<String, int>? sofBreakdown,
+    String? nop,
+    String? idDevice,
+    int? currentPage,
+    int? pageSize,
+    bool? hasReachedMax,
+    bool? isLoadingMore,
+    bool? isFilterLoading,
   }) {
     return TransactionHistoryLoaded(
       allTransactions: allTransactions ?? this.allTransactions,
@@ -72,17 +91,26 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       endDate: endDate ?? this.endDate,
       selectedKategori: selectedKategori ?? this.selectedKategori,
       selectedMode: selectedMode ?? this.selectedMode,
-      jukirProfile: jukirProfile ?? this.jukirProfile,
       roda2: roda2 ?? this.roda2,
       roda4: roda4 ?? this.roda4,
       totalTransaksi: totalTransaksi ?? this.totalTransaksi,
       totalPendapatan: totalPendapatan ?? this.totalPendapatan,
-      // 🚀 MAPPING BARU
       totalPajak: totalPajak ?? this.totalPajak,
       totalBersih: totalBersih ?? this.totalBersih,
       persentasePajak: persentasePajak ?? this.persentasePajak,
+      sofBreakdown: sofBreakdown ?? this.sofBreakdown,
+      nop: nop ?? this.nop,
+      idDevice: idDevice ?? this.idDevice,
+      currentPage: currentPage ?? this.currentPage,
+      pageSize: pageSize ?? this.pageSize,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      isFilterLoading: isFilterLoading ?? this.isFilterLoading,
     );
   }
+
+  bool get hasMore => !hasReachedMax;
+  List<HistoryItemModel> get visibleTransactions => filteredTransactions;
 
   @override
   List<Object?> get props => [
@@ -92,15 +120,21 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     endDate,
     selectedKategori,
     selectedMode,
-    jukirProfile,
     roda2,
     roda4,
     totalTransaksi,
     totalPendapatan,
-    // 🚀 REGISTRASI PROPS AGAR UI ME-REBUILD
     totalPajak,
     totalBersih,
     persentasePajak,
+    sofBreakdown,
+    nop,
+    idDevice,
+    currentPage,
+    pageSize,
+    hasReachedMax,
+    isLoadingMore,
+    isFilterLoading,
   ];
 }
 

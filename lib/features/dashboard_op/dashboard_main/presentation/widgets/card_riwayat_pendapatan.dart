@@ -1,0 +1,227 @@
+import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
+import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
+import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
+import '../../domain/entities/dashboard_op_entity.dart';
+
+class CardRiwayatPendapatanOp extends StatelessWidget {
+  const CardRiwayatPendapatanOp({
+    super.key,
+    required this.totalMotor,
+    required this.totalMobil,
+    required this.riwayat,
+    this.onLihatSemua,
+  });
+
+  final int totalMotor;
+  final int totalMobil;
+  final List<RiwayatPendapatanEntity> riwayat;
+  final VoidCallback? onLihatSemua;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.textPrimary.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Header
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(
+                  top: 2.0,
+                ), // Penyesuaian optikal agar sejajar dengan huruf kapital teks
+                child: Icon(
+                  Icons
+                      .access_time_rounded, // Atau ikon riwayat lain yang Anda suka
+                  size: 18,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Riwayat Pendapatan',
+                      style: AppTypography.bodySemiBold,
+                    ),
+                    SizedBox(height: 2),
+                    Text('Hari Ini', style: AppTypography.bodySemiBold),
+                  ],
+                ),
+              ),
+              InkWell(
+                onTap: onLihatSemua,
+                child: Row(
+                  children: [
+                    Text(
+                      'Lihat semua',
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    const Icon(
+                      Icons.chevron_right,
+                      size: 18,
+                      color:
+                          Colors.orange, // Sesuaikan jika ada AppColors.primary
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+          Column(
+            children: [
+              if (riwayat.isNotEmpty) ...[
+                /// List Riwayat
+                ...riwayat.map(
+                  (item) => Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: _RiwayatItem(
+                      item: item,
+                      currency: CurrencyFormatter.toIdr,
+                    ),
+                  ),
+                ),
+                const Divider(color: AppColors.border),
+                const SizedBox(height: 6),
+
+                /// Summary kendaraan
+                Row(
+                  children: [
+                    Expanded(
+                      child: _VehicleSummaryCard(
+                        isRoda2: true,
+                        value: totalMotor,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _VehicleSummaryCard(
+                        isRoda2: false,
+                        value: totalMobil,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              if (riwayat.isEmpty) ...[
+                const SizedBox(height: 16),
+                const Icon(Icons.receipt_long, color: AppColors.textSecondary),
+                const SizedBox(height: 4),
+                const Center(
+                  child: Text(
+                    "Belum ada transkasi",
+                    style: AppTypography.caption,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VehicleSummaryCard extends StatelessWidget {
+  const _VehicleSummaryCard({required this.isRoda2, required this.value});
+
+  final bool isRoda2;
+  final int value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: isRoda2 ? Colors.teal.shade50 : Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isRoda2 ? Icons.directions_bike : Icons.directions_car,
+            size: 20,
+            color: isRoda2 ? Colors.teal.shade600 : Colors.blue.shade700,
+          ),
+          const SizedBox(width: 10),
+          Column(
+            children: [
+              Text(
+                isRoda2 ? 'Motor' : 'Mobil',
+                style: AppTypography.caption.copyWith(
+                  color: isRoda2 ? Colors.teal.shade600 : Colors.blue.shade700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value.toString(),
+                style: AppTypography.bodySemiBold.copyWith(
+                  color: isRoda2 ? Colors.teal.shade600 : Colors.blue.shade700,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RiwayatItem extends StatelessWidget {
+  final RiwayatPendapatanEntity item;
+  final String Function(int) currency;
+
+  const _RiwayatItem({required this.item, required this.currency});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          item.jenisKendaraan,
+          style: AppTypography.bodyRegular.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const Text('|', style: TextStyle(color: AppColors.textSecondary)),
+        Text(
+          item.tgl,
+          style: AppTypography.bodyRegular.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const Text('|', style: TextStyle(color: AppColors.textSecondary)),
+        Text(
+          currency(item.kredit),
+          textAlign: TextAlign.end,
+          style: AppTypography.bodySemiBold,
+        ),
+      ],
+    );
+  }
+}

@@ -1,5 +1,3 @@
-// lib/features/update/domain/entities/update_entity.dart
-
 import 'package:equatable/equatable.dart';
 
 class UpdateEntity extends Equatable {

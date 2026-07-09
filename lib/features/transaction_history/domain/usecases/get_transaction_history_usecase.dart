@@ -13,7 +13,20 @@ class GetTransactionHistoryUseCase {
   Future<Either<Failure, HistoryResponseData>> execute({
     required DateTime startDate,
     required DateTime endDate,
+    required String nop,
+    required int page,
+    required int pageSize,
+    required int jenisKendaraan,
+    String? idDevice,
   }) {
-    return _repository.getHistory(startDate: startDate, endDate: endDate);
+    return _repository.getHistory(
+      startDate: startDate,
+      endDate: endDate,
+      nop: nop,
+      page: page,
+      pageSize: pageSize,
+      jenisKendaraan: jenisKendaraan,
+      idDevice: idDevice,
+    );
   }
 }

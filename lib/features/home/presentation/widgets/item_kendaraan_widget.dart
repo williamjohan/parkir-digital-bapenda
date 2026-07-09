@@ -27,17 +27,10 @@ class ItemKendaraanWidget extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isSolid ? AppColors.primary : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withOpacity(0.08),
-        //     blurRadius: 10,
-        //     offset: const Offset(0, 4),
-        //   ),
-        // ],
         border: Border.all(color: isSolid ? Colors.white : AppColors.border),
       ),
       child: Row(
@@ -45,7 +38,7 @@ class ItemKendaraanWidget extends StatelessWidget {
         children: [
           if (isLeftIcon) ...[
             Icon(icon, color: isSolid ? Colors.white : AppColors.primary),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
           ],
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -53,7 +46,7 @@ class ItemKendaraanWidget extends StatelessWidget {
             children: [
               if (!isLeftIcon) ...[
                 Icon(icon, color: isSolid ? Colors.white : AppColors.primary),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
               Text(
                 judul,
@@ -64,7 +57,7 @@ class ItemKendaraanWidget extends StatelessWidget {
               Text(
                 jumlah,
                 style: isSolid
-                    ? TextStyle(
+                    ? const TextStyle(
                         fontSize: 50,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

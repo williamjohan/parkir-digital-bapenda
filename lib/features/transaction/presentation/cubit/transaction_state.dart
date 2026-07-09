@@ -1,73 +1,37 @@
-import 'package:equatable/equatable.dart';
-import '../../../home/data/models/tarif_model.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/domain/entities/data_jukir_entity.dart';
+import '../../data/models/tarif/tarif_model.dart';
+import '../../domain/entities/qris_entity.dart';
 
-enum TransactionStatus {
-  ready,
-  loading,
-  success,
-  // Status di bawah tidak lagi dipakai di flow QRIS Rompi.
-  // Dipertahankan agar tidak break kode lain yang mungkin masih referensi enum ini.
-  // ignore: unused_field
-  submitting,
-  // ignore: unused_field
-  failure,
-  // ignore: unused_field
-  locationDisabled,
-  // ignore: unused_field
-  locationPermissionDenied,
-}
+part 'transaction_state.freezed.dart';
 
-class TransactionState extends Equatable {
-  final TransactionStatus status;
-  final List<TarifModel> tarifList;
-  final TarifModel? selectedTarif;
-  final bool isFree;
-  final String? errorMessage;
+enum TransactionStatus { ready, loading, success, submitting, failure }
 
-  // Map<jenisKendaraanId, localImagePath> — disimpan dari hasil getLocalQris
-  final Map<String, String> qrisMap;
+enum DataJukirStatus { initial, loading, success, error }
 
-  const TransactionState({
-    this.status = TransactionStatus.ready,
-    this.tarifList = const [],
-    this.selectedTarif,
-    this.isFree = false,
-    this.errorMessage,
-    this.qrisMap = const {},
-  });
+@freezed
+class TransactionState with _$TransactionState {
+  const TransactionState._();
 
-  bool get isValid => selectedTarif != null;
-
-  bool get isTarifEmpty => tarifList.isEmpty;
-
-  TransactionState copyWith({
-    TransactionStatus? status,
-    List<TarifModel>? tarifList,
+  const factory TransactionState({
+    @Default(TransactionStatus.ready) TransactionStatus status,
+    @Default([]) List<TarifModel> tarifList,
     TarifModel? selectedTarif,
-    bool clearSelectedTarif = false,
-    bool? isFree,
+    @Default(false) bool isFree,
+    // 🚀 PERBAIKAN: Hapus kata 'final', tambahkan @Default({})
+    @Default({}) Map<String, QrisLocalEntity> qrisMap,
+    @Default(DataJukirStatus.initial) DataJukirStatus dataJukirStatus,
+    @Default([]) List<DataJukirEntity> dataJukirList,
+    DataJukirEntity? selectedJukir,
     String? errorMessage,
-    Map<String, String>? qrisMap,
-  }) {
-    return TransactionState(
-      status: status ?? this.status,
-      tarifList: tarifList ?? this.tarifList,
-      selectedTarif: clearSelectedTarif
-          ? null
-          : (selectedTarif ?? this.selectedTarif),
-      isFree: isFree ?? this.isFree,
-      errorMessage: errorMessage ?? this.errorMessage,
-      qrisMap: qrisMap ?? this.qrisMap,
-    );
+  }) = _TransactionState;
+
+  bool isValid(bool requiresJukir) {
+    if (requiresJukir) {
+      return selectedTarif != null && selectedJukir != null;
+    }
+    return selectedTarif != null;
   }
 
-  @override
-  List<Object?> get props => [
-    status,
-    tarifList,
-    selectedTarif,
-    isFree,
-    errorMessage,
-    qrisMap,
-  ];
+  bool get isTarifEmpty => tarifList.isEmpty;
 }

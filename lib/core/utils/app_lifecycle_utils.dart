@@ -1,12 +1,8 @@
-// lib/core/utils/app_lifecycle_utils.dart
-
 import 'package:flutter/services.dart';
 import 'app_logger.dart';
 
 class AppLifecycleUtils {
   AppLifecycleUtils._();
-
-  // Nama channel komunikasi antara Flutter dan Native Android
   static const MethodChannel _channel = MethodChannel(
     'com.bapenda.parkir/app_retain',
   );

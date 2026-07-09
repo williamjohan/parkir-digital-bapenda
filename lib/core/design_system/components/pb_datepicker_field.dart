@@ -72,7 +72,6 @@ class _DateRangeFieldState extends State<DateRangeField> {
           style: AppTypography.caption.copyWith(color: Colors.white),
         ),
         const SizedBox(height: 6),
-        // 🚀 AREA SENTUH LEBAR: InkWell + AbsorbPointer
         Material(
           color: Colors.transparent,
           child: InkWell(
@@ -82,19 +81,20 @@ class _DateRangeFieldState extends State<DateRangeField> {
               child: TextField(
                 controller: _controller,
                 readOnly: true,
-                style: AppTypography.bodySemiBold.copyWith(color: Colors.white),
+                style: AppTypography.bodySemiBold.copyWith(
+                  color: Colors.white,
+                  fontSize: _controller.text.length > 20 ? 12 : 14,
+                ),
                 decoration: InputDecoration(
                   hintText: 'Pilih rentang tanggal',
                   hintStyle: AppTypography.bodySemiBold.copyWith(
                     color: Colors.white,
                   ),
-                  // 🚀 PERBAIKAN: Ikon diperbesar ke 24
                   suffixIcon: const Icon(
                     Icons.calendar_today,
                     size: 24,
                     color: Colors.white,
                   ),
-                  // 🚀 PERBAIKAN: Padding 16 untuk touch area yang lega
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 16,
                     horizontal: 16,

@@ -30,16 +30,12 @@ class LoginBackgroundWidget extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         image: const DecorationImage(
-          // [PERBAIKAN]: Tambahkan const di sini
           image: AssetImage(AppAssetImages.loginscreen),
           fit: BoxFit.cover,
           opacity: 0.15,
         ),
       ),
       child: SafeArea(
-        // 🚀 [KUNCI ARSITEKTUR RESPONSIVE]:
-        // Menggunakan LayoutBuilder agar UI otomatis menjadi Scrollable
-        // HANYA JIKA layar HP pengguna terlalu kecil.
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
@@ -68,7 +64,6 @@ class LoginBackgroundWidget extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            //logo lainnya
                           ],
                         ),
 
@@ -101,19 +96,15 @@ class LoginBackgroundWidget extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-
-                        // Spacer akan mendorong tombol secara elastis ke paling bawah layar
                         const Spacer(),
                         const SizedBox(
                           height: 24,
                         ), // Jarak aman minimal sebelum tombol
-                        // GROUP TOMBOL (Login & Register)
                         AnimatedOpacity(
                           opacity: isHidden ? 0.0 : 1.0,
                           duration: const Duration(milliseconds: 300),
                           child: Column(
                             children: [
-                              // 1. TOMBOL LOGIN (Primary - Putih)
                               SizedBox(
                                 width: double.infinity,
                                 height: 55,
@@ -141,8 +132,6 @@ class LoginBackgroundWidget extends StatelessWidget {
                             ],
                           ),
                         ),
-
-                        // [PERBAIKAN]: Jarak kaku 50px diubah menjadi 24px agar lebih proporsional di semua layar
                         const SizedBox(height: 24),
                       ],
                     ),

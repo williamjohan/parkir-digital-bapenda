@@ -1,17 +1,19 @@
 import 'package:dartz/dartz.dart';
+import 'package:parkir_digital_bapenda/features/home/domain/entities/dashboard_summary_jukir_entity.dart';
 import '../../../../core/errors/failure.dart';
-import '../../data/models/dashboard_summary_model.dart';
+import '../entities/dashboard_summary_non_jukir_entity.dart';
+import '../entities/dashboard_summary_pengawas.entity.dart';
 
 abstract class IHomeRepository {
-  /// Mengambil tarif dari API dan menyimpannya secara silent ke Secure Storage
-  Future<Either<Failure, void>> syncTarif();
+  Future<Either<Failure, DashboardSummaryJukirEntity>>
+  getDashboardSummaryJukir({required String nop});
 
-  /// Mengambil data dashboard dengan logika HYBRID (Jangkar Server + Delta Pending SQLite)
-  Future<Either<Failure, DashboardSummaryModel>> getHybridDashboardSummary();
+  Future<Either<Failure, DashboardSummaryNonJukirEntity>>
+  getDashboardSummaryNonJukir();
 
-  /// Mengambil data grafik mingguan
-  // Future<Either<Failure, List<WeeklyChartItemModel>>> getWeeklyChart();
+  Future<Either<Failure, DashboardSummaryNonJukirEntity>>
+  getDashboardSummaryNonJukirRange({String? tglAwal, String? tglAkhir});
 
-  // /// Mengambil tarif kendaraan
-  // Future<Either<Failure, List<TarifModel>>> getLocalTarifs();
+  Future<Either<Failure, DashboardSummaryPengawasEntity>>
+  getDashboardSummaryPengawas();
 }

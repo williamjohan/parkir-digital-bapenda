@@ -5,12 +5,12 @@ import '../../data/models/history_item_model.dart';
 
 class HistoryCardWidget extends StatelessWidget {
   final HistoryItemModel item;
-  final VoidCallback onPreviewTap;
+  final VoidCallback? onPrint;
 
   const HistoryCardWidget({
     super.key,
     required this.item,
-    required this.onPreviewTap,
+    required this.onPrint,
   });
 
   @override
@@ -33,12 +33,11 @@ class HistoryCardWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- HEADER: Tanggal & Badge ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  item.formattedDate, // 🚀 Langsung Panggil
+                  item.formattedDate,
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
@@ -69,18 +68,16 @@ class HistoryCardWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-
-            // --- BODY: Kendaraan, Plat, dan Nominal ---
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: item.vehicleColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(item.vehicleIcon, color: Colors.black87),
+                  child: Icon(item.vehicleIcon, color: item.vehicleColor),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -91,20 +88,12 @@ class HistoryCardWidget extends StatelessWidget {
                       Text(
                         item.titleText,
                         style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
+                        maxLines: 2,
                       ),
-                      // const SizedBox(height: 4),
-                      // Text(
-                      //   item.subtitleText,
-                      //   style: const TextStyle(
-                      //     fontSize: 13,
-                      //     color: Colors.grey,
-                      //     fontWeight: FontWeight.w500,
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -118,56 +107,97 @@ class HistoryCardWidget extends StatelessWidget {
                 ),
               ],
             ),
-
-            // const Divider(color: Colors.black12),
-            // const SizedBox(height: 4),
-
-            // --- FOOTER: Info Jukir & Tombol Preview Karcis ---
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            // Expanded(
-            //   child: Text(
-            //     'Petugas: ${item.namaPetugasBersih} (Shift ${item.shift})',
-            //     style: const TextStyle(fontSize: 11, color: Colors.grey),
-            //     maxLines: 1,
-            //     overflow: TextOverflow.ellipsis,
-            //   ),
-            // ),
-
-            // TOMBOL PREVIEW KARCIS
-            // InkWell(
-            //   onTap: onPreviewTap,
-            //   borderRadius: BorderRadius.circular(8),
-            //   child: Container(
-            //     padding: const EdgeInsets.symmetric(
-            //       horizontal: 12,
-            //       vertical: 6,
-            //     ),
-            //     decoration: BoxDecoration(
-            //       color: Colors.blue.shade50,
-            //       borderRadius: BorderRadius.circular(8),
-            //     ),
-            //     child: const Row(
-            //       mainAxisSize: MainAxisSize.min,
-            //       children: [
-            //         Icon(Icons.receipt_long, size: 16, color: Colors.blue),
-            //         SizedBox(width: 6),
-            //         Text(
-            //           'Lihat Karcis',
-            //           style: TextStyle(
-            //             fontSize: 12,
-            //             fontWeight: FontWeight.bold,
-            //             color: Colors.blue,
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // ],
-            // ),
+            const SizedBox(height: 14),
+            Divider(height: 1, color: Colors.grey.shade200),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _PaymentMethodPill(
+                  icon: item.sofIcon,
+                  color: item.sofColor,
+                  label: item.sofLabel,
+                ),
+                _PrintButton(onTap: onPrint),
+              ],
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PaymentMethodPill extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+
+  const _PaymentMethodPill({
+    required this.icon,
+    required this.color,
+    required this.label,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PrintButton extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const _PrintButton({this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.print_rounded, size: 15, color: Colors.black87),
+              SizedBox(width: 6),
+              Text(
+                'Cetak',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,22 +1,92 @@
-import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:gal/gal.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 
-/// Widget stateless yang menampilkan QRIS statis dari local image file.
-/// Tidak ada timer / polling — menunggu SignalR dari backend.
-class PaymentLocalQrisView extends StatelessWidget {
-  final String imagePath;
+/// Widget yang menampilkan QRIS (Statis/Dinamis/File) + aksi download ke galeri.
+class PaymentLocalQrisView extends StatefulWidget {
+  final Widget qrWidget;
   final String kategoriKendaraan;
-
-  // TODO: tambahkan callback ini saat SignalR sudah tersambung
-  // final VoidCallback? onCheckStatus;
 
   const PaymentLocalQrisView({
     super.key,
-    required this.imagePath,
+    required this.qrWidget,
     required this.kategoriKendaraan,
   });
+
+  @override
+  State<PaymentLocalQrisView> createState() => _PaymentLocalQrisViewState();
+}
+
+class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
+  final GlobalKey _qrisCardKey = GlobalKey();
+  bool _isDownloading = false;
+  bool _isCapturing = false;
+
+  Future<void> _downloadQris() async {
+    if (_isDownloading) return;
+    setState(() => _isDownloading = true);
+
+    try {
+      setState(() => _isCapturing = true);
+      await WidgetsBinding.instance.endOfFrame;
+
+      final boundary =
+          _qrisCardKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
+
+      if (boundary == null) {
+        throw Exception('Gagal menemukan tampilan QRIS');
+      }
+      final image = await boundary.toImage(pixelRatio: 3.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (mounted) setState(() => _isCapturing = false);
+
+      if (byteData == null) {
+        throw Exception('Gagal memproses gambar QRIS');
+      }
+
+      final Uint8List pngBytes = byteData.buffer.asUint8List();
+      final hasAccess = await Gal.hasAccess();
+      if (!hasAccess) {
+        final granted = await Gal.requestAccess();
+        if (!granted) {
+          throw Exception('Akses galeri ditolak');
+        }
+      }
+      final fileName =
+          'QRIS_${widget.kategoriKendaraan.replaceAll(' ', '_')}_${DateTime.now().millisecondsSinceEpoch}';
+
+      await Gal.putImageBytes(pngBytes, name: fileName);
+
+      if (!mounted) return;
+      _showSnackBar('QRIS berhasil disimpan ke galeri', isError: false);
+    } catch (e) {
+      if (!mounted) return;
+      _showSnackBar('Gagal menyimpan QRIS: ${e.toString()}', isError: true);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDownloading = false;
+          _isCapturing = false;
+        });
+      }
+    }
+  }
+
+  void _showSnackBar(String message, {required bool isError}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,19 +95,20 @@ class PaymentLocalQrisView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Column(
         children: [
-          // ── Header Info Kendaraan ────────────────────────────────────────
-          _InfoBadge(label: 'Jenis Kendaraan', value: kategoriKendaraan),
+          _InfoBadge(label: 'Jenis Kendaraan', value: widget.kategoriKendaraan),
           const SizedBox(height: 24),
-
-          // ── Card QRIS ────────────────────────────────────────────────────
-          _QrisCard(imagePath: imagePath),
+          RepaintBoundary(
+            key: _qrisCardKey,
+            child: _QrisCard(
+              qrWidget: widget.qrWidget,
+              isDownloading: _isDownloading,
+              isCapturing: _isCapturing,
+              onDownloadTap: _downloadQris,
+            ),
+          ),
           const SizedBox(height: 20),
-
-          // ── Instruksi ────────────────────────────────────────────────────
           const _InstruksiPembayaran(),
           const SizedBox(height: 16),
-
-          // ── Disclaimer ───────────────────────────────────────────────────
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -66,21 +137,11 @@ class PaymentLocalQrisView extends StatelessWidget {
               ],
             ),
           ),
-
-          // TODO: Tombol cek status manual (aktifkan saat SignalR siap)
-          // const SizedBox(height: 16),
-          // OutlinedButton.icon(
-          //   onPressed: onCheckStatus,
-          //   icon: const Icon(Icons.refresh_rounded, size: 18),
-          //   label: const Text('Cek Status Pembayaran'),
-          // ),
         ],
       ),
     );
   }
 }
-
-// ─── SUB-WIDGET ───────────────────────────────────────────────────────────────
 
 class _InfoBadge extends StatelessWidget {
   final String label;
@@ -131,9 +192,17 @@ class _InfoBadge extends StatelessWidget {
 }
 
 class _QrisCard extends StatelessWidget {
-  final String imagePath;
+  final Widget qrWidget; // 🚀 Menerima Widget
+  final bool isDownloading;
+  final bool isCapturing;
+  final VoidCallback onDownloadTap;
 
-  const _QrisCard({required this.imagePath});
+  const _QrisCard({
+    required this.qrWidget,
+    required this.isDownloading,
+    required this.isCapturing,
+    required this.onDownloadTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -152,15 +221,12 @@ class _QrisCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ── Header Card ──────────────────────────────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primary,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(11),
-              ),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(11)),
             ),
             child: Column(
               children: [
@@ -183,23 +249,13 @@ class _QrisCard extends StatelessWidget {
               ],
             ),
           ),
-
-          // ── QR Image ────────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.all(20),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.file(
-                File(imagePath),
-                width: 220,
-                height: 220,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const _QrisImageError(),
-              ),
+              child: qrWidget,
             ),
           ),
-
-          // ── Footer ───────────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Row(
@@ -218,38 +274,32 @@ class _QrisCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                const SizedBox(width: 6),
+                isCapturing
+                    ? const SizedBox.shrink()
+                    : InkWell(
+                        onTap: isDownloading ? null : onDownloadTap,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: isDownloading
+                              ? const SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.primary,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.download_rounded,
+                                  size: 22,
+                                  color: AppColors.primary,
+                                ),
+                        ),
+                      ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _QrisImageError extends StatelessWidget {
-  const _QrisImageError();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 220,
-      height: 220,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.broken_image_outlined,
-            size: 48,
-            color: AppColors.border,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Gambar QRIS tidak dapat dimuat',
-            style: AppTypography.caption.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),

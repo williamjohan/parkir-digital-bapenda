@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
+import 'package:parkir_digital_bapenda/features/webview/presentation/pages/lupa_password_webview.dart';
 
 class LoginFormSheetWidget extends StatefulWidget {
   final VoidCallback onClose;
@@ -20,20 +21,16 @@ class LoginFormSheetWidget extends StatefulWidget {
 }
 
 class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
-  // STATE BARU: Untuk mengatur visibility password
   bool _isPasswordVisible = false;
   bool _rememberMe = true;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // 1. Logic Tap Background -> Tutup Keyboard
       behavior: HitTestBehavior.opaque,
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-
-      // 2. Logic Swipe Down
       onVerticalDragEnd: (details) {
         if (details.primaryVelocity! > 0) {
           widget.onClose();
@@ -57,7 +54,6 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // HANDLE BAR
               Center(
                 child: Container(
                   width: 50,
@@ -69,8 +65,6 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                 ),
               ),
               const SizedBox(height: 30),
-
-              // Header Text
               const Text(
                 "Silakan Masuk",
                 style: TextStyle(
@@ -80,8 +74,6 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                 ),
               ),
               const SizedBox(height: 30),
-
-              // INPUT NPWPD
               _buildTextField(
                 controller: widget.usernameController,
                 label: "Username",
@@ -89,16 +81,12 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                 isPassword: false, // Bukan password
               ),
               const SizedBox(height: 20),
-
-              // INPUT PASSWORD (Logic Toggle ada di dalam fungsi ini)
               _buildTextField(
                 controller: widget.passwordController,
                 label: "Kata Sandi",
                 icon: Icons.lock_outline,
                 isPassword: true, // Tandai ini password
               ),
-
-              // LUPA PASSWORD
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,7 +114,18 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                     ],
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const WebViewPage(
+                            url:
+                                'https://bapenda.surabaya.go.id:7077/Login/ForgotPassword',
+                            title: 'Lupa Kata Sandi',
+                          ),
+                        ),
+                      );
+                    },
                     child: const Text(
                       "Lupa Kata Sandi?",
                       style: TextStyle(color: AppColors.primary),
@@ -135,8 +134,6 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                 ],
               ),
               const SizedBox(height: 20),
-
-              // TOMBOL MASUK
               SizedBox(
                 width: double.infinity,
                 height: 55,
@@ -177,10 +174,6 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
       ),
       child: TextField(
         controller: controller,
-        // LOGIC VISIBILITY:
-        // Jika ini field password, cek state _isPasswordVisible.
-        // Jika visible = true, maka obscureText = false (terbaca).
-        // Jika visible = false, maka obscureText = true (bintang-bintang).
         obscureText: isPassword ? !_isPasswordVisible : false,
 
         textInputAction: isPassword
@@ -188,11 +181,8 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
             : TextInputAction.next,
         decoration: InputDecoration(
           prefixIcon: Icon(icon, color: AppColors.primary),
-
-          // SUFFIX ICON (MATA)
           suffixIcon: isPassword
               ? IconButton(
-                  // Ganti icon berdasarkan state
                   icon: Icon(
                     _isPasswordVisible
                         ? Icons
@@ -201,7 +191,6 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                     color: Colors.grey,
                   ),
                   onPressed: () {
-                    // Update State saat tombol mata diklik
                     setState(() {
                       _isPasswordVisible = !_isPasswordVisible;
                     });

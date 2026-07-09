@@ -1,9 +1,6 @@
-// lib/core/utils/currency_formatter.dart
-
 import 'package:intl/intl.dart';
 
 class CurrencyFormatter {
-  // Mencegah class ini di-instansiasi (Clean OOP Practice untuk Utility Class)
   CurrencyFormatter._();
 
   /// Mengubah angka (int, double, atau String) menjadi format Rupiah.
@@ -13,19 +10,16 @@ class CurrencyFormatter {
     if (number == null) return 'Rp. 0';
 
     num value = 0;
-
-    // Proteksi Type-Safety dari respon API yang dinamis
     if (number is num) {
       value = number;
     } else if (number is String) {
-      // Hilangkan karakter non-numerik jika ada (misal dari input textfield)
       final cleanString = number.replaceAll(RegExp(r'[^0-9.]'), '');
       value = num.tryParse(cleanString) ?? 0;
     }
 
     final formatCurrency = NumberFormat.currency(
       locale: 'id_ID',
-      symbol: 'Rp. ', // Menggunakan "Rp. " sesuai permintaan Anda
+      symbol: 'Rp', // Menggunakan "Rp. " sesuai permintaan Anda
       decimalDigits: decimalDigits,
     );
 

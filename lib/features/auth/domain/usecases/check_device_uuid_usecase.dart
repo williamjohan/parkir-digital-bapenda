@@ -1,5 +1,3 @@
-// lib/features/auth/domain/usecases/check_device_uuid_usecase.dart
-
 import 'package:injectable/injectable.dart';
 import '../repositories/i_auth_repository.dart';
 

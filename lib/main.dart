@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -9,12 +10,15 @@ import 'core/di/injection.dart';
 import 'core/network/network_cubit.dart';
 import 'core/routes/app_router.dart';
 import 'features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
-import 'features/parking_transaction/persentation/cubit/sync_cubit.dart';
+import 'features/update/presentation/cubit/check_update_cubit.dart';
+import 'features/update/presentation/cubit/check_update_state.dart';
+import 'features/update/presentation/widgets/force_update_overlay_card.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = BapendaHttpOverrides();
-  await dotenv.load(fileName: ".env");
+  const String envFileName = appFlavor == 'demo' ? '.env.demo' : '.env.prod';
+  await dotenv.load(fileName: envFileName);
   await initializeDateFormatting('id_ID', null);
   configureDependencies();
   runApp(const MyApp());
@@ -33,9 +37,14 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (_) => appAuthCubit..checkStatus(isFromSplash: true),
         ),
-
-        BlocProvider<SyncCubit>(create: (_) => locator<SyncCubit>()),
         BlocProvider<NetworkCubit>(create: (_) => locator<NetworkCubit>()),
+
+        // 🚀 2. Daftarkan CheckUpdateCubit di level teratas
+        // lazy: false + checkNow() memastikan pengecekan berjalan instan saat Cold Boot
+        BlocProvider<CheckUpdateCubit>(
+          lazy: false,
+          create: (_) => locator<CheckUpdateCubit>()..checkNow(),
+        ),
       ],
       child: MaterialApp.router(
         title: 'Parkir Digital Bapenda',
@@ -45,7 +54,6 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           fontFamily: 'Poppins',
           pageTransitionsTheme: const PageTransitionsTheme(
-            // [PERBAIKAN]: Wajib tambahkan deklarasi tipe Map ini secara eksplisit!
             builders: <TargetPlatform, PageTransitionsBuilder>{
               TargetPlatform.android: PbSlidePageTransitionsBuilder(),
               TargetPlatform.iOS: PbSlidePageTransitionsBuilder(),
@@ -56,23 +64,49 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return Directionality(
             textDirection: TextDirection.ltr,
-            child: Stack(
-              children: [
-                child ?? const SizedBox.shrink(),
-                BlocBuilder<NetworkCubit, NetworkState>(
-                  builder: (context, state) {
-                    if (state is NetworkDisconnected) {
-                      return const Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: GlobalNoInternetBanner(),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ],
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  // 1. Aplikasi Utama (GoRouter Navigation)
+                  child ?? const SizedBox.shrink(),
+
+                  // 2. Banner No Internet
+                  BlocBuilder<NetworkCubit, NetworkState>(
+                    builder: (context, state) {
+                      if (state is NetworkDisconnected) {
+                        return const Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: GlobalNoInternetBanner(),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+
+                  // 3. FORCE UPDATE OVERLAY (Mengunci Total Layar)
+                  // Karena berada di Stack paling atas, dia menutupi seluruh aplikasi
+                  // Tanpa perlu showDialog, tanpa Navigator, 100% anti-crash!
+                  BlocBuilder<CheckUpdateCubit, CheckUpdateState>(
+                    builder: (context, state) {
+                      if (state is CheckUpdateAvailable &&
+                          state.update.isForceUpdate) {
+                        return Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withValues(
+                              alpha: 0.85,
+                            ), // Backdrop gelap
+                            alignment: Alignment.center,
+                            child: ForceUpdateOverlayCard(update: state.update),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -89,18 +123,18 @@ class GlobalNoInternetBanner extends StatelessWidget {
     return Material(
       color: Colors.red.shade600,
       elevation: 4,
-      child: SafeArea(
+      child: const SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.wifi_off, color: Colors.white, size: 16),
-              const SizedBox(width: 8),
+              Icon(Icons.wifi_off, color: Colors.white, size: 16),
+              SizedBox(width: 8),
               Text(
                 'Koneksi internet terputus',
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+                style: TextStyle(color: Colors.white, fontSize: 12),
               ),
             ],
           ),

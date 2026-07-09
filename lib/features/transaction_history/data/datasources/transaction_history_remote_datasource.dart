@@ -9,11 +9,12 @@ import '../models/history_response_data_model.dart';
 abstract class ITransactionHistoryRemoteDataSource {
   Future<HistoryResponseData> getHistory({
     required String nop,
-    required int petugasId,
-    required String shift,
     required DateTime startDate,
     required DateTime endDate,
-    int? limit,
+    required int page,
+    required int pageSize,
+    required int jenisKendaraan,
+    String? idDevice,
   });
 }
 
@@ -27,11 +28,12 @@ class TransactionHistoryRemoteDataSourceImpl
   @override
   Future<HistoryResponseData> getHistory({
     required String nop,
-    required int petugasId,
-    required String shift,
     required DateTime startDate,
     required DateTime endDate,
-    int? limit,
+    required int page,
+    required int pageSize,
+    required int jenisKendaraan,
+    String? idDevice,
   }) async {
     final String startIso =
         "${startDate.toUtc().toIso8601String().substring(0, 23)}Z";
@@ -41,16 +43,13 @@ class TransactionHistoryRemoteDataSourceImpl
 
     final formData = FormData.fromMap({
       'nop': nop,
-      'petugasId': petugasId.toString(),
-      'shift': shift,
       'tglAwal': startIso,
       'tglAkhir': endIso,
-      'limit': limit?.toString() ?? '',
+      'page': page,
+      'pageSize': pageSize,
+      'jenisKendaraan' : jenisKendaraan,
+      'idDevice': idDevice,
     });
-
-    // ==========================================================
-    // 🔍 [LOG X-RAY] CEK PAYLOAD HISTORY
-    // ==========================================================
     AppLogger.debug('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓');
     AppLogger.debug('┃ 🔍 MENGIRIM GET HISTORY KE /laporan-pendapatan');
     AppLogger.debug('┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫');
@@ -58,11 +57,10 @@ class TransactionHistoryRemoteDataSourceImpl
       AppLogger.debug('┃ 🔑 ${field.key} : ${field.value}');
     }
     AppLogger.debug('┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛');
-    // ==========================================================
 
     try {
       final response = await _dio.post(
-        ApiEndpoints.laporanPendapatan,
+        ApiEndpoints.laporanPendapatanDev,
         data: formData,
       );
 
@@ -72,14 +70,6 @@ class TransactionHistoryRemoteDataSourceImpl
         final data = responseData['data'];
 
         return HistoryResponseData.fromJson(data);
-        // final List<dynamic> detailList = data?['detail'] ?? [];
-
-        // return detailList
-        //     .map((json) => HistoryItemModel.fromJson(json))
-        //     .toList();
-
-        // final List<dynamic> dataList = responseData['data'] ?? [];
-        // return dataList.map((json) => HistoryItemModel.fromJson(json)).toList();
       } else {
         throw Exception(responseData['message'] ?? 'Gagal mengambil riwayat');
       }

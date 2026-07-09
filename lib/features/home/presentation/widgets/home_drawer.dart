@@ -1,8 +1,9 @@
-// lib/features/home/presentation/widgets/home_drawer.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:parkir_digital_bapenda/core/constants/feature_flag.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
+import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -10,11 +11,19 @@ import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
+import '../../../printer/presentation/cubit/printer_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isFree;
+  final RoleLoginDigitalParkir role;
+  final String? namaUPTB;
 
-  const HomeDrawer({super.key, required this.isFree});
+  const HomeDrawer({
+    super.key,
+    required this.isFree,
+    required this.role,
+    this.namaUPTB,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +31,11 @@ class HomeDrawer extends StatelessWidget {
       backgroundColor: AppColors.surface,
       child: Column(
         children: [
-          // --- HEADER DRAWER (DINAMIS DARI BRANKAS) ---
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(
-              top: 60,
-              bottom: 52,
+              top: 50,
+              bottom: 14,
               left: 24,
               right: 24,
             ),
@@ -39,19 +47,18 @@ class HomeDrawer extends StatelessWidget {
                   "PARKIR DIGITAL",
                   style: AppTypography.heading1.copyWith(color: Colors.white),
                 ),
+                Text(
+                  "© Bapenda Kota Surabaya",
+                  style: AppTypography.heading6.copyWith(color: Colors.white),
+                ),
                 const SizedBox(height: 4),
                 FutureBuilder<PackageInfo>(
                   future: PackageInfo.fromPlatform(),
                   builder: (context, snapshot) {
-                    // Beri nilai default saat Future masih berstatus 'loading'
                     String versionText = "Version ...";
 
                     if (snapshot.hasData) {
-                      // Mengambil atribut "version" (misal: 1.0.0) dari pubspec.yaml
                       versionText = "Version ${snapshot.data!.version}";
-
-                      // 💡 Opsional: Jika Anda juga ingin memunculkan Build Number (misal 1.0.0+2)
-                      // versionText = "Version ${snapshot.data!.version}+${snapshot.data!.buildNumber}";
                     }
 
                     return Text(
@@ -65,56 +72,187 @@ class HomeDrawer extends StatelessWidget {
               ],
             ),
           ),
-
-          // --- ITEM MENU ---
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
                 ListTile(
-                  leading: const Icon(
-                    Icons.history,
+                  leading: Icon(
+                    role == RoleLoginDigitalParkir.jukir
+                        ? Icons.receipt_long
+                        : Icons.store,
                     color: AppColors.textPrimary,
                   ),
-                  title: const Text(
-                    'History Transaksi',
+
+                  title: Text(
+                    (role == RoleLoginDigitalParkir.jukir ||
+                            role == RoleLoginDigitalParkir.pengawas)
+                        ? 'Riwayat Transaksi'
+                        : 'Objek Pajak',
                     style: AppTypography.bodyRegular,
                   ),
-                  onTap: () {
+
+                  onTap: () async {
                     Navigator.pop(context);
-                    context.push(AppRoutes.history, extra: {'isFree': isFree});
+
+                    if (role == RoleLoginDigitalParkir.jukir ||
+                        role == RoleLoginDigitalParkir.pengawas) {
+                      context.pushNamed(
+                        AppRoutes.history,
+                        extra: {'isFree': false},
+                      );
+                    } else {
+                      context.pushNamed(
+                        AppRoutes.searchObjekPajak,
+                        extra: {'role': role},
+                      );
+                    }
                   },
                 ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.person_outline,
-                    color: AppColors.textPrimary,
-                  ),
-                  title: const Text(
-                    'Profile',
-                    style: AppTypography.bodyRegular,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context); // Tutup drawer
-                    context.push(AppRoutes.profile);
-                  },
-                ),
-                if (FeatureFlags.enablePrinterFeature)
-                  ListTile(
+                PbPermissionGate(
+                  allowedRoles: const [RoleLoginDigitalParkir.bapenda],
+                  currentRole: role,
+                  child: ListTile(
                     leading: const Icon(
-                      Icons.print,
+                      Icons.money,
                       color: AppColors.textPrimary,
                     ),
                     title: const Text(
-                      'Printer Settings',
+                      'Pendapatan Digital',
                       style: AppTypography.bodyRegular,
                     ),
                     onTap: () {
                       Navigator.pop(context); // Tutup drawer
-                      // context.push(AppRoutes.printerSetting);
-                      context.goNamed(AppRoutes.printerSetting);
+                      context.push(
+                        AppRoutes.pendapatanDigital,
+                        extra: namaUPTB,
+                      );
                     },
                   ),
+                ),
+
+                PbPermissionGate(
+                  allowedRoles: const [RoleLoginDigitalParkir.bapenda],
+                  currentRole: role,
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.trending_up,
+                      color: AppColors.textPrimary,
+                    ),
+                    title: const Text(
+                      'Realisasi',
+                      style: AppTypography.bodyRegular,
+                    ),
+
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.pushNamed(
+                        AppRoutes.realisasiSeluruhOP,
+                        extra: namaUPTB,
+                      );
+                    },
+                  ),
+                ),
+
+                PbPermissionGate(
+                  allowedRoles: const [
+                    RoleLoginDigitalParkir.bapenda,
+                    RoleLoginDigitalParkir.jukir,
+                    RoleLoginDigitalParkir.wp,
+                  ],
+                  currentRole: role,
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.person_outline,
+                      color: AppColors.textPrimary,
+                    ),
+                    title: const Text(
+                      'Profile',
+                      style: AppTypography.bodyRegular,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context); // Tutup drawer
+                      context.push(AppRoutes.profile);
+                    },
+                  ),
+                ),
+                // if (FeatureFlags.enablePrinterFeature)
+                // ListTile(
+                //   leading: const Icon(Icons.print),
+                //   title: const Text('Pengaturan Printer'),
+                //   onTap: () async {
+                //     // 1. Tutup Drawer terlebih dahulu agar rapi
+                //     Navigator.pop(context);
+
+                //     // 2. Panggil fungsi cek permission yang baru saja kita pisah
+                //     final isPermissionGranted = await context
+                //         .read<PrinterCubit>()
+                //         .checkAndRequestPermissions(context);
+
+                //     // 3. Jika diizinkan, baru lakukan navigasi ke PrinterPage atau jalankan fungsi scan
+                //     if (isPermissionGranted) {
+                //       // Jalankan scan otomatis begitu masuk halaman (jika diinginkan)
+                //       if (context.mounted) {
+                //         context.read<PrinterCubit>().scanDevices(context);
+
+                //         // Pindah ke halaman printer Anda, misal:
+                //         Navigator.pushNamed(context, '/printer-page');
+                //       }
+                //     }
+                //   },
+                // ),
+                ListTile(
+                  leading: const Icon(Icons.print),
+                  title: const Text('Pengaturan Printer'),
+                  onTap: () async {
+                    // 1. Tangkap Cubit dan Context Halaman Utama (Safe Context) SEBELUM Drawer ditutup
+                    final printerCubit = context.read<PrinterCubit>();
+                    final safeContext = Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).context;
+
+                    // 2. Tutup Drawer
+                    Navigator.pop(context);
+
+                    // 3. Panggil fungsi cek permission menggunakan safeContext yang masih hidup
+                    final isPermissionGranted = await printerCubit
+                        .checkAndRequestPermissions(safeContext);
+
+                    // 4. Jika diizinkan, jalankan navigasi ke halaman pengaturan printer
+                    if (isPermissionGranted) {
+                      if (safeContext.mounted) {
+                        // 🚀 PERBAIKAN: Gunakan safeContext untuk navigasi!
+                        // (scanDevices dihapus dari sini karena di PrinterSettingsPage sudah otomatis dipanggil saat initState)
+                        safeContext.pushNamed(AppRoutes.printerSetting);
+                      }
+                    }
+                  },
+                ),
+
+                PbPermissionGate(
+                  allowedRoles: const [RoleLoginDigitalParkir.pengawas],
+                  currentRole:
+                      role, // Menggunakan variabel 'role' yang disuplai dari State Cubit Anda
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons
+                          .calendar_month_outlined, // Icon kalender yang bersih untuk representasi jadwal
+                      color: AppColors.textPrimary,
+                    ),
+                    title: const Text(
+                      'Jadwal & Kehadiran',
+                      style: AppTypography.bodyRegular,
+                    ),
+                    onTap: () {
+                      // 1. Tutup drawer terlebih dahulu agar tidak menghalangi transisi layar
+                      Navigator.pop(context);
+
+                      // 2. Navigasi ke layar Jadwal menggunakan pushNamed dari GoRouter
+                      context.pushNamed(AppRoutes.jadwalKehadiran);
+                    },
+                  ),
+                ),
                 ListTile(
                   leading: const Icon(
                     Icons.system_update_alt_rounded,
@@ -134,8 +272,6 @@ class HomeDrawer extends StatelessWidget {
               ],
             ),
           ),
-
-          // --- LOGOUT BUTTON ---
           const Divider(height: 1),
           ListTile(
             contentPadding: const EdgeInsets.symmetric(

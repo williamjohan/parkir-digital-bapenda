@@ -14,33 +14,22 @@ class CheckUpdateCubit extends Cubit<CheckUpdateState> {
     emit(CheckUpdateLoading());
 
     try {
-      // 🚀 1. Ambil versi aplikasi lokal yang terinstal di HP saat ini
       final packageInfo = await PackageInfo.fromPlatform();
-      // buildNumber biasanya berupa String "1", "2", dst. Kita ubah ke integer.
       final int localVersionCode = int.tryParse(packageInfo.buildNumber) ?? 0;
-
-      // 🚀 2. Ambil data JSON terbaru dari Server/Drive (melalui UseCase)
       final result = await _checkUpdateUseCase.execute();
-
-      print(">>> AUDIT CUBIT: Hasil dari UseCase adalah: $result");
 
       if (isClosed) return;
 
       result.fold((failure) => emit(CheckUpdateError(failure.message)), (
         updateEntity,
       ) {
-        // Jaring pengaman jika JSON gagal di-parsing
         if (updateEntity == null) {
-          emit(CheckUpdateError("Data pembaruan tidak ditemukan."));
+          emit(const CheckUpdateError("Data pembaruan tidak ditemukan."));
           return;
         }
-
-        // 🚀 3. Eksekusi Perbandingan (Auditor Logic)
         if (localVersionCode < updateEntity.buildNumber) {
-          // Jika versi lokal lebih kecil, paksa update!
           emit(CheckUpdateAvailable(updateEntity));
         } else {
-          // Jika versi lokal sama (atau lebih besar), aplikasi aman! Tampilkan Changelog.
           emit(
             CheckUpdateUpToDate(
               updateEntity.versionName,
@@ -51,7 +40,7 @@ class CheckUpdateCubit extends Cubit<CheckUpdateState> {
       });
     } catch (e) {
       if (!isClosed) {
-        emit(CheckUpdateError("Terjadi kesalahan sistem saat mengecek versi."));
+        emit(const CheckUpdateError("Terjadi kesalahan sistem saat mengecek versi."));
       }
     }
   }

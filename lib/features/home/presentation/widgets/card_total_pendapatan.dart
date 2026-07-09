@@ -9,6 +9,7 @@ class CardTotalPendapatan extends StatelessWidget {
   final String persentasePajak;
   final String nominalPajak;
   final String totalBersih;
+  final bool isShowHariIni;
 
   const CardTotalPendapatan({
     super.key,
@@ -16,6 +17,7 @@ class CardTotalPendapatan extends StatelessWidget {
     required this.persentasePajak,
     required this.nominalPajak,
     required this.totalBersih,
+    this.isShowHariIni = true,
   });
 
   @override
@@ -38,32 +40,51 @@ class CardTotalPendapatan extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // === 1. HEADER & TANGGAL ===
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("TOTAL PENDAPATAN", style: AppTypography.bodySemiBold),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  DateFormat('d MMM yyyy', 'id_ID').format(DateTime.now()),
-                  style: AppTypography.caption.copyWith(
-                    fontWeight: FontWeight.w600,
+              Row(
+                children: [
+                  if (!isShowHariIni) ...[
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.money,
+                        color: AppColors.success,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                  const Text("TOTAL PENDAPATAN", style: AppTypography.bodySemiBold),
+                ],
+              ),
+              if (isShowHariIni)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    DateFormat('d MMM yyyy', 'id_ID').format(DateTime.now()),
+                    style: AppTypography.caption.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
-          const SizedBox(height: 12),
-
-          // === 2. HERO METRIC (KOTOR) ===
+          if (isShowHariIni)
+            const Text("Hari ini", style: AppTypography.bodySemiBold),
+          if (!isShowHariIni) const SizedBox(height: 8),
           Text(
             "Pendapatan Kotor",
             style: AppTypography.caption.copyWith(
@@ -80,15 +101,10 @@ class CardTotalPendapatan extends StatelessWidget {
           ),
 
           const SizedBox(height: 16),
-
-          // === 3. FINANCIAL DIVIDER ===
           const Divider(height: 1, color: AppColors.border),
           const SizedBox(height: 16),
-
-          // === 4. BOTTOM ANALYTICS (PAJAK & BERSIH) ===
           Row(
             children: [
-              // Kolom Pajak (Kiri)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,12 +135,8 @@ class CardTotalPendapatan extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Garis Pemisah Vertikal
               Container(width: 1, height: 30, color: AppColors.border),
               const SizedBox(width: 16),
-
-              // Kolom Bersih (Kanan)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

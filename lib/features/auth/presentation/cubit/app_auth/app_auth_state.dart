@@ -1,5 +1,3 @@
-// lib/features/auth/presentation/cubit/app_auth/app_auth_state.dart
-
 import 'package:equatable/equatable.dart';
 
 abstract class AppAuthState extends Equatable {

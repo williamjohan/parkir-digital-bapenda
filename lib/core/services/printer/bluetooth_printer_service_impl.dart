@@ -15,7 +15,6 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
   @override
   Future<List<BluetoothDevice>> getPairedDevices() async {
     try {
-      // Mengambil daftar device dari cache Android
       return await _bluetooth.getBondedDevices();
     } catch (e) {
       AppLogger.error('Gagal mengambil perangkat Bluetooth: $e');
@@ -28,6 +27,17 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
     return await _bluetooth.isConnected ?? false;
   }
 
+  /// Mengecek apakah modul Bluetooth pada HP aktif atau mati
+  @override
+  Future<bool> get isBluetoothOn async {
+    try {
+      return await _bluetooth.isOn ?? false;
+    } catch (e) {
+      AppLogger.error('Gagal mengecek status Bluetooth HP: $e');
+      return false;
+    }
+  }
+
   @override
   Future<bool> connect(BluetoothDevice device) async {
     try {
@@ -35,8 +45,6 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
       if (connected) {
         await disconnect(); // Putus yang lama sebelum konek yang baru
       }
-
-      // 🚀 BYPASS ANDROID: Langsung tembak soket ke MAC Address device!
       await _bluetooth.connect(device);
       AppLogger.debug('>>> [PRINTER] Berhasil terhubung ke: ${device.name}');
       return true;
@@ -59,8 +67,8 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
   @override
   Future<bool> printReceipt(
     HistoryItemModel transaction,
-    String deviceId,
-    Map<String, dynamic> profile,
+    // String deviceId,
+    // Map<String, dynamic> profile,
   ) async {
     try {
       final connected = await isConnected;
@@ -68,16 +76,11 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
         AppLogger.error('>>> [PRINTER ERROR] Printer belum terhubung!');
         return false;
       }
-
-      // 1. 🧠 Minta "Sang Penerjemah" merakit desain karcis menjadi Bytes
       final List<int> bytes = await ReceiptFormatter.generateBytes(
         transaction,
-        deviceId,
-        profile,
+        // deviceId,
+        // profile,
       );
-
-      // 2. 🚀 Minta "Sang Kurir" menembakkan Bytes ke Printer!
-      // Kita pakai Uint8List karena ini format paling stabil untuk SPP Bluetooth
       await _bluetooth.writeBytes(Uint8List.fromList(bytes));
 
       AppLogger.debug('>>> [PRINTER SUCCESS] Karcis berhasil dicetak!');

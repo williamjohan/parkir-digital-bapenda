@@ -1,24 +1,27 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../domain/usecases/get_local_qris_usecase.dart';
-import 'transaction_state.dart';
-import '../../../home/data/models/tarif_model.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/domain/entities/data_jukir_entity.dart';
+import 'package:parkir_digital_bapenda/features/transaction/domain/usecases/qris_usecase.dart';
+import '../../domain/entities/qris_entity.dart';
 
-// IAppLocationService tidak dipakai lagi di flow QRIS Rompi.
-// submitTransaction tidak lagi butuh lokasi — navigasi langsung ke PaymentPage.
+import 'transaction_state.dart';
+import '../../data/models/tarif/tarif_model.dart';
 
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
-  final GetLocalQrisUseCase _getLocalQrisUseCase;
+  final QrisUsecase _qrisUsecase;
 
-  TransactionCubit(this._getLocalQrisUseCase) : super(const TransactionState());
+  TransactionCubit(this._qrisUsecase) : super(const TransactionState());
 
-  // ─── INIT ────────────────────────────────────────────────────────────────────
-
-  Future<void> init(bool isFree) async {
-    emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
-
-    final result = await _getLocalQrisUseCase.execute();
+  Future<void> init({required bool isFree, required bool isDemoMode}) async {
+    if (!isClosed) {
+      emit(state.copyWith(status: TransactionStatus.loading, isFree: isFree));
+    }
+    if (isDemoMode) {
+      _injectFallbackVehicles();
+      return;
+    }
+    final result = await _qrisUsecase.getLocalQris();
     if (isClosed) return;
 
     result.fold((_) => _injectFallbackVehicles(), (qrisMap) {
@@ -30,9 +33,8 @@ class TransactionCubit extends Cubit<TransactionState> {
     });
   }
 
-  // ─── SETUP KENDARAAN ─────────────────────────────────────────────────────────
-
-  void _setupVehiclesFromQris(Map<String, String> qrisMap) {
+  // 🚀 2. ADJUSTMENT: Ubah parameter menjadi Map<String, QrisLocalEntity>
+  void _setupVehiclesFromQris(Map<String, QrisLocalEntity> qrisMap) {
     final List<TarifModel> vehicles = qrisMap.keys.map((id) {
       return TarifModel(
         id: int.tryParse(id) ?? 0,
@@ -41,28 +43,32 @@ class TransactionCubit extends Cubit<TransactionState> {
       );
     }).toList();
 
-    emit(
-      state.copyWith(
-        status: TransactionStatus.ready,
-        tarifList: vehicles,
-        qrisMap: qrisMap,
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          status: TransactionStatus.ready,
+          tarifList: vehicles,
+          qrisMap: qrisMap,
+        ),
+      );
+    }
   }
 
   void _injectFallbackVehicles() {
-    // qrisMap kosong → PaymentPage akan tampilkan error "QRIS tidak tersedia"
     final List<TarifModel> fallback = [
       const TarifModel(id: 1, jenisTarif: 'Mobil', tarif: 0),
       const TarifModel(id: 2, jenisTarif: 'Motor', tarif: 0),
     ];
-    emit(
-      state.copyWith(
-        status: TransactionStatus.ready,
-        tarifList: fallback,
-        qrisMap: const {},
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          status: TransactionStatus.ready,
+          tarifList: fallback,
+          // 🚀 3. Map kosong sudah otomatis menyesuaikan tipe di state
+          qrisMap: const {},
+        ),
+      );
+    }
   }
 
   String _labelFromId(String id) {
@@ -76,26 +82,30 @@ class TransactionCubit extends Cubit<TransactionState> {
     }
   }
 
-  // ─── SELEKSI KENDARAAN ───────────────────────────────────────────────────────
-
   void selectTarif(TarifModel tarif) {
-    emit(state.copyWith(selectedTarif: tarif));
+    if (!isClosed) emit(state.copyWith(selectedTarif: tarif));
   }
 
-  // ─── SUBMIT → langsung navigasi, tanpa cek lokasi ────────────────────────────
-
-  void proceedToPayment() {
-    if (!state.isValid) return;
-    // Tidak ada cek lokasi, tidak ada insert transaksi.
-    // Cukup sinyal ke UI bahwa validasi lolos → navigasi ke PaymentPage.
-    emit(state.copyWith(status: TransactionStatus.success));
+  void proceedToPayment(bool requiresJukir) {
+    if (!state.isValid(requiresJukir)) return;
+    if (!isClosed) emit(state.copyWith(status: TransactionStatus.success));
   }
-
-  // ─── RESET ───────────────────────────────────────────────────────────────────
 
   void resetForm() {
-    emit(
-      state.copyWith(status: TransactionStatus.ready, clearSelectedTarif: true),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(status: TransactionStatus.ready, selectedTarif: null),
+      );
+    }
+  }
+
+  void selectJukir(DataJukirEntity jukir) {
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          selectedJukir: state.selectedJukir == jukir ? null : jukir,
+        ),
+      );
+    }
   }
 }
