@@ -19,4 +19,5 @@ class PaymentState with _$PaymentState {
       _DemoQrisReady;
 
   const factory PaymentState.error({required String message}) = _Error;
+  const factory PaymentState.paymentSuccess() = _PaymentSuccess;
 }

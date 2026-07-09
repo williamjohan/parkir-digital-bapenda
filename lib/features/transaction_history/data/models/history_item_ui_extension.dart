@@ -63,8 +63,9 @@ extension HistoryItemUiX on HistoryItemModel {
   }
 
   Color get vehicleColor {
-    return jenisTarif.toUpperCase() == 'MOTOR' ? const Color(0xFF10B981)
-      : const Color(0xFF3B82F6);
+    return jenisTarif.toUpperCase() == 'MOTOR'
+        ? const Color(0xFF10B981)
+        : const Color(0xFF3B82F6);
   }
 
   IconData get sofIcon => SofUiHelper.resolve(sof).icon;

@@ -1,17 +1,21 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-// 🚀 Pastikan import usecase dan entity benar
 import 'package:parkir_digital_bapenda/features/transaction/domain/usecases/qris_usecase.dart';
 import '../../domain/constant/qris_contants.dart';
+import '../../domain/usecases/payment_usecase.dart';
 import 'payment_state.dart';
 
 @injectable
 class PaymentCubit extends Cubit<PaymentState> {
   final QrisUsecase _qrisUsecase;
+  final PaymentUseCase _paymentUsecase;
 
-  // 🚀 Menggunakan const constructor dari Freezed
-  PaymentCubit(this._qrisUsecase) : super(const PaymentState.initial());
+  StreamSubscription<String>? _signalRSubscription;
+
+  PaymentCubit(this._qrisUsecase, this._paymentUsecase)
+    : super(const PaymentState.initial());
 
   Future<void> loadQris({
     required int jenisKendaraanId,
@@ -25,7 +29,6 @@ class PaymentCubit extends Cubit<PaymentState> {
       final qrisString = QrisDemoConstants.getQrisByVehicleType(
         jenisKendaraanId,
       );
-      // 🚀 Emit state demo Freezed
       if (!isClosed) {
         emit(PaymentState.demoQrisReady(rawQrisString: qrisString));
       }
@@ -39,37 +42,80 @@ class PaymentCubit extends Cubit<PaymentState> {
       (_) => emit(
         const PaymentState.error(message: 'Data QRIS lokal belum tersedia.'),
       ),
-      (qrisMap) {
+      (qrisMap) async {
         if (isClosed) return;
 
-        // Extract QrisLocalEntity dari Map
         final qrisEntity = qrisMap[jenisKendaraanId.toString()];
 
-        if (qrisEntity == null || qrisEntity.path.isEmpty) {
+        if (qrisEntity == null ||
+            qrisEntity.path.isEmpty ||
+            !File(qrisEntity.path).existsSync()) {
           emit(
-            const PaymentState.error(
-              message: 'QRIS untuk jenis kendaraan ini tidak ditemukan.',
-            ),
+            const PaymentState.error(message: 'QRIS / File tidak ditemukan.'),
           );
           return;
         }
 
-        if (!File(qrisEntity.path).existsSync()) {
-          emit(
-            const PaymentState.error(
-              message: 'File QRIS tidak ditemukan di perangkat.',
-            ),
-          );
-          return;
-        }
-
+        // 1. Tampilkan UI
         emit(
           PaymentState.localQrisReady(
             qrisImagePath: qrisEntity.path,
             kodeQris: qrisEntity.kodeQris,
           ),
         );
+
+        // 2. 🚀 EKSEKUSI SIGNALR VIA USECASE (Cubit cukup mengoper string kodeQris)
+        await _setupSignalR(qrisEntity.kodeQris);
       },
     );
+  }
+
+  Future<void> _setupSignalR(String kodeQris) async {
+    await _signalRSubscription?.cancel();
+
+    // 1. Dengarkan stream
+    _signalRSubscription = _paymentUsecase.statusStream.listen((status) {
+      if (isClosed) return;
+
+      if (status == "LUNAS") {
+        emit(const PaymentState.paymentSuccess());
+      } else if (status == "TIMEOUT") {
+        emit(
+          const PaymentState.error(
+            message: 'Waktu pembayaran habis (Timeout).',
+          ),
+        );
+      } else if (status == "ERROR") {
+        emit(
+          const PaymentState.error(
+            message: 'Terjadi gangguan pada sistem pembayaran.',
+          ),
+        );
+      }
+    });
+
+    // 2. 🚀 EKSEKUSI CONNECT DENGAN EITHER
+    final connectResult = await _paymentUsecase.connect(kodeQris);
+
+    if (isClosed) return;
+
+    connectResult.fold(
+      (failure) {
+        // Jika sejak awal gagal connect (misal Jukir no signal),
+        // tampilkan error, tapi UI masih bisa menampilkan QRIS lokal untuk di-scan manual
+        emit(PaymentState.error(message: failure.message));
+      },
+      (_) {
+        // Sukses terhubung, biarkan listener Stream yang bekerja selanjutnya
+      },
+    );
+  }
+
+  @override
+  Future<void> close() async {
+    await _signalRSubscription?.cancel();
+    // 🚀 Putus koneksi dengan aman via Usecase
+    await _paymentUsecase.disconnect();
+    return super.close();
   }
 }

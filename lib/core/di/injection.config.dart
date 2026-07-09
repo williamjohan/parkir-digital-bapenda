@@ -112,12 +112,7 @@ import '../../features/payment/data/repositories/payment_repository_impl.dart'
     as _i265;
 import '../../features/payment/domain/repositories/i_payment_repository.dart'
     as _i1004;
-import '../../features/payment/domain/usecases/check_payment_status_usecase.dart'
-    as _i191;
-import '../../features/payment/domain/usecases/stop_monitoring_payment_usecase.dart'
-    as _i907;
-import '../../features/payment/domain/usecases/watch_payment_status_usecase.dart'
-    as _i232;
+import '../../features/payment/domain/usecases/payment_usecase.dart' as _i808;
 import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
 import '../../features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart'
     as _i376;
@@ -227,6 +222,12 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i1015.ISecureStorageManager>(
     () => _i1042.SecureStorageManagerImpl(),
+  );
+  gh.lazySingleton<_i1004.IPaymentRepository>(
+    () => _i265.PaymentRepositoryImpl(gh<_i57.QrisSignalRDatasource>()),
+  );
+  gh.factory<_i808.PaymentUseCase>(
+    () => _i808.PaymentUseCase(gh<_i1004.IPaymentRepository>()),
   );
   gh.lazySingleton<_i344.ConnectivityCheckInterceptor>(
     () => _i344.ConnectivityCheckInterceptor(gh<_i895.Connectivity>()),
@@ -423,12 +424,6 @@ _i174.GetIt init(
       gh<_i654.DatabaseHelper2>(),
     ),
   );
-  gh.lazySingleton<_i1004.IPaymentRepository>(
-    () => _i265.PaymentRepositoryImpl(
-      gh<_i247.IPaymentRemoteDataSource>(),
-      gh<_i57.QrisSignalRDatasource>(),
-    ),
-  );
   gh.lazySingleton<_i644.GetSummaryDashboardOpUsecase>(
     () => _i644.GetSummaryDashboardOpUsecase(gh<_i23.DashboardOpRepository>()),
   );
@@ -464,15 +459,6 @@ _i174.GetIt init(
   gh.factory<_i1069.RealisasiCubit>(
     () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
   );
-  gh.lazySingleton<_i191.CheckPaymentStatusUseCase>(
-    () => _i191.CheckPaymentStatusUseCase(gh<_i1004.IPaymentRepository>()),
-  );
-  gh.lazySingleton<_i907.StopMonitoringPaymentUseCase>(
-    () => _i907.StopMonitoringPaymentUseCase(gh<_i1004.IPaymentRepository>()),
-  );
-  gh.lazySingleton<_i232.WatchPaymentStatusUseCase>(
-    () => _i232.WatchPaymentStatusUseCase(gh<_i1004.IPaymentRepository>()),
-  );
   gh.lazySingleton<_i708.AbsensiUsecase>(
     () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
   );
@@ -483,6 +469,10 @@ _i174.GetIt init(
       gh<_i996.ProfileUseCase>(),
       gh<_i127.CheckDeviceUuidUseCase>(),
     ),
+  );
+  gh.factory<_i513.PaymentCubit>(
+    () =>
+        _i513.PaymentCubit(gh<_i718.QrisUsecase>(), gh<_i808.PaymentUseCase>()),
   );
   gh.factory<_i875.AbsensiCubit>(
     () => _i875.AbsensiCubit(gh<_i708.AbsensiUsecase>()),
@@ -501,9 +491,6 @@ _i174.GetIt init(
   );
   gh.factory<_i376.PendapatanDigitalCubit>(
     () => _i376.PendapatanDigitalCubit(gh<_i207.HomeUsecase>()),
-  );
-  gh.factory<_i513.PaymentCubit>(
-    () => _i513.PaymentCubit(gh<_i718.QrisUsecase>()),
   );
   gh.factory<_i616.TransactionCubit>(
     () => _i616.TransactionCubit(gh<_i718.QrisUsecase>()),

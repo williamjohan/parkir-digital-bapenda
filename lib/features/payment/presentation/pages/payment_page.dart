@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// Jika Anda menggunakan go_router, pastikan import ini ada
+import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -32,6 +34,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   void initState() {
     super.initState();
+    // 🚀 Saat initState, Cubit akan load data dan otomatis start SignalR!
     context.read<PaymentCubit>().loadQris(
       jenisKendaraanId: widget.args.jenisKendaraanId,
       isDemoMode: widget.args.isDemoMode,
@@ -51,18 +54,45 @@ class _PaymentPageState extends State<PaymentPage> {
           elevation: 0,
           iconTheme: const IconThemeData(color: AppColors.textPrimary),
         ),
-        body: BlocBuilder<PaymentCubit, PaymentState>(
+        // 🚀 UPGRADE: Gunakan BlocConsumer untuk Handle Side-Effects (Navigasi & Snackbar)
+        body: BlocConsumer<PaymentCubit, PaymentState>(
+          listener: (context, state) {
+            // Gunakan whenOrNull agar kita hanya bereaksi pada state tertentu
+            state.whenOrNull(
+              paymentSuccess: () {
+                // 1. Tampilkan notifikasi sukses
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('✅ Pembayaran Berhasil Diterima!'),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                // 2. Tutup halaman dan kembalikan nilai 'true' ke halaman Transaction
+                context.pop(true);
+              },
+              error: (message) {
+                // Opsional: Jika Anda ingin memunculkan toast saat SignalR timeout/error
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+            );
+          },
           builder: (context, state) {
-            // 🚀 ARCHITECTURE UPGRADE: Menggunakan .when() dari Freezed
-            // Ini menjamin 100% Exhaustive Matching. Tidak ada state yang terlewat!
-            return state.when(
+            // 🚀 UPGRADE: Gunakan maybeWhen karena state 'paymentSuccess'
+            // tidak memiliki UI spesifik (hanya men-trigger pop di listener).
+            return state.maybeWhen(
               initial: () => const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
               ),
               loading: () => const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
               ),
-              // 🚀 STATE 1: Data Lokal Jukir (kodeQris sudah standby di sini)
               localQrisReady: (qrisImagePath, kodeQris) {
                 return PaymentLocalQrisView(
                   kategoriKendaraan: widget.args.kategoriKendaraan,
@@ -76,7 +106,6 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 );
               },
-              // 🚀 STATE 2: Demo Bapenda
               demoQrisReady: (rawQrisString) {
                 return PaymentLocalQrisView(
                   kategoriKendaraan: '${widget.args.kategoriKendaraan} (Demo)',
@@ -88,7 +117,6 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 );
               },
-              // 🚀 STATE 3: Error Handling
               error: (message) {
                 return _QrisErrorView(
                   message: message,
@@ -98,6 +126,10 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 );
               },
+              // orElse akan menangkap state 'paymentSuccess' selama sepersekian detik sebelum context.pop dieksekusi.
+              orElse: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
             );
           },
         ),
