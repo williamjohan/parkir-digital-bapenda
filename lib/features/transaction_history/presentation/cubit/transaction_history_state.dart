@@ -27,12 +27,15 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final double totalBersih;
   final int persentasePajak;
 
+  final Map<String, int> sofBreakdown;
+
   final String nop;
   final String idDevice;
   final int currentPage;
   final int pageSize;
   final bool hasReachedMax;
   final bool isLoadingMore;
+  final bool isFilterLoading;
 
   const TransactionHistoryLoaded({
     required this.allTransactions,
@@ -48,12 +51,14 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     required this.totalPajak,
     required this.totalBersih,
     required this.persentasePajak,
+    this.sofBreakdown = const {},
     required this.nop,
     required this.idDevice,
     this.currentPage = 1,
     this.pageSize = 20,
     this.hasReachedMax = false,
     this.isLoadingMore = false,
+    this.isFilterLoading = false,
   });
 
   TransactionHistoryLoaded copyWith({
@@ -70,12 +75,14 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     double? totalPajak,
     double? totalBersih,
     int? persentasePajak,
+    Map<String, int>? sofBreakdown,
     String? nop,
     String? idDevice,
     int? currentPage,
     int? pageSize,
     bool? hasReachedMax,
     bool? isLoadingMore,
+    bool? isFilterLoading,
   }) {
     return TransactionHistoryLoaded(
       allTransactions: allTransactions ?? this.allTransactions,
@@ -91,12 +98,14 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       totalPajak: totalPajak ?? this.totalPajak,
       totalBersih: totalBersih ?? this.totalBersih,
       persentasePajak: persentasePajak ?? this.persentasePajak,
+      sofBreakdown: sofBreakdown ?? this.sofBreakdown,
       nop: nop ?? this.nop,
       idDevice: idDevice ?? this.idDevice,
       currentPage: currentPage ?? this.currentPage,
       pageSize: pageSize ?? this.pageSize,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      isFilterLoading: isFilterLoading ?? this.isFilterLoading,
     );
   }
 
@@ -118,12 +127,14 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     totalPajak,
     totalBersih,
     persentasePajak,
+    sofBreakdown,
     nop,
     idDevice,
     currentPage,
     pageSize,
     hasReachedMax,
     isLoadingMore,
+    isFilterLoading,
   ];
 }
 

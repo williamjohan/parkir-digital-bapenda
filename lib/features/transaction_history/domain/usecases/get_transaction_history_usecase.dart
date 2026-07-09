@@ -16,6 +16,7 @@ class GetTransactionHistoryUseCase {
     required String nop,
     required int page,
     required int pageSize,
+    required int jenisKendaraan,
     String? idDevice,
   }) {
     return _repository.getHistory(
@@ -24,6 +25,7 @@ class GetTransactionHistoryUseCase {
       nop: nop,
       page: page,
       pageSize: pageSize,
+      jenisKendaraan: jenisKendaraan,
       idDevice: idDevice,
     );
   }

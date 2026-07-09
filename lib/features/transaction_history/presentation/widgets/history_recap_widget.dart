@@ -4,6 +4,7 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import 'history_item_widget.dart';
 
+
 class HistoryRecapWidget extends StatelessWidget {
   final String title;
   final String roda2;
@@ -12,6 +13,7 @@ class HistoryRecapWidget extends StatelessWidget {
   final String persentasePajak;
   final String nominalPajak;
   final String totalBersih;
+  final Map<String, int> sofBreakdown;
   final bool isFree;
 
   const HistoryRecapWidget({
@@ -23,6 +25,7 @@ class HistoryRecapWidget extends StatelessWidget {
     required this.persentasePajak,
     required this.nominalPajak,
     required this.totalBersih,
+    this.sofBreakdown = const {},
     this.isFree = true,
   });
 

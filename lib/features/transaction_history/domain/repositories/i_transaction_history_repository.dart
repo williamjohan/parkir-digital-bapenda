@@ -9,6 +9,7 @@ abstract class ITransactionHistoryRepository {
     required String nop,
     required int page,
     required int pageSize,
+    required int jenisKendaraan,
     String? idDevice,
   });
 }

@@ -18,6 +18,18 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   TransactionHistoryCubit(this._useCase, this._secureStorage)
     : super(TransactionHistoryInitial());
 
+  int _jenisKendaraanFor(String kategori) {
+    switch (kategori) {
+      case 'MOBIL':
+        return 1;
+      case 'MOTOR':
+        return 2;
+      case 'SEMUA':
+      default:
+        return 0;
+    }
+  }
+
   /// [REMOTE FILTER]: Tembak API Bapenda berdasarkan rentang tanggal
   Future<void> fetchHistory(
     DateTime start,
@@ -41,7 +53,6 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     _isFetchingMore = false;
 
     String finalNop = nop;
-
     if (nop.trim().isEmpty) {
       final profile = await _secureStorage.getJukirProfile() ?? {};
       finalNop = profile['nop']?.toString() ?? '';
@@ -54,6 +65,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       idDevice: idDevice,
       page: 1,
       pageSize: _defaultPageSize,
+      jenisKendaraan: 0,
     );
 
     if (isClosed) return;
@@ -77,6 +89,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           persentasePajak: data.detail.isNotEmpty
               ? data.detail.first.tarifPajak
               : 0,
+          sofBreakdown: _computeSofBreakdown(data.detail),
           nop: finalNop,
           idDevice: idDevice,
           currentPage: 1,
@@ -88,11 +101,64 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   }
 
   /// [LOCAL FILTER]: Menyortir data yang sudah ada di memori secara instan
-  void applyLocalFilter({String? kategori, int? mode}) {
+  Future<void> applyFilter({String? kategori, int? mode}) async {
     if (state is! TransactionHistoryLoaded) return;
-    final currentState = state as TransactionHistoryLoaded;
+    var currentState = state as TransactionHistoryLoaded;
+
+    final newKategori = kategori ?? currentState.selectedKategori;
+    final newMode = mode ?? currentState.selectedMode;
+    final kategoriChanged = newKategori != currentState.selectedKategori;
+
+    if (kategoriChanged) {
+      emit(currentState.copyWith(isFilterLoading: true));
+
+      final result = await _useCase.execute(
+        startDate: currentState.startDate,
+        endDate: currentState.endDate,
+        nop: currentState.nop,
+        idDevice: currentState.idDevice,
+        page: 1,
+        pageSize: currentState.pageSize,
+        jenisKendaraan: _jenisKendaraanFor(newKategori),
+      );
+
+      if (isClosed) return;
+
+      final refetched = result.fold<TransactionHistoryLoaded?>(
+        (failure) {
+          AppLogger.error(
+            'Gagal filter kategori $newKategori: ${failure.message}',
+          );
+          return null;
+        },
+        (data) => currentState.copyWith(
+          allTransactions: data.detail,
+          selectedKategori: newKategori,
+          roda2: data.roda2,
+          roda4: data.roda4,
+          totalTransaksi: data.jumlahTransaksi,
+          totalPendapatan: data.totalPendapatan,
+          totalPajak: data.totalPendapatanBapenda,
+          totalBersih: data.totalPendapatanWajibPajak,
+          currentPage: 1,
+          hasReachedMax: data.detail.length < currentState.pageSize,
+          isFilterLoading: false,
+        ),
+      );
+
+      if (refetched == null) {
+        if (!isClosed && state is TransactionHistoryLoaded) {
+          emit(
+            (state as TransactionHistoryLoaded).copyWith(isFilterLoading: false),
+          );
+        }
+        return;
+      }
+      currentState = refetched;
+    }
+
     if (!isClosed) {
-      emit(_rebuildFilteredState(currentState, kategori: kategori, mode: mode));
+      emit(_rebuildFilteredState(currentState, mode: newMode));
     }
   }
 
@@ -114,6 +180,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       idDevice: currentState.idDevice,
       page: nextPage,
       pageSize: currentState.pageSize,
+      jenisKendaraan: _jenisKendaraanFor(currentState.selectedKategori),
     );
 
     _isFetchingMore = false;
@@ -153,28 +220,21 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
   TransactionHistoryLoaded _rebuildFilteredState(
     TransactionHistoryLoaded state, {
-    String? kategori,
     int? mode,
   }) {
-    final newKategori = kategori ?? state.selectedKategori;
     final newMode = mode ?? state.selectedMode;
-    final isFiltered = newKategori != 'SEMUA' || newMode != -1;
 
-    final filteredData = state.allTransactions.where((trx) {
-      final passKategori = newKategori == 'SEMUA'
-          ? true
-          : trx.jenisTarif.toUpperCase() == newKategori.toUpperCase();
-      final passMode = newMode == -1 ? true : trx.modePlat == newMode;
-      return passKategori && passMode;
-    }).toList();
-
-    if (!isFiltered) {
+    if (newMode == -1) {
       return state.copyWith(
-        filteredTransactions: filteredData,
-        selectedKategori: newKategori,
+        filteredTransactions: state.allTransactions,
         selectedMode: newMode,
+        sofBreakdown: _computeSofBreakdown(state.allTransactions),
       );
     }
+
+    final filteredData = state.allTransactions
+        .where((trx) => trx.modePlat == newMode)
+        .toList();
 
     int filterRoda2 = 0;
     int filterRoda4 = 0;
@@ -193,7 +253,6 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
 
     return state.copyWith(
       filteredTransactions: filteredData,
-      selectedKategori: newKategori,
       selectedMode: newMode,
       roda2: filterRoda2,
       roda4: filterRoda4,
@@ -201,6 +260,16 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       totalPendapatan: filterKotor,
       totalPajak: filterPajak,
       totalBersih: filterBersih,
+      sofBreakdown: _computeSofBreakdown(filteredData),
     );
+  }
+
+  Map<String, int> _computeSofBreakdown(List<HistoryItemModel> data) {
+    final Map<String, int> counts = {};
+    for (final trx in data) {
+      final key = trx.sof.trim().isEmpty ? 'LAINNYA' : trx.sof.toUpperCase();
+      counts[key] = (counts[key] ?? 0) + 1;
+    }
+    return counts;
   }
 }

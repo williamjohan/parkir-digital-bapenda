@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -11,6 +13,22 @@ import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
 import '../widgets/history_recap_widget.dart'; // 🚀 IMPORT WIDGET ASLI
+
+final HistoryItemModel _dummyHistoryItem = HistoryItemModel(
+  id: 0,
+  orderId: '-',
+  jenisTarif: 'MOTOR',
+  sof: 'LAINNYA',
+  platNumber: '••••••',
+  tglTrx: '-',
+  kredit: 0,
+  namaPetugas: '-',
+  modePlat: -1,
+  shift: '-',
+  tarifPajak: 0,
+  deviceId: '-',
+  encUrl: '-',
+);
 
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
@@ -190,6 +208,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   }
 
   Widget _buildFilterSection(TransactionHistoryLoaded state) {
+    final bool isFiltering = state.isFilterLoading;
     return Column(
       children: [
         Container(
@@ -205,6 +224,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   'SEMUA',
                   state.selectedKategori,
                   'Semua',
+                  isFiltering,
                 ),
                 const SizedBox(width: 8),
                 _buildFilterChip(
@@ -212,6 +232,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   'MOBIL',
                   state.selectedKategori,
                   'Mobil',
+                  isFiltering,
                 ),
                 const SizedBox(width: 8),
                 _buildFilterChip(
@@ -219,6 +240,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   'MOTOR',
                   state.selectedKategori,
                   'Motor',
+                  isFiltering
                 ),
               ],
             ),
@@ -252,6 +274,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     if (state is TransactionHistoryLoaded) {
       final allFiltered = state.filteredTransactions;
       final data = state.visibleTransactions;
+      final isFiltering = state.isFilterLoading;
 
       return Stack(
         children: [
@@ -270,20 +293,21 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 8),
-                    child: (() {
-                      return HistoryRecapWidget(
+                    child: Skeletonizer(
+                      // 🆕 bungkus recap
+                      enabled: isFiltering,
+                      child: HistoryRecapWidget(
                         title: _getDynamicRecapTitle(),
                         roda2: state.roda2.toString(),
                         roda4: state.roda4.toString(),
-
                         totalPendapatan: state.totalPendapatan.toString(),
                         persentasePajak: state.persentasePajak.toString(),
                         nominalPajak: state.totalPajak.toString(),
                         totalBersih: state.totalBersih.toString(),
-
+                        sofBreakdown: state.sofBreakdown,
                         isFree: widget.isFree,
-                      );
-                    })(),
+                      ),
+                    ),
                   ),
                 ),
                 allFiltered.isEmpty
@@ -291,38 +315,43 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         hasScrollBody: false,
                         child: _buildEmptyState(),
                       )
-                    : SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          return HistoryCardWidget(
-                            item: data[index],
-                            onPrint: () {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (_) {
-                                  return Dialog(
-                                    insetPadding: const EdgeInsets.all(24),
-                                    child: PbPreviewTicketWidget(
-                                      item: data[index],
-                                      isPrinterReady: true,
-                                      okPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      printPressed: () async {
-                                        Navigator.pop(context);
+                    : Skeletonizer.sliver(
+                        enabled: isFiltering,
+                        child: SliverList(
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            return HistoryCardWidget(
+                              item: data[index],
+                              onPrint: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) {
+                                    return Dialog(
+                                      insetPadding: const EdgeInsets.all(24),
+                                      child: PbPreviewTicketWidget(
+                                        item: data[index],
+                                        isPrinterReady: true,
+                                        okPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        printPressed: () async {
+                                          Navigator.pop(context);
 
-                                        // proses print di sini
-                                        await context
-                                            .read<PrinterCubit>()
-                                            .printReceipt(data[index]);
-                                      },
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }, childCount: data.length),
+                                          await context
+                                              .read<PrinterCubit>()
+                                              .printReceipt(data[index]);
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }, childCount: data.length),
+                        ),
                       ),
 
                 if (state.isLoadingMore)
@@ -478,6 +507,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     String value,
     String selectedValue,
     String label,
+    bool isDisabled,
   ) {
     final bool isSelected = value == selectedValue;
     return ChoiceChip(
@@ -490,13 +520,15 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       ),
       backgroundColor: Colors.grey.shade100,
       side: BorderSide(color: isSelected ? Colors.blue : Colors.grey.shade300),
-      onSelected: (bool selected) {
-        if (selected) {
-          context.read<TransactionHistoryCubit>().applyLocalFilter(
-            kategori: value,
-          );
-        }
-      },
+      onSelected: isDisabled
+          ? null
+          : (bool selected) {
+              if (selected) {
+                context.read<TransactionHistoryCubit>().applyFilter(
+                  kategori: value,
+                );
+              }
+            },
     );
   }
 }
