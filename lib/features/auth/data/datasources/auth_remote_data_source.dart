@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../../core/utils/device_id_utils.dart';
 import '../models/auth_response_model.dart';

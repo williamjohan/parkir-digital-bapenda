@@ -2,9 +2,10 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/core/storage/secure_storage_manager.dart';
 import '../../../../core/services/printer/i_printer_service.dart';
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../../../../core/utils/permission_utils.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 
 part 'printer_state.dart';
@@ -16,15 +17,18 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   PrinterCubit(this._printerService, this._secureStorage)
     : super(PrinterInitial());
+
   Future<void> scanDevices() async {
     final currentState = state;
+
+    AppLogger.debug("========== SCAN DEVICES ==========");
 
     if (currentState is PrinterLoaded) {
       emit(
         PrinterLoaded(
           devices: currentState.devices,
           connectedDevice: currentState.connectedDevice,
-          isLoading: true, // Beri sinyal loading saja
+          isLoading: true,
         ),
       );
     } else {
@@ -32,33 +36,113 @@ class PrinterCubit extends Cubit<PrinterState> {
     }
 
     try {
-      await Future.delayed(const Duration(milliseconds: 1000));
+      // Request permission terlebih dahulu
+      final granted = await PermissionUtils.requestBluetoothPermission();
+
+      if (!granted) {
+        AppLogger.error("Permission Bluetooth ditolak.");
+
+        emit(
+          PrinterLoaded(
+            devices: currentState is PrinterLoaded ? currentState.devices : [],
+            connectedDevice: currentState is PrinterLoaded
+                ? currentState.connectedDevice
+                : null,
+            isLoading: false,
+          ),
+        );
+
+        emit(PrinterError("Permission Bluetooth belum diberikan."));
+
+        return;
+      }
+
+      AppLogger.debug("Permission granted");
+
       final devices = await _printerService.getPairedDevices();
+
+      AppLogger.debug("Jumlah device ditemukan : ${devices.length}");
+
       final isConnected = await _printerService.isConnected;
+
+      BluetoothDevice? connectedDevice;
+
+      if (isConnected && devices.isNotEmpty) {
+        connectedDevice = devices.first;
+      }
 
       if (isClosed) return;
 
       emit(
         PrinterLoaded(
           devices: devices,
-          connectedDevice: isConnected ? devices.firstOrNull : null,
-          isLoading: false, // Matikan sinyal loading
+          connectedDevice: connectedDevice,
+          isLoading: false,
         ),
       );
-    } catch (e) {
+
+      AppLogger.debug("Scan selesai");
+    } catch (e, stackTrace) {
+      AppLogger.error("Gagal scan printer", e, stackTrace);
+
       if (isClosed) return;
-      emit(PrinterError('Gagal memindai perangkat Bluetooth.'));
-      if (currentState is PrinterLoaded) {
-        emit(
-          PrinterLoaded(
-            devices: currentState.devices,
-            connectedDevice: currentState.connectedDevice,
-            isLoading: false,
-          ),
-        );
-      }
+
+      emit(
+        PrinterLoaded(
+          devices: currentState is PrinterLoaded ? currentState.devices : [],
+          connectedDevice: currentState is PrinterLoaded
+              ? currentState.connectedDevice
+              : null,
+          isLoading: false,
+        ),
+      );
+
+      emit(PrinterError("Gagal memindai perangkat Bluetooth."));
     }
   }
+  // Future<void> scanDevices() async {
+  //   final currentState = state;
+
+  //   if (currentState is PrinterLoaded) {
+  //     emit(
+  //       PrinterLoaded(
+  //         devices: currentState.devices,
+  //         connectedDevice: currentState.connectedDevice,
+  //         isLoading: true, // Beri sinyal loading saja
+  //       ),
+  //     );
+  //   } else {
+  //     emit(PrinterLoading());
+  //   }
+
+  //   try {
+  //     await Future.delayed(const Duration(milliseconds: 1000));
+  //     final devices = await _printerService.getPairedDevices();
+  //     final isConnected = await _printerService.isConnected;
+
+  //     if (isClosed) return;
+
+  //     emit(
+  //       PrinterLoaded(
+  //         devices: devices,
+  //         connectedDevice: isConnected ? devices.firstOrNull : null,
+  //         isLoading: false, // Matikan sinyal loading
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     if (isClosed) return;
+  //     emit(PrinterError('Gagal memindai perangkat Bluetooth.'));
+  //     if (currentState is PrinterLoaded) {
+  //       emit(
+  //         PrinterLoaded(
+  //           devices: currentState.devices,
+  //           connectedDevice: currentState.connectedDevice,
+  //           isLoading: false,
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
   Future<void> connectDevice(BluetoothDevice device) async {
     final currentState = state;
@@ -109,13 +193,13 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   Future<bool> printReceipt(
     HistoryItemModel transaction,
-    String deviceId,
-    Map<String, dynamic> profile,
+    // String deviceId,
+    // Map<String, dynamic> profile,
   ) async {
     final success = await _printerService.printReceipt(
       transaction,
-      deviceId,
-      profile,
+      // deviceId,
+      // profile,
     );
 
     return success;
@@ -134,8 +218,8 @@ class PrinterCubit extends Cubit<PrinterState> {
         );
         return await _printerService.printReceipt(
           transaction,
-          deviceId,
-          profile,
+          // deviceId,
+          // profile,
         );
       }
 
@@ -174,7 +258,10 @@ class PrinterCubit extends Cubit<PrinterState> {
         return false;
       }
       AppLogger.debug("🖨️ [Auto-Print] Konek Siluman Sukses! Mencetak...");
-      return await _printerService.printReceipt(transaction, deviceId, profile);
+      return await _printerService.printReceipt(
+        transaction,
+        // deviceId, profile
+      );
     } catch (e) {
       AppLogger.error("🖨️ [Auto-Print] Terjadi kesalahan fatal: $e");
       return false;

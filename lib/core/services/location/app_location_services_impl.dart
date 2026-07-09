@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/services/location/app_location_data.dart';
 import '../../errors/exception.dart';
-import '../../storage/secure_storage_manager.dart';
+import '../../storage/i_secure_storage_manager.dart';
 import 'i_app_location_service.dart';
 
 @LazySingleton(as: IAppLocationService)

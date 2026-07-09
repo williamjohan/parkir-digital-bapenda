@@ -320,8 +320,15 @@ class AppRouter {
             final nop = extra?['nop'] as String?;
             final idDevice = extra?['idDevice'] as String?;
 
-            return BlocProvider(
-              create: (_) => locator<TransactionHistoryCubit>(),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<TransactionHistoryCubit>(
+                  create: (_) => locator<TransactionHistoryCubit>(),
+                ),
+                BlocProvider<PrinterCubit>(
+                  create: (_) => locator<PrinterCubit>(),
+                ),
+              ],
               child: TransactionHistoryPage(
                 initialDate: initialDate,
                 isFree: isFree,

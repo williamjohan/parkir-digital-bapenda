@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/storage/secure_storage_manager.dart'; // Sesuaikan path jika berbeda
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../domain/usecases/check_device_readiness_usecase.dart';
 import 'init_state.dart';
 

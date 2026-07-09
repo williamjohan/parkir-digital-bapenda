@@ -23,4 +23,25 @@ class PermissionUtils {
       return Left(Exception('Terjadi kesalahan sistem saat meminta izin: $e'));
     }
   }
+
+  static Future<bool> requestBluetoothPermission() async {
+    try {
+      final statuses = await [
+        Permission.bluetoothScan,
+        Permission.bluetoothConnect,
+        Permission.locationWhenInUse,
+      ].request();
+
+      AppLogger.debug("bluetoothScan = ${statuses[Permission.bluetoothScan]}");
+      AppLogger.debug(
+        "bluetoothConnect = ${statuses[Permission.bluetoothConnect]}",
+      );
+      AppLogger.debug("location = ${statuses[Permission.locationWhenInUse]}");
+
+      return statuses.values.every((status) => status.isGranted);
+    } catch (e, stackTrace) {
+      AppLogger.error('Gagal meminta permission bluetooth', e, stackTrace);
+      return false;
+    }
+  }
 }

@@ -2,11 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
+import 'package:parkir_digital_bapenda/features/transaction/domain/usecases/qris_usecase.dart';
 import '../../../../../core/enums/app_enums.dart';
 import '../../../../../core/storage/database_helper_2.dart';
-import '../../../../../core/storage/secure_storage_manager.dart';
+import '../../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
-import '../../../../transaction/domain/usecases/sync_qris_usecase.dart';
 import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
 import '../../../domain/usecases/home_usecase.dart';
@@ -16,14 +16,14 @@ import 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   final HomeUsecase _homeUsecase;
   final ISecureStorageManager _secureStorage;
-  final SyncQrisUseCase _syncQrisUseCase;
+  final QrisUsecase _qrisUsecase;
   final ProfileUseCase _profileUseCase;
   final DatabaseHelper2 _databaseHelper;
 
   HomeCubit(
     this._homeUsecase,
     this._secureStorage,
-    this._syncQrisUseCase,
+    this._qrisUsecase,
     this._databaseHelper,
     this._profileUseCase,
   ) : super(const HomeState());
@@ -45,7 +45,7 @@ class HomeCubit extends Cubit<HomeState> {
       return;
     }
 
-    await _syncQrisUseCase.execute();
+    await _qrisUsecase.syncQris();
   }
 
   Future<void> loadDashboarJukir() async {

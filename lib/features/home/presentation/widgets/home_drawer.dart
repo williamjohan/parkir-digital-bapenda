@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:parkir_digital_bapenda/core/constants/feature_flag.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
@@ -175,21 +174,21 @@ class HomeDrawer extends StatelessWidget {
                     },
                   ),
                 ),
-                if (FeatureFlags.enablePrinterFeature)
-                  ListTile(
-                    leading: const Icon(
-                      Icons.print,
-                      color: AppColors.textPrimary,
-                    ),
-                    title: const Text(
-                      'Printer Settings',
-                      style: AppTypography.bodyRegular,
-                    ),
-                    onTap: () {
-                      Navigator.pop(context); // Tutup drawer
-                      context.goNamed(AppRoutes.printerSetting);
-                    },
+                // if (FeatureFlags.enablePrinterFeature)
+                ListTile(
+                  leading: const Icon(
+                    Icons.print,
+                    color: AppColors.textPrimary,
                   ),
+                  title: const Text(
+                    'Printer Settings',
+                    style: AppTypography.bodyRegular,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context); // Tutup drawer
+                    context.pushNamed(AppRoutes.printerSetting);
+                  },
+                ),
 
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.pengawas],

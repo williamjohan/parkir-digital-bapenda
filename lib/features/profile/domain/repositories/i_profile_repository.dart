@@ -6,6 +6,7 @@ abstract class IProfileRepository {
   Future<Either<Failure, UserEntity>> getProfileInfo({
     bool forceRefresh = false,
   });
+
   Future<Either<Failure, String>> getProfilePicturePath({
     bool forceRefresh = false,
   });

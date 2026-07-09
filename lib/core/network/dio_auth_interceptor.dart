@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import '../storage/secure_storage_manager.dart';
+import '../storage/i_secure_storage_manager.dart';
 import '../utils/app_logger.dart';
 
 @lazySingleton

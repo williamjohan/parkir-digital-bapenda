@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
-import '../../../../../core/storage/secure_storage_manager.dart';
+import '../../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
 import '../../../domain/usecases/check_auth_status_usecase.dart';
 import '../../../domain/usecases/check_device_uuid_usecase.dart';

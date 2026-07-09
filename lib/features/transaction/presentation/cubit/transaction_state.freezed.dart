@@ -20,8 +20,10 @@ mixin _$TransactionState {
   TransactionStatus get status => throw _privateConstructorUsedError;
   List<TarifModel> get tarifList => throw _privateConstructorUsedError;
   TarifModel? get selectedTarif => throw _privateConstructorUsedError;
-  bool get isFree => throw _privateConstructorUsedError;
-  Map<String, String> get qrisMap => throw _privateConstructorUsedError;
+  bool get isFree =>
+      throw _privateConstructorUsedError; // 🚀 PERBAIKAN: Hapus kata 'final', tambahkan @Default({})
+  Map<String, QrisLocalEntity> get qrisMap =>
+      throw _privateConstructorUsedError;
   DataJukirStatus get dataJukirStatus => throw _privateConstructorUsedError;
   List<DataJukirEntity> get dataJukirList => throw _privateConstructorUsedError;
   DataJukirEntity? get selectedJukir => throw _privateConstructorUsedError;
@@ -46,7 +48,7 @@ abstract class $TransactionStateCopyWith<$Res> {
     List<TarifModel> tarifList,
     TarifModel? selectedTarif,
     bool isFree,
-    Map<String, String> qrisMap,
+    Map<String, QrisLocalEntity> qrisMap,
     DataJukirStatus dataJukirStatus,
     List<DataJukirEntity> dataJukirList,
     DataJukirEntity? selectedJukir,
@@ -102,7 +104,7 @@ class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
             qrisMap: null == qrisMap
                 ? _value.qrisMap
                 : qrisMap // ignore: cast_nullable_to_non_nullable
-                      as Map<String, String>,
+                      as Map<String, QrisLocalEntity>,
             dataJukirStatus: null == dataJukirStatus
                 ? _value.dataJukirStatus
                 : dataJukirStatus // ignore: cast_nullable_to_non_nullable
@@ -153,7 +155,7 @@ abstract class _$$TransactionStateImplCopyWith<$Res>
     List<TarifModel> tarifList,
     TarifModel? selectedTarif,
     bool isFree,
-    Map<String, String> qrisMap,
+    Map<String, QrisLocalEntity> qrisMap,
     DataJukirStatus dataJukirStatus,
     List<DataJukirEntity> dataJukirList,
     DataJukirEntity? selectedJukir,
@@ -209,7 +211,7 @@ class __$$TransactionStateImplCopyWithImpl<$Res>
         qrisMap: null == qrisMap
             ? _value._qrisMap
             : qrisMap // ignore: cast_nullable_to_non_nullable
-                  as Map<String, String>,
+                  as Map<String, QrisLocalEntity>,
         dataJukirStatus: null == dataJukirStatus
             ? _value.dataJukirStatus
             : dataJukirStatus // ignore: cast_nullable_to_non_nullable
@@ -239,7 +241,7 @@ class _$TransactionStateImpl extends _TransactionState {
     final List<TarifModel> tarifList = const [],
     this.selectedTarif,
     this.isFree = false,
-    final Map<String, String> qrisMap = const {},
+    final Map<String, QrisLocalEntity> qrisMap = const {},
     this.dataJukirStatus = DataJukirStatus.initial,
     final List<DataJukirEntity> dataJukirList = const [],
     this.selectedJukir,
@@ -266,10 +268,12 @@ class _$TransactionStateImpl extends _TransactionState {
   @override
   @JsonKey()
   final bool isFree;
-  final Map<String, String> _qrisMap;
+  // 🚀 PERBAIKAN: Hapus kata 'final', tambahkan @Default({})
+  final Map<String, QrisLocalEntity> _qrisMap;
+  // 🚀 PERBAIKAN: Hapus kata 'final', tambahkan @Default({})
   @override
   @JsonKey()
-  Map<String, String> get qrisMap {
+  Map<String, QrisLocalEntity> get qrisMap {
     if (_qrisMap is EqualUnmodifiableMapView) return _qrisMap;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_qrisMap);
@@ -355,7 +359,7 @@ abstract class _TransactionState extends TransactionState {
     final List<TarifModel> tarifList,
     final TarifModel? selectedTarif,
     final bool isFree,
-    final Map<String, String> qrisMap,
+    final Map<String, QrisLocalEntity> qrisMap,
     final DataJukirStatus dataJukirStatus,
     final List<DataJukirEntity> dataJukirList,
     final DataJukirEntity? selectedJukir,
@@ -370,9 +374,9 @@ abstract class _TransactionState extends TransactionState {
   @override
   TarifModel? get selectedTarif;
   @override
-  bool get isFree;
+  bool get isFree; // 🚀 PERBAIKAN: Hapus kata 'final', tambahkan @Default({})
   @override
-  Map<String, String> get qrisMap;
+  Map<String, QrisLocalEntity> get qrisMap;
   @override
   DataJukirStatus get dataJukirStatus;
   @override

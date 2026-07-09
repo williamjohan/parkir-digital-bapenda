@@ -2,67 +2,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
-abstract class ISecureStorageManager {
-  Future<void> saveAccessToken(String token);
-  Future<String?> getAccessToken();
-  Future<void> saveRefreshToken(String token);
-  Future<String?> getRefreshToken();
-  Future<void> clearAllTokens();
-  Future<bool> hasValidToken();
-  Future<Map<String, dynamic>?> getJukirProfile();
-  Future<void> clearJukirProfile();
-  Future<void> saveMasterTarif(String jsonString);
-  Future<String?> getMasterTarif();
-  Future<void> clearMasterTarif();
-  Future<void> saveDashboardAnchor(String jsonString);
-  Future<String?> getDashboardAnchor();
-  Future<void> clearDashboardAnchor();
-  Future<void> saveDeviceUUID(String deviceId);
-  Future<String?> getDeviceUUID();
-  Future<void> clearDeviceUUID();
-  Future<void> savePrinterMacAddress(String macAdress);
-  Future<String?> getPrinterMacAddress();
-  Future<void> clearPrinterMacAddress();
-  Future<void> saveLastLocation(
-    String latitude,
-    String longitude,
-    String address,
-  );
-  Future<Map<String, String>?> getLastLocation();
-  Future<void> saveJukirProfile({
-    required String idUserStorage,
-    required String username,
-    required String namaUserStorage,
-    required String nopStorage,
-    required String alamat,
-    required int roleId,
-    String? pungutTarifDescription,
-    int? pungutTarif,
-    String? namaObjekPajak,
-    String? idDevice,
-    int? lokasiId,
-    String? namaLokasi,
-    String? kodeGate,
-    String? namaGate,
-    String? shift,
-  });
-  Future<void> saveQrisImagePaths(String jsonString);
-  Future<String?> getQrisImagePaths();
-  Future<void> clearQrisImagePaths();
-  Future<void> saveCredentials(String username, String password);
-  Future<Map<String, String>?> getCredentials();
-  Future<void> clearPasswordOnly();
-  Future<void> saveLogoutReason(String reason);
-  Future<String?> getAndClearLogoutReason();
-  Future<void> saveIsJukir(bool value);
-  Future<bool> getIsJukir();
-  Future<void> saveRoleId(int roleId);
-  Future<int?> getRoleId();
-  Future<void> clearRoleId();
-  Future<void> saveProfilePicture(String pathImage);
-  Future<String?> getProfilePicture();
-  Future<void> clearProfilePicture();
-}
+import 'i_secure_storage_manager.dart';
 
 @LazySingleton(as: ISecureStorageManager)
 class SecureStorageManagerImpl implements ISecureStorageManager {
@@ -76,13 +16,14 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyDeviceId = 'DEVICE_ID';
   static const String _keyPrinterMacAddress = 'PRINTER_MAC_ADDRESS';
   static const String _keyDeviceLocation = 'DEVICE_LOCATION';
-  static const String _keyQrisImagePaths = 'QRIS_IMAGE_PATHS';
   static const String _keyUsername = 'SAVED_USERNAME';
   static const String _keyPassword = 'SAVED_PASSWORD';
   static const String _keyLogoutReason = 'LOGOUT_REASON';
   static const String _keyIsJukir = 'IS_JUKIR';
   static const String _keyRoleId = 'ROLE_LOGIN_ID';
   static const String _keyProfilePicture = 'PROFILE_PICTURE';
+  static const String _keyQrisMetadata = 'QRIS_METADATA_V2';
+  static const String _keyQrisLastUpdate = 'QRIS_LAST_UPDATE_V2';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -218,7 +159,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
         return {
           'latitude': decodedData['latitude'].toString(),
           'longitude': decodedData['longitude'].toString(),
-          'address': decodedData['address'].toString(),
+          'address': (decodedData['address'] ?? '').toString(),
         };
       }
     } catch (e) {
@@ -264,21 +205,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     };
     final jsonString = jsonEncode(profileData);
     await _storage.write(key: _keyJukirProfile, value: jsonString);
-  }
-
-  @override
-  Future<void> saveQrisImagePaths(String jsonString) async {
-    await _storage.write(key: _keyQrisImagePaths, value: jsonString);
-  }
-
-  @override
-  Future<String?> getQrisImagePaths() async {
-    return await _storage.read(key: _keyQrisImagePaths);
-  }
-
-  @override
-  Future<void> clearQrisImagePaths() async {
-    await _storage.delete(key: _keyQrisImagePaths);
   }
 
   @override
@@ -360,5 +286,36 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<void> clearProfilePicture() async {
     await _storage.delete(key: _keyProfilePicture);
+  }
+
+  //QRIS
+  @override
+  Future<void> saveQrisMetadata(String jsonString) async {
+    await _storage.write(key: _keyQrisMetadata, value: jsonString);
+  }
+
+  @override
+  Future<String?> getQrisMetadata() async {
+    return await _storage.read(key: _keyQrisMetadata);
+  }
+
+  @override
+  Future<void> clearQrisMetadata() async {
+    await _storage.delete(key: _keyQrisMetadata);
+  }
+
+  @override
+  Future<void> saveQrisLastUpdate(String dateString) async {
+    await _storage.write(key: _keyQrisLastUpdate, value: dateString);
+  }
+
+  @override
+  Future<String?> getQrisLastUpdate() async {
+    return await _storage.read(key: _keyQrisLastUpdate);
+  }
+
+  @override
+  Future<void> clearQrisLastUpdate() async {
+    await _storage.delete(key: _keyQrisLastUpdate);
   }
 }

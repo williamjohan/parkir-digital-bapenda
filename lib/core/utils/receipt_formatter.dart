@@ -6,16 +6,16 @@ import '../../features/transaction_history/data/models/history_item_model.dart';
 class ReceiptFormatter {
   static Future<List<int>> generateBytes(
     HistoryItemModel transaction,
-    String deviceId,
-    Map<String, dynamic> profile,
+    // String deviceId,
+    // Map<String, dynamic> profile,
   ) async {
     final capabilityProfile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, capabilityProfile);
     List<int> bytes = [];
     bytes += generator.reset();
     bytes += [27, 51, 0];
-    final String namaLokasi = profile['namaObjekPajak'] ?? "Parkiran Fulan's";
-    final String alamat = profile['alamat'] ?? "Surabaya";
+    // final String namaLokasi = profile['namaObjekPajak'] ?? "Parkiran Fulan's";
+    // final String alamat = profile['alamat'] ?? "Surabaya";
     bytes += generator.text(
       'Tiket Parkir',
       styles: const PosStyles(align: PosAlign.center, bold: true),
@@ -25,11 +25,11 @@ class ReceiptFormatter {
       styles: const PosStyles(align: PosAlign.center),
     );
     bytes += generator.text(
-      namaLokasi,
+      "Nama lokasi dummy",
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
     bytes += generator.text(
-      alamat,
+      "alamat dummy",
       styles: const PosStyles(align: PosAlign.center),
     );
     bytes += generator.text(
@@ -57,7 +57,7 @@ class ReceiptFormatter {
     bytes += generator.text('');
     final String encryptedUrl = TicketCryptoUtils.encryptPayload(
       orderId: transaction.orderId,
-      deviceId: deviceId,
+      deviceId: transaction.deviceId,
     );
     final String qrUrl =
         'https://bapenda.surabaya.go.id:7077/CongratulationTaxPayment?id=$encryptedUrl';

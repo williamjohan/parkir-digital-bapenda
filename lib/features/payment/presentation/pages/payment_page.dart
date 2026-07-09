@@ -53,47 +53,51 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         body: BlocBuilder<PaymentCubit, PaymentState>(
           builder: (context, state) {
-            if (state is PaymentLocalQrisLoading) {
-              return const Center(
+            // 🚀 ARCHITECTURE UPGRADE: Menggunakan .when() dari Freezed
+            // Ini menjamin 100% Exhaustive Matching. Tidak ada state yang terlewat!
+            return state.when(
+              initial: () => const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
-              );
-            }
-            if (state is PaymentLocalQrisReady) {
-              return PaymentLocalQrisView(
-                kategoriKendaraan: widget.args.kategoriKendaraan,
-                qrWidget: Image.file(
-                  File(state.qrisImagePath),
-                  width: 220,
-                  height: 220,
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) =>
-                      const Icon(Icons.broken_image, size: 48),
-                ),
-              );
-            }
-            if (state is PaymentDemoQrisReady) {
-              return PaymentLocalQrisView(
-                kategoriKendaraan: '${widget.args.kategoriKendaraan} (Demo)',
-                qrWidget: QrImageView(
-                  data: state.rawQrisString,
-                  version: QrVersions.auto,
-                  size: 220,
-                  backgroundColor: Colors.white,
-                ),
-              );
-            }
-            if (state is PaymentLocalQrisError) {
-              return _QrisErrorView(
-                message: state.message,
-                onRetry: () => context.read<PaymentCubit>().loadQris(
-                  jenisKendaraanId: widget.args.jenisKendaraanId,
-                  isDemoMode: widget.args.isDemoMode,
-                ),
-              );
-            }
-
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+              loading: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+              // 🚀 STATE 1: Data Lokal Jukir (kodeQris sudah standby di sini)
+              localQrisReady: (qrisImagePath, kodeQris) {
+                return PaymentLocalQrisView(
+                  kategoriKendaraan: widget.args.kategoriKendaraan,
+                  qrWidget: Image.file(
+                    File(qrisImagePath),
+                    width: 220,
+                    height: 220,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.broken_image, size: 48),
+                  ),
+                );
+              },
+              // 🚀 STATE 2: Demo Bapenda
+              demoQrisReady: (rawQrisString) {
+                return PaymentLocalQrisView(
+                  kategoriKendaraan: '${widget.args.kategoriKendaraan} (Demo)',
+                  qrWidget: QrImageView(
+                    data: rawQrisString,
+                    version: QrVersions.auto,
+                    size: 220,
+                    backgroundColor: Colors.white,
+                  ),
+                );
+              },
+              // 🚀 STATE 3: Error Handling
+              error: (message) {
+                return _QrisErrorView(
+                  message: message,
+                  onRetry: () => context.read<PaymentCubit>().loadQris(
+                    jenisKendaraanId: widget.args.jenisKendaraanId,
+                    isDemoMode: widget.args.isDemoMode,
+                  ),
+                );
+              },
             );
           },
         ),

@@ -31,7 +31,12 @@ class ApiEndpoints {
   static const String laporanPendapatanDev =
       '/api/mobile/parking/laporan-pendapatan-dev';
   static const String dataJukirDev = '/api/mobile/parking/get-data-jukir-dev';
+
+  //QRIS
   static const String qrisRompiDev = '/api/mobile/parking/get-qris-rompi-dev';
+  static const String qrisCheckVersionDev =
+      '/api/mobile/parking/get-qris-last-update';
+
   static const String summaryOpDev = '/api/mobile/parking/get-summary-op-dev';
   static const String summaryRangeDev =
       '/api/mobile/parking/dashboard-summary-nonjukir-range-dev';

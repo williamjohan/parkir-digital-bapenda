@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../../core/di/injection.dart';
-import '../../../../../core/storage/secure_storage_manager.dart';
+import '../../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../domain/usecases/login_usecase.dart';
 import '../app_auth/app_auth_cubit.dart'; // [TAMBAHAN] Import AppAuthCubit
 import 'login_state.dart';

@@ -7,7 +7,11 @@ class HistoryCardWidget extends StatelessWidget {
   final HistoryItemModel item;
   final VoidCallback? onPrint;
 
-  const HistoryCardWidget({super.key, required this.item, this.onPrint});
+  const HistoryCardWidget({
+    super.key,
+    required this.item,
+    required this.onPrint,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +113,11 @@ class HistoryCardWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _PaymentMethodPill(icon: item.sofIcon, color: item.sofColor, label: item.sofLabel,),
+                _PaymentMethodPill(
+                  icon: item.sofIcon,
+                  color: item.sofColor,
+                  label: item.sofLabel,
+                ),
                 _PrintButton(onTap: onPrint),
               ],
             ),
@@ -122,10 +130,14 @@ class HistoryCardWidget extends StatelessWidget {
 
 class _PaymentMethodPill extends StatelessWidget {
   final IconData icon;
-  final Color color; 
+  final Color color;
   final String label;
 
-  const _PaymentMethodPill({ required this.icon, required this.color, required this.label});
+  const _PaymentMethodPill({
+    required this.icon,
+    required this.color,
+    required this.label,
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -171,9 +183,9 @@ class _PrintButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.grey.shade300),
           ),
-          child: Row(
+          child: const Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Icon(Icons.print_rounded, size: 15, color: Colors.black87),
               SizedBox(width: 6),
               Text(
