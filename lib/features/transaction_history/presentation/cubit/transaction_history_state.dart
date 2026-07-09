@@ -26,6 +26,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final double totalPajak;
   final double totalBersih;
   final int persentasePajak;
+  final int visibleCount;
 
   const TransactionHistoryLoaded({
     required this.allTransactions,
@@ -41,6 +42,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     required this.totalPajak,
     required this.totalBersih,
     required this.persentasePajak,
+    this.visibleCount = 5,
   });
 
   TransactionHistoryLoaded copyWith({
@@ -57,6 +59,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     double? totalPajak,
     double? totalBersih,
     int? persentasePajak,
+    int? visibleCount,
   }) {
     return TransactionHistoryLoaded(
       allTransactions: allTransactions ?? this.allTransactions,
@@ -72,9 +75,13 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       totalPajak: totalPajak ?? this.totalPajak,
       totalBersih: totalBersih ?? this.totalBersih,
       persentasePajak: persentasePajak ?? this.persentasePajak,
+      visibleCount: visibleCount ?? this.visibleCount,
     );
   }
 
+  bool get hasMore => visibleCount < filteredTransactions.length;
+  List<HistoryItemModel> get visibleTransactions =>
+      filteredTransactions.take(visibleCount).toList();
   @override
   List<Object?> get props => [
     allTransactions,
@@ -90,6 +97,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     totalPajak,
     totalBersih,
     persentasePajak,
+    visibleCount,
   ];
 }
 

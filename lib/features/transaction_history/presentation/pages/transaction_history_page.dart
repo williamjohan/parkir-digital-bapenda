@@ -98,6 +98,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       widget.idDevice ?? '',
     );
     _scrollController.addListener(() {
+      print('🟢 scroll listener jalan, offset: ${_scrollController.offset}');
       if (_scrollController.offset > 180 && !_isScrolledPastRecap) {
         setState(() => _isScrolledPastRecap = true);
       } else if (_scrollController.offset <= 180 && _isScrolledPastRecap) {
@@ -108,6 +109,16 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
         });
       }
     });
+
+    if(_scrollController.hasClients) {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final current = _scrollController.position.pixels;
+       print('🟡 max: $maxScroll, current: $current, ratio: ${current / maxScroll}');
+      if(current >= maxScroll * 0.9) {
+         print('🔴 threshold tercapai, manggil loadMoreItems'); 
+        context.read<TransactionHistoryCubit>().loadMoreItems();
+      }
+    }
   }
 
   @override
@@ -238,7 +249,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       return Center(child: Text(state.message));
     }
     if (state is TransactionHistoryLoaded) {
-      final data = state.filteredTransactions;
+      final allFiltered = state.filteredTransactions;
+      final data = state.visibleTransactions;
 
       return Stack(
         children: [
@@ -273,7 +285,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                     })(),
                   ),
                 ),
-                data.isEmpty
+                allFiltered.isEmpty
                     ? SliverFillRemaining(
                         hasScrollBody: false,
                         child: _buildEmptyState(),
@@ -283,6 +295,20 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                           return HistoryCardWidget(item: data[index]);
                         }, childCount: data.length),
                       ),
+
+                if (state.hasMore)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    ),
+                  ),
                 const SliverToBoxAdapter(child: SizedBox(height: 80)),
               ],
             ),
