@@ -175,21 +175,21 @@ class HomeDrawer extends StatelessWidget {
                     },
                   ),
                 ),
-                if (FeatureFlags.enablePrinterFeature)
-                  ListTile(
-                    leading: const Icon(
-                      Icons.print,
-                      color: AppColors.textPrimary,
-                    ),
-                    title: const Text(
-                      'Printer Settings',
-                      style: AppTypography.bodyRegular,
-                    ),
-                    onTap: () {
-                      Navigator.pop(context); // Tutup drawer
-                      context.goNamed(AppRoutes.printerSetting);
-                    },
+                // if (FeatureFlags.enablePrinterFeature)
+                ListTile(
+                  leading: const Icon(
+                    Icons.print,
+                    color: AppColors.textPrimary,
                   ),
+                  title: const Text(
+                    'Printer Settings',
+                    style: AppTypography.bodyRegular,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context); // Tutup drawer
+                    context.goNamed(AppRoutes.printerSetting);
+                  },
+                ),
 
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.pengawas],
