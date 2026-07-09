@@ -19,7 +19,14 @@ abstract class RegisterModule {
     final dio = Dio(
       BaseOptions(
         baseUrl: EnvConfig.baseUrl,
-        connectTimeout: const Duration(seconds: 30),
+        // 🚀 FIX: connectTimeout 30s -> 25s. Angka ini WAJIB ≥ total budget
+        // internal connectionFactory di bawah (DNS 8s + TCP connect 8s +
+        // TLS 8s = 24s worst-case), supaya outer timeout ini tidak memotong
+        // proses yang sebenarnya masih berjalan normal. Lever UTAMA ada di
+        // pemendekan budget TCP connect (15s->8s) di bawah -- itu yang
+        // paling mungkin jadi titik "hang" saat FortiGate men-drop koneksi
+        // diam-diam (lihat analisis log connectionTimeout berulang).
+        connectTimeout: const Duration(seconds: 25),
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 45),
         headers: {
@@ -33,7 +40,8 @@ abstract class RegisterModule {
     dio.httpClientAdapter = IOHttpClientAdapter(
       createHttpClient: () {
         final client = HttpClient();
-        client.connectionTimeout = const Duration(seconds: 30);
+        // 🚀 Konsisten dengan BaseOptions.connectTimeout di atas (25s).
+        client.connectionTimeout = const Duration(seconds: 25);
 
         // Helper: Cek otoritas bypass sertifikat
         bool isCertBypassAllowed(String host) {
@@ -68,11 +76,16 @@ abstract class RegisterModule {
                 // Fallback aman ke hostname asli
               }
 
-              // Budget TCP connection 15 detik
+              // 🚀 FIX: budget TCP connection turun 15s -> 8s. Ini KEMUNGKINAN
+              // BESAR titik sebenarnya di mana koneksi "hang" saat FortiGate
+              // men-drop paket diam-diam (bukan DNS, bukan TLS) -- TCP
+              // handshake yang BAKAL berhasil biasanya selesai dalam 1-3
+              // detik. Memendekkan ini adalah cara tercepat memangkas waktu
+              // tunggu user per percobaan.
               final connectTask = await Socket.startConnect(
                 targetHost,
                 uri.port,
-              ).timeout(const Duration(seconds: 15));
+              ).timeout(const Duration(seconds: 8));
               final rawSocket = await connectTask.socket;
 
               if (uri.scheme != 'https') {
@@ -83,12 +96,13 @@ abstract class RegisterModule {
               }
 
               try {
-                // Budget TLS Handshake 10 detik
+                // Budget TLS Handshake turun 10s -> 8s (konsisten dengan
+                // outer connectTimeout 25s: DNS 8s + TCP 8s + TLS 8s = 24s).
                 final secureSocket = await SecureSocket.secure(
                   rawSocket,
                   host: originalHost,
                   onBadCertificate: (cert) => isCertBypassAllowed(originalHost),
-                ).timeout(const Duration(seconds: 10));
+                ).timeout(const Duration(seconds: 8));
 
                 return ConnectionTask.fromSocket(
                   Future.value(secureSocket),
@@ -112,11 +126,15 @@ abstract class RegisterModule {
         logPrint: (message) {
           if (kDebugMode) AppLogger.debug('>>> [DIO RETRY] 🔄 $message');
         },
-        retries: 3, // Coba hingga 3x[cite: 5]
+        retries: 3,
+        // 🚀 FIX: delay dipangkas. Reaksi terhadap FortiGate/jaringan yang
+        // men-drop koneksi sesaat -- backoff panjang (2/5/10s) tidak banyak
+        // membantu untuk skenario ini, delay singkat cukup dan signifikan
+        // memangkas total waktu tunggu user.
         retryDelays: const [
-          Duration(seconds: 2), // Ketukan pertama cepat
-          Duration(seconds: 5), // Ketukan kedua agak direnggangkan
-          Duration(seconds: 10), // Ketukan terakhir
+          Duration(seconds: 1),
+          Duration(seconds: 2),
+          Duration(seconds: 4),
         ],
         retryEvaluator: (error, attempt) {
           //  FIX: request FormData sekarang dibangun dari MultipartFile.fromBytes
@@ -153,10 +171,26 @@ abstract class RegisterModule {
 
     // 🚀 3. INTERCEPTOR LAINNYA
     // (Opsional: DnsDiagnosticInterceptor bisa dilepas karena ResilientDnsResolver sudah cukup memberikan log[cite: 3, 4])
+
+    // 🚀 FIX: ConnectivityCheckInterceptor dipindah KELUAR dari kDebugMode
+    // dan ditaruh PALING AWAL. Sebelumnya cuma aktif saat development --
+    // padahal manfaatnya (fail-fast dengan pesan jelas saat HP benar-benar
+    // offline total: mode pesawat/tidak ada sinyal) justru paling
+    // dibutuhkan di lapangan (build production), bukan saat development.
+    //
+    // CATATAN PENTING: interceptor ini HANYA menangani kasus "device offline
+    // total" (link-layer, WiFi/seluler mati). Untuk kasus koneksi ke server
+    // spesifik yang di-drop FortiGate (device tetap online, cuma request ke
+    // apibapenda.surabaya.go.id yang gagal) -- itu TIDAK terdeteksi di sini,
+    // request tetap diteruskan dan baru gagal di connectionFactory (sudah
+    // ditangani lewat tuning timeout & retry terpisah).
+    //
+    // Ditaruh SEBELUM authInterceptor supaya kalau memang offline total,
+    // tidak perlu buang waktu ambil access token dari secure storage dulu.
+    dio.interceptors.add(ConnectivityCheckInterceptor(connectivity));
     dio.interceptors.add(authInterceptor);
 
     if (kDebugMode) {
-      dio.interceptors.add(ConnectivityCheckInterceptor(connectivity));
       //dio.interceptors.add(DebugMockInterceptor());
       dio.interceptors.add(
         LogInterceptor(

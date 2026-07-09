@@ -1,5 +1,5 @@
 import 'package:uuid/uuid.dart';
-import '../storage/secure_storage_manager.dart';
+import '../storage/i_secure_storage_manager.dart';
 
 class DeviceIdUtils {
   static Future<String> getSecureDeviceId(

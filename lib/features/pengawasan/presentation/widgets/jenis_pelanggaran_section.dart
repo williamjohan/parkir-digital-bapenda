@@ -70,7 +70,7 @@ class JenisPelanggaranSection extends StatelessWidget {
                               style: AppTypography.caption.copyWith(
                                 color: isSelected
                                     ? AppColors.primary
-                                    : AppColors.disabled,
+                                    : AppColors.textSecondary,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,

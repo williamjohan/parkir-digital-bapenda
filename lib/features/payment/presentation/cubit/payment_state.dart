@@ -1,38 +1,22 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-abstract class PaymentState extends Equatable {
-  const PaymentState();
+part 'payment_state.freezed.dart';
 
-  @override
-  List<Object?> get props => [];
-}
+@freezed
+class PaymentState with _$PaymentState {
+  const factory PaymentState.initial() = _Initial;
 
-class PaymentInitial extends PaymentState {}
+  const factory PaymentState.loading() = _Loading;
 
-class PaymentLocalQrisLoading extends PaymentState {}
+  ///  STATE 1: Khusus Jukir (Membawa path file SQLite dan kodeQris)
+  const factory PaymentState.localQrisReady({
+    required String qrisImagePath,
+    required String kodeQris,
+  }) = _LocalQrisReady;
 
-/// 🚀 STATE 1: Khusus Jukir (Membawa path file SQLite)
-class PaymentLocalQrisReady extends PaymentState {
-  final String qrisImagePath;
-  const PaymentLocalQrisReady(this.qrisImagePath);
+  ///  STATE 2: Khusus Bapenda Demo (Membawa string mentah QRIS)
+  const factory PaymentState.demoQrisReady({required String rawQrisString}) =
+      _DemoQrisReady;
 
-  @override
-  List<Object?> get props => [qrisImagePath];
-}
-
-/// 🚀 STATE 2: Khusus Bapenda Demo (Membawa string mentah QRIS)
-class PaymentDemoQrisReady extends PaymentState {
-  final String rawQrisString;
-  const PaymentDemoQrisReady(this.rawQrisString);
-
-  @override
-  List<Object?> get props => [rawQrisString];
-}
-
-class PaymentLocalQrisError extends PaymentState {
-  final String message;
-  const PaymentLocalQrisError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  const factory PaymentState.error({required String message}) = _Error;
 }

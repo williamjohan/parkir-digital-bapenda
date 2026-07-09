@@ -1,16 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/domain/entities/data_jukir_entity.dart';
-import '../../domain/usecases/get_local_qris_usecase.dart';
+import 'package:parkir_digital_bapenda/features/transaction/domain/usecases/qris_usecase.dart';
+import '../../domain/entities/qris_entity.dart';
+
 import 'transaction_state.dart';
-import '../../../home/data/models/tarif/tarif_model.dart';
+import '../../data/models/tarif/tarif_model.dart';
 
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
-  final GetLocalQrisUseCase _getLocalQrisUseCase;
-  // final GetDataJukirUseCase _getDataJukirUseCase;
+  final QrisUsecase _qrisUsecase;
 
-  TransactionCubit(this._getLocalQrisUseCase) : super(const TransactionState());
+  TransactionCubit(this._qrisUsecase) : super(const TransactionState());
 
   Future<void> init({required bool isFree, required bool isDemoMode}) async {
     if (!isClosed) {
@@ -20,7 +21,7 @@ class TransactionCubit extends Cubit<TransactionState> {
       _injectFallbackVehicles();
       return;
     }
-    final result = await _getLocalQrisUseCase.execute();
+    final result = await _qrisUsecase.getLocalQris();
     if (isClosed) return;
 
     result.fold((_) => _injectFallbackVehicles(), (qrisMap) {
@@ -32,7 +33,8 @@ class TransactionCubit extends Cubit<TransactionState> {
     });
   }
 
-  void _setupVehiclesFromQris(Map<String, String> qrisMap) {
+  // 🚀 2. ADJUSTMENT: Ubah parameter menjadi Map<String, QrisLocalEntity>
+  void _setupVehiclesFromQris(Map<String, QrisLocalEntity> qrisMap) {
     final List<TarifModel> vehicles = qrisMap.keys.map((id) {
       return TarifModel(
         id: int.tryParse(id) ?? 0,
@@ -62,6 +64,7 @@ class TransactionCubit extends Cubit<TransactionState> {
         state.copyWith(
           status: TransactionStatus.ready,
           tarifList: fallback,
+          // 🚀 3. Map kosong sudah otomatis menyesuaikan tipe di state
           qrisMap: const {},
         ),
       );

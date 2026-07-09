@@ -5,7 +5,7 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../../../transaction/data/models/profile_photo_response_model.dart';
+import '../models/profile_photo_response_model.dart';
 
 abstract class IProfileRemoteDataSource {
   Future<UserModel> getProfile();

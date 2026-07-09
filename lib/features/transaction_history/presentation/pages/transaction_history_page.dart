@@ -98,7 +98,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       widget.idDevice ?? '',
     );
     _scrollController.addListener(() {
-      print('🟢 scroll listener jalan, offset: ${_scrollController.offset}');
       if (_scrollController.offset > 180 && !_isScrolledPastRecap) {
         setState(() => _isScrolledPastRecap = true);
       } else if (_scrollController.offset <= 180 && _isScrolledPastRecap) {
@@ -110,12 +109,10 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       }
     });
 
-    if(_scrollController.hasClients) {
+    if (_scrollController.hasClients) {
       final maxScroll = _scrollController.position.maxScrollExtent;
       final current = _scrollController.position.pixels;
-       print('🟡 max: $maxScroll, current: $current, ratio: ${current / maxScroll}');
-      if(current >= maxScroll * 0.9) {
-         print('🔴 threshold tercapai, manggil loadMoreItems'); 
+      if (current >= maxScroll * 0.9) {
         context.read<TransactionHistoryCubit>().loadMoreItems();
       }
     }

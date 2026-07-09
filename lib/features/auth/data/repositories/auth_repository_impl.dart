@@ -4,7 +4,7 @@ import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/database_helper_2.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../domain/usecases/get_transaction_history_usecase.dart';
 import 'transaction_history_state.dart';
 
@@ -140,8 +140,6 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     final cappedCount = nextCount > currentState.filteredTransactions.length
         ? currentState.filteredTransactions.length
         : nextCount;
-
-    print('🔥 loadMore dipanggil: ${currentState.visibleCount} -> $cappedCount');
 
     if (!isClosed) {
       emit(currentState.copyWith(visibleCount: cappedCount));
