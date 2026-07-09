@@ -98,7 +98,6 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       widget.idDevice ?? '',
     );
     _scrollController.addListener(() {
-      print('🟢 scroll listener jalan, offset: ${_scrollController.offset}');
       if (_scrollController.offset > 180 && !_isScrolledPastRecap) {
         setState(() => _isScrolledPastRecap = true);
       } else if (_scrollController.offset <= 180 && _isScrolledPastRecap) {
@@ -108,17 +107,15 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               false; // Otomatis tutup overlay jika user manual scroll ke paling atas
         });
       }
-    });
 
-    if(_scrollController.hasClients) {
-      final maxScroll = _scrollController.position.maxScrollExtent;
-      final current = _scrollController.position.pixels;
-       print('🟡 max: $maxScroll, current: $current, ratio: ${current / maxScroll}');
-      if(current >= maxScroll * 0.9) {
-         print('🔴 threshold tercapai, manggil loadMoreItems'); 
-        context.read<TransactionHistoryCubit>().loadMoreItems();
+      if (_scrollController.hasClients) {
+        final maxScroll = _scrollController.position.maxScrollExtent;
+        final current = _scrollController.position.pixels;
+        if (current >= maxScroll * 0.9) {
+          context.read<TransactionHistoryCubit>().loadMoreItems();
+        }
       }
-    }
+    });
   }
 
   @override
@@ -296,7 +293,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                         }, childCount: data.length),
                       ),
 
-                if (state.hasMore)
+                if (state.isLoadingMore)
                   const SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),

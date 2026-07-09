@@ -7,6 +7,8 @@ abstract class ITransactionHistoryRepository {
     required DateTime startDate,
     required DateTime endDate,
     required String nop,
+    required int page,
+    required int pageSize,
     String? idDevice,
   });
 }

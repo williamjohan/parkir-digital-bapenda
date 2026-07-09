@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_forgot_password_dialog.dart';
+import 'package:parkir_digital_bapenda/features/webview/presentation/pages/lupa_password_webview.dart';
 
 class LoginFormSheetWidget extends StatefulWidget {
   final VoidCallback onClose;
@@ -114,7 +115,17 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                     ],
                   ),
                   TextButton(
-                    onPressed: () => PBForgotPasswordDialog.show(context),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const WebViewPage(
+                            url: 'https://bapenda.surabaya.go.id:7077/Login/ForgotPassword',
+                            title: 'Lupa Kata Sandi',
+                          ),
+                        ),
+                      );
+                    },
                     child: const Text(
                       "Lupa Kata Sandi?",
                       style: TextStyle(color: AppColors.primary),

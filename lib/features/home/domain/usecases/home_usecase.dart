@@ -54,6 +54,8 @@ class HomeUsecase {
         nop: nop,
         startDate: startDate,
         endDate: endDate,
+        page: 1,
+        pageSize: limit,
       );
 
       return result.fold(

@@ -26,7 +26,13 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final double totalPajak;
   final double totalBersih;
   final int persentasePajak;
-  final int visibleCount;
+
+  final String nop;
+  final String idDevice;
+  final int currentPage;
+  final int pageSize;
+  final bool hasReachedMax;
+  final bool isLoadingMore;
 
   const TransactionHistoryLoaded({
     required this.allTransactions,
@@ -42,7 +48,12 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     required this.totalPajak,
     required this.totalBersih,
     required this.persentasePajak,
-    this.visibleCount = 5,
+    required this.nop,
+    required this.idDevice,
+    this.currentPage = 1,
+    this.pageSize = 20,
+    this.hasReachedMax = false,
+    this.isLoadingMore = false,
   });
 
   TransactionHistoryLoaded copyWith({
@@ -59,7 +70,12 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     double? totalPajak,
     double? totalBersih,
     int? persentasePajak,
-    int? visibleCount,
+    String? nop,
+    String? idDevice,
+    int? currentPage,
+    int? pageSize,
+    bool? hasReachedMax,
+    bool? isLoadingMore,
   }) {
     return TransactionHistoryLoaded(
       allTransactions: allTransactions ?? this.allTransactions,
@@ -75,13 +91,18 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       totalPajak: totalPajak ?? this.totalPajak,
       totalBersih: totalBersih ?? this.totalBersih,
       persentasePajak: persentasePajak ?? this.persentasePajak,
-      visibleCount: visibleCount ?? this.visibleCount,
+      nop: nop ?? this.nop,
+      idDevice: idDevice ?? this.idDevice,
+      currentPage: currentPage ?? this.currentPage,
+      pageSize: pageSize ?? this.pageSize,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
-  bool get hasMore => visibleCount < filteredTransactions.length;
-  List<HistoryItemModel> get visibleTransactions =>
-      filteredTransactions.take(visibleCount).toList();
+  bool get hasMore => !hasReachedMax;
+  List<HistoryItemModel> get visibleTransactions => filteredTransactions;
+
   @override
   List<Object?> get props => [
     allTransactions,
@@ -97,7 +118,12 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     totalPajak,
     totalBersih,
     persentasePajak,
-    visibleCount,
+    nop,
+    idDevice,
+    currentPage,
+    pageSize,
+    hasReachedMax,
+    isLoadingMore,
   ];
 }
 

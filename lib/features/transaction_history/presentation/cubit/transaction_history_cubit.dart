@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/utils/app_logger.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
 import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/usecases/get_transaction_history_usecase.dart';
 import 'transaction_history_state.dart';
@@ -8,6 +10,9 @@ import 'transaction_history_state.dart';
 class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   final GetTransactionHistoryUseCase _useCase;
   final ISecureStorageManager _secureStorage;
+
+  static const int _defaultPageSize = 20;
+  bool _isFetchingMore = false;
 
   TransactionHistoryCubit(this._useCase, this._secureStorage)
     : super(TransactionHistoryInitial());
@@ -32,6 +37,7 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     }
 
     emit(TransactionHistoryLoading());
+    _isFetchingMore = false;
 
     String finalNop = nop;
 
@@ -45,6 +51,8 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       endDate: end,
       nop: finalNop,
       idDevice: idDevice,
+      page: 1,
+      pageSize: _defaultPageSize,
     );
 
     if (isClosed) return;
@@ -68,6 +76,11 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           persentasePajak: data.detail.isNotEmpty
               ? data.detail.first.tarifPajak
               : 0,
+          nop: finalNop,
+          idDevice: idDevice,
+          currentPage: 1,
+          pageSize: _defaultPageSize,
+          hasReachedMax: data.detail.length < _defaultPageSize,
         ),
       ),
     );
@@ -76,25 +89,92 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   /// [LOCAL FILTER]: Menyortir data yang sudah ada di memori secara instan
   void applyLocalFilter({String? kategori, int? mode}) {
     if (state is! TransactionHistoryLoaded) return;
+    final currentState = state as TransactionHistoryLoaded;
+    if (!isClosed) {
+      emit(_rebuildFilteredState(currentState, kategori: kategori, mode: mode));
+    }
+  }
 
+  Future<void> loadMoreItems() async {
+    if (state is! TransactionHistoryLoaded) return;
     final currentState = state as TransactionHistoryLoaded;
 
-    final newKategori = kategori ?? currentState.selectedKategori;
-    final newMode = mode ?? currentState.selectedMode;
-    final filteredData = currentState.allTransactions.where((trx) {
-      bool passKategori = true;
-      if (newKategori != 'SEMUA') {
-        passKategori =
-            trx.jenisTarif.toUpperCase() == newKategori.toUpperCase();
-      }
+    if (currentState.hasReachedMax || _isFetchingMore) return;
 
-      bool passMode = true;
-      if (newMode != -1) {
-        passMode = trx.modePlat == newMode;
-      }
+    _isFetchingMore = true;
+    emit(currentState.copyWith(isLoadingMore: true));
 
+    final nextPage = currentState.currentPage + 1;
+
+    final result = await _useCase.execute(
+      startDate: currentState.startDate,
+      endDate: currentState.endDate,
+      nop: currentState.nop,
+      idDevice: currentState.idDevice,
+      page: nextPage,
+      pageSize: currentState.pageSize,
+    );
+
+    _isFetchingMore = false;
+    if (isClosed) return;
+
+    result.fold(
+      (failure) {
+        AppLogger.error(
+          'Gagal load more history (page $nextPage): ${failure.message}',
+        );
+        if (state is TransactionHistoryLoaded) {
+          emit(
+            (state as TransactionHistoryLoaded).copyWith(isLoadingMore: false),
+          );
+        }
+      },
+      (data) {
+        if (state is! TransactionHistoryLoaded) return;
+        final latestState = state as TransactionHistoryLoaded;
+
+        final List<HistoryItemModel> newAllTransactions = [
+          ...latestState.allTransactions,
+          ...data.detail,
+        ];
+
+        final updatedBase = latestState.copyWith(
+          allTransactions: newAllTransactions,
+          currentPage: nextPage,
+          hasReachedMax: data.detail.length < latestState.pageSize,
+          isLoadingMore: false,
+        );
+
+        emit(_rebuildFilteredState(updatedBase));
+      },
+    );
+  }
+
+  TransactionHistoryLoaded _rebuildFilteredState(
+    TransactionHistoryLoaded state, {
+    String? kategori,
+    int? mode,
+  }) {
+    final newKategori = kategori ?? state.selectedKategori;
+    final newMode = mode ?? state.selectedMode;
+    final isFiltered = newKategori != 'SEMUA' || newMode != -1;
+
+    final filteredData = state.allTransactions.where((trx) {
+      final passKategori = newKategori == 'SEMUA'
+          ? true
+          : trx.jenisTarif.toUpperCase() == newKategori.toUpperCase();
+      final passMode = newMode == -1 ? true : trx.modePlat == newMode;
       return passKategori && passMode;
     }).toList();
+
+    if (!isFiltered) {
+      return state.copyWith(
+        filteredTransactions: filteredData,
+        selectedKategori: newKategori,
+        selectedMode: newMode,
+      );
+    }
+
     int filterRoda2 = 0;
     int filterRoda4 = 0;
     int filterKotor = 0;
@@ -104,47 +184,22 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     for (final trx in filteredData) {
       if (trx.jenisTarif == 'MOTOR') filterRoda2++;
       if (trx.jenisTarif == 'MOBIL') filterRoda4++;
-
       filterKotor += trx.kredit;
-
-      final double hitungPajak = (trx.kredit * trx.tarifPajak) / 100;
+      final hitungPajak = (trx.kredit * trx.tarifPajak) / 100;
       filterPajak += hitungPajak;
       filterBersih += (trx.kredit - hitungPajak);
     }
 
-    if (!isClosed) {
-      emit(
-        currentState.copyWith(
-          filteredTransactions: filteredData,
-          selectedKategori: newKategori,
-          selectedMode: newMode,
-          roda2: filterRoda2,
-          roda4: filterRoda4,
-          totalTransaksi: filteredData.length,
-          totalPendapatan: filterKotor,
-          totalPajak: filterPajak,
-          totalBersih: filterBersih,
-          visibleCount: 5,
-        ),
-      );
-    }
-  }
-
-  void loadMoreItems() {
-    if (state is! TransactionHistoryLoaded) return;
-    final currentState = state as TransactionHistoryLoaded;
-
-    if (!currentState.hasMore) return;
-
-    final nextCount = currentState.visibleCount + 5;
-    final cappedCount = nextCount > currentState.filteredTransactions.length
-        ? currentState.filteredTransactions.length
-        : nextCount;
-
-    print('🔥 loadMore dipanggil: ${currentState.visibleCount} -> $cappedCount');
-
-    if (!isClosed) {
-      emit(currentState.copyWith(visibleCount: cappedCount));
-    }
+    return state.copyWith(
+      filteredTransactions: filteredData,
+      selectedKategori: newKategori,
+      selectedMode: newMode,
+      roda2: filterRoda2,
+      roda4: filterRoda4,
+      totalTransaksi: filteredData.length,
+      totalPendapatan: filterKotor,
+      totalPajak: filterPajak,
+      totalBersih: filterBersih,
+    );
   }
 }

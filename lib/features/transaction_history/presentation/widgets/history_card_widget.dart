@@ -84,10 +84,11 @@ class HistoryCardWidget extends StatelessWidget {
                       Text(
                         item.titleText,
                         style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
+                        maxLines: 2,
                       ),
                     ],
                   ),

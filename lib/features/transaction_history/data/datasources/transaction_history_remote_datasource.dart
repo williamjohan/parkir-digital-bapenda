@@ -11,7 +11,8 @@ abstract class ITransactionHistoryRemoteDataSource {
     required String nop,
     required DateTime startDate,
     required DateTime endDate,
-    int? limit,
+    int page = 1,
+    int pageSize = 20,
     String? idDevice,
   });
 }
@@ -28,7 +29,8 @@ class TransactionHistoryRemoteDataSourceImpl
     required String nop,
     required DateTime startDate,
     required DateTime endDate,
-    int? limit,
+    int page = 1,
+    int pageSize = 20,
     String? idDevice,
   }) async {
     final String startIso =
@@ -41,7 +43,8 @@ class TransactionHistoryRemoteDataSourceImpl
       'nop': nop,
       'tglAwal': startIso,
       'tglAkhir': endIso,
-      'limit': limit ?? 0,
+      'page': page,
+      'pageSize': pageSize,
       'idDevice': idDevice,
     });
     AppLogger.debug('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓');

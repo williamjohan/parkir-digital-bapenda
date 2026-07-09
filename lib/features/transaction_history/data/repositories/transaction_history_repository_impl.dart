@@ -18,6 +18,8 @@ class TransactionHistoryRepositoryImpl
     required DateTime startDate,
     required DateTime endDate,
     required String nop,
+    required int page,
+    required int pageSize,
     String? idDevice,
   }) async {
     try {
@@ -25,7 +27,8 @@ class TransactionHistoryRepositoryImpl
         nop: nop,
         startDate: startDate,
         endDate: endDate,
-        limit: null,
+        page: page,
+        pageSize: pageSize,
         idDevice: idDevice,
       );
       return Right(apiResult);
