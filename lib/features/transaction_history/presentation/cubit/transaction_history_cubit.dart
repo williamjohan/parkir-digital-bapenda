@@ -124,8 +124,27 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           totalPendapatan: filterKotor,
           totalPajak: filterPajak,
           totalBersih: filterBersih,
+          visibleCount: 5,
         ),
       );
+    }
+  }
+
+  void loadMoreItems() {
+    if (state is! TransactionHistoryLoaded) return;
+    final currentState = state as TransactionHistoryLoaded;
+
+    if (!currentState.hasMore) return;
+
+    final nextCount = currentState.visibleCount + 5;
+    final cappedCount = nextCount > currentState.filteredTransactions.length
+        ? currentState.filteredTransactions.length
+        : nextCount;
+
+    print('🔥 loadMore dipanggil: ${currentState.visibleCount} -> $cappedCount');
+
+    if (!isClosed) {
+      emit(currentState.copyWith(visibleCount: cappedCount));
     }
   }
 }
