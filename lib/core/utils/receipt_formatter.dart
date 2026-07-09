@@ -25,11 +25,11 @@ class ReceiptFormatter {
       styles: const PosStyles(align: PosAlign.center),
     );
     bytes += generator.text(
-      "Nama lokasi dummy",
+      transaction.namaLokasi,
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
     bytes += generator.text(
-      "alamat dummy",
+      transaction.alamatOp,
       styles: const PosStyles(align: PosAlign.center),
     );
     bytes += generator.text(

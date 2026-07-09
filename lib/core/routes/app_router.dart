@@ -146,8 +146,13 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.home,
           name: AppRoutes.home,
-          builder: (context, state) => BlocProvider(
-            create: (_) => locator<HomeCubit>(),
+          builder: (context, state) => MultiBlocProvider(
+            providers: [
+              BlocProvider<HomeCubit>(create: (_) => locator<HomeCubit>()),
+              BlocProvider<PrinterCubit>(
+                create: (_) => locator<PrinterCubit>(),
+              ),
+            ],
             child: const HomePage(),
           ),
         ),

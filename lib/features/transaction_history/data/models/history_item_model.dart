@@ -43,6 +43,15 @@ class HistoryItemModel {
   @JsonKey(name: 'encUrl', defaultValue: '-')
   final String encUrl;
 
+  @JsonKey(name: 'namaLokasi', defaultValue: '-')
+  final String namaLokasi;
+
+  @JsonKey(name: 'namaOp', defaultValue: '-')
+  final String namaOp;
+
+  @JsonKey(name: 'alamatOp', defaultValue: '-')
+  final String alamatOp;
+
   HistoryItemModel({
     required this.id,
     required this.orderId,
@@ -57,6 +66,9 @@ class HistoryItemModel {
     required this.tarifPajak,
     required this.deviceId,
     required this.encUrl,
+    required this.namaLokasi,
+    required this.namaOp,
+    required this.alamatOp,
   });
 
   factory HistoryItemModel.fromJson(Map<String, dynamic> json) =>

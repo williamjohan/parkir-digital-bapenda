@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_ui_extension.dart';
 import '../../../../features/transaction_history/data/models/history_item_model.dart';
 import '../../tokens/app_colors.dart';
 import '../pb_primary_button.dart';
@@ -42,14 +44,14 @@ class PbPreviewTicketWidget extends StatelessWidget {
           const Text("BAPENDA Kota Surabaya"),
 
           /// INFO LOKASI
-          const Text(
-            "nama op",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Text(
+            item.namaOp,
+            style: const TextStyle(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          const Text("alamat op", textAlign: TextAlign.center),
+          Text(item.alamatOp, textAlign: TextAlign.center),
           const SizedBox(height: 6),
-          Text(item.tglTrx),
+          Text(item.formattedDate),
 
           const SizedBox(height: 12),
           const Divider(),
@@ -63,13 +65,11 @@ class PbPreviewTicketWidget extends StatelessWidget {
                 TextSpan(text: item.jenisTarif),
 
                 // 2. Plat Nomor (Hanya muncul jika string tidak kosong)
-                if (item.platNumber.isNotEmpty) ...[
-                  const TextSpan(
-                    text: '  •  ',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  TextSpan(text: item.platNumber),
-                ],
+                const TextSpan(
+                  text: '  •  ',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                TextSpan(text: CurrencyFormatter.toIdr(item.kredit)),
               ],
             ),
             textAlign: TextAlign.center,

@@ -14,6 +14,9 @@ abstract class IPrinterService {
   /// Mengecek apakah printer sedang terhubung
   Future<bool> get isConnected;
 
+  /// 🚀 TAMBAHKAN INI: Mengecek apakah Bluetooth HP aktif
+  Future<bool> get isBluetoothOn;
+
   /// Mencetak karcis menggunakan data transaksi
   Future<bool> printReceipt(
     HistoryItemModel transaction,

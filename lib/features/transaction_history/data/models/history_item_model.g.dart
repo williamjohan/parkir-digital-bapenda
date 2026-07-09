@@ -21,6 +21,9 @@ HistoryItemModel _$HistoryItemModelFromJson(Map<String, dynamic> json) =>
       tarifPajak: (json['tarifPajak'] as num?)?.toInt() ?? 0,
       deviceId: json['deviceId'] as String? ?? '-',
       encUrl: json['encUrl'] as String? ?? '-',
+      namaLokasi: json['namaLokasi'] as String? ?? '-',
+      namaOp: json['namaOp'] as String? ?? '-',
+      alamatOp: json['alamatOp'] as String? ?? '-',
     );
 
 Map<String, dynamic> _$HistoryItemModelToJson(HistoryItemModel instance) =>
@@ -38,4 +41,7 @@ Map<String, dynamic> _$HistoryItemModelToJson(HistoryItemModel instance) =>
       'tarifPajak': instance.tarifPajak,
       'deviceId': instance.deviceId,
       'encUrl': instance.encUrl,
+      'namaLokasi': instance.namaLokasi,
+      'namaOp': instance.namaOp,
+      'alamatOp': instance.alamatOp,
     };

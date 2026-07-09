@@ -20,7 +20,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PrinterCubit>().scanDevices();
+      context.read<PrinterCubit>().scanDevices(context);
     });
   }
 
@@ -43,7 +43,8 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: () => context.read<PrinterCubit>().scanDevices(),
+              onPressed: () =>
+                  context.read<PrinterCubit>().scanDevices(context),
             ),
           ],
         ),

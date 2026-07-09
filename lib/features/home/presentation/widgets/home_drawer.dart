@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
@@ -10,6 +11,7 @@ import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
+import '../../../printer/presentation/cubit/printer_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isFree;
@@ -175,18 +177,56 @@ class HomeDrawer extends StatelessWidget {
                   ),
                 ),
                 // if (FeatureFlags.enablePrinterFeature)
+                // ListTile(
+                //   leading: const Icon(Icons.print),
+                //   title: const Text('Pengaturan Printer'),
+                //   onTap: () async {
+                //     // 1. Tutup Drawer terlebih dahulu agar rapi
+                //     Navigator.pop(context);
+
+                //     // 2. Panggil fungsi cek permission yang baru saja kita pisah
+                //     final isPermissionGranted = await context
+                //         .read<PrinterCubit>()
+                //         .checkAndRequestPermissions(context);
+
+                //     // 3. Jika diizinkan, baru lakukan navigasi ke PrinterPage atau jalankan fungsi scan
+                //     if (isPermissionGranted) {
+                //       // Jalankan scan otomatis begitu masuk halaman (jika diinginkan)
+                //       if (context.mounted) {
+                //         context.read<PrinterCubit>().scanDevices(context);
+
+                //         // Pindah ke halaman printer Anda, misal:
+                //         Navigator.pushNamed(context, '/printer-page');
+                //       }
+                //     }
+                //   },
+                // ),
                 ListTile(
-                  leading: const Icon(
-                    Icons.print,
-                    color: AppColors.textPrimary,
-                  ),
-                  title: const Text(
-                    'Printer Settings',
-                    style: AppTypography.bodyRegular,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context); // Tutup drawer
-                    context.pushNamed(AppRoutes.printerSetting);
+                  leading: const Icon(Icons.print),
+                  title: const Text('Pengaturan Printer'),
+                  onTap: () async {
+                    // 1. Tangkap Cubit dan Context Halaman Utama (Safe Context) SEBELUM Drawer ditutup
+                    final printerCubit = context.read<PrinterCubit>();
+                    final safeContext = Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).context;
+
+                    // 2. Tutup Drawer
+                    Navigator.pop(context);
+
+                    // 3. Panggil fungsi cek permission menggunakan safeContext yang masih hidup
+                    final isPermissionGranted = await printerCubit
+                        .checkAndRequestPermissions(safeContext);
+
+                    // 4. Jika diizinkan, jalankan navigasi ke halaman pengaturan printer
+                    if (isPermissionGranted) {
+                      if (safeContext.mounted) {
+                        // 🚀 PERBAIKAN: Gunakan safeContext untuk navigasi!
+                        // (scanDevices dihapus dari sini karena di PrinterSettingsPage sudah otomatis dipanggil saat initState)
+                        safeContext.pushNamed(AppRoutes.printerSetting);
+                      }
+                    }
                   },
                 ),
 

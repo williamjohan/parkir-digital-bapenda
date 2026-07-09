@@ -27,6 +27,17 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
     return await _bluetooth.isConnected ?? false;
   }
 
+  /// Mengecek apakah modul Bluetooth pada HP aktif atau mati
+  @override
+  Future<bool> get isBluetoothOn async {
+    try {
+      return await _bluetooth.isOn ?? false;
+    } catch (e) {
+      AppLogger.error('Gagal mengecek status Bluetooth HP: $e');
+      return false;
+    }
+  }
+
   @override
   Future<bool> connect(BluetoothDevice device) async {
     try {

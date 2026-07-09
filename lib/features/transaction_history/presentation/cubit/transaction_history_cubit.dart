@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/storage/i_secure_storage_manager.dart';
 import 'package:parkir_digital_bapenda/core/utils/app_logger.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
-import '../../../../core/storage/secure_storage_manager.dart';
 import '../../domain/usecases/get_transaction_history_usecase.dart';
 import 'transaction_history_state.dart';
 
@@ -149,7 +148,9 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       if (refetched == null) {
         if (!isClosed && state is TransactionHistoryLoaded) {
           emit(
-            (state as TransactionHistoryLoaded).copyWith(isFilterLoading: false),
+            (state as TransactionHistoryLoaded).copyWith(
+              isFilterLoading: false,
+            ),
           );
         }
         return;

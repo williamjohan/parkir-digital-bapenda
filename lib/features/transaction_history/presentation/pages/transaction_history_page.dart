@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
-import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
@@ -13,22 +12,6 @@ import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
 import '../widgets/history_recap_widget.dart'; // 🚀 IMPORT WIDGET ASLI
-
-final HistoryItemModel _dummyHistoryItem = HistoryItemModel(
-  id: 0,
-  orderId: '-',
-  jenisTarif: 'MOTOR',
-  sof: 'LAINNYA',
-  platNumber: '••••••',
-  tglTrx: '-',
-  kredit: 0,
-  namaPetugas: '-',
-  modePlat: -1,
-  shift: '-',
-  tarifPajak: 0,
-  deviceId: '-',
-  encUrl: '-',
-);
 
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
@@ -240,7 +223,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   'MOTOR',
                   state.selectedKategori,
                   'Motor',
-                  isFiltering
+                  isFiltering,
                 ),
               ],
             ),
@@ -338,11 +321,34 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                                           Navigator.pop(context);
                                         },
                                         printPressed: () async {
-                                          Navigator.pop(context);
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (_) {
+                                              return Dialog(
+                                                insetPadding:
+                                                    const EdgeInsets.all(24),
+                                                child: PbPreviewTicketWidget(
+                                                  item: data[index],
+                                                  isPrinterReady: true,
+                                                  okPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  printPressed: () async {
+                                                    // Navigator.pop(context);
 
-                                          await context
-                                              .read<PrinterCubit>()
-                                              .printReceipt(data[index]);
+                                                    // proses print di sini
+                                                    await context
+                                                        .read<PrinterCubit>()
+                                                        .printReceipt(
+                                                          context,
+                                                          data[index],
+                                                        );
+                                                  },
+                                                ),
+                                              );
+                                            },
+                                          );
                                         },
                                       ),
                                     );
