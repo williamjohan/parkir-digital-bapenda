@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
+import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../shared/loading/loading_overlay.dart';
@@ -15,6 +17,7 @@ class TransactionHistoryPage extends StatefulWidget {
   final bool isFree;
   final String? nop;
   final String? idDevice;
+  final Map<String, dynamic>? item;
 
   const TransactionHistoryPage({
     super.key,
@@ -22,6 +25,7 @@ class TransactionHistoryPage extends StatefulWidget {
     required this.isFree,
     this.nop,
     this.idDevice,
+    this.item,
   });
 
   @override
@@ -289,7 +293,35 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                       )
                     : SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
-                          return HistoryCardWidget(item: data[index]);
+                          return HistoryCardWidget(
+                            item: data[index],
+                            onPrint: () {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) {
+                                  return Dialog(
+                                    insetPadding: const EdgeInsets.all(24),
+                                    child: PbPreviewTicketWidget(
+                                      item: data[index],
+                                      isPrinterReady: true,
+                                      okPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      printPressed: () async {
+                                        Navigator.pop(context);
+
+                                        // proses print di sini
+                                        await context
+                                            .read<PrinterCubit>()
+                                            .printReceipt(data[index]);
+                                      },
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
                         }, childCount: data.length),
                       ),
 

@@ -56,8 +56,8 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
   @override
   Future<bool> printReceipt(
     HistoryItemModel transaction,
-    String deviceId,
-    Map<String, dynamic> profile,
+    // String deviceId,
+    // Map<String, dynamic> profile,
   ) async {
     try {
       final connected = await isConnected;
@@ -67,8 +67,8 @@ class BluetoothPrinterServiceImpl implements IPrinterService {
       }
       final List<int> bytes = await ReceiptFormatter.generateBytes(
         transaction,
-        deviceId,
-        profile,
+        // deviceId,
+        // profile,
       );
       await _bluetooth.writeBytes(Uint8List.fromList(bytes));
 

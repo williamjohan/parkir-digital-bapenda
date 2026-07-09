@@ -7,7 +7,11 @@ class HistoryCardWidget extends StatelessWidget {
   final HistoryItemModel item;
   final VoidCallback? onPrint;
 
-  const HistoryCardWidget({super.key, required this.item, this.onPrint});
+  const HistoryCardWidget({
+    super.key,
+    required this.item,
+    required this.onPrint,
+  });
 
   @override
   Widget build(BuildContext context) {

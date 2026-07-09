@@ -37,6 +37,12 @@ class HistoryItemModel {
   @JsonKey(name: 'tarifPajak', defaultValue: 0)
   final int tarifPajak;
 
+  @JsonKey(name: 'deviceId', defaultValue: '-')
+  final String deviceId;
+
+  @JsonKey(name: 'encUrl', defaultValue: '-')
+  final String encUrl;
+
   HistoryItemModel({
     required this.id,
     required this.orderId,
@@ -49,6 +55,8 @@ class HistoryItemModel {
     required this.modePlat,
     required this.shift,
     required this.tarifPajak,
+    required this.deviceId,
+    required this.encUrl,
   });
 
   factory HistoryItemModel.fromJson(Map<String, dynamic> json) =>
@@ -56,19 +64,20 @@ class HistoryItemModel {
 
   Map<String, dynamic> toJson() => _$HistoryItemModelToJson(this);
 
-  factory HistoryItemModel.fromLocalDatabase(Map<String, dynamic> map) {
-    return HistoryItemModel(
-      id: 0,
-      orderId: map['id_transaksi_lokal']?.toString() ?? '',
-      jenisTarif: map['kategori_kendaraan']?.toString() ?? '-',
-      sof: map['metode_pembayaran']?.toString() ?? 'FREE',
-      platNumber: map['plat_nomor']?.toString() ?? '-',
-      tglTrx: map['waktu_transaksi']?.toString() ?? '',
-      kredit: (map['nominal'] as num?)?.toInt() ?? 0,
-      namaPetugas: map['nama_jukir']?.toString() ?? '',
-      modePlat: (map['mode_plat'] as num?)?.toInt() ?? 0,
-      shift: map['shift']?.toString() ?? '1',
-      tarifPajak: (map['tarif_pajak'] as num?)?.toInt() ?? 0,
-    );
-  }
+  // factory HistoryItemModel.fromLocalDatabase(Map<String, dynamic> map) {
+  //   return HistoryItemModel(
+  //     id: 0,
+  //     orderId: map['id_transaksi_lokal']?.toString() ?? '',
+  //     jenisTarif: map['kategori_kendaraan']?.toString() ?? '-',
+  //     sof: map['metode_pembayaran']?.toString() ?? 'FREE',
+  //     platNumber: map['plat_nomor']?.toString() ?? '-',
+  //     tglTrx: map['waktu_transaksi']?.toString() ?? '',
+  //     kredit: (map['nominal'] as num?)?.toInt() ?? 0,
+  //     namaPetugas: map['nama_jukir']?.toString() ?? '',
+  //     modePlat: (map['mode_plat'] as num?)?.toInt() ?? 0,
+  //     shift: map['shift']?.toString() ?? '1',
+  //     tarifPajak: (map['tarif_pajak'] as num?)?.toInt() ?? 0,
+  //     deviceId: map['deviceId']?.toString() ?? '',
+  //   );
+  // }
 }

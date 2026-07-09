@@ -193,13 +193,13 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   Future<bool> printReceipt(
     HistoryItemModel transaction,
-    String deviceId,
-    Map<String, dynamic> profile,
+    // String deviceId,
+    // Map<String, dynamic> profile,
   ) async {
     final success = await _printerService.printReceipt(
       transaction,
-      deviceId,
-      profile,
+      // deviceId,
+      // profile,
     );
 
     return success;
@@ -218,8 +218,8 @@ class PrinterCubit extends Cubit<PrinterState> {
         );
         return await _printerService.printReceipt(
           transaction,
-          deviceId,
-          profile,
+          // deviceId,
+          // profile,
         );
       }
 
@@ -258,7 +258,10 @@ class PrinterCubit extends Cubit<PrinterState> {
         return false;
       }
       AppLogger.debug("🖨️ [Auto-Print] Konek Siluman Sukses! Mencetak...");
-      return await _printerService.printReceipt(transaction, deviceId, profile);
+      return await _printerService.printReceipt(
+        transaction,
+        // deviceId, profile
+      );
     } catch (e) {
       AppLogger.error("🖨️ [Auto-Print] Terjadi kesalahan fatal: $e");
       return false;

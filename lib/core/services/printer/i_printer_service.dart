@@ -17,7 +17,7 @@ abstract class IPrinterService {
   /// Mencetak karcis menggunakan data transaksi
   Future<bool> printReceipt(
     HistoryItemModel transaction,
-    String deviceId,
-    Map<String, dynamic> profile,
+    // String deviceId,
+    // Map<String, dynamic> profile,
   );
 }
