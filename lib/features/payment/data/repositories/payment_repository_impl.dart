@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
+import '../../domain/entities/payment_success_entity.dart';
 import '../../domain/repositories/i_payment_repository.dart';
 import '../datasources/qris_signalr_datasource.dart';
 
@@ -16,16 +17,10 @@ class PaymentRepositoryImpl implements IPaymentRepository {
       await _signalRDatasource.connectAndJoin(kodeQris);
       return const Right(unit);
     } catch (e) {
-      // Tangkap kegagalan koneksi awal (misal server down)
       return Left(
         ServerFailure('Gagal terhubung ke server pembayaran: ${e.toString()}'),
       );
     }
-  }
-
-  @override
-  Stream<String> getPaymentStatusStream() {
-    return _signalRDatasource.qrisStatusStream;
   }
 
   @override
@@ -35,6 +30,51 @@ class PaymentRepositoryImpl implements IPaymentRepository {
       return const Right(unit);
     } catch (e) {
       return const Left(ServerFailure('Gagal memutus koneksi dengan aman.'));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, PaymentSuccessEntity>>
+  getPaymentStatusStream() async* {
+    await for (final event in _signalRDatasource.qrisStatusStream) {
+      if (event.status == "LUNAS") {
+        try {
+          final payload = event.payload ?? {};
+
+          final entity = PaymentSuccessEntity(
+            orderId: payload['coreReference']?.toString() ?? '-',
+            namaOp: payload['namaOP']?.toString() ?? '-', // Dari BE
+            alamatOp: payload['alamatOP']?.toString() ?? '-', // Dari BE
+            tanggalTransaksi:
+                payload['transactionDate']?.toString() ??
+                DateTime.now().toIso8601String(),
+            jenisTarif: payload['jenistarif']?.toString() ?? '-',
+            credit: (double.tryParse(payload['amount']?.toString() ?? '0') ?? 0)
+                .toInt(),
+            encUrl: payload['necurl']?.toString() ?? '',
+          );
+
+          yield Right(entity);
+        } catch (e) {
+          // FALLBACK TERAKHIR: Jika terjadi error parsing ekstrem (misal format JSON berubah),
+          // TETAP pancarkan Right(Entity) dengan data kosong, agar flow LUNAS tidak putus!
+          yield Right(
+            PaymentSuccessEntity(
+              orderId: '-',
+              namaOp: '-',
+              alamatOp: '-',
+              tanggalTransaksi: DateTime.now().toIso8601String(),
+              jenisTarif: '-',
+              credit: 0,
+              encUrl: '',
+            ),
+          );
+        }
+      } else if (event.status == "TIMEOUT") {
+        yield const Left(ServerFailure('TIMEOUT'));
+      } else if (event.status == "ERROR") {
+        yield const Left(ServerFailure('ERROR'));
+      }
     }
   }
 }

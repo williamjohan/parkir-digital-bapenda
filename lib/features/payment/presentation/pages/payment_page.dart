@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/payment/presentation/pages/payment_dialog_helpers.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../transaction_history/data/models/history_item_model.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
 import 'payment_local_qris_view.dart';
@@ -70,16 +72,43 @@ class _PaymentPageState extends State<PaymentPage> {
           //  2. Ubah listener menjadi async
           listener: (context, state) async {
             await state.whenOrNull(
-              paymentSuccess: () async {
-                // 3. Tampilkan Lottie Dialog dan tunggu sampai selesai (2 detik)
-                // isFree = false karena ini adalah pembayaran QRIS
+              paymentSuccess: (ticketData) async {
                 await PaymentDialogHelpers.showSuccessLottie(context, false);
+                if (!context.mounted) return;
 
-                // 4. Tutup halaman PaymentPage dan kembalikan nilai 'true' ke TransactionPage
-                // Selalu gunakan context.mounted setelah proses await
-                if (context.mounted) {
-                  context.pop(true);
-                }
+                final historyItem = HistoryItemModel.forTicketPreview(
+                  orderId: ticketData.orderId,
+                  namaOp: ticketData.namaOp,
+                  alamatOp: ticketData.alamatOp,
+                  tglTrx: ticketData.tanggalTransaksi,
+                  jenisTarif: ticketData.jenisTarif,
+                  kredit: ticketData.credit,
+                  encUrl: ticketData.encUrl,
+                );
+
+                await showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (dialogContext) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      child: Center(
+                        child: PbPreviewTicketWidget(
+                          item: historyItem, // 🚀 Masukkan hasil mapping
+                          isPrinterReady: true,
+                          okPressed: () {
+                            Navigator.of(dialogContext).pop();
+                            if (context.mounted) context.pop(true);
+                          },
+                          printPressed: () {
+                            /* Cetak */
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             );
           },

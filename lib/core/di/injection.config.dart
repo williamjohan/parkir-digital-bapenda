@@ -104,8 +104,6 @@ import '../../features/jadwal/domain/repositories/i_jadwal_repositories.dart'
     as _i394;
 import '../../features/jadwal/domain/usecases/jadwal_usecase.dart' as _i853;
 import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart' as _i367;
-import '../../features/payment/data/datasources/payment_remote_datasource.dart'
-    as _i247;
 import '../../features/payment/data/datasources/qris_signalr_datasource.dart'
     as _i57;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
@@ -296,9 +294,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i394.IJadwalRepository>(
     () => _i1061.JadwalRepositoryImpl(gh<_i595.IJadwalRemoteDataSource>()),
-  );
-  gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
-    () => _i247.PaymentRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i819.GetDaftarNopUsecase>(
     () => _i819.GetDaftarNopUsecase(gh<_i849.DaftarNopRepository>()),
