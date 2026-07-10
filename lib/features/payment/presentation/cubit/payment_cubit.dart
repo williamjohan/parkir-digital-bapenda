@@ -12,7 +12,8 @@ class PaymentCubit extends Cubit<PaymentState> {
   final QrisUsecase _qrisUsecase;
   final PaymentUseCase _paymentUsecase;
 
-  StreamSubscription<String>? _signalRSubscription;
+  //  PERBAIKAN: Gunakan var atau spesifikkan tipenya (bukan String lagi)
+  StreamSubscription? _signalRSubscription;
 
   PaymentCubit(this._qrisUsecase, this._paymentUsecase)
     : super(const PaymentState.initial());
@@ -56,10 +57,6 @@ class PaymentCubit extends Cubit<PaymentState> {
           return;
         }
 
-        // UNTUK TESTING //
-        // const String simulatedKodeQris = '';
-        //---------------//
-
         String simulatedKodeQris = qrisEntity.kodeQris;
 
         // 1. Tampilkan UI
@@ -70,12 +67,11 @@ class PaymentCubit extends Cubit<PaymentState> {
           ),
         );
 
-        // 2.  LAYER PERTAHANAN: Evaluasi kelayakan SignalR
-        // HANYA eksekusi SignalR jika kodeQris benar-benar ada isinya
+        // 2. LAYER PERTAHANAN: Evaluasi kelayakan SignalR
         if (simulatedKodeQris.trim().isNotEmpty) {
           await _setupSignalR(qrisEntity.kodeQris);
         } else {
-          ();
+          // Log opsional jika kodeQris kosong
         }
       },
     );
@@ -84,40 +80,42 @@ class PaymentCubit extends Cubit<PaymentState> {
   Future<void> _setupSignalR(String kodeQris) async {
     await _signalRSubscription?.cancel();
 
-    // 1. Dengarkan stream
-    _signalRSubscription = _paymentUsecase.statusStream.listen((status) {
+    //  PERBAIKAN: Dengarkan stream yang me-return Either
+    _signalRSubscription = _paymentUsecase.statusStream.listen((result) {
       if (isClosed) return;
 
-      if (status == "LUNAS") {
-        emit(const PaymentState.paymentSuccess());
-      } else if (status == "TIMEOUT") {
-        emit(
-          const PaymentState.error(
-            message: 'Waktu pembayaran habis (Silahkan Ulangi).',
-          ),
-        );
-      } else if (status == "ERROR") {
-        emit(
-          const PaymentState.error(
-            message: 'Terjadi gangguan pada sistem pembayaran.',
-          ),
-        );
-      }
+      // Extract isi dari Either
+      result.fold(
+        (failure) {
+          if (failure.message == "TIMEOUT") {
+            emit(
+              const PaymentState.error(
+                message: 'Waktu pembayaran habis (Silahkan Ulangi).',
+              ),
+            );
+          } else {
+            emit(PaymentState.error(message: failure.message));
+          }
+        },
+        (ticketData) {
+          // 🚀 SUKSES: Lemparkan entity ke UI
+          emit(PaymentState.paymentSuccess(ticketData: ticketData));
+        },
+      );
     });
 
-    // 2.  EKSEKUSI CONNECT DENGAN EITHER
+    // 3. EKSEKUSI CONNECT DENGAN EITHER
     final connectResult = await _paymentUsecase.connect(kodeQris);
 
     if (isClosed) return;
 
     connectResult.fold(
       (failure) {
-        // Jika sejak awal gagal connect (misal Jukir no signal),
-        // tampilkan error, tapi UI masih bisa menampilkan QRIS lokal untuk di-scan manual
+        // Gagal terhubung di awal
         emit(PaymentState.error(message: failure.message));
       },
       (_) {
-        // Sukses terhubung, biarkan listener Stream yang bekerja selanjutnya
+        // Sukses terhubung, biarkan listener Stream yang bekerja
       },
     );
   }
@@ -125,7 +123,6 @@ class PaymentCubit extends Cubit<PaymentState> {
   @override
   Future<void> close() async {
     await _signalRSubscription?.cancel();
-    //  Putus koneksi dengan aman via Usecase
     await _paymentUsecase.disconnect();
     return super.close();
   }

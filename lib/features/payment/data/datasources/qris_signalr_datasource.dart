@@ -3,15 +3,21 @@ import 'package:injectable/injectable.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 import '../../../../core/utils/app_logger.dart';
 
+class SignalREvent {
+  final String status;
+  final Map<String, dynamic>? payload;
+  SignalREvent(this.status, {this.payload});
+}
+
 @lazySingleton
 class QrisSignalRDatasource {
   HubConnection? _connection;
 
-  StreamController<String>? _statusController;
+  StreamController<SignalREvent>? _statusController;
   String? _activeKodeQris;
 
-  Stream<String> get qrisStatusStream {
-    _statusController ??= StreamController<String>.broadcast();
+  Stream<SignalREvent> get qrisStatusStream {
+    _statusController ??= StreamController<SignalREvent>.broadcast();
     return _statusController!.stream;
   }
 
@@ -35,7 +41,8 @@ class QrisSignalRDatasource {
       await _joinGroup(kodeQris);
     } catch (e) {
       AppLogger.error('🚨 [SignalR] Gagal connect: $e');
-      _statusController?.add("ERROR");
+      // esuaikan pemanggilan error
+      _statusController?.add(SignalREvent("ERROR"));
     }
   }
 
@@ -54,7 +61,24 @@ class QrisSignalRDatasource {
   void _registerListeners() {
     _connection?.on("QRIS_LUNAS", (arguments) {
       AppLogger.debug('💰 [SignalR] QRIS_LUNAS — args: $arguments');
-      _statusController?.add("LUNAS");
+
+      //  TANGKAP DAN PARSING PAYLOAD DENGAN AMAN
+      if (arguments != null && arguments.isNotEmpty) {
+        try {
+          // Parsing aman dari dynamic ke String untuk key-nya
+          final rawPayload = arguments[0] as Map<dynamic, dynamic>;
+          final safePayload = rawPayload.map(
+            (key, value) => MapEntry(key.toString(), value),
+          );
+
+          _statusController?.add(SignalREvent("LUNAS", payload: safePayload));
+        } catch (e) {
+          AppLogger.error('🚨 Gagal parsing payload LUNAS: $e');
+          _statusController?.add(SignalREvent("LUNAS")); // Fallback aman
+        }
+      } else {
+        _statusController?.add(SignalREvent("LUNAS"));
+      }
     });
 
     _connection?.on("QRIS_PENDING", (arguments) {
@@ -63,10 +87,9 @@ class QrisSignalRDatasource {
 
     _connection?.on("QRIS_TIMEOUT", (arguments) {
       AppLogger.debug('⏰ [SignalR] QRIS_TIMEOUT — args: $arguments');
-      _statusController?.add("TIMEOUT");
+      _statusController?.add(SignalREvent("TIMEOUT")); // 🚀 Sesuaikan
     });
 
-    // Error handles BE problem (Filter False Alarm tetap dipertahankan)
     _connection?.on("QRIS_ERROR", (arguments) {
       AppLogger.debug('❌ [SignalR] QRIS_ERROR — args: $arguments');
       try {
@@ -82,7 +105,7 @@ class QrisSignalRDatasource {
       } catch (e) {
         AppLogger.error('Gagal parsing error payload: $e');
       }
-      _statusController?.add("ERROR");
+      _statusController?.add(SignalREvent("ERROR")); // 🚀 Sesuaikan
     });
 
     _connection?.onreconnected(({connectionId}) async {

@@ -25,7 +25,7 @@ mixin _$PaymentState {
     localQrisReady,
     required TResult Function(String rawQrisString) demoQrisReady,
     required TResult Function(String message) error,
-    required TResult Function() paymentSuccess,
+    required TResult Function(PaymentSuccessEntity ticketData) paymentSuccess,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -34,7 +34,7 @@ mixin _$PaymentState {
     TResult? Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult? Function(String rawQrisString)? demoQrisReady,
     TResult? Function(String message)? error,
-    TResult? Function()? paymentSuccess,
+    TResult? Function(PaymentSuccessEntity ticketData)? paymentSuccess,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -43,7 +43,7 @@ mixin _$PaymentState {
     TResult Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult Function(String rawQrisString)? demoQrisReady,
     TResult Function(String message)? error,
-    TResult Function()? paymentSuccess,
+    TResult Function(PaymentSuccessEntity ticketData)? paymentSuccess,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -147,7 +147,7 @@ class _$InitialImpl implements _Initial {
     localQrisReady,
     required TResult Function(String rawQrisString) demoQrisReady,
     required TResult Function(String message) error,
-    required TResult Function() paymentSuccess,
+    required TResult Function(PaymentSuccessEntity ticketData) paymentSuccess,
   }) {
     return initial();
   }
@@ -160,7 +160,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult? Function(String rawQrisString)? demoQrisReady,
     TResult? Function(String message)? error,
-    TResult? Function()? paymentSuccess,
+    TResult? Function(PaymentSuccessEntity ticketData)? paymentSuccess,
   }) {
     return initial?.call();
   }
@@ -173,7 +173,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult Function(String rawQrisString)? demoQrisReady,
     TResult Function(String message)? error,
-    TResult Function()? paymentSuccess,
+    TResult Function(PaymentSuccessEntity ticketData)? paymentSuccess,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -279,7 +279,7 @@ class _$LoadingImpl implements _Loading {
     localQrisReady,
     required TResult Function(String rawQrisString) demoQrisReady,
     required TResult Function(String message) error,
-    required TResult Function() paymentSuccess,
+    required TResult Function(PaymentSuccessEntity ticketData) paymentSuccess,
   }) {
     return loading();
   }
@@ -292,7 +292,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult? Function(String rawQrisString)? demoQrisReady,
     TResult? Function(String message)? error,
-    TResult? Function()? paymentSuccess,
+    TResult? Function(PaymentSuccessEntity ticketData)? paymentSuccess,
   }) {
     return loading?.call();
   }
@@ -305,7 +305,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult Function(String rawQrisString)? demoQrisReady,
     TResult Function(String message)? error,
-    TResult Function()? paymentSuccess,
+    TResult Function(PaymentSuccessEntity ticketData)? paymentSuccess,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -453,7 +453,7 @@ class _$LocalQrisReadyImpl implements _LocalQrisReady {
     localQrisReady,
     required TResult Function(String rawQrisString) demoQrisReady,
     required TResult Function(String message) error,
-    required TResult Function() paymentSuccess,
+    required TResult Function(PaymentSuccessEntity ticketData) paymentSuccess,
   }) {
     return localQrisReady(qrisImagePath, kodeQris);
   }
@@ -466,7 +466,7 @@ class _$LocalQrisReadyImpl implements _LocalQrisReady {
     TResult? Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult? Function(String rawQrisString)? demoQrisReady,
     TResult? Function(String message)? error,
-    TResult? Function()? paymentSuccess,
+    TResult? Function(PaymentSuccessEntity ticketData)? paymentSuccess,
   }) {
     return localQrisReady?.call(qrisImagePath, kodeQris);
   }
@@ -479,7 +479,7 @@ class _$LocalQrisReadyImpl implements _LocalQrisReady {
     TResult Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult Function(String rawQrisString)? demoQrisReady,
     TResult Function(String message)? error,
-    TResult Function()? paymentSuccess,
+    TResult Function(PaymentSuccessEntity ticketData)? paymentSuccess,
     required TResult orElse(),
   }) {
     if (localQrisReady != null) {
@@ -625,7 +625,7 @@ class _$DemoQrisReadyImpl implements _DemoQrisReady {
     localQrisReady,
     required TResult Function(String rawQrisString) demoQrisReady,
     required TResult Function(String message) error,
-    required TResult Function() paymentSuccess,
+    required TResult Function(PaymentSuccessEntity ticketData) paymentSuccess,
   }) {
     return demoQrisReady(rawQrisString);
   }
@@ -638,7 +638,7 @@ class _$DemoQrisReadyImpl implements _DemoQrisReady {
     TResult? Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult? Function(String rawQrisString)? demoQrisReady,
     TResult? Function(String message)? error,
-    TResult? Function()? paymentSuccess,
+    TResult? Function(PaymentSuccessEntity ticketData)? paymentSuccess,
   }) {
     return demoQrisReady?.call(rawQrisString);
   }
@@ -651,7 +651,7 @@ class _$DemoQrisReadyImpl implements _DemoQrisReady {
     TResult Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult Function(String rawQrisString)? demoQrisReady,
     TResult Function(String message)? error,
-    TResult Function()? paymentSuccess,
+    TResult Function(PaymentSuccessEntity ticketData)? paymentSuccess,
     required TResult orElse(),
   }) {
     if (demoQrisReady != null) {
@@ -793,7 +793,7 @@ class _$ErrorImpl implements _Error {
     localQrisReady,
     required TResult Function(String rawQrisString) demoQrisReady,
     required TResult Function(String message) error,
-    required TResult Function() paymentSuccess,
+    required TResult Function(PaymentSuccessEntity ticketData) paymentSuccess,
   }) {
     return error(message);
   }
@@ -806,7 +806,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult? Function(String rawQrisString)? demoQrisReady,
     TResult? Function(String message)? error,
-    TResult? Function()? paymentSuccess,
+    TResult? Function(PaymentSuccessEntity ticketData)? paymentSuccess,
   }) {
     return error?.call(message);
   }
@@ -819,7 +819,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult Function(String rawQrisString)? demoQrisReady,
     TResult Function(String message)? error,
-    TResult Function()? paymentSuccess,
+    TResult Function(PaymentSuccessEntity ticketData)? paymentSuccess,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -890,6 +890,8 @@ abstract class _$$PaymentSuccessImplCopyWith<$Res> {
     _$PaymentSuccessImpl value,
     $Res Function(_$PaymentSuccessImpl) then,
   ) = __$$PaymentSuccessImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({PaymentSuccessEntity ticketData});
 }
 
 /// @nodoc
@@ -903,26 +905,55 @@ class __$$PaymentSuccessImplCopyWithImpl<$Res>
 
   /// Create a copy of PaymentState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? ticketData = null}) {
+    return _then(
+      _$PaymentSuccessImpl(
+        ticketData: null == ticketData
+            ? _value.ticketData
+            : ticketData // ignore: cast_nullable_to_non_nullable
+                  as PaymentSuccessEntity,
+      ),
+    );
+  }
 }
 
 /// @nodoc
 
 class _$PaymentSuccessImpl implements _PaymentSuccess {
-  const _$PaymentSuccessImpl();
+  const _$PaymentSuccessImpl({required this.ticketData});
+
+  @override
+  final PaymentSuccessEntity ticketData;
 
   @override
   String toString() {
-    return 'PaymentState.paymentSuccess()';
+    return 'PaymentState.paymentSuccess(ticketData: $ticketData)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$PaymentSuccessImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$PaymentSuccessImpl &&
+            (identical(other.ticketData, ticketData) ||
+                other.ticketData == ticketData));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, ticketData);
+
+  /// Create a copy of PaymentState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PaymentSuccessImplCopyWith<_$PaymentSuccessImpl> get copyWith =>
+      __$$PaymentSuccessImplCopyWithImpl<_$PaymentSuccessImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
@@ -933,9 +964,9 @@ class _$PaymentSuccessImpl implements _PaymentSuccess {
     localQrisReady,
     required TResult Function(String rawQrisString) demoQrisReady,
     required TResult Function(String message) error,
-    required TResult Function() paymentSuccess,
+    required TResult Function(PaymentSuccessEntity ticketData) paymentSuccess,
   }) {
-    return paymentSuccess();
+    return paymentSuccess(ticketData);
   }
 
   @override
@@ -946,9 +977,9 @@ class _$PaymentSuccessImpl implements _PaymentSuccess {
     TResult? Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult? Function(String rawQrisString)? demoQrisReady,
     TResult? Function(String message)? error,
-    TResult? Function()? paymentSuccess,
+    TResult? Function(PaymentSuccessEntity ticketData)? paymentSuccess,
   }) {
-    return paymentSuccess?.call();
+    return paymentSuccess?.call(ticketData);
   }
 
   @override
@@ -959,11 +990,11 @@ class _$PaymentSuccessImpl implements _PaymentSuccess {
     TResult Function(String qrisImagePath, String kodeQris)? localQrisReady,
     TResult Function(String rawQrisString)? demoQrisReady,
     TResult Function(String message)? error,
-    TResult Function()? paymentSuccess,
+    TResult Function(PaymentSuccessEntity ticketData)? paymentSuccess,
     required TResult orElse(),
   }) {
     if (paymentSuccess != null) {
-      return paymentSuccess();
+      return paymentSuccess(ticketData);
     }
     return orElse();
   }
@@ -1013,5 +1044,15 @@ class _$PaymentSuccessImpl implements _PaymentSuccess {
 }
 
 abstract class _PaymentSuccess implements PaymentState {
-  const factory _PaymentSuccess() = _$PaymentSuccessImpl;
+  const factory _PaymentSuccess({
+    required final PaymentSuccessEntity ticketData,
+  }) = _$PaymentSuccessImpl;
+
+  PaymentSuccessEntity get ticketData;
+
+  /// Create a copy of PaymentState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PaymentSuccessImplCopyWith<_$PaymentSuccessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

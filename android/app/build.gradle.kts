@@ -30,13 +30,18 @@ android {
     flavorDimensions += "env"
 
     productFlavors {
-        create("prod") {
+        create("jukir") {
             dimension = "env"
+            applicationIdSuffix = ".jukir"
             resValue("string", "app_name", "TS Park Jukir")
         }
         create("demo") {
             dimension = "env"
             applicationIdSuffix = ".demo"
+            resValue("string", "app_name", "TS Park Bapenda")
+        }
+        create("playstore") {
+            dimension = "env"
             resValue("string", "app_name", "TS Park Bapenda")
         }
     }

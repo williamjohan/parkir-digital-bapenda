@@ -10,8 +10,6 @@ class PbPreviewTicketWidget extends StatelessWidget {
   final VoidCallback? okPressed;
   final VoidCallback? printPressed;
   final HistoryItemModel item;
-  // final Map<String, dynamic> itemOp;
-  // 🚀 JADIKAN DEFAULT TRUE (Mencegah crash jika dipanggil dari layar jadul)
   final bool isPrinterReady;
 
   const PbPreviewTicketWidget({
@@ -19,7 +17,7 @@ class PbPreviewTicketWidget extends StatelessWidget {
     required this.okPressed,
     required this.printPressed,
     required this.item,
-    required this.isPrinterReady, // 🚀 UBAH DI SINI
+    required this.isPrinterReady,
   });
 
   @override

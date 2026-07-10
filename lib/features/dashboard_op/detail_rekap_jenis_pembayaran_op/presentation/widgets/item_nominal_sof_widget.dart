@@ -20,13 +20,25 @@ class ItemNominalSofWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDisabled = nominal == 0 || jumlah == 0;
+
+    final Color primaryColor = isDisabled
+        ? Colors.grey
+        : (isMotor ? Colors.teal.shade600 : Colors.blue.shade700);
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isMotor
-            ? Colors.teal.shade600.withValues(alpha: 0.1)
-            : Colors.blue.shade700.withValues(alpha: 0.1),
-        border: Border.all(color: borderColor.withValues(alpha: 0.4)),
+        color: isDisabled
+            ? Colors.grey.withValues(alpha: 0.08)
+            : (isMotor
+                  ? Colors.teal.shade600.withValues(alpha: 0.1)
+                  : Colors.blue.shade700.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: isDisabled
+              ? Colors.grey.withValues(alpha: 0.3)
+              : borderColor.withValues(alpha: 0.4),
+        ),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -35,23 +47,26 @@ class ItemNominalSofWidget extends StatelessWidget {
           Text(
             isMotor ? 'Motor' : 'Mobil',
             style: AppTypography.caption.copyWith(
-              color: AppColors.textSecondary,
+              color: isDisabled ? AppColors.disabled : AppColors.textSecondary,
             ),
           ),
-          Text(CurrencyFormatter.toIdr(nominal), style: AppTypography.heading4),
+          Text(
+            CurrencyFormatter.toIdr(nominal),
+            style: AppTypography.heading4.copyWith(
+              color: isDisabled ? AppColors.disabled : AppColors.textPrimary,
+            ),
+          ),
           Row(
             children: [
               Icon(
                 isMotor ? Icons.two_wheeler : Icons.directions_car,
                 size: 20,
-                color: isMotor ? Colors.teal.shade600 : Colors.blue.shade700,
+                color: primaryColor,
               ),
               const SizedBox(width: 4),
               Text(
                 jumlah.toString(),
-                style: AppTypography.bodySemiBold.copyWith(
-                  color: isMotor ? Colors.teal.shade600 : Colors.blue.shade700,
-                ),
+                style: AppTypography.bodySemiBold.copyWith(color: primaryColor),
               ),
             ],
           ),

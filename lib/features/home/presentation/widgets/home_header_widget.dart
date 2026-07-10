@@ -50,8 +50,9 @@ class HomeHeaderWidget extends StatelessWidget {
                       "Hallo, $namaJukir !",
                       style: AppTypography.heading1.copyWith(
                         color: Colors.white,
+                        fontSize: 15,
                       ),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../domain/entities/payment_success_entity.dart'; // 🚀 IMPORT ENTITY
 
 part 'payment_state.freezed.dart';
 
@@ -8,16 +9,19 @@ class PaymentState with _$PaymentState {
 
   const factory PaymentState.loading() = _Loading;
 
-  ///  STATE 1: Khusus Jukir (Membawa path file SQLite dan kodeQris)
+  /// STATE 1: Khusus Jukir (Membawa path file SecuredStorage dan kodeQris)
   const factory PaymentState.localQrisReady({
     required String qrisImagePath,
     required String kodeQris,
   }) = _LocalQrisReady;
 
-  ///  STATE 2: Khusus Bapenda Demo (Membawa string mentah QRIS)
+  /// STATE 2: Khusus Bapenda Demo (Membawa string mentah QRIS)
   const factory PaymentState.demoQrisReady({required String rawQrisString}) =
       _DemoQrisReady;
 
   const factory PaymentState.error({required String message}) = _Error;
-  const factory PaymentState.paymentSuccess() = _PaymentSuccess;
+
+  const factory PaymentState.paymentSuccess({
+    required PaymentSuccessEntity ticketData,
+  }) = _PaymentSuccess;
 }

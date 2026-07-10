@@ -14,6 +14,13 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": ["--flavor", "prod"]
+        },
+        {
+            "name": "📱 Debug: TS Park (PLAYSTORE)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": ["--flavor", "playstore"]
         }
     ]
 }
