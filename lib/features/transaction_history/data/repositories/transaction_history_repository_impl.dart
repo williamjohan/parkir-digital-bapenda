@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/data/models/sof_summary_model.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../domain/repositories/i_transaction_history_repository.dart';
@@ -38,6 +39,28 @@ class TransactionHistoryRepositoryImpl
       if (e is ServerException) {
         return Left(ServerFailure(e.message));
       }
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<SofSummaryModel>>> getSofBreakdown({
+    required String nop,
+    required DateTime startDate,
+    required DateTime endDate,
+    required int jenisKendaraan,
+  }) async {
+    try {
+      final result = await _remoteDataSource.getSofBreakdown(
+        nop: nop,
+        startDate: startDate,
+        endDate: endDate,
+        jenisKendaraan: jenisKendaraan
+      );
+      return Right(result);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
   }

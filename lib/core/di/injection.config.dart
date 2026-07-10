@@ -166,6 +166,8 @@ import '../../features/transaction_history/data/repositories/transaction_history
     as _i19;
 import '../../features/transaction_history/domain/repositories/i_transaction_history_repository.dart'
     as _i502;
+import '../../features/transaction_history/domain/usecases/get_sof_usecase.dart'
+    as _i259;
 import '../../features/transaction_history/domain/usecases/get_transaction_history_usecase.dart'
     as _i732;
 import '../../features/transaction_history/presentation/cubit/transaction_history_cubit.dart'
@@ -438,6 +440,10 @@ _i174.GetIt init(
       gh<_i502.ITransactionHistoryRepository>(),
     ),
   );
+  gh.lazySingleton<_i259.GetSofBreakdownUseCase>(
+    () =>
+        _i259.GetSofBreakdownUseCase(gh<_i502.ITransactionHistoryRepository>()),
+  );
   gh.lazySingleton<_i437.AddPengawasanUsecase>(
     () => _i437.AddPengawasanUsecase(gh<_i165.PengawasanRepository>()),
   );
@@ -459,6 +465,13 @@ _i174.GetIt init(
   gh.factory<_i1069.RealisasiCubit>(
     () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
   );
+  gh.factory<_i753.TransactionHistoryCubit>(
+    () => _i753.TransactionHistoryCubit(
+      gh<_i732.GetTransactionHistoryUseCase>(),
+      gh<_i259.GetSofBreakdownUseCase>(),
+      gh<_i1015.ISecureStorageManager>(),
+    ),
+  );
   gh.lazySingleton<_i708.AbsensiUsecase>(
     () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
   );
@@ -476,12 +489,6 @@ _i174.GetIt init(
   );
   gh.factory<_i875.AbsensiCubit>(
     () => _i875.AbsensiCubit(gh<_i708.AbsensiUsecase>()),
-  );
-  gh.factory<_i753.TransactionHistoryCubit>(
-    () => _i753.TransactionHistoryCubit(
-      gh<_i732.GetTransactionHistoryUseCase>(),
-      gh<_i1015.ISecureStorageManager>(),
-    ),
   );
   gh.lazySingleton<_i207.HomeUsecase>(
     () => _i207.HomeUsecase(
