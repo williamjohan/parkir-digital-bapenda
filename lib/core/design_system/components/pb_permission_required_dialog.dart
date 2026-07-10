@@ -52,7 +52,7 @@ class PermissionRequiredDialog extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 34,
-              backgroundColor: AppColors.primary.withOpacity(.08),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.08),
               child: Icon(icon, size: 36, color: AppColors.primary),
             ),
             const SizedBox(height: 20),
@@ -75,7 +75,12 @@ class PermissionRequiredDialog extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text("Nanti", style: AppTypography.bodyRegular.copyWith(color: AppColors.primary),),
+                    child: Text(
+                      "Nanti",
+                      style: AppTypography.bodyRegular.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -90,7 +95,12 @@ class PermissionRequiredDialog extends StatelessWidget {
                         openAppSettings();
                       }
                     },
-                    child: Text(confirmText, style: AppTypography.bodyRegular.copyWith(color: AppColors.primary),),
+                    child: Text(
+                      confirmText,
+                      style: AppTypography.bodyRegular.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
                   ),
                 ),
               ],
