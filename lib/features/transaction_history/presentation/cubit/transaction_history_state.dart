@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/data/models/sof_summary_model.dart';
 import '../../data/models/history_item_model.dart';
 
 abstract class TransactionHistoryState extends Equatable {
@@ -15,6 +16,7 @@ class TransactionHistoryLoading extends TransactionHistoryState {}
 class TransactionHistoryLoaded extends TransactionHistoryState {
   final List<HistoryItemModel> allTransactions;
   final List<HistoryItemModel> filteredTransactions;
+  final List<SofSummaryModel> sofDetailList;
   final DateTime startDate;
   final DateTime endDate;
   final String selectedKategori;
@@ -36,6 +38,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
   final bool hasReachedMax;
   final bool isLoadingMore;
   final bool isFilterLoading;
+  final bool isSofPanelLoading;
 
   const TransactionHistoryLoaded({
     required this.allTransactions,
@@ -59,11 +62,14 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     this.hasReachedMax = false,
     this.isLoadingMore = false,
     this.isFilterLoading = false,
+    this.sofDetailList = const [],
+    this.isSofPanelLoading = false,
   });
 
   TransactionHistoryLoaded copyWith({
     List<HistoryItemModel>? allTransactions,
     List<HistoryItemModel>? filteredTransactions,
+    List<SofSummaryModel>? sofDetailList,
     DateTime? startDate,
     DateTime? endDate,
     String? selectedKategori,
@@ -83,6 +89,7 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     bool? hasReachedMax,
     bool? isLoadingMore,
     bool? isFilterLoading,
+    bool? isSofPanelLoading,
   }) {
     return TransactionHistoryLoaded(
       allTransactions: allTransactions ?? this.allTransactions,
@@ -106,6 +113,8 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       isFilterLoading: isFilterLoading ?? this.isFilterLoading,
+      sofDetailList: sofDetailList ?? this.sofDetailList,
+      isSofPanelLoading: isSofPanelLoading ?? this.isSofPanelLoading,
     );
   }
 
@@ -135,6 +144,8 @@ class TransactionHistoryLoaded extends TransactionHistoryState {
     hasReachedMax,
     isLoadingMore,
     isFilterLoading,
+    sofDetailList,
+    isSofPanelLoading,
   ];
 }
 

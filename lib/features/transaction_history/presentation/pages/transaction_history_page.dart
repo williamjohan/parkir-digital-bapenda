@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/sof_breakdown_panel_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
@@ -33,8 +34,10 @@ class TransactionHistoryPage extends StatefulWidget {
   State<TransactionHistoryPage> createState() => _TransactionHistoryPageState();
 }
 
-class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
+class _TransactionHistoryPageState extends State<TransactionHistoryPage>
+    with SingleTickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
+  late final AnimationController _sofPanelController;
 
   bool _isScrolledPastRecap = false;
   bool _showOverlayRecap = false;
@@ -95,6 +98,11 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       59,
       59,
     );
+    _sofPanelController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+      value: 0,
+    );
 
     context.read<TransactionHistoryCubit>().fetchHistory(
       _startDate,
@@ -121,6 +129,31 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _sofPanelController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _openSofPanel(TransactionHistoryState state) {
+    final isFirstOpen =
+        _sofPanelController.value < 0.5 &&
+        state is TransactionHistoryLoaded &&
+        state.sofDetailList.isEmpty;
+    _sofPanelController.animateTo(1, curve: Curves.easeOut);
+    if (isFirstOpen) {
+      context.read<TransactionHistoryCubit>().fetchSofBreakdown();
+    }
+  }
+
+  void _closeSofPanel() =>
+      _sofPanelController.animateTo(0, curve: Curves.easeOut);
+
+  void _toggleSofPanel(TransactionHistoryState state) {
+    _sofPanelController.value > 0.5 ? _closeSofPanel() : _openSofPanel(state);
   }
 
   @override
@@ -205,11 +238,100 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                                 );
                           },
                     ),
-                    if (state is TransactionHistoryLoaded && widget.nop != null)
+                    if (state is TransactionHistoryLoaded)
                       _buildFilterSection(state),
-                    Expanded(child: _buildScrollContent(state)),
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final double availableWidth = constraints.maxWidth;
+
+                          return ClipRect(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onHorizontalDragUpdate: (details) {
+                                if (state is! TransactionHistoryLoaded) return;
+                                final delta =
+                                    details.primaryDelta! / availableWidth;
+                                _sofPanelController.value =
+                                    (_sofPanelController.value + delta).clamp(
+                                      0.0,
+                                      1.0,
+                                    );
+                              },
+                              onHorizontalDragEnd: (details) {
+                                if (state is! TransactionHistoryLoaded) return;
+                                final velocity = details.primaryVelocity ?? 0;
+                                const flingThreshold = 300.0;
+                                if (velocity > flingThreshold) {
+                                  _openSofPanel(state);
+                                } else if (velocity < -flingThreshold) {
+                                  _closeSofPanel();
+                                } else if (_sofPanelController.value > 0.5) {
+                                  _openSofPanel(state);
+                                } else {
+                                  _closeSofPanel();
+                                }
+                              },
+                              child: Stack(
+                                children: [
+                                  if (state is TransactionHistoryLoaded)
+                                    AnimatedBuilder(
+                                      animation: _sofPanelController,
+                                      builder: (context, child) => Positioned(
+                                        top: 0,
+                                        bottom: 0,
+                                        left:
+                                            (_sofPanelController.value - 1) *
+                                            availableWidth,
+                                        width: availableWidth,
+                                        child: child!,
+                                      ),
+                                      child: SofBreakdownPanelWidget(
+                                        sofList: state.sofDetailList,
+                                        isLoading: state.isSofPanelLoading,
+                                        selectedKategori:
+                                            state.selectedKategori,
+                                      ),
+                                    ),
+                                  AnimatedBuilder(
+                                    animation: _sofPanelController,
+                                    builder: (context, child) => Positioned(
+                                      top: 0,
+                                      bottom: 0,
+                                      left:
+                                          _sofPanelController.value *
+                                          availableWidth,
+                                      width: availableWidth,
+                                      child: child!,
+                                    ),
+                                    child: _buildScrollContent(state),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
+                floatingActionButton: state is TransactionHistoryLoaded
+                    ? AnimatedBuilder(
+                        animation: _sofPanelController,
+                        builder: (context, _) {
+                          final isOpen = _sofPanelController.value > 0.5;
+                          return FloatingActionButton(
+                            heroTag: 'sof_panel_fab',
+                            onPressed: () => _toggleSofPanel(state),
+                            backgroundColor: AppColors.primary,
+                            child: Icon(
+                              isOpen ? Icons.close : Icons.payments_rounded,
+                              color: Colors.white,
+                            ),
+                          );
+                        },
+                      )
+                    : null,
               ),
             ),
           );
