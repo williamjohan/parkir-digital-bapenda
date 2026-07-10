@@ -238,7 +238,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
                                 );
                           },
                     ),
-                    if (state is TransactionHistoryLoaded && widget.nop != null)
+                    if (state is TransactionHistoryLoaded)
                       _buildFilterSection(state),
                     Expanded(
                       child: LayoutBuilder(
