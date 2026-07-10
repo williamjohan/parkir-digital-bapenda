@@ -22,6 +22,10 @@ class DashboardOpResponseModel with _$DashboardOpResponseModel {
 
     required List<RiwayatPendapatanModel> riwayatList,
     required List<SofModel> sofList,
+
+    required int tarifMotor,
+    required int tarifMobil,
+    required String jadwalOperasional,
   }) = _DashboardOpResponseModel;
 
   factory DashboardOpResponseModel.fromJson(Map<String, dynamic> json) =>

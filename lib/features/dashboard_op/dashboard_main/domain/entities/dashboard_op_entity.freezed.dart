@@ -32,6 +32,9 @@ mixin _$DashboardOpEntity {
   List<RiwayatPendapatanEntity> get riwayatList =>
       throw _privateConstructorUsedError;
   List<SofEntity> get sofList => throw _privateConstructorUsedError;
+  int get tarifMotor => throw _privateConstructorUsedError;
+  int get tarifMobil => throw _privateConstructorUsedError;
+  String get jadwalOperasional => throw _privateConstructorUsedError;
 
   /// Create a copy of DashboardOpEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -60,6 +63,9 @@ abstract class $DashboardOpEntityCopyWith<$Res> {
     RealisasiTahunIniEntity realisasiTahunIni,
     List<RiwayatPendapatanEntity> riwayatList,
     List<SofEntity> sofList,
+    int tarifMotor,
+    int tarifMobil,
+    String jadwalOperasional,
   });
 
   $RealisasiTahunIniEntityCopyWith<$Res> get realisasiTahunIni;
@@ -92,6 +98,9 @@ class _$DashboardOpEntityCopyWithImpl<$Res, $Val extends DashboardOpEntity>
     Object? realisasiTahunIni = null,
     Object? riwayatList = null,
     Object? sofList = null,
+    Object? tarifMotor = null,
+    Object? tarifMobil = null,
+    Object? jadwalOperasional = null,
   }) {
     return _then(
       _value.copyWith(
@@ -145,6 +154,18 @@ class _$DashboardOpEntityCopyWithImpl<$Res, $Val extends DashboardOpEntity>
                 ? _value.sofList
                 : sofList // ignore: cast_nullable_to_non_nullable
                       as List<SofEntity>,
+            tarifMotor: null == tarifMotor
+                ? _value.tarifMotor
+                : tarifMotor // ignore: cast_nullable_to_non_nullable
+                      as int,
+            tarifMobil: null == tarifMobil
+                ? _value.tarifMobil
+                : tarifMobil // ignore: cast_nullable_to_non_nullable
+                      as int,
+            jadwalOperasional: null == jadwalOperasional
+                ? _value.jadwalOperasional
+                : jadwalOperasional // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -185,6 +206,9 @@ abstract class _$$DashboardOpEntityImplCopyWith<$Res>
     RealisasiTahunIniEntity realisasiTahunIni,
     List<RiwayatPendapatanEntity> riwayatList,
     List<SofEntity> sofList,
+    int tarifMotor,
+    int tarifMobil,
+    String jadwalOperasional,
   });
 
   @override
@@ -217,6 +241,9 @@ class __$$DashboardOpEntityImplCopyWithImpl<$Res>
     Object? realisasiTahunIni = null,
     Object? riwayatList = null,
     Object? sofList = null,
+    Object? tarifMotor = null,
+    Object? tarifMobil = null,
+    Object? jadwalOperasional = null,
   }) {
     return _then(
       _$DashboardOpEntityImpl(
@@ -269,6 +296,18 @@ class __$$DashboardOpEntityImplCopyWithImpl<$Res>
             ? _value._sofList
             : sofList // ignore: cast_nullable_to_non_nullable
                   as List<SofEntity>,
+        tarifMotor: null == tarifMotor
+            ? _value.tarifMotor
+            : tarifMotor // ignore: cast_nullable_to_non_nullable
+                  as int,
+        tarifMobil: null == tarifMobil
+            ? _value.tarifMobil
+            : tarifMobil // ignore: cast_nullable_to_non_nullable
+                  as int,
+        jadwalOperasional: null == jadwalOperasional
+            ? _value.jadwalOperasional
+            : jadwalOperasional // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -290,6 +329,9 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
     required this.realisasiTahunIni,
     required final List<RiwayatPendapatanEntity> riwayatList,
     required final List<SofEntity> sofList,
+    required this.tarifMotor,
+    required this.tarifMobil,
+    required this.jadwalOperasional,
   }) : _riwayatList = riwayatList,
        _sofList = sofList;
 
@@ -330,8 +372,15 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
   }
 
   @override
+  final int tarifMotor;
+  @override
+  final int tarifMobil;
+  @override
+  final String jadwalOperasional;
+
+  @override
   String toString() {
-    return 'DashboardOpEntity(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList)';
+    return 'DashboardOpEntity(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList, tarifMotor: $tarifMotor, tarifMobil: $tarifMobil, jadwalOperasional: $jadwalOperasional)';
   }
 
   @override
@@ -371,7 +420,13 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
               other._riwayatList,
               _riwayatList,
             ) &&
-            const DeepCollectionEquality().equals(other._sofList, _sofList));
+            const DeepCollectionEquality().equals(other._sofList, _sofList) &&
+            (identical(other.tarifMotor, tarifMotor) ||
+                other.tarifMotor == tarifMotor) &&
+            (identical(other.tarifMobil, tarifMobil) ||
+                other.tarifMobil == tarifMobil) &&
+            (identical(other.jadwalOperasional, jadwalOperasional) ||
+                other.jadwalOperasional == jadwalOperasional));
   }
 
   @override
@@ -389,6 +444,9 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
     realisasiTahunIni,
     const DeepCollectionEquality().hash(_riwayatList),
     const DeepCollectionEquality().hash(_sofList),
+    tarifMotor,
+    tarifMobil,
+    jadwalOperasional,
   );
 
   /// Create a copy of DashboardOpEntity
@@ -417,6 +475,9 @@ abstract class _DashboardOpEntity implements DashboardOpEntity {
     required final RealisasiTahunIniEntity realisasiTahunIni,
     required final List<RiwayatPendapatanEntity> riwayatList,
     required final List<SofEntity> sofList,
+    required final int tarifMotor,
+    required final int tarifMobil,
+    required final String jadwalOperasional,
   }) = _$DashboardOpEntityImpl;
 
   @override
@@ -443,6 +504,12 @@ abstract class _DashboardOpEntity implements DashboardOpEntity {
   List<RiwayatPendapatanEntity> get riwayatList;
   @override
   List<SofEntity> get sofList;
+  @override
+  int get tarifMotor;
+  @override
+  int get tarifMobil;
+  @override
+  String get jadwalOperasional;
 
   /// Create a copy of DashboardOpEntity
   /// with the given fields replaced by the non-null parameter values.

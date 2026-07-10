@@ -29,6 +29,9 @@ _$DashboardOpResponseModelImpl _$$DashboardOpResponseModelImplFromJson(
   sofList: (json['sofList'] as List<dynamic>)
       .map((e) => SofModel.fromJson(e as Map<String, dynamic>))
       .toList(),
+  tarifMotor: (json['tarifMotor'] as num).toInt(),
+  tarifMobil: (json['tarifMobil'] as num).toInt(),
+  jadwalOperasional: json['jadwalOperasional'] as String,
 );
 
 Map<String, dynamic> _$$DashboardOpResponseModelImplToJson(
@@ -47,6 +50,9 @@ Map<String, dynamic> _$$DashboardOpResponseModelImplToJson(
   'realisasiTahunIni': instance.realisasiTahunIni,
   'riwayatList': instance.riwayatList,
   'sofList': instance.sofList,
+  'tarifMotor': instance.tarifMotor,
+  'tarifMobil': instance.tarifMobil,
+  'jadwalOperasional': instance.jadwalOperasional,
 };
 
 _$RealisasiTahunIniModelImpl _$$RealisasiTahunIniModelImplFromJson(

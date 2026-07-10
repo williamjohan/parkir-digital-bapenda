@@ -21,6 +21,10 @@ class DashboardOpEntity with _$DashboardOpEntity {
 
     required List<RiwayatPendapatanEntity> riwayatList,
     required List<SofEntity> sofList,
+
+    required int tarifMotor,
+    required int tarifMobil,
+    required String jadwalOperasional,
   }) = _DashboardOpEntity;
 }
 
