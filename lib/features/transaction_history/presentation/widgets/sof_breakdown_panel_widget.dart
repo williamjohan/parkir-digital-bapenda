@@ -1,5 +1,6 @@
 // presentation/widgets/sof_breakdown_panel_widget.dart
 import 'package:flutter/material.dart';
+import 'package:parkir_digital_bapenda/core/utils/number_formatter.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_ui_extension.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -65,7 +66,7 @@ class SofBreakdownPanelWidget extends StatelessWidget {
                             height: 300,
                             child: Center(
                               child: Text(
-                                'Belum ada data',
+                                'Belum ada rekap jenis pembayaran',
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.textHint,
                                 ),
@@ -96,7 +97,6 @@ class SofBreakdownPanelWidget extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _SofMethodCard extends StatelessWidget {
@@ -255,7 +255,7 @@ class _VehicleMiniCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '${count}x',
+            '${NumberFormatter.format(count)}x',
             style: AppTypography.bodySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: AppColors.textPrimary,
@@ -297,10 +297,10 @@ class _SofPlaceholderCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Expanded(child: _MiniPlaceholder()),
               SizedBox(width: 8),

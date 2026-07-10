@@ -435,14 +435,14 @@ _i174.GetIt init(
   gh.factory<_i402.DataJukirCubit>(
     () => _i402.DataJukirCubit(gh<_i254.GetDataJukirUseCase>()),
   );
+  gh.lazySingleton<_i259.GetSofBreakdownUseCase>(
+    () =>
+        _i259.GetSofBreakdownUseCase(gh<_i502.ITransactionHistoryRepository>()),
+  );
   gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
     () => _i732.GetTransactionHistoryUseCase(
       gh<_i502.ITransactionHistoryRepository>(),
     ),
-  );
-  gh.lazySingleton<_i259.GetSofBreakdownUseCase>(
-    () =>
-        _i259.GetSofBreakdownUseCase(gh<_i502.ITransactionHistoryRepository>()),
   );
   gh.lazySingleton<_i437.AddPengawasanUsecase>(
     () => _i437.AddPengawasanUsecase(gh<_i165.PengawasanRepository>()),
