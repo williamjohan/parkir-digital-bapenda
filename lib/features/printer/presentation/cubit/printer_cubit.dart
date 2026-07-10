@@ -1,6 +1,5 @@
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/services/printer/i_printer_service.dart';
@@ -22,20 +21,31 @@ class PrinterCubit extends Cubit<PrinterState> {
   // =========================================================================
   // 🚀 METHOD MANDIRI: Cek & Minta Permission dari Mana Saja (Termasuk Drawer)
   // =========================================================================
-  Future<bool> checkAndRequestPermissions(BuildContext context) async {
+  // 🚀 PERBAIKAN: Hapus parameter BuildContext
+  Future<bool> checkAndRequestPermissions() async {
     final currentState = state;
     try {
-      final granted = await PermissionUtils.requestBluetoothPermission(context);
+      final status = await PermissionUtils.requestBluetoothPermission();
 
-      if (!granted) {
-        AppLogger.error("Permission Bluetooth ditolak.");
-        emit(PrinterError("Permission Bluetooth belum diberikan."));
+      if (status == BluetoothPermissionStatus.granted) {
+        AppLogger.debug("Permission granted via checkAndRequestPermissions");
+        return true;
+      }
+
+      if (status == BluetoothPermissionStatus.permanentlyDenied) {
+        AppLogger.error("Permission Bluetooth ditolak permanen.");
+        emit(
+          PrinterPermissionRequiresAction(),
+        ); // 🚀 Emit state khusus untuk memanggil Dialog
         _restoreLoadedState(currentState);
         return false;
       }
 
-      AppLogger.debug("Permission granted via checkAndRequestPermissions");
-      return true;
+      // Jika ditolak biasa / error
+      AppLogger.error("Permission Bluetooth ditolak.");
+      emit(PrinterError("Permission Bluetooth belum diberikan."));
+      _restoreLoadedState(currentState);
+      return false;
     } catch (e, stackTrace) {
       AppLogger.error("Gagal mengecek permission", e, stackTrace);
       emit(PrinterError("Gagal memeriksa izin perangkat."));
@@ -47,7 +57,7 @@ class PrinterCubit extends Cubit<PrinterState> {
   // =========================================================================
   // 🖨️ METHOD: Scan Devices (Menjadi lebih ringkas dan bersih)
   // =========================================================================
-  Future<void> scanDevices(BuildContext context) async {
+  Future<void> scanDevices() async {
     final currentState = state;
 
     AppLogger.debug("========== SCAN DEVICES ==========");
@@ -66,7 +76,7 @@ class PrinterCubit extends Cubit<PrinterState> {
 
     try {
       // 🔄 Menggunakan fungsi cek permission mandiri
-      final granted = await checkAndRequestPermissions(context);
+      final granted = await checkAndRequestPermissions();
       if (!granted) return; // Berhenti jika tidak diizinkan
 
       // Cek apakah Bluetooth HP Aktif
@@ -142,15 +152,12 @@ class PrinterCubit extends Cubit<PrinterState> {
   // =========================================================================
   // 🖨️ METHOD: Manual Print Receipt (Tombol cetak karcis di halaman riwayat)
   // =========================================================================
-  Future<bool> printReceipt(
-    BuildContext context,
-    HistoryItemModel transaction,
-  ) async {
+  Future<bool> printReceipt(HistoryItemModel transaction) async {
     final currentState = state;
 
     try {
       // 🔄 Menggunakan fungsi cek permission mandiri
-      final granted = await checkAndRequestPermissions(context);
+      final granted = await checkAndRequestPermissions();
       if (!granted) return false; // Berhenti jika tidak diizinkan
 
       // Cek apakah Bluetooth HP Aktif

@@ -36,3 +36,12 @@ class PrinterError extends PrinterState {
   @override
   List<Object?> get props => [message, timestamp];
 }
+
+// 🚀 TAMBAHKAN STATE INI
+class PrinterPermissionRequiresAction extends PrinterState {
+  final DateTime timestamp;
+  PrinterPermissionRequiresAction() : timestamp = DateTime.now();
+
+  @override
+  List<Object?> get props => [timestamp];
+}

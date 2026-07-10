@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-
 import '../../../../../core/utils/currency_formatter.dart';
 
 class ItemNominalSofWidget extends StatelessWidget {

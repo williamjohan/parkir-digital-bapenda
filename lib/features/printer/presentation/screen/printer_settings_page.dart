@@ -1,6 +1,7 @@
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -20,7 +21,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PrinterCubit>().scanDevices(context);
+      context.read<PrinterCubit>().scanDevices();
     });
   }
 
@@ -43,8 +44,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: () =>
-                  context.read<PrinterCubit>().scanDevices(context),
+              onPressed: () => context.read<PrinterCubit>().scanDevices(),
             ),
           ],
         ),
@@ -55,6 +55,15 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                 context,
                 message: state.message,
                 isError: true,
+              );
+            }
+            // 🚀 TAMBAHKAN LISTENER INI UNTUK MENAMPILKAN DIALOG
+            else if (state is PrinterPermissionRequiresAction) {
+              PbPermissionDialog.show(
+                context,
+                title: 'Akses Izin Diperlukan',
+                description:
+                    'Anda telah menolak izin Perangkat Sekitar (Bluetooth) atau Lokasi aplikasi ini.\n\nMohon aktifkan izin tersebut secara manual melalui pengaturan aplikasi agar fitur printer dapat digunakan kembali.',
               );
             }
           },

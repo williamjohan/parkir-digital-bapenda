@@ -4,6 +4,7 @@ import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/print
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/sof_breakdown_panel_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -181,6 +182,15 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
                 context,
                 message: state.message,
                 isError: true,
+              );
+            }
+            // 🚀 TAMBAHKAN LISTENER INI UNTUK MENAMPILKAN DIALOG
+            else if (state is PrinterPermissionRequiresAction) {
+              PbPermissionDialog.show(
+                context,
+                title: 'Akses Izin Diperlukan',
+                description:
+                    'Anda telah menolak izin Perangkat Sekitar (Bluetooth) atau Lokasi aplikasi ini.\n\nMohon aktifkan izin tersebut secara manual melalui pengaturan aplikasi agar fitur printer dapat digunakan kembali.',
               );
             }
           },
@@ -476,10 +486,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
                                           // proses print di sini
                                           await context
                                               .read<PrinterCubit>()
-                                              .printReceipt(
-                                                context,
-                                                data[index],
-                                              );
+                                              .printReceipt(data[index]);
                                         },
                                       ),
                                     );

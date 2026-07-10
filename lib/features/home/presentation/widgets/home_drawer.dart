@@ -217,7 +217,7 @@ class HomeDrawer extends StatelessWidget {
 
                     // 3. Panggil fungsi cek permission menggunakan safeContext yang masih hidup
                     final isPermissionGranted = await printerCubit
-                        .checkAndRequestPermissions(safeContext);
+                        .checkAndRequestPermissions();
 
                     // 4. Jika diizinkan, jalankan navigasi ke halaman pengaturan printer
                     if (isPermissionGranted) {
