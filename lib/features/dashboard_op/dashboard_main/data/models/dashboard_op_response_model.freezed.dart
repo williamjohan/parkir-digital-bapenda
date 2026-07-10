@@ -38,6 +38,9 @@ mixin _$DashboardOpResponseModel {
   List<RiwayatPendapatanModel> get riwayatList =>
       throw _privateConstructorUsedError;
   List<SofModel> get sofList => throw _privateConstructorUsedError;
+  int get tarifMotor => throw _privateConstructorUsedError;
+  int get tarifMobil => throw _privateConstructorUsedError;
+  String get jadwalOperasional => throw _privateConstructorUsedError;
 
   /// Serializes this DashboardOpResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -69,6 +72,9 @@ abstract class $DashboardOpResponseModelCopyWith<$Res> {
     RealisasiTahunIniModel realisasiTahunIni,
     List<RiwayatPendapatanModel> riwayatList,
     List<SofModel> sofList,
+    int tarifMotor,
+    int tarifMobil,
+    String jadwalOperasional,
   });
 
   $RealisasiTahunIniModelCopyWith<$Res> get realisasiTahunIni;
@@ -104,6 +110,9 @@ class _$DashboardOpResponseModelCopyWithImpl<
     Object? realisasiTahunIni = null,
     Object? riwayatList = null,
     Object? sofList = null,
+    Object? tarifMotor = null,
+    Object? tarifMobil = null,
+    Object? jadwalOperasional = null,
   }) {
     return _then(
       _value.copyWith(
@@ -157,6 +166,18 @@ class _$DashboardOpResponseModelCopyWithImpl<
                 ? _value.sofList
                 : sofList // ignore: cast_nullable_to_non_nullable
                       as List<SofModel>,
+            tarifMotor: null == tarifMotor
+                ? _value.tarifMotor
+                : tarifMotor // ignore: cast_nullable_to_non_nullable
+                      as int,
+            tarifMobil: null == tarifMobil
+                ? _value.tarifMobil
+                : tarifMobil // ignore: cast_nullable_to_non_nullable
+                      as int,
+            jadwalOperasional: null == jadwalOperasional
+                ? _value.jadwalOperasional
+                : jadwalOperasional // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -197,6 +218,9 @@ abstract class _$$DashboardOpResponseModelImplCopyWith<$Res>
     RealisasiTahunIniModel realisasiTahunIni,
     List<RiwayatPendapatanModel> riwayatList,
     List<SofModel> sofList,
+    int tarifMotor,
+    int tarifMobil,
+    String jadwalOperasional,
   });
 
   @override
@@ -233,6 +257,9 @@ class __$$DashboardOpResponseModelImplCopyWithImpl<$Res>
     Object? realisasiTahunIni = null,
     Object? riwayatList = null,
     Object? sofList = null,
+    Object? tarifMotor = null,
+    Object? tarifMobil = null,
+    Object? jadwalOperasional = null,
   }) {
     return _then(
       _$DashboardOpResponseModelImpl(
@@ -285,6 +312,18 @@ class __$$DashboardOpResponseModelImplCopyWithImpl<$Res>
             ? _value._sofList
             : sofList // ignore: cast_nullable_to_non_nullable
                   as List<SofModel>,
+        tarifMotor: null == tarifMotor
+            ? _value.tarifMotor
+            : tarifMotor // ignore: cast_nullable_to_non_nullable
+                  as int,
+        tarifMobil: null == tarifMobil
+            ? _value.tarifMobil
+            : tarifMobil // ignore: cast_nullable_to_non_nullable
+                  as int,
+        jadwalOperasional: null == jadwalOperasional
+            ? _value.jadwalOperasional
+            : jadwalOperasional // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -306,6 +345,9 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
     required this.realisasiTahunIni,
     required final List<RiwayatPendapatanModel> riwayatList,
     required final List<SofModel> sofList,
+    required this.tarifMotor,
+    required this.tarifMobil,
+    required this.jadwalOperasional,
   }) : _riwayatList = riwayatList,
        _sofList = sofList;
 
@@ -349,8 +391,15 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
   }
 
   @override
+  final int tarifMotor;
+  @override
+  final int tarifMobil;
+  @override
+  final String jadwalOperasional;
+
+  @override
   String toString() {
-    return 'DashboardOpResponseModel(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList)';
+    return 'DashboardOpResponseModel(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList, tarifMotor: $tarifMotor, tarifMobil: $tarifMobil, jadwalOperasional: $jadwalOperasional)';
   }
 
   @override
@@ -390,7 +439,13 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
               other._riwayatList,
               _riwayatList,
             ) &&
-            const DeepCollectionEquality().equals(other._sofList, _sofList));
+            const DeepCollectionEquality().equals(other._sofList, _sofList) &&
+            (identical(other.tarifMotor, tarifMotor) ||
+                other.tarifMotor == tarifMotor) &&
+            (identical(other.tarifMobil, tarifMobil) ||
+                other.tarifMobil == tarifMobil) &&
+            (identical(other.jadwalOperasional, jadwalOperasional) ||
+                other.jadwalOperasional == jadwalOperasional));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -409,6 +464,9 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
     realisasiTahunIni,
     const DeepCollectionEquality().hash(_riwayatList),
     const DeepCollectionEquality().hash(_sofList),
+    tarifMotor,
+    tarifMobil,
+    jadwalOperasional,
   );
 
   /// Create a copy of DashboardOpResponseModel
@@ -442,6 +500,9 @@ abstract class _DashboardOpResponseModel implements DashboardOpResponseModel {
     required final RealisasiTahunIniModel realisasiTahunIni,
     required final List<RiwayatPendapatanModel> riwayatList,
     required final List<SofModel> sofList,
+    required final int tarifMotor,
+    required final int tarifMobil,
+    required final String jadwalOperasional,
   }) = _$DashboardOpResponseModelImpl;
 
   factory _DashboardOpResponseModel.fromJson(Map<String, dynamic> json) =
@@ -471,6 +532,12 @@ abstract class _DashboardOpResponseModel implements DashboardOpResponseModel {
   List<RiwayatPendapatanModel> get riwayatList;
   @override
   List<SofModel> get sofList;
+  @override
+  int get tarifMotor;
+  @override
+  int get tarifMobil;
+  @override
+  String get jadwalOperasional;
 
   /// Create a copy of DashboardOpResponseModel
   /// with the given fields replaced by the non-null parameter values.

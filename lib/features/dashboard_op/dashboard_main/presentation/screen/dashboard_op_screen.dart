@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_income_summary.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_informasi_operasional.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/header_dashboard_op_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
@@ -38,7 +39,9 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
         elevation: 0,
         foregroundColor: Colors.black,
         iconTheme: const IconThemeData(color: AppColors.primary),
@@ -70,6 +73,16 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                       children: [
                         Skeletonizer(
                           enabled: state.loading,
+                          child: CardInformasiOperasional(
+                            jamOperasional:
+                                state.data?.jadwalOperasional ??
+                                "Belum ada jam operasional",
+                            tarifMotor: state.data?.tarifMotor ?? 0,
+                            tarifMobil: state.data?.tarifMobil ?? 0,
+                          ),
+                        ),
+                        Skeletonizer(
+                          enabled: state.loading,
                           child: DashboardIncomeSummary(
                             totalPendapatan:
                                 state.data?.pendapatanHariIniKotor ?? 0,
@@ -79,6 +92,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                                 0,
                           ),
                         ),
+
                         Skeletonizer(
                           enabled: state.loading,
                           child: CardRiwayatPendapatanOp(

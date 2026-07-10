@@ -50,6 +50,9 @@ class DashboardOpMapper {
             ),
           )
           .toList(),
+      tarifMotor: model.tarifMotor,
+      tarifMobil: model.tarifMobil,
+      jadwalOperasional: model.jadwalOperasional,
     );
   }
 }
