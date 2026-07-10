@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// Jika Anda menggunakan go_router, pastikan import ini ada
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/features/payment/presentation/pages/payment_dialog_helpers.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
-import '../widgets/payment_local_qris_view.dart';
+import 'payment_local_qris_view.dart';
 
 class PaymentPageArgs {
   final int jenisKendaraanId;
@@ -34,7 +34,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   void initState() {
     super.initState();
-    // 🚀 Saat initState, Cubit akan load data dan otomatis start SignalR!
+    // Saat initState, Cubit akan load data dan otomatis start SignalR!
     context.read<PaymentCubit>().loadQris(
       jenisKendaraanId: widget.args.jenisKendaraanId,
       isDemoMode: widget.args.isDemoMode,
@@ -49,42 +49,42 @@ class _PaymentPageState extends State<PaymentPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Pembayaran QRIS', style: AppTypography.heading3),
-          backgroundColor: Colors.white,
+          title: Text(
+            'Pembayaran Qris',
+            style: AppTypography.heading5.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: AppColors.surface,
+          scrolledUnderElevation: 0,
+          shape: const Border(
+            bottom: BorderSide(color: AppColors.primary, width: 1.0),
+          ),
           elevation: 0,
-          iconTheme: const IconThemeData(color: AppColors.textPrimary),
+          foregroundColor: Colors.black,
+          iconTheme: const IconThemeData(color: AppColors.primary),
         ),
-        // 🚀 UPGRADE: Gunakan BlocConsumer untuk Handle Side-Effects (Navigasi & Snackbar)
         body: BlocConsumer<PaymentCubit, PaymentState>(
-          listener: (context, state) {
-            // Gunakan whenOrNull agar kita hanya bereaksi pada state tertentu
-            state.whenOrNull(
-              paymentSuccess: () {
-                // 1. Tampilkan notifikasi sukses
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('✅ Pembayaran Berhasil Diterima!'),
-                    backgroundColor: Colors.green,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-                // 2. Tutup halaman dan kembalikan nilai 'true' ke halaman Transaction
-                context.pop(true);
-              },
-              error: (message) {
-                // Opsional: Jika Anda ingin memunculkan toast saat SignalR timeout/error
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(message),
-                    backgroundColor: Colors.red,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+          //  2. Ubah listener menjadi async
+          listener: (context, state) async {
+            await state.whenOrNull(
+              paymentSuccess: () async {
+                // 3. Tampilkan Lottie Dialog dan tunggu sampai selesai (2 detik)
+                // isFree = false karena ini adalah pembayaran QRIS
+                await PaymentDialogHelpers.showSuccessLottie(context, false);
+
+                // 4. Tutup halaman PaymentPage dan kembalikan nilai 'true' ke TransactionPage
+                // Selalu gunakan context.mounted setelah proses await
+                if (context.mounted) {
+                  context.pop(true);
+                }
               },
             );
           },
           builder: (context, state) {
-            // 🚀 UPGRADE: Gunakan maybeWhen karena state 'paymentSuccess'
+            // UPGRADE: Gunakan maybeWhen karena state 'paymentSuccess'
             // tidak memiliki UI spesifik (hanya men-trigger pop di listener).
             return state.maybeWhen(
               initial: () => const Center(
@@ -94,16 +94,54 @@ class _PaymentPageState extends State<PaymentPage> {
                 child: CircularProgressIndicator(color: AppColors.primary),
               ),
               localQrisReady: (qrisImagePath, kodeQris) {
-                return PaymentLocalQrisView(
-                  kategoriKendaraan: widget.args.kategoriKendaraan,
-                  qrWidget: Image.file(
-                    File(qrisImagePath),
-                    width: 220,
-                    height: 220,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.broken_image, size: 48),
-                  ),
+                return Column(
+                  children: [
+                    Expanded(
+                      child: PaymentLocalQrisView(
+                        kategoriKendaraan: widget.args.kategoriKendaraan,
+                        showTimer: kodeQris.trim().isNotEmpty,
+                        qrWidget: Image.file(
+                          File(qrisImagePath),
+                          width: 220,
+                          height: 220,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) =>
+                              const Icon(Icons.broken_image, size: 48),
+                        ),
+                      ),
+                    ),
+                    if (kodeQris.trim().isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade50,
+                          border: Border(
+                            top: BorderSide(color: Colors.orange.shade200),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.info_outline,
+                              color: Colors.orange,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Pengecekan otomatis tidak tersedia. Harap periksa Di Halaman History',
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: Colors.orange.shade900,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 );
               },
               demoQrisReady: (rawQrisString) {
@@ -126,7 +164,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 );
               },
-              // orElse akan menangkap state 'paymentSuccess' selama sepersekian detik sebelum context.pop dieksekusi.
+              // 🚀 5. Saat paymentSuccess terjadi, UI di latar belakang akan dirender
+              // menjadi CircularProgressIndicator selagi Lottie Dialog bermain di atasnya.
+              // Ini mencegah pengguna menekan tombol apapun secara tidak sengaja.
               orElse: () => const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
               ),
@@ -155,7 +195,7 @@ class _QrisErrorView extends StatelessWidget {
             const Icon(
               Icons.qr_code_2_outlined,
               size: 64,
-              color: AppColors.border,
+              color: AppColors.primaryLight,
             ),
             const SizedBox(height: 16),
             Text(

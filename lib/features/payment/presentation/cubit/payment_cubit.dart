@@ -56,16 +56,27 @@ class PaymentCubit extends Cubit<PaymentState> {
           return;
         }
 
+        // UNTUK TESTING //
+        // const String simulatedKodeQris = '';
+        //---------------//
+
+        String simulatedKodeQris = qrisEntity.kodeQris;
+
         // 1. Tampilkan UI
         emit(
           PaymentState.localQrisReady(
             qrisImagePath: qrisEntity.path,
-            kodeQris: qrisEntity.kodeQris,
+            kodeQris: simulatedKodeQris,
           ),
         );
 
-        // 2. 🚀 EKSEKUSI SIGNALR VIA USECASE (Cubit cukup mengoper string kodeQris)
-        await _setupSignalR(qrisEntity.kodeQris);
+        // 2.  LAYER PERTAHANAN: Evaluasi kelayakan SignalR
+        // HANYA eksekusi SignalR jika kodeQris benar-benar ada isinya
+        if (simulatedKodeQris.trim().isNotEmpty) {
+          await _setupSignalR(qrisEntity.kodeQris);
+        } else {
+          ();
+        }
       },
     );
   }
@@ -82,7 +93,7 @@ class PaymentCubit extends Cubit<PaymentState> {
       } else if (status == "TIMEOUT") {
         emit(
           const PaymentState.error(
-            message: 'Waktu pembayaran habis (Timeout).',
+            message: 'Waktu pembayaran habis (Silahkan Ulangi).',
           ),
         );
       } else if (status == "ERROR") {
@@ -94,7 +105,7 @@ class PaymentCubit extends Cubit<PaymentState> {
       }
     });
 
-    // 2. 🚀 EKSEKUSI CONNECT DENGAN EITHER
+    // 2.  EKSEKUSI CONNECT DENGAN EITHER
     final connectResult = await _paymentUsecase.connect(kodeQris);
 
     if (isClosed) return;
@@ -114,7 +125,7 @@ class PaymentCubit extends Cubit<PaymentState> {
   @override
   Future<void> close() async {
     await _signalRSubscription?.cancel();
-    // 🚀 Putus koneksi dengan aman via Usecase
+    //  Putus koneksi dengan aman via Usecase
     await _paymentUsecase.disconnect();
     return super.close();
   }
