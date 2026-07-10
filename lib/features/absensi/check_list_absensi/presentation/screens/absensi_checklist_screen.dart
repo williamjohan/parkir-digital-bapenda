@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
-import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_service.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
+import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
+import 'package:parkir_digital_bapenda/core/services/permission/permission_wrapper.dart';
 import 'package:parkir_digital_bapenda/core/utils/photo_utils.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_header_widget.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_number_field.dart';
@@ -83,7 +84,6 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
       return;
     }
 
-    // 1. Proses watermark
     cubit.setCapturing(true);
     await Future.delayed(const Duration(milliseconds: 300));
     final capturedFile = await PhotoUtils.captureWatermarkedImage(_photoKey);
@@ -170,12 +170,16 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                   state: state,
                   photoKey: _photoKey,
                   onTap: () async {
-                    final granted =
-                        await PermissionService.ensureCameraAndLocationPermission(
-                          context,
-                        );
+                    final granted = await PermissionService.ensure(
+                      context,
+                      permissions: const [
+                        PermissionType.camera,
+                        PermissionType.location,
+                        PermissionType.locationService,
+                      ],
+                    );
 
-                    if (!granted || !mounted) return;
+                    if (!granted || !context.mounted) return;
 
                     context.read<AbsensiCubit>().takePhoto(
                       widget.locationService,

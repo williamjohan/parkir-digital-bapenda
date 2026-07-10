@@ -6,6 +6,8 @@ import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
+import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
+import 'package:parkir_digital_bapenda/core/services/permission/permission_wrapper.dart';
 // import 'package:parkir_digital_bapenda/core/utils/debug_mock_scenario.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/keterangan_section_card.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
@@ -149,7 +151,18 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                   placeName: state.placeName,
                   latitude: state.latitude,
                   longitude: state.longitude,
-                  onPickPhoto: () {
+                  onPickPhoto: () async {
+                    final granted = await PermissionService.ensure(
+                      context,
+                      permissions: const [
+                        PermissionType.camera,
+                        PermissionType.location,
+                        PermissionType.locationService,
+                      ],
+                    );
+
+                    if (!granted || !context.mounted) return;
+
                     context.read<PengawasanCubit>().pickAndSetPhoto(
                       picker: _picker,
                       locationService: widget.locationService,
