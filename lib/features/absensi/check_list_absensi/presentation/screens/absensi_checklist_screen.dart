@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_service.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
@@ -168,9 +169,18 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                 AbsenPhotoWidget(
                   state: state,
                   photoKey: _photoKey,
-                  onTap: () => context.read<AbsensiCubit>().takePhoto(
-                    widget.locationService,
-                  ),
+                  onTap: () async {
+                    final granted =
+                        await PermissionService.ensureCameraAndLocationPermission(
+                          context,
+                        );
+
+                    if (!granted || !mounted) return;
+
+                    context.read<AbsensiCubit>().takePhoto(
+                      widget.locationService,
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 FormSectionCard(

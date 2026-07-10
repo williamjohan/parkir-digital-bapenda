@@ -65,7 +65,7 @@ class SofBreakdownPanelWidget extends StatelessWidget {
                             height: 300,
                             child: Center(
                               child: Text(
-                                'Belum ada data',
+                                'Belum ada rekap jenis pembayaran',
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.textHint,
                                 ),
