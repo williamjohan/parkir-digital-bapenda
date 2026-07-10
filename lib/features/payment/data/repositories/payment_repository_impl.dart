@@ -42,16 +42,16 @@ class PaymentRepositoryImpl implements IPaymentRepository {
           final payload = event.payload ?? {};
 
           final entity = PaymentSuccessEntity(
-            orderId: payload['coreReference']?.toString() ?? '-',
+            orderId: payload['orderId']?.toString() ?? '-',
             namaOp: payload['namaOP']?.toString() ?? '-', // Dari BE
             alamatOp: payload['alamatOP']?.toString() ?? '-', // Dari BE
             tanggalTransaksi:
-                payload['transactionDate']?.toString() ??
+                payload['tanggalTransaksi']?.toString() ??
                 DateTime.now().toIso8601String(),
             jenisTarif: payload['jenistarif']?.toString() ?? '-',
             credit: (double.tryParse(payload['amount']?.toString() ?? '0') ?? 0)
                 .toInt(),
-            encUrl: payload['necurl']?.toString() ?? '',
+            encUrl: payload['neCurl']?.toString() ?? '',
           );
 
           yield Right(entity);
