@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
+import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
@@ -212,24 +213,33 @@ class HomeDrawer extends StatelessWidget {
                       rootNavigator: true,
                     ).context;
 
-                    // 2. Tutup Drawer
+                    // 2. Tutup Drawer terlebih dahulu agar UI bersih
                     Navigator.pop(context);
 
-                    // 3. Panggil fungsi cek permission menggunakan safeContext yang masih hidup
+                    // 3. Panggil fungsi cek permission
                     final isPermissionGranted = await printerCubit
                         .checkAndRequestPermissions();
 
-                    // 4. Jika diizinkan, jalankan navigasi ke halaman pengaturan printer
-                    if (isPermissionGranted) {
-                      if (safeContext.mounted) {
-                        // 🚀 PERBAIKAN: Gunakan safeContext untuk navigasi!
-                        // (scanDevices dihapus dari sini karena di PrinterSettingsPage sudah otomatis dipanggil saat initState)
+                    // 4. Pastikan context halaman utama masih aktif sebelum memunculkan UI baru
+                    if (safeContext.mounted) {
+                      if (isPermissionGranted) {
+                        // Jika Izin Diberikan -> Langsung ke Halaman Printer
                         safeContext.pushNamed(AppRoutes.printerSetting);
+                      } else {
+                        // Jika Izin Ditolak -> Cek apakah state Cubit minta buka Dialog
+                        if (printerCubit.state
+                            is PrinterPermissionRequiresAction) {
+                          PbPermissionDialog.show(
+                            safeContext,
+                            title: 'Akses Izin Diperlukan',
+                            description:
+                                'Anda telah menolak izin Perangkat Sekitar (Bluetooth) atau Lokasi aplikasi ini.\n\nMohon aktifkan izin tersebut secara manual melalui pengaturan aplikasi agar fitur printer dapat digunakan kembali.',
+                          );
+                        }
                       }
                     }
                   },
                 ),
-
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.pengawas],
                   currentRole:

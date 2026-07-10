@@ -30,35 +30,50 @@ class PermissionUtils {
   // 🚀 PERBAIKAN: Hapus BuildContext, ubah tipe kembalian menjadi BluetoothPermissionStatus
   static Future<BluetoothPermissionStatus> requestBluetoothPermission() async {
     try {
+      // 1. Lakukan request untuk semua permission
       final statuses = await [
         Permission.bluetoothScan,
         Permission.bluetoothConnect,
         Permission.locationWhenInUse,
       ].request();
 
-      final scanStatus = statuses[Permission.bluetoothScan];
-      final connectStatus = statuses[Permission.bluetoothConnect];
-      final locationStatus = statuses[Permission.locationWhenInUse];
+      final scanStatus =
+          statuses[Permission.bluetoothScan] ?? PermissionStatus.denied;
+      final connectStatus =
+          statuses[Permission.bluetoothConnect] ?? PermissionStatus.denied;
+      final locationStatus =
+          statuses[Permission.locationWhenInUse] ?? PermissionStatus.denied;
 
       AppLogger.debug("bluetoothScan = $scanStatus");
       AppLogger.debug("bluetoothConnect = $connectStatus");
       AppLogger.debug("location = $locationStatus");
 
-      // 🔍 JIKA USER PILIH "JANGAN IZINKAN" / PERMANENTLY DENIED
-      if (scanStatus == PermissionStatus.permanentlyDenied ||
-          connectStatus == PermissionStatus.permanentlyDenied ||
-          locationStatus == PermissionStatus.permanentlyDenied) {
-        AppLogger.error("Izin Bluetooth/Lokasi ditolak permanen.");
-        return BluetoothPermissionStatus.permanentlyDenied; // Kembalikan status
-      }
-
-      final isGranted = statuses.values.every((status) => status.isGranted);
-
-      if (isGranted) {
+      // 2. Jika semuanya diizinkan
+      if (scanStatus.isGranted &&
+          connectStatus.isGranted &&
+          locationStatus.isGranted) {
         return BluetoothPermissionStatus.granted;
-      } else {
-        return BluetoothPermissionStatus.denied;
       }
+
+      // 3. Pengecekan Agresif: Cek apakah ADA SALAH SATU yang ditolak permanen
+      if (scanStatus.isPermanentlyDenied ||
+          connectStatus.isPermanentlyDenied ||
+          locationStatus.isPermanentlyDenied) {
+        AppLogger.error("Izin ditolak permanen terdeteksi dari hasil request.");
+        return BluetoothPermissionStatus.permanentlyDenied;
+      }
+
+      // 4. Fallback Cek Manual: Kadang OS menyembunyikan status 'permanentlyDenied'
+      // di dalam status 'denied' biasa jika pop-up sudah diblokir sistem.
+      if (await Permission.locationWhenInUse.isPermanentlyDenied ||
+          await Permission.bluetoothScan.isPermanentlyDenied ||
+          await Permission.bluetoothConnect.isPermanentlyDenied) {
+        AppLogger.error("Izin ditolak permanen terdeteksi dari cek manual.");
+        return BluetoothPermissionStatus.permanentlyDenied;
+      }
+
+      // 5. Jika benar-benar baru ditolak pertama kali (pop-up OS masih bisa muncul)
+      return BluetoothPermissionStatus.denied;
     } catch (e, stackTrace) {
       AppLogger.error('Gagal mengecek permission bluetooth', e, stackTrace);
       return BluetoothPermissionStatus.error;

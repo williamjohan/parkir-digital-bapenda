@@ -19,36 +19,46 @@ class PrinterCubit extends Cubit<PrinterState> {
     : super(PrinterInitial());
 
   // =========================================================================
-  // 🚀 METHOD MANDIRI: Cek & Minta Permission dari Mana Saja (Termasuk Drawer)
+  // 🚀 METHOD MANDIRI: Cek & Minta Permission (Tanpa BuildContext)
   // =========================================================================
-  // 🚀 PERBAIKAN: Hapus parameter BuildContext
   Future<bool> checkAndRequestPermissions() async {
+    // Simpan state saat ini agar UI tidak nge-blank/reset jika gagal
     final currentState = state;
+
     try {
+      // Panggil Utils yang sudah mengembalikan Enum
       final status = await PermissionUtils.requestBluetoothPermission();
 
+      // 1. Jika Semua Izin Diberikan (Granted)
       if (status == BluetoothPermissionStatus.granted) {
-        AppLogger.debug("Permission granted via checkAndRequestPermissions");
+        AppLogger.debug("Izin lengkap diberikan.");
         return true;
       }
 
-      if (status == BluetoothPermissionStatus.permanentlyDenied) {
-        AppLogger.error("Permission Bluetooth ditolak permanen.");
-        emit(
-          PrinterPermissionRequiresAction(),
-        ); // 🚀 Emit state khusus untuk memanggil Dialog
+      // 2. Jika Izin Ditolak (Baik Ditolak Biasa maupun Permanen)
+      // Karena Android kadang menyembunyikan pop-up bawaan jika sudah diblokir,
+      // kita tangkap keduanya di sini untuk memunculkan PbPermissionDialog ke Setelan.
+      if (status == BluetoothPermissionStatus.permanentlyDenied ||
+          status == BluetoothPermissionStatus.denied) {
+        AppLogger.error("Izin Bluetooth/Lokasi ditolak atau tidak lengkap.");
+
+        // 🚀 Emit state khusus agar BlocListener di UI memunculkan PbPermissionDialog
+        emit(PrinterPermissionRequiresAction());
+
+        // Kembalikan ke state sebelumnya agar list device tidak hilang
         _restoreLoadedState(currentState);
         return false;
       }
 
-      // Jika ditolak biasa / error
-      AppLogger.error("Permission Bluetooth ditolak.");
-      emit(PrinterError("Permission Bluetooth belum diberikan."));
+      // 3. Jika terjadi Error dari Utils
+      AppLogger.error("Status permission error.");
+      emit(PrinterError("Gagal memeriksa izin perangkat."));
       _restoreLoadedState(currentState);
       return false;
     } catch (e, stackTrace) {
-      AppLogger.error("Gagal mengecek permission", e, stackTrace);
-      emit(PrinterError("Gagal memeriksa izin perangkat."));
+      // 4. Jika ada Exception yang lolos
+      AppLogger.error("Exception saat mengecek permission", e, stackTrace);
+      emit(PrinterError("Terjadi kesalahan sistem saat meminta izin."));
       _restoreLoadedState(currentState);
       return false;
     }
