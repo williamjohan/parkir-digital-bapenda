@@ -76,7 +76,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                           child: CardInformasiOperasional(
                             jamOperasional:
                                 state.data?.jadwalOperasional ??
-                                "Belum ada jam operasional",
+                                "--:-- - --:--",
                             tarifMotor: state.data?.tarifMotor ?? 0,
                             tarifMobil: state.data?.tarifMobil ?? 0,
                           ),

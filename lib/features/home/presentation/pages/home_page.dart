@@ -13,6 +13,7 @@ import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../printer/presentation/cubit/printer_cubit.dart';
 import '../cubit/home/home_cubit.dart';
 import '../cubit/home/home_state.dart';
 import '../widgets/animated_home_fab.dart';
@@ -40,6 +41,12 @@ class _HomePageState extends State<HomePage> {
     await context.read<HomeCubit>().initialize();
     if (_isFirstLoad) {
       _isFirstLoad = false;
+
+      // 🚀 TAMBAHKAN PENGECEKAN PERMISSION DI SINI
+      // Gunakan mounted untuk memastikan widget Home masih aktif sebelum menampilkan pop-up
+      if (mounted) {
+        await context.read<PrinterCubit>().checkAndRequestPermissions(context);
+      }
     }
   }
 

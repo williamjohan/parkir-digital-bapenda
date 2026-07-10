@@ -125,68 +125,96 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TransactionHistoryCubit, TransactionHistoryState>(
-      listener: (context, state) {
-        if (state is TransactionHistoryError) {
-          PbStatusSnackbar.show(context, message: state.message, isError: true);
-        }
-      },
-      builder: (context, state) {
-        final bool isLoading = state is TransactionHistoryLoading;
-        return LoadingOverlay(
-          isLoading: isLoading,
-          child: SafeArea(
-            bottom: true,
-            top: false,
-            child: Scaffold(
-              backgroundColor: Colors.grey.shade50,
-              appBar: AppBar(
-                title: Text(
-                  'Riwayat Pendapatan',
-                  style: AppTypography.heading5.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
+    return MultiBlocListener(
+      listeners: [
+        // Listener Pertama: Untuk menangkap error dari Riwayat Transaksi
+        BlocListener<TransactionHistoryCubit, TransactionHistoryState>(
+          listener: (context, state) {
+            if (state is TransactionHistoryError) {
+              PbStatusSnackbar.show(
+                context,
+                message: state.message,
+                isError: true,
+              );
+            }
+          },
+        ),
+
+        // Listener Kedua: Untuk menangkap error dari Printer
+        BlocListener<PrinterCubit, PrinterState>(
+          listener: (context, state) {
+            if (state is PrinterError) {
+              PbStatusSnackbar.show(
+                context,
+                message: state.message,
+                isError: true,
+              );
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<TransactionHistoryCubit, TransactionHistoryState>(
+        builder: (context, state) {
+          final bool isLoading = state is TransactionHistoryLoading;
+          return LoadingOverlay(
+            isLoading: isLoading,
+            child: SafeArea(
+              bottom: true,
+              top: false,
+              child: Scaffold(
+                backgroundColor: Colors.grey.shade50,
+                appBar: AppBar(
+                  title: Text(
+                    'Riwayat Pendapatan',
+                    style: AppTypography.heading5.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+                  centerTitle: true,
+                  backgroundColor: AppColors.surface,
+                  elevation: 0,
+                  foregroundColor: Colors.black,
+                  iconTheme: const IconThemeData(color: AppColors.primary),
                 ),
-                centerTitle: true,
-                backgroundColor: AppColors.surface,
-                elevation: 0,
-                foregroundColor: Colors.black,
-                iconTheme: const IconThemeData(color: AppColors.primary),
-              ),
-              body: Column(
-                children: [
-                  RangeFilterWidget(
-                    onApply:
-                        ({
-                          required String startDate,
-                          required String endDate,
-                          required String startTime,
-                          required String endTime,
-                        }) {
-                          final start = DateTime.parse("$startDate $startTime");
-                          final end = DateTime.parse("$endDate $endTime");
-                          setState(() {
-                            _startDate = start;
-                            _endDate = end;
-                          });
-                          context.read<TransactionHistoryCubit>().fetchHistory(
-                            start,
-                            end,
-                            widget.nop ?? '',
-                            widget.idDevice ?? '',
-                          );
-                        },
-                  ),
-                  if (state is TransactionHistoryLoaded && widget.nop != null)
-                    _buildFilterSection(state),
-                  Expanded(child: _buildScrollContent(state)),
-                ],
+                body: Column(
+                  children: [
+                    RangeFilterWidget(
+                      onApply:
+                          ({
+                            required String startDate,
+                            required String endDate,
+                            required String startTime,
+                            required String endTime,
+                          }) {
+                            final start = DateTime.parse(
+                              "$startDate $startTime",
+                            );
+                            final end = DateTime.parse("$endDate $endTime");
+                            setState(() {
+                              _startDate = start;
+                              _endDate = end;
+                            });
+                            context
+                                .read<TransactionHistoryCubit>()
+                                .fetchHistory(
+                                  start,
+                                  end,
+                                  widget.nop ?? '',
+                                  widget.idDevice ?? '',
+                                );
+                          },
+                    ),
+                    if (state is TransactionHistoryLoaded && widget.nop != null)
+                      _buildFilterSection(state),
+                    Expanded(child: _buildScrollContent(state)),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -321,34 +349,15 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                                           Navigator.pop(context);
                                         },
                                         printPressed: () async {
-                                          showDialog(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (_) {
-                                              return Dialog(
-                                                insetPadding:
-                                                    const EdgeInsets.all(24),
-                                                child: PbPreviewTicketWidget(
-                                                  item: data[index],
-                                                  isPrinterReady: true,
-                                                  okPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  printPressed: () async {
-                                                    // Navigator.pop(context);
+                                          // Navigator.pop(context);
 
-                                                    // proses print di sini
-                                                    await context
-                                                        .read<PrinterCubit>()
-                                                        .printReceipt(
-                                                          context,
-                                                          data[index],
-                                                        );
-                                                  },
-                                                ),
+                                          // proses print di sini
+                                          await context
+                                              .read<PrinterCubit>()
+                                              .printReceipt(
+                                                context,
+                                                data[index],
                                               );
-                                            },
-                                          );
                                         },
                                       ),
                                     );
