@@ -35,7 +35,9 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
         elevation: 0,
         foregroundColor: Colors.black,
         iconTheme: const IconThemeData(color: AppColors.primary),
@@ -47,32 +49,47 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 16,
-                    left: 16,
-                    right: 16,
+                if (state.isLoading || items.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 16,
+                      left: 16,
+                      right: 16,
+                    ),
+                    child: Skeletonizer(
+                      enabled: state.isLoading,
+                      child: const PendapatanInfoCard(),
+                    ),
                   ),
-                  child: Skeletonizer(
-                    enabled: state.isLoading,
-                    child: const PendapatanInfoCard(),
-                  ),
-                ),
                 Expanded(
                   child: Skeletonizer(
                     enabled: state.isLoading,
-                    child: ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: items.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
-                      itemBuilder: (_, index) {
-                        final entity = items[index];
+                    child: state.isLoading
+                        ? ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: items.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (_, index) {
+                              return DataJukirCard(
+                                entity: items[index],
+                                lihatRiwayatOnTap: () {},
+                              );
+                            },
+                          )
+                        : items.isEmpty
+                        ? const _EmptyState()
+                        : ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: items.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (_, index) {
+                              final entity = items[index];
 
-                        return DataJukirCard(
-                          entity: entity,
-                          lihatRiwayatOnTap: state.isLoading
-                              ? null
-                              : () {
+                              return DataJukirCard(
+                                entity: entity,
+                                lihatRiwayatOnTap: () {
                                   context.pushNamed(
                                     AppRoutes.history,
                                     extra: {
@@ -82,15 +99,45 @@ class _DataJukirScreenState extends State<DataJukirScreen> {
                                     },
                                   );
                                 },
-                        );
-                      },
-                    ),
+                              );
+                            },
+                          ),
                   ),
                 ),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.inbox_outlined, size: 72, color: Colors.grey.shade400),
+          const SizedBox(height: 16),
+          Text(
+            'Belum ada data jukir',
+            style: AppTypography.bodyRegular.copyWith(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Data jukir akan muncul di sini.',
+            style: AppTypography.bodySmall.copyWith(color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
