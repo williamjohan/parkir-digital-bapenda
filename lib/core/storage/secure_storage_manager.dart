@@ -53,7 +53,6 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     await clearMasterTarif();
     await clearRoleId();
     await clearDashboardAnchor();
-    await clearPrinterMacAddress();
   }
 
   @override

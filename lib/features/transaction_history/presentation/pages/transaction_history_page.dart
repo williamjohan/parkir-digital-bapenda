@@ -1,15 +1,18 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/sof_breakdown_panel_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import '../../../../core/design_system/components/pb_permission_dialog.dart';
+import '../../../../core/design_system/components/pb_permission_dialogv2.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../shared/loading/loading_overlay.dart';
+import '../../../printer/presentation/cubit/printer_state.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
@@ -177,22 +180,38 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
         // Listener Kedua: Untuk menangkap error dari Printer
         BlocListener<PrinterCubit, PrinterState>(
           listener: (context, state) {
-            if (state is PrinterError) {
-              PbStatusSnackbar.show(
-                context,
-                message: state.message,
-                isError: true,
-              );
-            }
-            // 🚀 TAMBAHKAN LISTENER INI UNTUK MENAMPILKAN DIALOG
-            else if (state is PrinterPermissionRequiresAction) {
-              PbPermissionDialog.show(
-                context,
-                title: 'Akses Izin Diperlukan',
-                description:
-                    'Anda telah menolak izin Perangkat Sekitar (Bluetooth) atau Lokasi aplikasi ini.\n\nMohon aktifkan izin tersebut secara manual melalui pengaturan aplikasi agar fitur printer dapat digunakan kembali.',
-              );
-            }
+            // 🚀 GUNAKAN MAYBEWHEN DARI FREEZED (Lebih bersih & type-safe)
+            state.maybeWhen(
+              error: (message, _) {
+                PbStatusSnackbar.show(context, message: message, isError: true);
+              },
+              permissionRequiresAction: (_) {
+                PbPermissionDialog.show(
+                  context, // Positional context
+                  type: AppPermissionType.bluetooth,
+                  status: AppPermissionStatus.permanentlyDenied,
+                  onActionPressed: () {
+                    context.read<PrinterCubit>().checkAndRequestPermissions();
+                  },
+                );
+              },
+              // Jika user mau cetak karcis
+              // tapi Bluetooth HP mereka dalam posisi mati (OFF)
+              bluetoothOffRequiresAction: (_) {
+                PbPermissionDialog.show(
+                  context, // Positional context
+                  type: AppPermissionType.bluetooth,
+                  status: AppPermissionStatus
+                      .permanentlyDenied, // Memicu teks "Buka Pengaturan"
+                  onActionPressed: () async {
+                    await AppSettings.openAppSettings(
+                      type: AppSettingsType.bluetooth,
+                    );
+                  },
+                );
+              },
+              orElse: () {},
+            );
           },
         ),
       ],

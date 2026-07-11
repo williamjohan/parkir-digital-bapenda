@@ -170,7 +170,7 @@ abstract class RegisterModule {
     );
 
     // 🚀 3. INTERCEPTOR LAINNYA
-    // (Opsional: DnsDiagnosticInterceptor bisa dilepas karena ResilientDnsResolver sudah cukup memberikan log[cite: 3, 4])
+    // (Opsional: DnsDiagnosticInterceptor bisa dilepas karena ResilientDnsResolver sudah cukup memberikan log
 
     // 🚀 FIX: ConnectivityCheckInterceptor dipindah KELUAR dari kDebugMode
     // dan ditaruh PALING AWAL. Sebelumnya cuma aktif saat development --

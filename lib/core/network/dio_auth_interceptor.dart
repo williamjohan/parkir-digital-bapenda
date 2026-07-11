@@ -28,7 +28,7 @@ class DioAuthInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    // TENDANG: Jika Backend membalas dengan 401 (Token Expired / Invalid)[cite: 2]
+    // TENDANG: Jika Backend membalas dengan 401 (Token Expired / Invalid)
     if (err.response?.statusCode == 401) {
       AppLogger.error(
         '>>> [AUTH] 🚨 401 Unauthorized pada: ${err.requestOptions.path}',
@@ -36,8 +36,7 @@ class DioAuthInterceptor extends Interceptor {
       AppLogger.warning('>>> [AUTH] 🧹 Membersihkan sesi aktif...');
 
       await _storage.saveLogoutReason('SESSION_EXPIRED');
-      await _storage
-          .clearAllTokens(); // AppAuthCubit akan menangkap ini[cite: 2]
+      await _storage.clearAllTokens();
     }
 
     return super.onError(err, handler);

@@ -37,7 +37,7 @@ class UpdateProgressDialog extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            // 🚀 PERBAIKAN ARSITEKTUR: Gunakan BlocConsumer menggantikan BlocBuilder[cite: 6]
+            // 🚀 PERBAIKAN ARSITEKTUR: Gunakan BlocConsumer menggantikan BlocBuilder
             child: BlocConsumer<UpdateProgressCubit, UpdateProgressState>(
               // 1. LISTENER: Khusus mengeksekusi perintah non-UI (Side Effects)
               listener: (context, state) {
@@ -49,7 +49,7 @@ class UpdateProgressDialog extends StatelessWidget {
                   Navigator.of(context, rootNavigator: true).pop();
                 }
               },
-              // 2. BUILDER: Murni hanya menggambar tampilan[cite: 6]
+              // 2. BUILDER: Murni hanya menggambar tampilan
               builder: (context, state) {
                 if (state is UpdateError) {
                   return Column(

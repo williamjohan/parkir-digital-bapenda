@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
 import 'package:injectable/injectable.dart';
@@ -10,8 +8,7 @@ import '../../../../core/services/printer/i_printer_service.dart';
 import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
-
-part 'printer_state.dart';
+import 'printer_state.dart'; // Import file state freezed
 
 @injectable
 class PrinterCubit extends Cubit<PrinterState> {
@@ -21,450 +18,352 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   StreamSubscription<BtcDevice>? _discoverySub;
   StreamSubscription<BtcDevice?>? _connectionSub;
-  StreamSubscription<bool>? _bluetoothStateSub; // 🚀 BARU
+  StreamSubscription<bool>? _bluetoothStateSub;
+
+  Timer? _discoveryTimer;
   bool? _lastBluetoothOn;
 
   PrinterCubit(
     this._printerService,
     this._secureStorage,
     this._permissionService,
-  ) : super(PrinterInitial()) {
-    // 🚀 Auto-sync state setiap kali status koneksi berubah di level service,
-    // termasuk saat printer disconnect sendiri di luar kontrol UI, ATAU saat
-    // cubit ini instance baru (misal karena factory injection) tapi service
-    // singleton-nya masih punya koneksi aktif dari sebelumnya.
+  ) : super(const PrinterState.initial()) {
+    // 🚀 SINGLE SOURCE OF TRUTH (Sangat ringkas berkat Freezed)
     _connectionSub = _printerService.connectionChanges.listen((device) {
-      final s = state;
-      if (s is PrinterLoaded) {
-        emit(
-          PrinterLoaded(
-            devices: s.devices,
-            discoveredDevices: s.discoveredDevices,
-            connectedDevice: device,
-            isLoading: s.isLoading,
-            isScanning: s.isScanning,
-          ),
-        );
-      }
+      if (isClosed) return;
+      state.maybeMap(
+        loaded: (s) => emit(s.copyWith(connectedDevice: device)),
+        orElse: () {},
+      );
     });
 
     _bluetoothStateSub = _printerService.bluetoothStateChanges.listen((isOn) {
+      if (isClosed) return;
       final wasOn = _lastBluetoothOn;
       _lastBluetoothOn = isOn;
 
       if (wasOn == false && isOn) {
-        AppLogger.debug('>>> [PRINTER] Bluetooth aktif lagi, auto-refresh.');
         scanDevices();
         return;
       }
-      // Abaikan kalau ini bukan transisi ON->OFF (misal event pertama saat
-      // subscribe, atau Bluetooth balik nyala lagi).
+
       if (wasOn != true || isOn) return;
 
-      AppLogger.debug(
-        '>>> [PRINTER] Bluetooth HP dimatiin user di tengah proses.',
-      );
-
+      _discoveryTimer?.cancel();
       _discoverySub?.cancel();
       _printerService.stopDiscovery();
 
-      final s = state;
-      if (s is PrinterLoaded) {
-        emit(
-          PrinterLoaded(
-            devices: s.devices,
-            discoveredDevices: s.discoveredDevices,
+      state.maybeMap(
+        loaded: (s) => emit(
+          s.copyWith(
             connectedDevice: null,
             isLoading: false,
             isScanning: false,
           ),
-        );
-      }
-      emit(PrinterBluetoothOffRequiresAction());
+        ),
+        orElse: () {},
+      );
+
+      emit(PrinterState.bluetoothOffRequiresAction(timestamp: DateTime.now()));
     });
   }
 
   Future<bool> checkBluetoothOn() async {
     final bluetoothOn = await _printerService.isBluetoothOn;
     if (!bluetoothOn) {
-      emit(PrinterBluetoothOffRequiresAction());
+      emit(PrinterState.bluetoothOffRequiresAction(timestamp: DateTime.now()));
       return false;
     }
     return true;
   }
 
   Future<void> refreshPairedDevices() async {
-    final currentState = state;
     try {
       final granted = await checkAndRequestPermissions();
       if (!granted) return;
 
-      final bluetoothOn = await _printerService.isBluetoothOn;
-      if (!bluetoothOn) {
-        emit(PrinterBluetoothOffRequiresAction());
-        return;
-      }
+      final bluetoothOn = await checkBluetoothOn();
+      if (!bluetoothOn) return;
 
       final devices = await _printerService.getPairedDevices();
+      final savedMac = await _secureStorage.getPrinterMacAddress();
       if (isClosed) return;
 
       emit(
-        PrinterLoaded(
+        PrinterState.loaded(
           devices: devices,
-          discoveredDevices: currentState is PrinterLoaded
-              ? currentState.discoveredDevices
-              : const [],
+          discoveredDevices: state.maybeMap(
+            loaded: (s) => s.discoveredDevices,
+            orElse: () => [],
+          ),
           connectedDevice: _printerService.connectedDevice,
-          isScanning: currentState is PrinterLoaded && currentState.isScanning,
+          savedMacAddress: savedMac,
+          isScanning: state.maybeMap(
+            loaded: (s) => s.isScanning,
+            orElse: () => false,
+          ),
         ),
       );
     } catch (e, stackTrace) {
       AppLogger.error("Gagal refresh daftar printer", e, stackTrace);
       if (isClosed) return;
-      emit(PrinterError("Gagal memuat ulang daftar perangkat."));
-      if (currentState is PrinterLoaded) {
-        emit(
-          PrinterLoaded(
-            devices: currentState.devices,
-            discoveredDevices: currentState.discoveredDevices,
-            connectedDevice: currentState.connectedDevice,
-          ),
-        );
-      }
+      emit(
+        PrinterState.error(
+          message: "Gagal memuat ulang daftar perangkat.",
+          timestamp: DateTime.now(),
+        ),
+      );
     }
   }
 
   Future<bool> checkAndRequestPermissions() async {
-    final currentState = state;
-
     try {
       final status = await _permissionService.requestPermission(
         AppPermissionType.bluetooth,
       );
 
-      if (status == AppPermissionStatus.granted) {
-        AppLogger.debug("Izin lengkap diberikan.");
-        return true;
-      }
+      if (status == AppPermissionStatus.granted) return true;
 
-      if (status == AppPermissionStatus.permanentlyDenied ||
-          status == AppPermissionStatus.denied) {
-        AppLogger.error("Izin Bluetooth/Lokasi ditolak atau tidak lengkap.");
-        emit(PrinterPermissionRequiresAction());
-        _restoreLoadedState(currentState);
-        return false;
-      }
-
-      emit(PrinterError("Gagal memeriksa izin perangkat."));
-      _restoreLoadedState(currentState);
+      emit(PrinterState.permissionRequiresAction(timestamp: DateTime.now()));
       return false;
     } catch (e, stackTrace) {
       AppLogger.error("Exception saat mengecek permission", e, stackTrace);
-      emit(PrinterError("Terjadi kesalahan sistem saat meminta izin."));
-      _restoreLoadedState(currentState);
+      emit(
+        PrinterState.error(
+          message: "Terjadi kesalahan sistem saat meminta izin.",
+          timestamp: DateTime.now(),
+        ),
+      );
       return false;
     }
   }
 
   Future<void> scanDevices() async {
-    final currentState = state;
-    AppLogger.debug("========== SCAN DEVICES ==========");
-
-    if (currentState is PrinterLoaded) {
-      emit(
-        PrinterLoaded(
-          devices: currentState.devices,
-          discoveredDevices: currentState.discoveredDevices,
-          connectedDevice: currentState.connectedDevice,
-          isLoading: true,
-          isScanning: currentState.isScanning,
-        ),
-      );
-    } else {
-      emit(PrinterLoading());
-    }
+    state.maybeMap(
+      loaded: (s) => emit(s.copyWith(isLoading: true)),
+      orElse: () => emit(const PrinterState.loading()),
+    );
 
     try {
       final granted = await checkAndRequestPermissions();
       if (!granted) return;
 
-      final bluetoothOn = await _printerService.isBluetoothOn;
-      if (!bluetoothOn) {
-        _restoreLoadedState(currentState);
-        emit(PrinterBluetoothOffRequiresAction());
-        return;
-      }
+      final bluetoothOn = await checkBluetoothOn();
+      if (!bluetoothOn) return;
 
       final devices = await _printerService.getPairedDevices();
-      AppLogger.debug("Jumlah device ditemukan : ${devices.length}");
+
+      final savedMac = await _secureStorage.getPrinterMacAddress();
 
       if (isClosed) return;
 
       emit(
-        PrinterLoaded(
+        PrinterState.loaded(
           devices: devices,
-          // 🚀 Diambil LANGSUNG dari service, bukan ditebak lewat MAC tersimpan.
           connectedDevice: _printerService.connectedDevice,
+          savedMacAddress: savedMac,
           isLoading: false,
         ),
       );
-
-      AppLogger.debug("Scan selesai");
     } catch (e, stackTrace) {
       AppLogger.error("Gagal scan printer", e, stackTrace);
       if (isClosed) return;
       emit(
-        PrinterLoaded(
-          devices: currentState is PrinterLoaded ? currentState.devices : [],
-          connectedDevice: _printerService.connectedDevice,
-          isLoading: false,
+        PrinterState.error(
+          message: "Gagal memindai perangkat Bluetooth.",
+          timestamp: DateTime.now(),
         ),
       );
-      emit(PrinterError("Gagal memindai perangkat Bluetooth."));
     }
   }
 
-  // =========================================================================
-  // 🚀 DISCOVERY: cari perangkat baru di sekitar (belum tentu paired)
-  // =========================================================================
   Future<void> startScanning() async {
-    final currentState = state;
-
     final granted = await checkAndRequestPermissions();
     if (!granted) return;
 
-    final bluetoothOn = await _printerService.isBluetoothOn;
-    if (!bluetoothOn) {
-      emit(PrinterBluetoothOffRequiresAction());
-      return;
-    }
+    final bluetoothOn = await checkBluetoothOn();
+    if (!bluetoothOn) return;
 
-    final existingDevices = currentState is PrinterLoaded
-        ? currentState.devices
-        : await _printerService.getPairedDevices();
-    final existingConnected = currentState is PrinterLoaded
-        ? currentState.connectedDevice
-        : _printerService.connectedDevice;
+    final List<BtcDevice> existingDevices = state.maybeMap(
+      loaded: (s) => s.devices,
+      orElse: () => <BtcDevice>[],
+    );
+
+    final savedMac = await _secureStorage.getPrinterMacAddress();
 
     emit(
-      PrinterLoaded(
-        devices: existingDevices,
+      PrinterState.loaded(
+        devices: existingDevices.isEmpty
+            ? await _printerService.getPairedDevices()
+            : existingDevices,
         discoveredDevices: const [],
-        connectedDevice: existingConnected,
+        connectedDevice: _printerService.connectedDevice,
+        savedMacAddress: savedMac, // 🚀 SUPAI KE STATE UI
         isScanning: true,
       ),
     );
 
     await _discoverySub?.cancel();
     _discoverySub = _printerService.discoveryResults.listen((device) {
-      final s = state;
-      if (s is! PrinterLoaded) return;
-      final alreadyKnown =
-          s.discoveredDevices.any((d) => d.address == device.address) ||
-          s.devices.any((d) => d.address == device.address);
-      if (alreadyKnown) return;
-
-      emit(
-        PrinterLoaded(
-          devices: s.devices,
-          discoveredDevices: [...s.discoveredDevices, device],
-          connectedDevice: s.connectedDevice,
-          isScanning: s.isScanning,
-        ),
+      if (isClosed) return;
+      state.maybeMap(
+        loaded: (s) {
+          final alreadyKnown =
+              s.discoveredDevices.any((d) => d.address == device.address) ||
+              s.devices.any((d) => d.address == device.address);
+          if (!alreadyKnown) {
+            emit(
+              s.copyWith(discoveredDevices: [...s.discoveredDevices, device]),
+            );
+          }
+        },
+        orElse: () {},
       );
     });
 
     await _printerService.startDiscovery();
 
-    // Discovery classic Bluetooth di Android biasanya auto-stop ~12 detik,
-    // kasih auto-stop di app juga biar isScanning kebalik dengan benar.
-    Future.delayed(const Duration(seconds: 12), stopScanning);
+    _discoveryTimer?.cancel();
+    _discoveryTimer = Timer(const Duration(seconds: 12), stopScanning);
   }
 
   Future<void> stopScanning() async {
+    _discoveryTimer?.cancel();
     await _discoverySub?.cancel();
     await _printerService.stopDiscovery();
+
     if (isClosed) return;
-    final s = state;
-    if (s is PrinterLoaded) {
-      emit(
-        PrinterLoaded(
-          devices: s.devices,
-          discoveredDevices: s.discoveredDevices,
-          connectedDevice: s.connectedDevice,
-          isScanning: false,
-        ),
-      );
-    }
+    state.maybeMap(
+      loaded: (s) => emit(s.copyWith(isScanning: false)),
+      orElse: () {},
+    );
   }
 
-  // =========================================================================
-  // 🖨️ Manual Print Receipt — TANPA fallback tebak-tebakan lagi
-  // =========================================================================
   Future<bool> printReceipt(HistoryItemModel transaction) async {
-    final currentState = state;
     try {
       final granted = await checkAndRequestPermissions();
       if (!granted) return false;
 
-      final bluetoothOn = await _printerService.isBluetoothOn;
-      if (!bluetoothOn) {
-        emit(PrinterBluetoothOffRequiresAction());
-        _restoreLoadedState(currentState);
-        return false;
-      }
+      final bluetoothOn = await checkBluetoothOn();
+      if (!bluetoothOn) return false;
 
-      // Sumber kebenaran: langsung dari service.
       if (!_printerService.isConnected) {
         final savedMacAddress = await _secureStorage.getPrinterMacAddress();
         if (savedMacAddress != null && savedMacAddress.isNotEmpty) {
           final pairedDevices = await _printerService.getPairedDevices();
-          BtcDevice? targetDevice;
-          for (var device in pairedDevices) {
-            if (device.address == savedMacAddress) {
-              targetDevice = device;
-              break;
-            }
-          }
-          if (targetDevice != null) {
+          try {
+            final targetDevice = pairedDevices.firstWhere(
+              (d) => d.address == savedMacAddress,
+            );
             await _printerService.connect(targetDevice);
+          } catch (_) {
+            /* Printer tidak ditemukan di paired devices */
           }
         }
       }
 
       if (!_printerService.isConnected) {
         emit(
-          PrinterError(
-            "Belum ada perangkat printer yang terhubung. Pastikan printer dalam kondisi MENYALA.",
+          PrinterState.error(
+            message:
+                "Belum ada perangkat printer yang terhubung. Pastikan printer dalam kondisi MENYALA.",
+            timestamp: DateTime.now(),
           ),
         );
-        _restoreLoadedState(currentState);
         return false;
-      }
-
-      // Sinkronkan UI kalau ternyata sebelumnya belum sinkron — TANPA nebak.
-      if (currentState is! PrinterLoaded ||
-          currentState.connectedDevice?.address !=
-              _printerService.connectedDevice?.address) {
-        final pairedDevices = await _printerService.getPairedDevices();
-        emit(
-          PrinterLoaded(
-            devices: pairedDevices,
-            connectedDevice: _printerService.connectedDevice,
-          ),
-        );
       }
 
       final success = await _printerService.printReceipt(transaction);
       if (!success) {
         emit(
-          PrinterError(
-            "Gagal mencetak karcis. Pastikan kertas tersedia atau printer dalam kondisi baik.",
+          PrinterState.error(
+            message:
+                "Gagal mencetak karcis. Pastikan kertas tersedia atau printer dalam kondisi baik.",
+            timestamp: DateTime.now(),
           ),
         );
-        _restoreLoadedState(currentState);
         return false;
       }
 
       return true;
     } catch (e) {
       AppLogger.error("🖨️ [Print] Terjadi kesalahan fatal: $e");
-      emit(PrinterError("Terjadi kesalahan sistem saat mencoba mencetak."));
-      _restoreLoadedState(currentState);
+      emit(
+        PrinterState.error(
+          message: "Terjadi kesalahan sistem saat mencoba mencetak.",
+          timestamp: DateTime.now(),
+        ),
+      );
       return false;
     }
   }
 
   Future<void> connectDevice(BtcDevice device) async {
-    final currentState = state;
-    if (currentState is! PrinterLoaded) return;
+    final bluetoothOn = await checkBluetoothOn();
+    if (!bluetoothOn) return;
 
-    final bluetoothOn = await _printerService.isBluetoothOn;
-    if (!bluetoothOn) {
-      emit(PrinterBluetoothOffRequiresAction());
-      return;
-    }
-
-    emit(
-      PrinterLoaded(
-        devices: currentState.devices,
-        discoveredDevices: currentState.discoveredDevices,
-        connectedDevice: currentState.connectedDevice,
-        isLoading: true,
-      ),
+    state.maybeMap(
+      loaded: (s) => emit(s.copyWith(isLoading: true)),
+      orElse: () {},
     );
 
     final success = await _printerService.connect(device);
     if (isClosed) return;
 
     if (success) {
+      // Simpan ke Local Storage
       await _secureStorage.savePrinterMacAddress(device.address);
-      AppLogger.debug("🖨️ MAC Address ${device.address} tersimpan!");
+      AppLogger.debug(
+        "🖨️ MAC Address ${device.address} resmi tersimpan di aplikasi!",
+      );
 
-      final updatedDevices =
-          currentState.devices.any((d) => d.address == device.address)
-          ? currentState.devices
-          : [...currentState.devices, device];
+      state.maybeMap(
+        loaded: (s) {
+          final updatedDevices =
+              s.devices.any((d) => d.address == device.address)
+              ? s.devices
+              : [...s.devices, device];
 
-      emit(
-        PrinterLoaded(
-          devices: updatedDevices,
-          discoveredDevices: currentState.discoveredDevices
-              .where((d) => d.address != device.address)
-              .toList(),
-          connectedDevice: device,
-        ),
+          emit(
+            s.copyWith(
+              devices: updatedDevices,
+              discoveredDevices: s.discoveredDevices
+                  .where((d) => d.address != device.address)
+                  .toList(),
+              savedMacAddress: device.address,
+              isLoading: false,
+            ),
+          );
+        },
+        orElse: () {},
       );
     } else {
-      final bluetoothStillOn = await _printerService.isBluetoothOn;
-      if (!bluetoothStillOn) return;
       emit(
-        PrinterError(
-          'Gagal terhubung ke ${device.displayName}. Pastikan printer menyala.',
+        PrinterState.error(
+          message:
+              'Gagal terhubung ke ${device.displayName}. Pastikan printer menyala.',
+          timestamp: DateTime.now(),
         ),
       );
-      emit(
-        PrinterLoaded(
-          devices: currentState.devices,
-          discoveredDevices: currentState.discoveredDevices,
-        ),
-      );
+      refreshPairedDevices();
     }
   }
 
   Future<void> disconnect() async {
-    final currentState = state;
-    if (currentState is! PrinterLoaded) return;
-
     await _printerService.disconnect();
     await _secureStorage.clearPrinterMacAddress();
 
     if (isClosed) return;
-    emit(
-      PrinterLoaded(
-        devices: currentState.devices,
-        discoveredDevices: currentState.discoveredDevices,
-        connectedDevice: null,
-      ),
+    state.maybeMap(
+      loaded: (s) =>
+          emit(s.copyWith(connectedDevice: null, savedMacAddress: null)),
+      orElse: () {},
     );
-  }
-
-  void _restoreLoadedState(PrinterState currentState) {
-    if (currentState is PrinterLoaded) {
-      emit(
-        PrinterLoaded(
-          devices: currentState.devices,
-          discoveredDevices: currentState.discoveredDevices,
-          connectedDevice: currentState.connectedDevice,
-          isLoading: false,
-          isScanning: currentState.isScanning,
-        ),
-      );
-    }
   }
 
   @override
   Future<void> close() {
+    _discoveryTimer?.cancel();
     _discoverySub?.cancel();
     _connectionSub?.cancel();
     _bluetoothStateSub?.cancel();

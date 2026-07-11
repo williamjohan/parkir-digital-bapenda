@@ -15,7 +15,7 @@ class ResilientDnsResolver {
   static final Map<String, _CachedIp> _cache = {};
 
   /// Resolve hostname -> IP.
-  /// Return null kalau semua resolver gagal, caller wajib fallback ke hostname asli[cite: 4].
+  /// Return null kalau semua resolver gagal, caller wajib fallback ke hostname asli.
   static Future<String?> resolveIp(String host) async {
     final cached = _cache[host];
     if (cached != null && !cached.isExpired) {

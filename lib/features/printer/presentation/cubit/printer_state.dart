@@ -1,60 +1,31 @@
-part of 'printer_cubit.dart';
+import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-abstract class PrinterState extends Equatable {
-  const PrinterState();
-  @override
-  List<Object?> get props => [];
-}
+part 'printer_state.freezed.dart';
 
-class PrinterInitial extends PrinterState {}
+@freezed
+class PrinterState with _$PrinterState {
+  const factory PrinterState.initial() = _Initial;
 
-class PrinterLoading extends PrinterState {}
+  const factory PrinterState.loading() = _Loading;
 
-class PrinterLoaded extends PrinterState {
-  final List<BtcDevice> devices;
-  final List<BtcDevice>
-  discoveredDevices; // 🚀 hasil scan realtime, belum tentu paired
-  final BtcDevice? connectedDevice;
-  final bool isLoading;
-  final bool isScanning; // 🚀 status discovery lagi jalan atau nggak
+  const factory PrinterState.loaded({
+    required List<BtcDevice> devices,
+    @Default([]) List<BtcDevice> discoveredDevices,
+    BtcDevice? connectedDevice,
+    String? savedMacAddress,
+    @Default(false) bool isLoading,
+    @Default(false) bool isScanning,
+  }) = _Loaded;
 
-  const PrinterLoaded({
-    required this.devices,
-    this.discoveredDevices = const [],
-    this.connectedDevice,
-    this.isLoading = false,
-    this.isScanning = false,
-  });
+  const factory PrinterState.error({
+    required String message,
+    DateTime? timestamp,
+  }) = _Error;
 
-  @override
-  List<Object?> get props => [
-    devices,
-    discoveredDevices,
-    connectedDevice,
-    isLoading,
-    isScanning,
-  ];
-}
+  const factory PrinterState.permissionRequiresAction({DateTime? timestamp}) =
+      _PermissionRequiresAction;
 
-class PrinterError extends PrinterState {
-  final String message;
-  final DateTime timestamp;
-  PrinterError(this.message) : timestamp = DateTime.now();
-  @override
-  List<Object?> get props => [message, timestamp];
-}
-
-class PrinterPermissionRequiresAction extends PrinterState {
-  final DateTime timestamp;
-  PrinterPermissionRequiresAction() : timestamp = DateTime.now();
-  @override
-  List<Object?> get props => [timestamp];
-}
-
-// 🚀 STATE BARU: minta UI munculin modal "Bluetooth belum aktif"
-class PrinterBluetoothOffRequiresAction extends PrinterState {
-  final DateTime timestamp;
-  PrinterBluetoothOffRequiresAction() : timestamp = DateTime.now();
-  @override
-  List<Object?> get props => [timestamp];
+  const factory PrinterState.bluetoothOffRequiresAction({DateTime? timestamp}) =
+      _BluetoothOffRequiresAction;
 }
