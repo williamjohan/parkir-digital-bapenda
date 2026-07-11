@@ -220,7 +220,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                     // 🚀 BARU: tarik ke bawah buat refresh daftar perangkat
                     child: RefreshIndicator(
                       onRefresh: () =>
-                          context.read<PrinterCubit>().refreshPairedDevices(),
+                          context.read<PrinterCubit>().scanDevices(),
                       color: AppColors.primary,
                       child: ListDeviceWidget(
                         devices: devices,

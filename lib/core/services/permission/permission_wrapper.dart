@@ -125,12 +125,13 @@ class PermissionService {
             await PermissionRequiredDialog.show(
               context,
               icon: Icons.bluetooth_rounded,
-              title: "Izin Bluetooth Dibutuhkan",
+              title: "Izin Perangkat di Sekitar Dibutuhkan",
               description:
-                  "Aktifkan izin Bluetooth agar fitur ini dapat digunakan.",
+                  "Aktifkan izin \"Perangkat di sekitar\" (Nearby devices) agar fitur ini dapat digunakan.",
             );
             return false;
           }
+          break;
           break;
 
         case PermissionType.bluetoothService:
