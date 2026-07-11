@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/payment/presentation/pages/payment_dialog_helpers.dart';
+import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -101,8 +102,8 @@ class _PaymentPageState extends State<PaymentPage> {
                             Navigator.of(dialogContext).pop();
                             if (context.mounted) context.pop(true);
                           },
-                          printPressed: () {
-                            /* Cetak */
+                          printPressed: () async {
+                            return await context.read<PrinterCubit>().printReceipt(historyItem);
                           },
                         ),
                       ),
