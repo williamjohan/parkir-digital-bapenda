@@ -272,7 +272,7 @@ class ListDeviceWidget extends StatelessWidget {
                     color: AppColors.success.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -280,7 +280,7 @@ class ListDeviceWidget extends StatelessWidget {
                         size: 14,
                         color: AppColors.success,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Aktif',
                         style: TextStyle(
@@ -340,7 +340,7 @@ class ListDeviceWidget extends StatelessWidget {
                 ],
               ),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.bluetooth_searching_rounded,
               size: 38,
               color: AppColors.primary,

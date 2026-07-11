@@ -18,8 +18,6 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$HomeState {
   HomeStatus get status => throw _privateConstructorUsedError;
-  CameraPermissionStatus? get permissionActionStatus =>
-      throw _privateConstructorUsedError;
   String? get selectedVehicleForCapture => throw _privateConstructorUsedError;
   int? get actionTimestamp => throw _privateConstructorUsedError;
   int get motorCount => throw _privateConstructorUsedError;
@@ -70,7 +68,6 @@ abstract class $HomeStateCopyWith<$Res> {
   @useResult
   $Res call({
     HomeStatus status,
-    CameraPermissionStatus? permissionActionStatus,
     String? selectedVehicleForCapture,
     int? actionTimestamp,
     int motorCount,
@@ -127,7 +124,6 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   @override
   $Res call({
     Object? status = null,
-    Object? permissionActionStatus = freezed,
     Object? selectedVehicleForCapture = freezed,
     Object? actionTimestamp = freezed,
     Object? motorCount = null,
@@ -167,10 +163,6 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as HomeStatus,
-            permissionActionStatus: freezed == permissionActionStatus
-                ? _value.permissionActionStatus
-                : permissionActionStatus // ignore: cast_nullable_to_non_nullable
-                      as CameraPermissionStatus?,
             selectedVehicleForCapture: freezed == selectedVehicleForCapture
                 ? _value.selectedVehicleForCapture
                 : selectedVehicleForCapture // ignore: cast_nullable_to_non_nullable
@@ -356,7 +348,6 @@ abstract class _$$HomeStateImplCopyWith<$Res>
   @useResult
   $Res call({
     HomeStatus status,
-    CameraPermissionStatus? permissionActionStatus,
     String? selectedVehicleForCapture,
     int? actionTimestamp,
     int motorCount,
@@ -416,7 +407,6 @@ class __$$HomeStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? status = null,
-    Object? permissionActionStatus = freezed,
     Object? selectedVehicleForCapture = freezed,
     Object? actionTimestamp = freezed,
     Object? motorCount = null,
@@ -456,10 +446,6 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as HomeStatus,
-        permissionActionStatus: freezed == permissionActionStatus
-            ? _value.permissionActionStatus
-            : permissionActionStatus // ignore: cast_nullable_to_non_nullable
-                  as CameraPermissionStatus?,
         selectedVehicleForCapture: freezed == selectedVehicleForCapture
             ? _value.selectedVehicleForCapture
             : selectedVehicleForCapture // ignore: cast_nullable_to_non_nullable
@@ -598,7 +584,6 @@ class __$$HomeStateImplCopyWithImpl<$Res>
 class _$HomeStateImpl implements _HomeState {
   const _$HomeStateImpl({
     this.status = HomeStatus.initial,
-    this.permissionActionStatus,
     this.selectedVehicleForCapture,
     this.actionTimestamp,
     this.motorCount = 0,
@@ -685,8 +670,6 @@ class _$HomeStateImpl implements _HomeState {
   @override
   @JsonKey()
   final HomeStatus status;
-  @override
-  final CameraPermissionStatus? permissionActionStatus;
   @override
   final String? selectedVehicleForCapture;
   @override
@@ -798,7 +781,7 @@ class _$HomeStateImpl implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(status: $status, permissionActionStatus: $permissionActionStatus, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, checkInOutData: $checkInOutData)';
+    return 'HomeState(status: $status, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, checkInOutData: $checkInOutData)';
   }
 
   @override
@@ -807,8 +790,6 @@ class _$HomeStateImpl implements _HomeState {
         (other.runtimeType == runtimeType &&
             other is _$HomeStateImpl &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.permissionActionStatus, permissionActionStatus) ||
-                other.permissionActionStatus == permissionActionStatus) &&
             (identical(
                   other.selectedVehicleForCapture,
                   selectedVehicleForCapture,
@@ -882,7 +863,6 @@ class _$HomeStateImpl implements _HomeState {
   int get hashCode => Object.hashAll([
     runtimeType,
     status,
-    permissionActionStatus,
     selectedVehicleForCapture,
     actionTimestamp,
     motorCount,
@@ -929,7 +909,6 @@ class _$HomeStateImpl implements _HomeState {
 abstract class _HomeState implements HomeState {
   const factory _HomeState({
     final HomeStatus status,
-    final CameraPermissionStatus? permissionActionStatus,
     final String? selectedVehicleForCapture,
     final int? actionTimestamp,
     final int motorCount,
@@ -966,8 +945,6 @@ abstract class _HomeState implements HomeState {
 
   @override
   HomeStatus get status;
-  @override
-  CameraPermissionStatus? get permissionActionStatus;
   @override
   String? get selectedVehicleForCapture;
   @override

@@ -4,10 +4,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/enums/app_enums.dart';
+import '../../../../core/services/permission/i_permission_service.dart';
 import '../../../../core/services/printer/i_printer_service.dart';
 import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
-import '../../../../core/utils/permission_utils.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 
 part 'printer_state.dart';
@@ -16,14 +17,18 @@ part 'printer_state.dart';
 class PrinterCubit extends Cubit<PrinterState> {
   final IPrinterService _printerService;
   final ISecureStorageManager _secureStorage;
+  final IPermissionService _permissionService;
 
   StreamSubscription<BtcDevice>? _discoverySub;
   StreamSubscription<BtcDevice?>? _connectionSub;
   StreamSubscription<bool>? _bluetoothStateSub; // 🚀 BARU
   bool? _lastBluetoothOn;
 
-  PrinterCubit(this._printerService, this._secureStorage)
-    : super(PrinterInitial()) {
+  PrinterCubit(
+    this._printerService,
+    this._secureStorage,
+    this._permissionService,
+  ) : super(PrinterInitial()) {
     // 🚀 Auto-sync state setiap kali status koneksi berubah di level service,
     // termasuk saat printer disconnect sendiri di luar kontrol UI, ATAU saat
     // cubit ini instance baru (misal karena factory injection) tapi service
@@ -131,23 +136,25 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   Future<bool> checkAndRequestPermissions() async {
     final currentState = state;
-    try {
-      final status = await PermissionUtils.requestBluetoothPermission();
 
-      if (status == BluetoothPermissionStatus.granted) {
+    try {
+      final status = await _permissionService.requestPermission(
+        AppPermissionType.bluetooth,
+      );
+
+      if (status == AppPermissionStatus.granted) {
         AppLogger.debug("Izin lengkap diberikan.");
         return true;
       }
 
-      if (status == BluetoothPermissionStatus.permanentlyDenied ||
-          status == BluetoothPermissionStatus.denied) {
+      if (status == AppPermissionStatus.permanentlyDenied ||
+          status == AppPermissionStatus.denied) {
         AppLogger.error("Izin Bluetooth/Lokasi ditolak atau tidak lengkap.");
         emit(PrinterPermissionRequiresAction());
         _restoreLoadedState(currentState);
         return false;
       }
 
-      AppLogger.error("Status permission error.");
       emit(PrinterError("Gagal memeriksa izin perangkat."));
       _restoreLoadedState(currentState);
       return false;

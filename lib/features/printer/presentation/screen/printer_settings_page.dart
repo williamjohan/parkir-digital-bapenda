@@ -19,17 +19,26 @@ class PrinterSettingsPage extends StatefulWidget {
 }
 
 class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
+  late final PrinterCubit _printerCubit;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _printerCubit = context.read<PrinterCubit>();
+  }
+
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PrinterCubit>().scanDevices();
+      _printerCubit.scanDevices();
     });
   }
 
   @override
   void dispose() {
-    context.read<PrinterCubit>().stopScanning();
+    _printerCubit.stopScanning();
     super.dispose();
   }
 

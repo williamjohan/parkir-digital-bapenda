@@ -187,6 +187,8 @@ import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
 import '../services/location/app_location_services_impl.dart' as _i35;
 import '../services/location/i_app_location_service.dart' as _i988;
+import '../services/permission/i_permission_service.dart' as _i164;
+import '../services/permission/permission_service_impl.dart' as _i1018;
 import '../services/printer/bluetooth_printer_service_impl.dart' as _i291;
 import '../services/printer/i_printer_service.dart' as _i1003;
 import '../storage/database_helper_2.dart' as _i654;
@@ -223,6 +225,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i1015.ISecureStorageManager>(
     () => _i1042.SecureStorageManagerImpl(),
   );
+  gh.lazySingleton<_i164.IPermissionService>(
+    () => _i1018.PermissionServiceImpl(),
+  );
   gh.lazySingleton<_i1004.IPaymentRepository>(
     () => _i265.PaymentRepositoryImpl(gh<_i57.QrisSignalRDatasource>()),
   );
@@ -235,12 +240,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i11.NetworkCubit>(
     () => _i11.NetworkCubit(gh<_i895.Connectivity>()),
   );
-  gh.factory<_i377.PrinterCubit>(
-    () => _i377.PrinterCubit(
-      gh<_i1003.IPrinterService>(),
-      gh<_i1015.ISecureStorageManager>(),
-    ),
-  );
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1015.ISecureStorageManager>()),
   );
@@ -248,6 +247,13 @@ _i174.GetIt init(
     () => _i674.InitCubit(
       checkDeviceReadinessUseCase: gh<_i232.CheckDeviceReadinessUseCase>(),
       secureStorageManager: gh<_i1015.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i377.PrinterCubit>(
+    () => _i377.PrinterCubit(
+      gh<_i1003.IPrinterService>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i164.IPermissionService>(),
     ),
   );
   gh.lazySingleton<_i988.IAppLocationService>(

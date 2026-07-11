@@ -132,7 +132,6 @@ class PermissionService {
             return false;
           }
           break;
-          break;
 
         case PermissionType.bluetoothService:
           final bluetooth = FlutterClassicBluetooth();

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
@@ -7,14 +6,12 @@ import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
 import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
 import 'package:parkir_digital_bapenda/core/services/permission/permission_wrapper.dart';
-import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
-import '../../../printer/presentation/cubit/printer_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isFree;

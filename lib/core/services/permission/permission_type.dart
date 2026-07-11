@@ -7,5 +7,5 @@ enum PermissionType {
   photos,
   microphone,
   bluetooth,
-  bluetoothService
+  bluetoothService,
 }

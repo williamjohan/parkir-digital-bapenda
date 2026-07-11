@@ -67,3 +67,16 @@ enum JenisKendaraan {
 
   const JenisKendaraan(this.id);
 }
+
+enum AppPermissionType {
+  camera,
+  location,
+  locationService,
+  notification,
+  storage,
+  photos,
+  microphone,
+  bluetooth,
+}
+
+enum AppPermissionStatus { granted, denied, permanentlyDenied }
