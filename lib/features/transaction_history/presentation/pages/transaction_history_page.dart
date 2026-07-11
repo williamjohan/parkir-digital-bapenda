@@ -484,7 +484,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
                                           // Navigator.pop(context);
 
                                           // proses print di sini
-                                          await context
+                                          return await context
                                               .read<PrinterCubit>()
                                               .printReceipt(data[index]);
                                         },
