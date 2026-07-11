@@ -1,13 +1,15 @@
-import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
+import '../../../../core/design_system/components/pb_permission_required_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../shared/loading/loading_overlay.dart';
 import '../cubit/printer_cubit.dart';
-import '../widgets/list_device_widget.dart'; // 🚀 Import Widget Anak
+import '../widgets/list_device_widget.dart';
 
 class PrinterSettingsPage extends StatefulWidget {
   const PrinterSettingsPage({super.key});
@@ -23,6 +25,12 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PrinterCubit>().scanDevices();
     });
+  }
+
+  @override
+  void dispose() {
+    context.read<PrinterCubit>().stopScanning();
+    super.dispose();
   }
 
   @override
@@ -56,9 +64,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                 message: state.message,
                 isError: true,
               );
-            }
-            // 🚀 TAMBAHKAN LISTENER INI UNTUK MENAMPILKAN DIALOG
-            else if (state is PrinterPermissionRequiresAction) {
+            } else if (state is PrinterPermissionRequiresAction) {
               PbPermissionDialog.show(
                 context,
                 title: 'Akses Izin Diperlukan',
@@ -66,14 +72,31 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                     'Anda telah menolak izin Perangkat Sekitar (Bluetooth) atau Lokasi aplikasi ini.\n\nMohon aktifkan izin tersebut secara manual melalui pengaturan aplikasi agar fitur printer dapat digunakan kembali.',
               );
             }
+            // 🚀 MODAL BARU: Bluetooth HP belum aktif
+            else if (state is PrinterBluetoothOffRequiresAction) {
+              PermissionRequiredDialog.show(
+                context,
+                icon: Icons.bluetooth_disabled_rounded,
+                title: 'Bluetooth Belum Aktif',
+                description:
+                    'Aktifkan Bluetooth pada perangkat Anda terlebih dahulu agar bisa mencari dan terhubung ke printer.',
+                onConfirm: () {
+                  AppSettings.openAppSettings(type: AppSettingsType.bluetooth);
+                },
+              );
+            }
           },
           builder: (context, state) {
             final isLoading =
                 state is PrinterLoading ||
                 (state is PrinterLoaded && state.isLoading);
+            final isScanning = state is PrinterLoaded && state.isScanning;
             final devices = state is PrinterLoaded
                 ? state.devices
-                : <BluetoothDevice>[];
+                : <BtcDevice>[];
+            final discoveredDevices = state is PrinterLoaded
+                ? state.discoveredDevices
+                : <BtcDevice>[];
             final connectedDevice = state is PrinterLoaded
                 ? state.connectedDevice
                 : null;
@@ -103,7 +126,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                         const SizedBox(height: 8),
                         Text(
                           connectedDevice != null
-                              ? 'Terhubung dengan:\n${connectedDevice.name}'
+                              ? 'Terhubung dengan:\n${connectedDevice.displayName}'
                               : 'Printer Tidak Terhubung',
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -114,21 +137,55 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                                 : AppColors.error,
                           ),
                         ),
-                        if (connectedDevice != null) ...[
-                          const SizedBox(height: 12),
-                          ElevatedButton.icon(
-                            onPressed: isLoading
-                                ? null
-                                : () =>
-                                      context.read<PrinterCubit>().disconnect(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.error,
-                              foregroundColor: Colors.white,
+                        const SizedBox(height: 12),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 12,
+                          runSpacing: 8,
+                          children: [
+                            if (connectedDevice != null)
+                              ElevatedButton.icon(
+                                onPressed: isLoading
+                                    ? null
+                                    : () => context
+                                          .read<PrinterCubit>()
+                                          .disconnect(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.error,
+                                  foregroundColor: Colors.white,
+                                ),
+                                icon: const Icon(Icons.link_off),
+                                label: const Text('Putuskan Koneksi'),
+                              ),
+                            ElevatedButton.icon(
+                              onPressed: isLoading
+                                  ? null
+                                  : () => isScanning
+                                        ? context
+                                              .read<PrinterCubit>()
+                                              .stopScanning()
+                                        : context
+                                              .read<PrinterCubit>()
+                                              .startScanning(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isScanning
+                                    ? Colors.grey
+                                    : AppColors.primary,
+                                foregroundColor: Colors.white,
+                              ),
+                              icon: Icon(
+                                isScanning
+                                    ? Icons.stop
+                                    : Icons.bluetooth_searching,
+                              ),
+                              label: Text(
+                                isScanning
+                                    ? 'Berhenti Mencari'
+                                    : 'Cari Perangkat Baru',
+                              ),
                             ),
-                            icon: const Icon(Icons.link_off),
-                            label: const Text('Putuskan Koneksi'),
-                          ),
-                        ],
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -159,21 +216,21 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                       ],
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: Text(
-                      'Perangkat Tersimpan (Paired Devices):',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
                   Expanded(
-                    child: ListDeviceWidget(
-                      devices: devices,
-                      connectedDevice: connectedDevice,
-                      isLoading: isLoading,
-                      onConnect: (device) {
-                        context.read<PrinterCubit>().connectDevice(device);
-                      },
+                    // 🚀 BARU: tarik ke bawah buat refresh daftar perangkat
+                    child: RefreshIndicator(
+                      onRefresh: () =>
+                          context.read<PrinterCubit>().refreshPairedDevices(),
+                      color: AppColors.primary,
+                      child: ListDeviceWidget(
+                        devices: devices,
+                        discoveredDevices: discoveredDevices,
+                        connectedDevice: connectedDevice,
+                        isLoading: isLoading,
+                        isScanning: isScanning,
+                        onConnect: (device) =>
+                            context.read<PrinterCubit>().connectDevice(device),
+                      ),
                     ),
                   ),
                 ],

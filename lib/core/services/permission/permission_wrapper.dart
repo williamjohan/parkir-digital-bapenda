@@ -1,4 +1,6 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_required_dialog.dart';
 import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
@@ -126,6 +128,28 @@ class PermissionService {
               title: "Izin Bluetooth Dibutuhkan",
               description:
                   "Aktifkan izin Bluetooth agar fitur ini dapat digunakan.",
+            );
+            return false;
+          }
+          break;
+
+        case PermissionType.bluetoothService:
+          final bluetooth = FlutterClassicBluetooth();
+          bool enabled;
+          try {
+            enabled = await bluetooth.isEnabled();
+          } catch (_) {
+            enabled = false;
+          }
+
+          if (!enabled) {
+            await PermissionRequiredDialog.show(
+              context,
+              icon: Icons.bluetooth_disabled_rounded,
+              title: "Bluetooth Belum Aktif",
+              description: "Aktifkan Bluetooth agar fitur ini dapat digunakan.",
+              onConfirm: () =>
+                  AppSettings.openAppSettings(type: AppSettingsType.bluetooth),
             );
             return false;
           }
