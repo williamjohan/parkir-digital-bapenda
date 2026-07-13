@@ -228,12 +228,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i164.IPermissionService>(
     () => _i1018.PermissionServiceImpl(),
   );
-  gh.lazySingleton<_i1004.IPaymentRepository>(
-    () => _i265.PaymentRepositoryImpl(gh<_i57.QrisSignalRDatasource>()),
-  );
-  gh.factory<_i808.PaymentUseCase>(
-    () => _i808.PaymentUseCase(gh<_i1004.IPaymentRepository>()),
-  );
   gh.lazySingleton<_i344.ConnectivityCheckInterceptor>(
     () => _i344.ConnectivityCheckInterceptor(gh<_i895.Connectivity>()),
   );
@@ -249,6 +243,12 @@ _i174.GetIt init(
       secureStorageManager: gh<_i1015.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i1004.IPaymentRepository>(
+    () => _i265.PaymentRepositoryImpl(
+      gh<_i57.QrisSignalRDatasource>(),
+      gh<_i1015.ISecureStorageManager>(),
+    ),
+  );
   gh.factory<_i377.PrinterCubit>(
     () => _i377.PrinterCubit(
       gh<_i1003.IPrinterService>(),
@@ -258,6 +258,9 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i988.IAppLocationService>(
     () => _i35.AppLocationServiceImpl(gh<_i1015.ISecureStorageManager>()),
+  );
+  gh.factory<_i808.PaymentUseCase>(
+    () => _i808.PaymentUseCase(gh<_i1004.IPaymentRepository>()),
   );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),

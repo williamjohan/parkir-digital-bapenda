@@ -9,7 +9,7 @@ class ListDeviceWidget extends StatelessWidget {
   final List<BtcDevice> devices;
   final List<BtcDevice> discoveredDevices;
   final BtcDevice? connectedDevice;
-  final String? savedMacAddress; // 🚀 TERIMA DARI SETTINGS PAGE
+  final String? savedMacAddress;
   final bool isLoading;
   final bool isScanning;
   final Function(BtcDevice) onConnect;

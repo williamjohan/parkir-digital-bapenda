@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/storage/i_secure_storage_manager.dart';
 import '../../../../core/errors/failure.dart';
 import '../../domain/entities/payment_success_entity.dart';
 import '../../domain/repositories/i_payment_repository.dart';
@@ -8,8 +9,9 @@ import '../datasources/qris_signalr_datasource.dart';
 @LazySingleton(as: IPaymentRepository)
 class PaymentRepositoryImpl implements IPaymentRepository {
   final QrisSignalRDatasource _signalRDatasource;
+  final ISecureStorageManager _iSecureStorageManager;
 
-  PaymentRepositoryImpl(this._signalRDatasource);
+  PaymentRepositoryImpl(this._signalRDatasource, this._iSecureStorageManager);
 
   @override
   Future<Either<Failure, Unit>> connectToPaymentStream(String kodeQris) async {
@@ -40,11 +42,14 @@ class PaymentRepositoryImpl implements IPaymentRepository {
       if (event.status == "LUNAS") {
         try {
           final payload = event.payload ?? {};
+          final profileOP = await _iSecureStorageManager.getJukirProfile();
+          final namaOpValue = profileOP?['namaObjekPajak']?.toString() ?? '-';
+          final alamatOpValue = profileOP?['alamat']?.toString() ?? '-';
 
           final entity = PaymentSuccessEntity(
             orderId: payload['orderId']?.toString() ?? '-',
-            namaOp: payload['namaOp']?.toString() ?? '-', // Dari BE
-            alamatOp: payload['alamatOp']?.toString() ?? '-', // Dari BE
+            namaOp: namaOpValue,
+            alamatOp: alamatOpValue,
             tanggalTransaksi:
                 payload['tanggalTransaksi']?.toString() ??
                 DateTime.now().toIso8601String(),
