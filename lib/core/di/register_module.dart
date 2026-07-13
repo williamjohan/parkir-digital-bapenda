@@ -10,6 +10,8 @@ import 'package:parkir_digital_bapenda/core/network/connectivity_check_intercept
 import '../network/dio_auth_interceptor.dart';
 import '../network/env_config.dart';
 import '../network/resilent_dns_resolver.dart';
+import '../services/audio/audio_notification_service_impl.dart';
+import '../services/audio/i_audio_notification_service.dart';
 import '../utils/app_logger.dart';
 
 @module
@@ -210,4 +212,8 @@ abstract class RegisterModule {
 
   @lazySingleton
   Connectivity get connectivity => Connectivity();
+
+  @lazySingleton
+  IAudioNotificationService get audioNotificationService =>
+      AudioNotificationServiceImpl()..init();
 }

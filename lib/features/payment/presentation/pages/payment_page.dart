@@ -8,6 +8,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/services/audio/i_audio_notification_service.dart';
 import '../../../printer/presentation/cubit/printer_state.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 import '../cubit/payment_cubit.dart';
@@ -75,6 +77,9 @@ class _PaymentPageState extends State<PaymentPage> {
           listener: (context, state) async {
             await state.whenOrNull(
               paymentSuccess: (ticketData) async {
+                locator<IAudioNotificationService>().playPaymentSuccess(
+                  ticketData.credit,
+                );
                 await PaymentDialogHelpers.showSuccessLottie(context, false);
                 if (!context.mounted) return;
 

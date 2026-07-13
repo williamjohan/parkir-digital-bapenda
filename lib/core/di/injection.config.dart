@@ -183,6 +183,7 @@ import '../../features/update/presentation/cubit/check_update_cubit.dart'
 import '../network/connectivity_check_interceptor.dart' as _i344;
 import '../network/dio_auth_interceptor.dart' as _i817;
 import '../network/network_cubit.dart' as _i11;
+import '../services/audio/i_audio_notification_service.dart' as _i827;
 import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
 import '../services/location/app_location_services_impl.dart' as _i35;
@@ -205,6 +206,9 @@ _i174.GetIt init(
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
   gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
+  gh.lazySingleton<_i827.IAudioNotificationService>(
+    () => registerModule.audioNotificationService,
+  );
   gh.lazySingleton<_i654.DatabaseHelper2>(() => _i654.DatabaseHelper2());
   gh.lazySingleton<_i57.QrisSignalRDatasource>(
     () => _i57.QrisSignalRDatasource(),
