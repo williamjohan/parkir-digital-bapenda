@@ -57,7 +57,7 @@ enum RoleLoginDigitalParkir {
   }
 }
 
-enum SearchOpType { digital, nonDigital, free, paid }
+enum SearchOpType { digital, nonDigital, free }
 
 enum JenisKendaraan {
   mobil(1),

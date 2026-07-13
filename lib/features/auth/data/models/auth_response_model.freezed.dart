@@ -362,6 +362,7 @@ mixin _$NopModel {
   String get nmCamat => throw _privateConstructorUsedError;
   String get kdLurah => throw _privateConstructorUsedError;
   String get nmLurah => throw _privateConstructorUsedError;
+  String get statusDigitalisasi => throw _privateConstructorUsedError;
 
   /// Serializes this NopModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -389,6 +390,7 @@ abstract class $NopModelCopyWith<$Res> {
     String nmCamat,
     String kdLurah,
     String nmLurah,
+    String statusDigitalisasi,
   });
 }
 
@@ -417,6 +419,7 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
     Object? nmCamat = null,
     Object? kdLurah = null,
     Object? nmLurah = null,
+    Object? statusDigitalisasi = null,
   }) {
     return _then(
       _value.copyWith(
@@ -460,6 +463,10 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
                 ? _value.nmLurah
                 : nmLurah // ignore: cast_nullable_to_non_nullable
                       as String,
+            statusDigitalisasi: null == statusDigitalisasi
+                ? _value.statusDigitalisasi
+                : statusDigitalisasi // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -486,6 +493,7 @@ abstract class _$$NopModelImplCopyWith<$Res>
     String nmCamat,
     String kdLurah,
     String nmLurah,
+    String statusDigitalisasi,
   });
 }
 
@@ -513,6 +521,7 @@ class __$$NopModelImplCopyWithImpl<$Res>
     Object? nmCamat = null,
     Object? kdLurah = null,
     Object? nmLurah = null,
+    Object? statusDigitalisasi = null,
   }) {
     return _then(
       _$NopModelImpl(
@@ -556,6 +565,10 @@ class __$$NopModelImplCopyWithImpl<$Res>
             ? _value.nmLurah
             : nmLurah // ignore: cast_nullable_to_non_nullable
                   as String,
+        statusDigitalisasi: null == statusDigitalisasi
+            ? _value.statusDigitalisasi
+            : statusDigitalisasi // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -575,6 +588,7 @@ class _$NopModelImpl implements _NopModel {
     this.nmCamat = '',
     this.kdLurah = '',
     this.nmLurah = '',
+    this.statusDigitalisasi = '',
   });
 
   factory _$NopModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -610,10 +624,13 @@ class _$NopModelImpl implements _NopModel {
   @override
   @JsonKey()
   final String nmLurah;
+  @override
+  @JsonKey()
+  final String statusDigitalisasi;
 
   @override
   String toString() {
-    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital, pungutTarif: $pungutTarif, uptb: $uptb, kdCamat: $kdCamat, nmCamat: $nmCamat, kdLurah: $kdLurah, nmLurah: $nmLurah)';
+    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital, pungutTarif: $pungutTarif, uptb: $uptb, kdCamat: $kdCamat, nmCamat: $nmCamat, kdLurah: $kdLurah, nmLurah: $nmLurah, statusDigitalisasi: $statusDigitalisasi)';
   }
 
   @override
@@ -633,7 +650,9 @@ class _$NopModelImpl implements _NopModel {
             (identical(other.kdCamat, kdCamat) || other.kdCamat == kdCamat) &&
             (identical(other.nmCamat, nmCamat) || other.nmCamat == nmCamat) &&
             (identical(other.kdLurah, kdLurah) || other.kdLurah == kdLurah) &&
-            (identical(other.nmLurah, nmLurah) || other.nmLurah == nmLurah));
+            (identical(other.nmLurah, nmLurah) || other.nmLurah == nmLurah) &&
+            (identical(other.statusDigitalisasi, statusDigitalisasi) ||
+                other.statusDigitalisasi == statusDigitalisasi));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -650,6 +669,7 @@ class _$NopModelImpl implements _NopModel {
     nmCamat,
     kdLurah,
     nmLurah,
+    statusDigitalisasi,
   );
 
   /// Create a copy of NopModel
@@ -678,6 +698,7 @@ abstract class _NopModel implements NopModel {
     final String nmCamat,
     final String kdLurah,
     final String nmLurah,
+    final String statusDigitalisasi,
   }) = _$NopModelImpl;
 
   factory _NopModel.fromJson(Map<String, dynamic> json) =
@@ -703,6 +724,8 @@ abstract class _NopModel implements NopModel {
   String get kdLurah;
   @override
   String get nmLurah;
+  @override
+  String get statusDigitalisasi;
 
   /// Create a copy of NopModel
   /// with the given fields replaced by the non-null parameter values.

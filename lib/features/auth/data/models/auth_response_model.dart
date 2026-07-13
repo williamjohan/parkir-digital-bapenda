@@ -32,6 +32,7 @@ class NopModel with _$NopModel {
     @Default('') String nmCamat,
     @Default('') String kdLurah,
     @Default('') String nmLurah,
+    @Default('') String statusDigitalisasi,
   }) = _NopModel;
 
   factory NopModel.fromJson(Map<String, dynamic> json) =>

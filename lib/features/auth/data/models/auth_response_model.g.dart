@@ -50,6 +50,7 @@ _$NopModelImpl _$$NopModelImplFromJson(Map<String, dynamic> json) =>
       nmCamat: json['nmCamat'] as String? ?? '',
       kdLurah: json['kdLurah'] as String? ?? '',
       nmLurah: json['nmLurah'] as String? ?? '',
+      statusDigitalisasi: json['statusDigitalisasi'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
@@ -64,6 +65,7 @@ Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
       'nmCamat': instance.nmCamat,
       'kdLurah': instance.kdLurah,
       'nmLurah': instance.nmLurah,
+      'statusDigitalisasi': instance.statusDigitalisasi,
     };
 
 _$OpPengawasAuthModelImpl _$$OpPengawasAuthModelImplFromJson(

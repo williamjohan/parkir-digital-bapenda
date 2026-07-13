@@ -138,6 +138,13 @@ class _SearchOpPageState extends State<SearchOpPage> {
                       return const Center(child: Text('Data tidak ditemukan'));
                     }
 
+                    if (state.filteredNopList.isNotEmpty) {
+                      debugPrint('=== 5 DATA PERTAMA ===');
+                      for (final item in state.filteredNopList.take(5)) {
+                        debugPrint(item.toString());
+                      }
+                    }
+
                     return ListView.separated(
                       keyboardDismissBehavior:
                           ScrollViewKeyboardDismissBehavior.onDrag,
@@ -146,11 +153,11 @@ class _SearchOpPageState extends State<SearchOpPage> {
                       itemBuilder: (context, index) {
                         final item = state.filteredNopList[index];
 
-                        final isDigital = (item['is_digital'] ?? 0) == 1;
-                        final isFree = (item['pungut_tarif'] ?? 0) == 1;
-                        final chipType = isFree
-                            ? getTarifType(item)
-                            : getDigitalType(item);
+                        // final isDigital = (item['is_digital'] ?? 0) == 1;
+                        // final isFree = (item['pungut_tarif'] ?? 0) == 1;
+                        // final chipType = isFree
+                        //     ? getTarifType(item)
+                        //     : getDigitalType(item);
                         //     item['is_digital'] == false &&
                         //     item['pungut_tarif'] == 2;
 
@@ -185,7 +192,7 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                   Container(
                                     width: 4,
                                     decoration: BoxDecoration(
-                                      color: chipType.foregroundColor,
+                                      color: getColor(item),
                                       borderRadius: BorderRadius.circular(100),
                                     ),
                                   ),
@@ -261,21 +268,12 @@ class _SearchOpPageState extends State<SearchOpPage> {
                                           spacing: 8,
                                           runSpacing: 4,
                                           children: [
-                                            if (isDigital || !isFree)
-                                              PbChipIndicator(
-                                                labelText: getDigitalLabel(
-                                                  item,
-                                                ),
-                                                type: getDigitalType(item),
-                                                radius: PbRadiusType.full,
-                                              ),
-                                            // disini
-                                            if (isFree)
-                                              PbChipIndicator(
-                                                labelText: getTarifLabel(item),
-                                                type: getTarifType(item),
-                                                radius: PbRadiusType.full,
-                                              ),
+                                            PbChipIndicator(
+                                              labelText:
+                                                  item['statusDigitalisasi'],
+                                              type: getDigitalType(item),
+                                              radius: PbRadiusType.full,
+                                            ),
                                           ],
                                         ),
                                         const SizedBox(height: 4),
@@ -357,22 +355,41 @@ class _SearchOpPageState extends State<SearchOpPage> {
   }
 }
 
-String getDigitalLabel(Map<String, dynamic> item) {
-  final isDigital = item['is_digital'] ?? 0;
-  return isDigital == 1 ? 'Digitalisasi' : 'Proses Digitalisasi';
-}
+// String getDigitalLabel(Map<String, dynamic> item) {
+//   final isDigital = item['is_digital'] ?? 0;
+//   return isDigital == 1 ? 'Digitalisasi' : 'Proses Digitalisasi';
+// }
 
 PbChipType getDigitalType(Map<String, dynamic> item) {
-  final isDigital = item['is_digital'] ?? 0;
-  return isDigital == 1 ? PbChipType.success : PbChipType.warning;
+  final statusDigitalisasi = item['statusDigitalisasi'] ?? '';
+
+  if (statusDigitalisasi == 'Digital') {
+    return PbChipType.success;
+  } else if (statusDigitalisasi == 'Proses Digital') {
+    return PbChipType.warning;
+  } else {
+    return PbChipType.error;
+  }
 }
 
-String getTarifLabel(Map<String, dynamic> item) {
-  final pungutTarif = item['pungut_tarif'] ?? 1;
-  return pungutTarif == 1 ? 'Gratis' : 'Berbayar';
+Color getColor(Map<String, dynamic> item) {
+  final statusDigitalisasi = item['statusDigitalisasi'] ?? '';
+
+  if (statusDigitalisasi == 'Digital') {
+    return AppColors.success;
+  } else if (statusDigitalisasi == 'Proses Digital') {
+    return AppColors.warning;
+  } else {
+    return AppColors.error;
+  }
 }
 
-PbChipType getTarifType(Map<String, dynamic> item) {
-  final pungutTarif = item['pungut_tarif'] ?? 1;
-  return pungutTarif == 1 ? PbChipType.info : PbChipType.success;
-}
+// String getTarifLabel(Map<String, dynamic> item) {
+//   final pungutTarif = item['pungut_tarif'] ?? 1;
+//   return pungutTarif == 1 ? 'Gratis' : 'Berbayar';
+// }
+
+// PbChipType getTarifType(Map<String, dynamic> item) {
+//   final pungutTarif = item['pungut_tarif'] ?? 1;
+//   return pungutTarif == 1 ? PbChipType.info : PbChipType.success;
+// }
