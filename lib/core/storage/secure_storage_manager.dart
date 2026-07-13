@@ -52,6 +52,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     await clearJukirProfile();
     await clearMasterTarif();
     await clearRoleId();
+    await clearProfilePicture();
     await clearDashboardAnchor();
   }
 

@@ -118,6 +118,8 @@ class HistoryCardWidget extends StatelessWidget {
                   color: item.sofColor,
                   label: item.sofLabel,
                 ),
+
+                //Tidak jadi dipakai
                 _PrintButton(onTap: onPrint),
               ],
             ),

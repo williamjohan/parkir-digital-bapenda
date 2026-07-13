@@ -82,6 +82,10 @@ dependencies:
   webview_flutter: 4.13.1
   flutter_classic_bluetooth: ^0.1.3
 
+  # --- Audio ---
+  audioplayers: ^5.2.1 
+  flutter_tts: ^4.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

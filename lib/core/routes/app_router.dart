@@ -138,21 +138,15 @@ class AppRouter {
           builder: (context, state) => BlocProvider(
             create: (_) => locator<PengawasanCubit>(),
             child: LaporanFormScreen(
-              locationService:
-                  locator<IAppLocationService>(), // 🔥 tambahin ini
+              locationService: locator<IAppLocationService>(),
             ),
           ),
         ),
         GoRoute(
           path: AppRoutes.home,
           name: AppRoutes.home,
-          builder: (context, state) => MultiBlocProvider(
-            providers: [
-              BlocProvider<HomeCubit>(create: (_) => locator<HomeCubit>()),
-              BlocProvider<PrinterCubit>(
-                create: (_) => locator<PrinterCubit>(),
-              ),
-            ],
+          builder: (context, state) => BlocProvider<HomeCubit>(
+            create: (_) => locator<HomeCubit>(),
             child: const HomePage(),
           ),
         ),
@@ -325,15 +319,8 @@ class AppRouter {
             final nop = extra?['nop'] as String?;
             final idDevice = extra?['idDevice'] as String?;
 
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider<TransactionHistoryCubit>(
-                  create: (_) => locator<TransactionHistoryCubit>(),
-                ),
-                BlocProvider<PrinterCubit>(
-                  create: (_) => locator<PrinterCubit>(),
-                ),
-              ],
+            return BlocProvider<TransactionHistoryCubit>(
+              create: (_) => locator<TransactionHistoryCubit>(),
               child: TransactionHistoryPage(
                 initialDate: initialDate,
                 isFree: isFree,

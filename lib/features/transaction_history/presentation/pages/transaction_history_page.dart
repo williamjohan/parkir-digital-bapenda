@@ -490,14 +490,14 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
                                 showDialog(
                                   context: context,
                                   barrierDismissible: false,
-                                  builder: (_) {
+                                  builder: (dialogContext) {
                                     return Dialog(
                                       insetPadding: const EdgeInsets.all(24),
                                       child: PbPreviewTicketWidget(
                                         item: data[index],
                                         isPrinterReady: true,
                                         okPressed: () {
-                                          Navigator.pop(context);
+                                          Navigator.pop(dialogContext);
                                         },
                                         printPressed: () async {
                                           // Navigator.pop(context);

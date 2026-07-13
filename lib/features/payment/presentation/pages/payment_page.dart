@@ -8,6 +8,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../printer/presentation/cubit/printer_state.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
@@ -87,6 +88,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   encUrl: ticketData.encUrl,
                 );
 
+                final printerCubit = context.read<PrinterCubit>();
+                final parentContext = context;
+
                 await showDialog(
                   context: context,
                   barrierDismissible: false,
@@ -95,15 +99,32 @@ class _PaymentPageState extends State<PaymentPage> {
                       backgroundColor: Colors.transparent,
                       elevation: 0,
                       child: Center(
-                        child: PbPreviewTicketWidget(
-                          item: historyItem, // 🚀 Masukkan hasil mapping
-                          isPrinterReady: true,
-                          okPressed: () {
-                            Navigator.of(dialogContext).pop();
-                            if (context.mounted) context.pop(true);
-                          },
-                          printPressed: () async {
-                            return await context.read<PrinterCubit>().printReceipt(historyItem);
+                        child: BlocBuilder<PrinterCubit, PrinterState>(
+                          bloc: printerCubit,
+                          builder: (context, printerState) {
+                            final isReady = printerState.maybeMap(
+                              loaded: (s) => s.connectedDevice != null,
+                              orElse: () => false,
+                            );
+
+                            return PbPreviewTicketWidget(
+                              item: historyItem,
+                              isPrinterReady: isReady,
+                              okPressed: () {
+                                dialogContext.pop();
+
+                                if (parentContext.mounted) {
+                                  parentContext.pop(
+                                    true,
+                                  ); // Tutup PaymentPage & kirim result true
+                                }
+                              },
+                              printPressed: () async {
+                                return await printerCubit.printReceipt(
+                                  historyItem,
+                                );
+                              },
+                            );
                           },
                         ),
                       ),

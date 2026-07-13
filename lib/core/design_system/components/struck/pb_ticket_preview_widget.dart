@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/utils/currency_formatter.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_ui_extension.dart';
@@ -6,13 +7,10 @@ import '../../tokens/app_colors.dart';
 import '../pb_primary_button.dart';
 import '../pb_qr_generator_widget.dart';
 
-enum _PrintStatus { idle, printing, success, failed } // 🚀 BARU
+enum _PrintStatus { idle, printing, success, failed }
 
 class PbPreviewTicketWidget extends StatefulWidget {
   final VoidCallback? okPressed;
-  // 🚀 GANTI: dulu VoidCallback, sekarang wajib return Future<bool> —
-  // true kalau print sukses, false kalau gagal, biar widget ini bisa
-  // nampilin animasi loading -> sukses/gagal sendiri.
   final Future<bool> Function()? printPressed;
   final HistoryItemModel item;
   final bool isPrinterReady;
@@ -32,18 +30,33 @@ class PbPreviewTicketWidget extends StatefulWidget {
 class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
     with SingleTickerProviderStateMixin {
   _PrintStatus _status = _PrintStatus.idle;
+  Timer? _resetTimer;
 
-  late final AnimationController _checkController = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 450),
-  );
-  late final Animation<double> _checkScale = CurvedAnimation(
-    parent: _checkController,
-    curve: Curves.elasticOut,
-  );
+  late AnimationController _checkController;
+  late Animation<double> _checkScale;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    );
+
+    _checkScale = CurvedAnimation(
+      parent: _checkController,
+      curve: Curves.elasticOut,
+    );
+  }
 
   @override
   void dispose() {
+    _resetTimer?.cancel();
+    _resetTimer = null;
+
+    if (_checkController.isAnimating) {
+      _checkController.stop(canceled: true);
+    }
     _checkController.dispose();
     super.dispose();
   }
@@ -51,24 +64,34 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
   Future<void> _handlePrint() async {
     if (_status == _PrintStatus.printing || widget.printPressed == null) return;
 
-    setState(() => _status = _PrintStatus.printing);
+    _resetTimer?.cancel();
+
+    if (mounted) {
+      setState(() => _status = _PrintStatus.printing);
+    }
 
     final success = await widget.printPressed!.call();
+
+    // 🚀 3. DEFENSIVE CHECK: Pastikan widget masih tertancap di layar setelah async
     if (!mounted) return;
 
     if (success) {
       setState(() => _status = _PrintStatus.success);
       _checkController.forward(from: 0);
 
-      // Balik ke tombol normal abis animasinya keliatan user —
-      // biar bisa cetak ulang kalau mau (misal salah kertas, dsb).
-      Future.delayed(const Duration(milliseconds: 1800), () {
-        if (mounted) setState(() => _status = _PrintStatus.idle);
+      _resetTimer = Timer(const Duration(milliseconds: 1800), () {
+        // 🚀 4. DOUBLE GUARD: Jangan panggil setState jika dialog sudah ditutup tombol OK
+        if (mounted) {
+          setState(() => _status = _PrintStatus.idle);
+        }
       });
     } else {
       setState(() => _status = _PrintStatus.failed);
-      Future.delayed(const Duration(milliseconds: 1600), () {
-        if (mounted) setState(() => _status = _PrintStatus.idle);
+
+      _resetTimer = Timer(const Duration(milliseconds: 1600), () {
+        if (mounted) {
+          setState(() => _status = _PrintStatus.idle);
+        }
       });
     }
   }
@@ -80,7 +103,6 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
       children: [
         _buildCard(context),
 
-        // 🚀 BARU: overlay checkmark hijau yang nutupin card pas sukses cetak
         if (_status == _PrintStatus.success)
           Positioned.fill(
             child: IgnorePointer(
@@ -147,14 +169,12 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          /// HEADER
           const Text(
             "Tiket Parkir",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const Text("BAPENDA Kota Surabaya"),
 
-          /// INFO LOKASI
           Text(
             item.namaOp,
             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -167,7 +187,6 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
           const SizedBox(height: 12),
           const Divider(),
 
-          /// DETAIL KENDARAAN
           Text.rich(
             TextSpan(
               style: const TextStyle(fontSize: 14, color: Colors.black87),
@@ -185,7 +204,6 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
 
           const SizedBox(height: 16),
 
-          /// QR CODE
           Container(
             width: 220,
             height: 220,
@@ -199,7 +217,6 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
 
           const SizedBox(height: 12),
 
-          /// ID TRANSAKSI
           const Text(
             "ID TRANSAKSI",
             style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -208,11 +225,16 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
 
           const SizedBox(height: 16),
 
-          /// BUTTONS
           Row(
             children: [
               Expanded(
-                child: PbPrimaryButton(text: "OK", onPressed: widget.okPressed),
+                // 🚀 NONAKTIFKAN TOMBOL OK SAAT PROSES CETAK BERJALAN
+                child: PbPrimaryButton(
+                  text: "OK",
+                  onPressed: _status == _PrintStatus.printing
+                      ? null
+                      : widget.okPressed,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(child: _buildPrintButton()),
@@ -223,8 +245,6 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
     );
   }
 
-  // 🚀 BARU: tombol cetak sekarang 4 wajah — idle, printing, failed, success
-  // (success dihandle di overlay, tombolnya sendiri balik ke bentuk idle)
   Widget _buildPrintButton() {
     if (!widget.isPrinterReady) {
       return ElevatedButton.icon(

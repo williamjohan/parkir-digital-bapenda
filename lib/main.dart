@@ -10,6 +10,7 @@ import 'core/di/injection.dart';
 import 'core/network/network_cubit.dart';
 import 'core/routes/app_router.dart';
 import 'features/auth/presentation/cubit/app_auth/app_auth_cubit.dart';
+import 'features/printer/presentation/cubit/printer_cubit.dart';
 import 'features/update/presentation/cubit/check_update_cubit.dart';
 import 'features/update/presentation/cubit/check_update_state.dart';
 import 'features/update/presentation/widgets/force_update_overlay_card.dart';
@@ -39,12 +40,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<NetworkCubit>(create: (_) => locator<NetworkCubit>()),
 
-        // 🚀 2. Daftarkan CheckUpdateCubit di level teratas
-        // lazy: false + checkNow() memastikan pengecekan berjalan instan saat Cold Boot
         BlocProvider<CheckUpdateCubit>(
           lazy: false,
           create: (_) => locator<CheckUpdateCubit>()..checkNow(),
         ),
+
+        BlocProvider<PrinterCubit>(create: (_) => locator<PrinterCubit>()),
       ],
       child: MaterialApp.router(
         title: 'Parkir Digital Bapenda',
