@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/services/camera/camera_service.dart';
 import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
-import '../../../../../core/enums/app_enums.dart';
-import '../../../../../core/services/permission/i_permission_service.dart';
 import '../../domain/entities/absensi_entity.dart';
 import '../../domain/usecases/absensi_usecase.dart';
 import 'absensi_state.dart';
@@ -14,14 +12,11 @@ const Map<String, int> kInstrumentIds = {'EDC': 1, 'QRIS': 2, 'TSpark': 3};
 @injectable
 class AbsensiCubit extends Cubit<AbsensiState> {
   final AbsensiUsecase _usecase;
-  final IPermissionService _permissionService;
-  final IAppLocationService _locationService;
 
-  AbsensiCubit(this._usecase, this._permissionService, this._locationService)
-    : super(const AbsensiState());
+  AbsensiCubit(this._usecase) : super(const AbsensiState());
 
   // --- LOGIC LOKASI ---
-  Future<void> fetchLocation() async {
+  Future<void> fetchLocation(IAppLocationService locationService) async {
     emit(
       state.copyWith(
         isFetchingLocation: true,
@@ -32,11 +27,7 @@ class AbsensiCubit extends Cubit<AbsensiState> {
       ),
     );
     try {
-      final canProceed = await _guardLocationPermissions();
-      if (!canProceed || isClosed) return;
-
-      // 🚀 Langsung gunakan _locationService milik Cubit!
-      final result = await _locationService.getCurrentLocation();
+      final result = await locationService.getCurrentLocation();
       if (isClosed) return;
 
       emit(
@@ -61,20 +52,17 @@ class AbsensiCubit extends Cubit<AbsensiState> {
     }
   }
 
-  // --- AMBIL FOTO  ---
-  Future<void> takePhoto() async {
+  // --- LOGIC AMBIL FOTO MENTAH ---
+  Future<void> takePhoto(IAppLocationService locationService) async {
     try {
-      final canProceed = await _guardCameraAndLocationPermissions();
-      if (!canProceed || isClosed) return;
-
       final file = await CameraService.takePhoto();
       if (file == null) return;
 
       emit(state.copyWith(rawPhoto: file, photoTakenAt: DateTime.now()));
 
-      await fetchLocation();
+      // Otomatis refresh lokasi begitu foto didapatkan
+      await fetchLocation(locationService);
     } catch (e) {
-      if (isClosed) return;
       emit(state.copyWith(errorMessage: "Gagal mengambil foto dari kamera"));
     }
   }
@@ -173,74 +161,5 @@ class AbsensiCubit extends Cubit<AbsensiState> {
 
   void reset() {
     if (!isClosed) emit(const AbsensiState());
-  }
-
-  // ===========================================================================
-  // 🛡️ PRIVATE PERMISSION GUARDS (CLEAN ARCHITECTURE)
-  // ===========================================================================
-
-  Future<bool> _guardLocationPermissions() async {
-    final locStatus = await _permissionService.requestPermission(
-      AppPermissionType.location,
-    );
-    if (locStatus == AppPermissionStatus.permanentlyDenied) {
-      emit(
-        state.copyWith(
-          status: AbsensiStatus.permissionDenied,
-          errorMessage:
-              "Izin lokasi ditolak permanen. Aktifkan di Pengaturan agar bisa absen.",
-        ),
-      );
-      return false;
-    } else if (locStatus == AppPermissionStatus.denied) {
-      emit(
-        state.copyWith(
-          errorMessage:
-              "Izin lokasi wajib diberikan untuk mencatat koordinat absensi.",
-        ),
-      );
-      return false;
-    }
-
-    final gpsStatus = await _permissionService.requestPermission(
-      AppPermissionType.locationService,
-    );
-    if (gpsStatus == AppPermissionStatus.permanentlyDenied) {
-      emit(
-        state.copyWith(
-          status: AbsensiStatus.gpsOff,
-          errorMessage: "Sensor GPS belum aktif. Silakan nyalakan GPS HP Anda.",
-        ),
-      );
-      return false;
-    }
-
-    return true;
-  }
-
-  Future<bool> _guardCameraAndLocationPermissions() async {
-    final camStatus = await _permissionService.requestPermission(
-      AppPermissionType.camera,
-    );
-    if (camStatus == AppPermissionStatus.permanentlyDenied) {
-      emit(
-        state.copyWith(
-          status: AbsensiStatus.permissionDenied,
-          errorMessage:
-              "Izin kamera ditolak permanen. Aktifkan di Pengaturan untuk foto wajah.",
-        ),
-      );
-      return false;
-    } else if (camStatus == AppPermissionStatus.denied) {
-      emit(
-        state.copyWith(
-          errorMessage:
-              "Izin kamera wajib diberikan untuk mengambil foto wajah.",
-        ),
-      );
-      return false;
-    }
-
-    return await _guardLocationPermissions();
   }
 }

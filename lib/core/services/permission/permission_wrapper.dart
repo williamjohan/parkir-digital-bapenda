@@ -2,7 +2,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_dialog.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_required_dialog.dart';
 import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -17,7 +17,7 @@ class PermissionService {
           final status = await Permission.camera.request();
 
           if (!status.isGranted) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.photo_camera_rounded,
               title: "Izin Kamera Dibutuhkan",
@@ -32,7 +32,7 @@ class PermissionService {
           final status = await Permission.location.request();
 
           if (!status.isGranted) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.location_on_rounded,
               title: "Izin Lokasi Dibutuhkan",
@@ -47,7 +47,7 @@ class PermissionService {
           final enabled = await Geolocator.isLocationServiceEnabled();
 
           if (!enabled) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.gps_off_rounded,
               title: "GPS Belum Aktif",
@@ -62,7 +62,7 @@ class PermissionService {
           final status = await Permission.notification.request();
 
           if (!status.isGranted) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.notifications_active_rounded,
               title: "Izin Notifikasi Dibutuhkan",
@@ -77,7 +77,7 @@ class PermissionService {
           final status = await Permission.microphone.request();
 
           if (!status.isGranted) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.mic_rounded,
               title: "Izin Mikrofon Dibutuhkan",
@@ -92,7 +92,7 @@ class PermissionService {
           final status = await Permission.storage.request();
 
           if (!status.isGranted) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.folder_rounded,
               title: "Izin Penyimpanan Dibutuhkan",
@@ -107,7 +107,7 @@ class PermissionService {
           final status = await Permission.photos.request();
 
           if (!status.isGranted) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.photo_library_rounded,
               title: "Izin Galeri Dibutuhkan",
@@ -122,7 +122,7 @@ class PermissionService {
           final status = await Permission.bluetoothConnect.request();
 
           if (!status.isGranted) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.bluetooth_rounded,
               title: "Izin Bluetooth Dibutuhkan",
@@ -143,7 +143,7 @@ class PermissionService {
           }
 
           if (!enabled) {
-            await PbPermissionDialog.show(
+            await PermissionRequiredDialog.show(
               context,
               icon: Icons.bluetooth_disabled_rounded,
               title: "Bluetooth Belum Aktif",
