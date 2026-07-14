@@ -4,6 +4,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
+import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
+import 'package:parkir_digital_bapenda/core/services/permission/permission_wrapper.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
@@ -199,8 +201,27 @@ class HomeDrawer extends StatelessWidget {
                     'Pengaturan Printer',
                     style: AppTypography.bodyRegular,
                   ),
-                  onTap: () async {
-                    context.pushNamed(AppRoutes.printerSetting);
+                   onTap: () async {
+                    final safeContext = Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).context;
+
+                    Navigator.pop(context);
+
+                     final isReady = await PermissionService.ensure(
+                      safeContext,
+                      permissions: [
+                        PermissionType.location,
+                        PermissionType.locationService,
+                        PermissionType.bluetooth,
+                        PermissionType.bluetoothService,
+                      ],
+                    );
+
+                      if (isReady && safeContext.mounted) {
+                      safeContext.pushNamed(AppRoutes.printerSetting);
+                    }
                   },
                 ),
 
