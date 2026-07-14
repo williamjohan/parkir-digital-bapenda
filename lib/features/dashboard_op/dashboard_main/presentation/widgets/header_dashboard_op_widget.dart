@@ -5,13 +5,11 @@ import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.
 
 class HeaderDashboardOp extends StatelessWidget {
   final Map<String, dynamic> item;
-  final bool isDigital;
   final VoidCallback? onPressedLihatDaftarJukir;
 
   const HeaderDashboardOp({
     super.key,
     required this.item,
-    required this.isDigital,
     required this.onPressedLihatDaftarJukir,
   });
 
@@ -67,13 +65,11 @@ class HeaderDashboardOp extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: isDigital
-                            ? AppColors.background.withValues(alpha: 0.25)
-                            : AppColors.textPrimary.withValues(alpha: 0.15),
+                        color: AppColors.background.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        isDigital ? 'Digital' : 'Belum Digital',
+                        item['statusDigitalisasi'],
                         style: AppTypography.caption.copyWith(
                           color: AppColors.background,
                         ),

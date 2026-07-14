@@ -55,7 +55,6 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                 enabled: state.loading,
                 child: HeaderDashboardOp(
                   item: widget.item,
-                  isDigital: state.data?.isDigital ?? false,
                   onPressedLihatDaftarJukir: () {
                     context.pushNamed(
                       AppRoutes.dataJukir,
