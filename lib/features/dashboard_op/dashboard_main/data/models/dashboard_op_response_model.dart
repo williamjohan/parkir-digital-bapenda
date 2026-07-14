@@ -22,6 +22,7 @@ class DashboardOpResponseModel with _$DashboardOpResponseModel {
 
     required List<RiwayatPendapatanModel> riwayatList,
     required List<SofModel> sofList,
+    @Default([]) List<AlatDigitalModel> alatDigitalList,
 
     required int tarifMotor,
     required int tarifMobil,
@@ -76,4 +77,13 @@ class SofModel with _$SofModel {
 
   factory SofModel.fromJson(Map<String, dynamic> json) =>
       _$SofModelFromJson(json);
+}
+
+@freezed
+class AlatDigitalModel with _$AlatDigitalModel {
+  const factory AlatDigitalModel({required String nama, required bool status}) =
+      _AlatDigitalModel;
+
+  factory AlatDigitalModel.fromJson(Map<String, dynamic> json) =>
+      _$AlatDigitalModelFromJson(json);
 }

@@ -50,6 +50,10 @@ class DashboardOpMapper {
             ),
           )
           .toList(),
+
+      alatDigitalList: model.alatDigitalList
+          .map((e) => AlatDigitalEntity(nama: e.nama, status: e.status))
+          .toList(),
       tarifMotor: model.tarifMotor,
       tarifMobil: model.tarifMobil,
       jadwalOperasional: model.jadwalOperasional,

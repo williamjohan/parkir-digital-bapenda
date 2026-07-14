@@ -7,12 +7,21 @@ class CardInformasiOperasional extends StatelessWidget {
   final String jamOperasional;
   final int tarifMotor;
   final int tarifMobil;
+  // 🚀 BARU
+  final bool hasCctv;
+  final bool hasEdc;
+  final bool hasTs;
+  final bool hasQrisRompi;
 
   const CardInformasiOperasional({
     super.key,
     required this.jamOperasional,
     required this.tarifMotor,
     required this.tarifMobil,
+    this.hasCctv = false,
+    this.hasEdc = false,
+    this.hasTs = false,
+    this.hasQrisRompi = false,
   });
 
   @override
@@ -80,9 +89,7 @@ class CardInformasiOperasional extends StatelessWidget {
                   ],
                 ),
               ),
-
               Container(width: 1, height: 52, color: AppColors.border),
-
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20),
@@ -102,6 +109,109 @@ class CardInformasiOperasional extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+
+          // 🚀 BARU: section fasilitas — pola sama kayak Tarif di atas
+          // (Divider dulu, baru label kecil, baru kontennya)
+          const Divider(color: AppColors.border),
+          const Text("Fasilitas", style: AppTypography.caption),
+          const SizedBox(height: 10),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            childAspectRatio: 3.2,
+            children: [
+              _FacilityChip(
+                label: 'EDC',
+                icon: Icons.credit_card_rounded,
+                isAvailable: hasEdc,
+              ),
+              _FacilityChip(
+                label: 'QRIS Rompi',
+                icon: Icons.qr_code_2_rounded,
+                isAvailable: hasQrisRompi,
+              ),
+              _FacilityChip(
+                label: 'CCTV',
+                icon: Icons.videocam_rounded,
+                isAvailable: hasCctv,
+              ),
+              _FacilityChip(
+                label: 'TS',
+                icon: Icons.touch_app_rounded,
+                isAvailable: hasTs,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// 🚀 BARU: chip pill kecil — solid + icon putih kalau tersedia,
+// outline abu pudar kalau enggak (biar beda jelas tanpa keliatan "kosong/error")
+class _FacilityChip extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isAvailable;
+
+  const _FacilityChip({
+    required this.label,
+    required this.icon,
+    required this.isAvailable,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // 🚀 GANTI: dulu Row mainAxisSize.min (biar chip mepet ke teks),
+      // sekarang full-width karena bakal diisi ke slot grid
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isAvailable
+            ? AppColors.success.withValues(alpha: .10)
+            : Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isAvailable
+              ? AppColors.success.withValues(alpha: .3)
+              : AppColors.border,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isAvailable ? AppColors.success : Colors.grey.shade300,
+            ),
+            child: Icon(
+              icon,
+              size: 11,
+              color: isAvailable ? Colors.white : Colors.grey.shade500,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            // 🚀 BARU: biar teks gak overflow kalau kolomnya sempit ("QRIS Rompi")
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.caption.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 11.5,
+                color: isAvailable
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
+              ),
+            ),
           ),
         ],
       ),

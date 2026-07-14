@@ -32,6 +32,8 @@ mixin _$DashboardOpEntity {
   List<RiwayatPendapatanEntity> get riwayatList =>
       throw _privateConstructorUsedError;
   List<SofEntity> get sofList => throw _privateConstructorUsedError;
+  List<AlatDigitalEntity> get alatDigitalList =>
+      throw _privateConstructorUsedError;
   int get tarifMotor => throw _privateConstructorUsedError;
   int get tarifMobil => throw _privateConstructorUsedError;
   String get jadwalOperasional => throw _privateConstructorUsedError;
@@ -63,6 +65,7 @@ abstract class $DashboardOpEntityCopyWith<$Res> {
     RealisasiTahunIniEntity realisasiTahunIni,
     List<RiwayatPendapatanEntity> riwayatList,
     List<SofEntity> sofList,
+    List<AlatDigitalEntity> alatDigitalList,
     int tarifMotor,
     int tarifMobil,
     String jadwalOperasional,
@@ -98,6 +101,7 @@ class _$DashboardOpEntityCopyWithImpl<$Res, $Val extends DashboardOpEntity>
     Object? realisasiTahunIni = null,
     Object? riwayatList = null,
     Object? sofList = null,
+    Object? alatDigitalList = null,
     Object? tarifMotor = null,
     Object? tarifMobil = null,
     Object? jadwalOperasional = null,
@@ -154,6 +158,10 @@ class _$DashboardOpEntityCopyWithImpl<$Res, $Val extends DashboardOpEntity>
                 ? _value.sofList
                 : sofList // ignore: cast_nullable_to_non_nullable
                       as List<SofEntity>,
+            alatDigitalList: null == alatDigitalList
+                ? _value.alatDigitalList
+                : alatDigitalList // ignore: cast_nullable_to_non_nullable
+                      as List<AlatDigitalEntity>,
             tarifMotor: null == tarifMotor
                 ? _value.tarifMotor
                 : tarifMotor // ignore: cast_nullable_to_non_nullable
@@ -206,6 +214,7 @@ abstract class _$$DashboardOpEntityImplCopyWith<$Res>
     RealisasiTahunIniEntity realisasiTahunIni,
     List<RiwayatPendapatanEntity> riwayatList,
     List<SofEntity> sofList,
+    List<AlatDigitalEntity> alatDigitalList,
     int tarifMotor,
     int tarifMobil,
     String jadwalOperasional,
@@ -241,6 +250,7 @@ class __$$DashboardOpEntityImplCopyWithImpl<$Res>
     Object? realisasiTahunIni = null,
     Object? riwayatList = null,
     Object? sofList = null,
+    Object? alatDigitalList = null,
     Object? tarifMotor = null,
     Object? tarifMobil = null,
     Object? jadwalOperasional = null,
@@ -296,6 +306,10 @@ class __$$DashboardOpEntityImplCopyWithImpl<$Res>
             ? _value._sofList
             : sofList // ignore: cast_nullable_to_non_nullable
                   as List<SofEntity>,
+        alatDigitalList: null == alatDigitalList
+            ? _value._alatDigitalList
+            : alatDigitalList // ignore: cast_nullable_to_non_nullable
+                  as List<AlatDigitalEntity>,
         tarifMotor: null == tarifMotor
             ? _value.tarifMotor
             : tarifMotor // ignore: cast_nullable_to_non_nullable
@@ -315,7 +329,7 @@ class __$$DashboardOpEntityImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$DashboardOpEntityImpl implements _DashboardOpEntity {
+class _$DashboardOpEntityImpl extends _DashboardOpEntity {
   const _$DashboardOpEntityImpl({
     required this.nop,
     required this.namaOp,
@@ -329,11 +343,14 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
     required this.realisasiTahunIni,
     required final List<RiwayatPendapatanEntity> riwayatList,
     required final List<SofEntity> sofList,
+    final List<AlatDigitalEntity> alatDigitalList = const [],
     required this.tarifMotor,
     required this.tarifMobil,
     required this.jadwalOperasional,
   }) : _riwayatList = riwayatList,
-       _sofList = sofList;
+       _sofList = sofList,
+       _alatDigitalList = alatDigitalList,
+       super._();
 
   @override
   final String nop;
@@ -371,6 +388,15 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
     return EqualUnmodifiableListView(_sofList);
   }
 
+  final List<AlatDigitalEntity> _alatDigitalList;
+  @override
+  @JsonKey()
+  List<AlatDigitalEntity> get alatDigitalList {
+    if (_alatDigitalList is EqualUnmodifiableListView) return _alatDigitalList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_alatDigitalList);
+  }
+
   @override
   final int tarifMotor;
   @override
@@ -380,7 +406,7 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
 
   @override
   String toString() {
-    return 'DashboardOpEntity(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList, tarifMotor: $tarifMotor, tarifMobil: $tarifMobil, jadwalOperasional: $jadwalOperasional)';
+    return 'DashboardOpEntity(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList, alatDigitalList: $alatDigitalList, tarifMotor: $tarifMotor, tarifMobil: $tarifMobil, jadwalOperasional: $jadwalOperasional)';
   }
 
   @override
@@ -421,6 +447,10 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
               _riwayatList,
             ) &&
             const DeepCollectionEquality().equals(other._sofList, _sofList) &&
+            const DeepCollectionEquality().equals(
+              other._alatDigitalList,
+              _alatDigitalList,
+            ) &&
             (identical(other.tarifMotor, tarifMotor) ||
                 other.tarifMotor == tarifMotor) &&
             (identical(other.tarifMobil, tarifMobil) ||
@@ -444,6 +474,7 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
     realisasiTahunIni,
     const DeepCollectionEquality().hash(_riwayatList),
     const DeepCollectionEquality().hash(_sofList),
+    const DeepCollectionEquality().hash(_alatDigitalList),
     tarifMotor,
     tarifMobil,
     jadwalOperasional,
@@ -461,7 +492,7 @@ class _$DashboardOpEntityImpl implements _DashboardOpEntity {
       );
 }
 
-abstract class _DashboardOpEntity implements DashboardOpEntity {
+abstract class _DashboardOpEntity extends DashboardOpEntity {
   const factory _DashboardOpEntity({
     required final String nop,
     required final String namaOp,
@@ -475,10 +506,12 @@ abstract class _DashboardOpEntity implements DashboardOpEntity {
     required final RealisasiTahunIniEntity realisasiTahunIni,
     required final List<RiwayatPendapatanEntity> riwayatList,
     required final List<SofEntity> sofList,
+    final List<AlatDigitalEntity> alatDigitalList,
     required final int tarifMotor,
     required final int tarifMobil,
     required final String jadwalOperasional,
   }) = _$DashboardOpEntityImpl;
+  const _DashboardOpEntity._() : super._();
 
   @override
   String get nop;
@@ -504,6 +537,8 @@ abstract class _DashboardOpEntity implements DashboardOpEntity {
   List<RiwayatPendapatanEntity> get riwayatList;
   @override
   List<SofEntity> get sofList;
+  @override
+  List<AlatDigitalEntity> get alatDigitalList;
   @override
   int get tarifMotor;
   @override
@@ -1236,5 +1271,157 @@ abstract class _SofEntity implements SofEntity {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SofEntityImplCopyWith<_$SofEntityImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$AlatDigitalEntity {
+  String get nama => throw _privateConstructorUsedError;
+  bool get status => throw _privateConstructorUsedError;
+
+  /// Create a copy of AlatDigitalEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $AlatDigitalEntityCopyWith<AlatDigitalEntity> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AlatDigitalEntityCopyWith<$Res> {
+  factory $AlatDigitalEntityCopyWith(
+    AlatDigitalEntity value,
+    $Res Function(AlatDigitalEntity) then,
+  ) = _$AlatDigitalEntityCopyWithImpl<$Res, AlatDigitalEntity>;
+  @useResult
+  $Res call({String nama, bool status});
+}
+
+/// @nodoc
+class _$AlatDigitalEntityCopyWithImpl<$Res, $Val extends AlatDigitalEntity>
+    implements $AlatDigitalEntityCopyWith<$Res> {
+  _$AlatDigitalEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of AlatDigitalEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? nama = null, Object? status = null}) {
+    return _then(
+      _value.copyWith(
+            nama: null == nama
+                ? _value.nama
+                : nama // ignore: cast_nullable_to_non_nullable
+                      as String,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$AlatDigitalEntityImplCopyWith<$Res>
+    implements $AlatDigitalEntityCopyWith<$Res> {
+  factory _$$AlatDigitalEntityImplCopyWith(
+    _$AlatDigitalEntityImpl value,
+    $Res Function(_$AlatDigitalEntityImpl) then,
+  ) = __$$AlatDigitalEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String nama, bool status});
+}
+
+/// @nodoc
+class __$$AlatDigitalEntityImplCopyWithImpl<$Res>
+    extends _$AlatDigitalEntityCopyWithImpl<$Res, _$AlatDigitalEntityImpl>
+    implements _$$AlatDigitalEntityImplCopyWith<$Res> {
+  __$$AlatDigitalEntityImplCopyWithImpl(
+    _$AlatDigitalEntityImpl _value,
+    $Res Function(_$AlatDigitalEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AlatDigitalEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? nama = null, Object? status = null}) {
+    return _then(
+      _$AlatDigitalEntityImpl(
+        nama: null == nama
+            ? _value.nama
+            : nama // ignore: cast_nullable_to_non_nullable
+                  as String,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$AlatDigitalEntityImpl implements _AlatDigitalEntity {
+  const _$AlatDigitalEntityImpl({required this.nama, required this.status});
+
+  @override
+  final String nama;
+  @override
+  final bool status;
+
+  @override
+  String toString() {
+    return 'AlatDigitalEntity(nama: $nama, status: $status)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AlatDigitalEntityImpl &&
+            (identical(other.nama, nama) || other.nama == nama) &&
+            (identical(other.status, status) || other.status == status));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, nama, status);
+
+  /// Create a copy of AlatDigitalEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AlatDigitalEntityImplCopyWith<_$AlatDigitalEntityImpl> get copyWith =>
+      __$$AlatDigitalEntityImplCopyWithImpl<_$AlatDigitalEntityImpl>(
+        this,
+        _$identity,
+      );
+}
+
+abstract class _AlatDigitalEntity implements AlatDigitalEntity {
+  const factory _AlatDigitalEntity({
+    required final String nama,
+    required final bool status,
+  }) = _$AlatDigitalEntityImpl;
+
+  @override
+  String get nama;
+  @override
+  bool get status;
+
+  /// Create a copy of AlatDigitalEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AlatDigitalEntityImplCopyWith<_$AlatDigitalEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

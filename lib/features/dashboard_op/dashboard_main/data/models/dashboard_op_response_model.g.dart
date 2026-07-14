@@ -29,6 +29,11 @@ _$DashboardOpResponseModelImpl _$$DashboardOpResponseModelImplFromJson(
   sofList: (json['sofList'] as List<dynamic>)
       .map((e) => SofModel.fromJson(e as Map<String, dynamic>))
       .toList(),
+  alatDigitalList:
+      (json['alatDigitalList'] as List<dynamic>?)
+          ?.map((e) => AlatDigitalModel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
   tarifMotor: (json['tarifMotor'] as num).toInt(),
   tarifMobil: (json['tarifMobil'] as num).toInt(),
   jadwalOperasional: json['jadwalOperasional'] as String,
@@ -50,6 +55,7 @@ Map<String, dynamic> _$$DashboardOpResponseModelImplToJson(
   'realisasiTahunIni': instance.realisasiTahunIni,
   'riwayatList': instance.riwayatList,
   'sofList': instance.sofList,
+  'alatDigitalList': instance.alatDigitalList,
   'tarifMotor': instance.tarifMotor,
   'tarifMobil': instance.tarifMobil,
   'jadwalOperasional': instance.jadwalOperasional,
@@ -118,3 +124,14 @@ Map<String, dynamic> _$$SofModelImplToJson(_$SofModelImpl instance) =>
       'jumlahMotor': instance.jumlahMotor,
       'jumlahMobil': instance.jumlahMobil,
     };
+
+_$AlatDigitalModelImpl _$$AlatDigitalModelImplFromJson(
+  Map<String, dynamic> json,
+) => _$AlatDigitalModelImpl(
+  nama: json['nama'] as String,
+  status: json['status'] as bool,
+);
+
+Map<String, dynamic> _$$AlatDigitalModelImplToJson(
+  _$AlatDigitalModelImpl instance,
+) => <String, dynamic>{'nama': instance.nama, 'status': instance.status};

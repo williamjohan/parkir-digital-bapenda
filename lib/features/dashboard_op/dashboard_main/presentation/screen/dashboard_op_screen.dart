@@ -79,6 +79,10 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                                 "--:-- - --:--",
                             tarifMotor: state.data?.tarifMotor ?? 0,
                             tarifMobil: state.data?.tarifMobil ?? 0,
+                            hasCctv: state.data?.hasCctv ?? false,
+                            hasEdc: state.data?.hasEdc ?? false,
+                            hasQrisRompi: state.data?.hasQrisRompi ?? false,
+                            hasTs: state.data?.hasTs ?? false,
                           ),
                         ),
                         Skeletonizer(
