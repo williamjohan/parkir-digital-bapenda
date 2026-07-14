@@ -3,7 +3,15 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'absensi_state.freezed.dart';
 
-enum AbsensiStatus { initial, loading, success, failure }
+// TAMBAHAN:  permissionDenied dan gpsOff agar UI tahu kapan harus memunculkan dialog Pengaturan
+enum AbsensiStatus {
+  initial,
+  loading,
+  success,
+  failure,
+  permissionDenied,
+  gpsOff,
+}
 
 @freezed
 class AbsensiState with _$AbsensiState {

@@ -5,7 +5,7 @@ import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/print
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/sof_breakdown_panel_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import '../../../../core/design_system/components/pb_permission_dialogv2.dart';
+import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';

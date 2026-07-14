@@ -25,5 +25,5 @@ class AppAssetLottie {
 
 class AppAssetAudio {
   AppAssetAudio._();
-  static const successAudio = 'assets/audio/success.mp3';
+  static const successAudio = 'audio/success.mp3';
 }

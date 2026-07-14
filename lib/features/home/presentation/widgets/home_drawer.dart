@@ -4,8 +4,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
-import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
-import 'package:parkir_digital_bapenda/core/services/permission/permission_wrapper.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
@@ -76,6 +74,7 @@ class HomeDrawer extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
+                //Riwayat Transaksi atau Objek Pajak
                 ListTile(
                   leading: Icon(
                     role == RoleLoginDigitalParkir.jukir
@@ -109,6 +108,8 @@ class HomeDrawer extends StatelessWidget {
                     }
                   },
                 ),
+
+                //Pendapatan Digital
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.bapenda],
                   currentRole: role,
@@ -122,7 +123,7 @@ class HomeDrawer extends StatelessWidget {
                       style: AppTypography.bodyRegular,
                     ),
                     onTap: () {
-                      Navigator.pop(context); // Tutup drawer
+                      Navigator.pop(context);
                       context.push(
                         AppRoutes.pendapatanDigital,
                         extra: namaUPTB,
@@ -131,6 +132,7 @@ class HomeDrawer extends StatelessWidget {
                   ),
                 ),
 
+                //Realisasi
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.bapenda],
                   currentRole: role,
@@ -154,6 +156,7 @@ class HomeDrawer extends StatelessWidget {
                   ),
                 ),
 
+                //PROFILE
                 PbPermissionGate(
                   allowedRoles: const [
                     RoleLoginDigitalParkir.bapenda,
@@ -176,109 +179,26 @@ class HomeDrawer extends StatelessWidget {
                     },
                   ),
                 ),
-                // if (FeatureFlags.enablePrinterFeature)
-                // ListTile(
-                //   leading: const Icon(Icons.print),
-                //   title: const Text('Pengaturan Printer'),
-                //   onTap: () async {
-                //     // 1. Tutup Drawer terlebih dahulu agar rapi
-                //     Navigator.pop(context);
 
-                //     // 2. Panggil fungsi cek permission yang baru saja kita pisah
-                //     final isPermissionGranted = await context
-                //         .read<PrinterCubit>()
-                //         .checkAndRequestPermissions(context);
-
-                //     // 3. Jika diizinkan, baru lakukan navigasi ke PrinterPage atau jalankan fungsi scan
-                //     if (isPermissionGranted) {
-                //       // Jalankan scan otomatis begitu masuk halaman (jika diinginkan)
-                //       if (context.mounted) {
-                //         context.read<PrinterCubit>().scanDevices(context);
-
-                //         // Pindah ke halaman printer Anda, misal:
-                //         Navigator.pushNamed(context, '/printer-page');
-                //       }
-                //     }
-                //   },
-                // ),
-                // ListTile(
-                //   leading: const Icon(Icons.print),
-                //   title: const Text('Pengaturan Printer'),
-                //   onTap: () async {
-                //     // 1. Tangkap Cubit dan Context Halaman Utama (Safe Context) SEBELUM Drawer ditutup
-                //     final printerCubit = context.read<PrinterCubit>();
-                //     final safeContext = Navigator.of(
-                //       context,
-                //       rootNavigator: true,
-                //     ).context;
-
-                //     // 2. Tutup Drawer terlebih dahulu agar UI bersih
-                //     Navigator.pop(context);
-
-                //     // 3. Panggil fungsi cek permission
-                //     final isPermissionGranted = await printerCubit
-                //         .checkAndRequestPermissions();
-
-                //     // 4. Pastikan context halaman utama masih aktif sebelum memunculkan UI baru
-                //     if (safeContext.mounted) {
-                //       if (isPermissionGranted) {
-                //         // Jika Izin Diberikan -> Langsung ke Halaman Printer
-                //         safeContext.pushNamed(AppRoutes.printerSetting);
-                //       } else {
-                //         // Jika Izin Ditolak -> Cek apakah state Cubit minta buka Dialog
-                //         if (printerCubit.state
-                //             is PrinterPermissionRequiresAction) {
-                //           PbPermissionDialog.show(
-                //             safeContext,
-                //             title: 'Akses Izin Diperlukan',
-                //             description:
-                //                 'Anda telah menolak izin Perangkat Sekitar (Bluetooth) atau Lokasi aplikasi ini.\n\nMohon aktifkan izin tersebut secara manual melalui pengaturan aplikasi agar fitur printer dapat digunakan kembali.',
-                //           );
-                //         }
-                //       }
-                //     }
-                //   },
-                // ),
+                //PENGATURAN PRINTER
                 ListTile(
                   leading: const Icon(Icons.print),
-                  title: const Text('Pengaturan Printer'),
+                  title: const Text(
+                    'Pengaturan Printer',
+                    style: AppTypography.bodyRegular,
+                  ),
                   onTap: () async {
-                    // 1. Tangkap context "aman" (root navigator) SEBELUM Drawer ditutup
-                    final safeContext = Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).context;
-
-                    // 2. Tutup Drawer dulu biar UI bersih
-                    Navigator.pop(context);
-
-                    // 🚀 GANTI: dulu printerCubit.checkAndRequestPermissions() +
-                    // checkBluetoothOn() manual, sekarang cukup satu pintu lewat
-                    // PermissionService.ensure — urutan dicek satu-satu, begitu ada yang
-                    // gagal langsung munculin PermissionRequiredDialog yang sesuai & stop.
-                    final isReady = await PermissionService.ensure(
-                      safeContext,
-                      permissions: [
-                        PermissionType.location,
-                        PermissionType.locationService,
-                        PermissionType.bluetooth,
-                        PermissionType.bluetoothService,
-                      ],
-                    );
-
-                    if (isReady && safeContext.mounted) {
-                      safeContext.pushNamed(AppRoutes.printerSetting);
-                    }
+                    context.pushNamed(AppRoutes.printerSetting);
                   },
                 ),
+
+                //Jadwal & Kehadiran
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.pengawas],
-                  currentRole:
-                      role, // Menggunakan variabel 'role' yang disuplai dari State Cubit Anda
+                  currentRole: role,
                   child: ListTile(
                     leading: const Icon(
-                      Icons
-                          .calendar_month_outlined, // Icon kalender yang bersih untuk representasi jadwal
+                      Icons.calendar_month_outlined,
                       color: AppColors.textPrimary,
                     ),
                     title: const Text(
@@ -286,14 +206,13 @@ class HomeDrawer extends StatelessWidget {
                       style: AppTypography.bodyRegular,
                     ),
                     onTap: () {
-                      // 1. Tutup drawer terlebih dahulu agar tidak menghalangi transisi layar
                       Navigator.pop(context);
-
-                      // 2. Navigasi ke layar Jadwal menggunakan pushNamed dari GoRouter
                       context.pushNamed(AppRoutes.jadwalKehadiran);
                     },
                   ),
                 ),
+
+                //Cek Pembaruan
                 ListTile(
                   leading: const Icon(
                     Icons.system_update_alt_rounded,
@@ -304,10 +223,8 @@ class HomeDrawer extends StatelessWidget {
                     style: AppTypography.bodyRegular,
                   ),
                   onTap: () {
-                    Navigator.pop(context); // Tutup drawer
-                    context.pushNamed(
-                      AppRoutes.update,
-                    ); // Arahkan ke rute update
+                    Navigator.pop(context);
+                    context.pushNamed(AppRoutes.update);
                   },
                 ),
               ],

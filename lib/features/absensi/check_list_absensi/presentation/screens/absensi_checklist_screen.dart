@@ -4,9 +4,6 @@ import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dia
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
-import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
-import 'package:parkir_digital_bapenda/core/services/permission/permission_wrapper.dart';
 import 'package:parkir_digital_bapenda/core/utils/photo_utils.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_header_widget.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_number_field.dart';
@@ -20,13 +17,8 @@ enum ShiftFormType { checkIn, checkOut }
 
 class ShiftFormScreen extends StatefulWidget {
   final ShiftFormType type;
-  final IAppLocationService locationService;
 
-  const ShiftFormScreen({
-    super.key,
-    required this.type,
-    required this.locationService,
-  });
+  const ShiftFormScreen({super.key, required this.type});
 
   @override
   State<ShiftFormScreen> createState() => _ShiftFormScreenState();
@@ -49,7 +41,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AbsensiCubit>().fetchLocation(widget.locationService);
+      context.read<AbsensiCubit>().fetchLocation();
     });
   }
 
@@ -169,21 +161,8 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                 AbsenPhotoWidget(
                   state: state,
                   photoKey: _photoKey,
-                  onTap: () async {
-                    final granted = await PermissionService.ensure(
-                      context,
-                      permissions: const [
-                        PermissionType.camera,
-                        PermissionType.location,
-                        PermissionType.locationService,
-                      ],
-                    );
-
-                    if (!granted || !context.mounted) return;
-
-                    context.read<AbsensiCubit>().takePhoto(
-                      widget.locationService,
-                    );
+                  onTap: () {
+                    context.read<AbsensiCubit>().takePhoto();
                   },
                 ),
                 const SizedBox(height: 16),

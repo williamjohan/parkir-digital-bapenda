@@ -17,6 +17,8 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$PengawasanState {
+  // 🚀 2. TAMBAHKAN PROPERTI STATUS
+  PengawasanStatus get status => throw _privateConstructorUsedError;
   RequestLaporanPengawasanEntity get request =>
       throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
@@ -31,8 +33,7 @@ mixin _$PengawasanState {
   String? get locationError => throw _privateConstructorUsedError;
   bool get isFetchingLocation => throw _privateConstructorUsedError;
   bool get isCapturing => throw _privateConstructorUsedError;
-  String get keteranganText =>
-      throw _privateConstructorUsedError; // 🔑 pindahin dari controller lokal
+  String get keteranganText => throw _privateConstructorUsedError;
   List<JenisPelanggaranEntity> get jenisPelanggaran =>
       throw _privateConstructorUsedError;
   List<LaporanPengawasanEntity> get laporan =>
@@ -55,6 +56,7 @@ abstract class $PengawasanStateCopyWith<$Res> {
   ) = _$PengawasanStateCopyWithImpl<$Res, PengawasanState>;
   @useResult
   $Res call({
+    PengawasanStatus status,
     RequestLaporanPengawasanEntity request,
     bool isLoading,
     bool isLoadingLaporan,
@@ -92,6 +94,7 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? status = null,
     Object? request = null,
     Object? isLoading = null,
     Object? isLoadingLaporan = null,
@@ -112,6 +115,10 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
   }) {
     return _then(
       _value.copyWith(
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as PengawasanStatus,
             request: null == request
                 ? _value.request
                 : request // ignore: cast_nullable_to_non_nullable
@@ -208,6 +215,7 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
+    PengawasanStatus status,
     RequestLaporanPengawasanEntity request,
     bool isLoading,
     bool isLoadingLaporan,
@@ -245,6 +253,7 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? status = null,
     Object? request = null,
     Object? isLoading = null,
     Object? isLoadingLaporan = null,
@@ -265,6 +274,10 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
   }) {
     return _then(
       _$PengawasanStateImpl(
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as PengawasanStatus,
         request: null == request
             ? _value.request
             : request // ignore: cast_nullable_to_non_nullable
@@ -342,6 +355,7 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
 
 class _$PengawasanStateImpl extends _PengawasanState {
   const _$PengawasanStateImpl({
+    this.status = PengawasanStatus.initial,
     this.request = const RequestLaporanPengawasanEntity(),
     this.isLoading = false,
     this.isLoadingLaporan = false,
@@ -366,6 +380,10 @@ class _$PengawasanStateImpl extends _PengawasanState {
        _laporanFake = laporanFake,
        super._();
 
+  // 🚀 2. TAMBAHKAN PROPERTI STATUS
+  @override
+  @JsonKey()
+  final PengawasanStatus status;
   @override
   @JsonKey()
   final RequestLaporanPengawasanEntity request;
@@ -401,9 +419,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
   @override
   @JsonKey()
   final String keteranganText;
-  // 🔑 pindahin dari controller lokal
   final List<JenisPelanggaranEntity> _jenisPelanggaran;
-  // 🔑 pindahin dari controller lokal
   @override
   @JsonKey()
   List<JenisPelanggaranEntity> get jenisPelanggaran {
@@ -433,7 +449,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
 
   @override
   String toString() {
-    return 'PengawasanState(request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, keteranganText: $keteranganText, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
+    return 'PengawasanState(status: $status, request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, keteranganText: $keteranganText, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
   }
 
   @override
@@ -441,6 +457,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PengawasanStateImpl &&
+            (identical(other.status, status) || other.status == status) &&
             (identical(other.request, request) || other.request == request) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
@@ -482,6 +499,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
   @override
   int get hashCode => Object.hash(
     runtimeType,
+    status,
     request,
     isLoading,
     isLoadingLaporan,
@@ -515,6 +533,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
 
 abstract class _PengawasanState extends PengawasanState {
   const factory _PengawasanState({
+    final PengawasanStatus status,
     final RequestLaporanPengawasanEntity request,
     final bool isLoading,
     final bool isLoadingLaporan,
@@ -535,6 +554,9 @@ abstract class _PengawasanState extends PengawasanState {
   }) = _$PengawasanStateImpl;
   const _PengawasanState._() : super._();
 
+  // 🚀 2. TAMBAHKAN PROPERTI STATUS
+  @override
+  PengawasanStatus get status;
   @override
   RequestLaporanPengawasanEntity get request;
   @override
@@ -562,7 +584,7 @@ abstract class _PengawasanState extends PengawasanState {
   @override
   bool get isCapturing;
   @override
-  String get keteranganText; // 🔑 pindahin dari controller lokal
+  String get keteranganText;
   @override
   List<JenisPelanggaranEntity> get jenisPelanggaran;
   @override

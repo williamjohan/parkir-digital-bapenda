@@ -47,7 +47,6 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/update/presentation/pages/update_page.dart';
 import '../di/injection.dart';
 import '../enums/app_enums.dart';
-import '../services/location/i_app_location_service.dart';
 import 'app_routes.dart';
 import 'go_router_refresh_stream.dart';
 
@@ -137,9 +136,7 @@ class AppRouter {
           name: AppRoutes.addLaporanPelanggaran,
           builder: (context, state) => BlocProvider(
             create: (_) => locator<PengawasanCubit>(),
-            child: LaporanFormScreen(
-              locationService: locator<IAppLocationService>(),
-            ),
+            child: const LaporanFormScreen(),
           ),
         ),
         GoRoute(
@@ -158,10 +155,7 @@ class AppRouter {
 
             return BlocProvider(
               create: (_) => locator<AbsensiCubit>(),
-              child: ShiftFormScreen(
-                type: type,
-                locationService: locator<IAppLocationService>(),
-              ),
+              child: ShiftFormScreen(type: type),
             );
           },
         ),

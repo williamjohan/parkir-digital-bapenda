@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/domain/entities/laporan_pengawasan/laporan_pengawasan_entity.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/services/location/i_app_location_service.dart';
+import '../../../../core/services/permission/i_permission_service.dart';
 import '../../../../core/utils/photo_utils.dart';
 import '../../domain/constants/jenis_pelanggaran_dummy.dart';
 import '../../domain/usecases/pengawasan_usecase.dart';
@@ -13,15 +15,22 @@ import 'pengawasan_state.dart';
 class PengawasanCubit extends Cubit<PengawasanState> {
   final AddPengawasanUsecase _addPengawasanUsecase;
   final GetLaporanPengawasanUsecase _getLaporanPengawasanUsecase;
+  final IPermissionService _permissionService;
+  final IAppLocationService _locationService;
+  final ImagePicker _picker = ImagePicker();
 
-  PengawasanCubit(this._addPengawasanUsecase, this._getLaporanPengawasanUsecase)
-    : super(const PengawasanState());
+  PengawasanCubit(
+    this._addPengawasanUsecase,
+    this._getLaporanPengawasanUsecase,
+    this._permissionService,
+    this._locationService,
+  ) : super(const PengawasanState());
 
   void loadJenisPelanggaran() {
     emit(state.copyWith(jenisPelanggaran: dummyJenisPelanggaran));
   }
 
-  // 🔥 UPDATE: Langsung emit ke state.request
+  // Langsung emit ke state.request
   void setJenisPelanggaran(int jenisPel) {
     emit(state.copyWith(request: state.request.copyWith(jenisPel: jenisPel)));
   }
@@ -31,7 +40,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
   }
 
   // --- LOGIC LOKASI ---
-  Future<void> fetchLocation(IAppLocationService locationService) async {
+  Future<void> fetchLocation() async {
     emit(
       state.copyWith(
         isFetchingLocation: true,
@@ -42,7 +51,11 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       ),
     );
     try {
-      final result = await locationService.getCurrentLocation();
+      // 🛡️ PERTAHANAN 1: Cek izin & sensor GPS sebelum akses hardware
+      final canProceed = await _guardLocationPermissions();
+      if (!canProceed || isClosed) return;
+
+      final result = await _locationService.getCurrentLocation();
       if (isClosed) return;
 
       emit(
@@ -62,12 +75,13 @@ class PengawasanCubit extends Cubit<PengawasanState> {
   }
 
   // --- LOGIC AMBIL FOTO MENTAH ---
-  Future<void> pickAndSetPhoto({
-    required ImagePicker picker,
-    required IAppLocationService locationService,
-  }) async {
+  Future<void> pickAndSetPhoto() async {
     try {
-      final XFile? image = await PhotoUtils.pickPhoto(picker);
+      // 🛡️ PERTAHANAN 2: Cek izin kamera & GPS sebelum buka kamera
+      final canProceed = await _guardCameraAndLocationPermissions();
+      if (!canProceed || isClosed) return;
+
+      final XFile? image = await PhotoUtils.pickPhoto(_picker);
       if (image == null) return;
 
       emit(
@@ -78,13 +92,14 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       );
 
       // Otomatis langsung perbarui lokasi begitu foto didapatkan
-      await fetchLocation(locationService);
+      await fetchLocation();
     } catch (e) {
+      if (isClosed) return;
       emit(state.copyWith(errorMessage: "Gagal mengambil foto dari kamera"));
     }
   }
 
-  // 🔥 BARU: Simpan foto yang sudah di-watermark ke dalam state.request sebelum submit
+  // Simpan foto yang sudah di-watermark ke dalam state.request sebelum submit
   void setWatermarkedPhoto(File watermarkedFile) {
     emit(
       state.copyWith(
@@ -93,7 +108,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     );
   }
 
-  // 🔥 UPDATE: Bersihkan juga properti di dalam state.request saat foto dihapus
+  // Bersihkan juga properti di dalam state.request saat foto dihapus
   void removePhoto() {
     emit(
       state.copyWith(
@@ -108,7 +123,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     emit(state.copyWith(isCapturing: isCapturing));
   }
 
-  // 🔥 UPDATE: Fungsi submit sekarang hanya butuh ketPel, sisanya membaca langsung dari state.request
+  // Fungsi submit sekarang hanya butuh ketPel, sisanya membaca langsung dari state.request
   Future<void> submit(String ketPel) async {
     // Gabungkan keterangan terbaru ke dalam request final
     final finalRequest = state.request.copyWith(ketPel: ketPel.trim());
@@ -192,6 +207,75 @@ class PengawasanCubit extends Cubit<PengawasanState> {
 
       emit(state.copyWith(isLoadingLaporan: false, errorMessage: e.toString()));
     }
+  }
+
+  // ===========================================================================
+  // 🛡️ PRIVATE PERMISSION GUARDS
+  // ===========================================================================
+
+  Future<bool> _guardLocationPermissions() async {
+    final locStatus = await _permissionService.requestPermission(
+      AppPermissionType.location,
+    );
+    if (locStatus == AppPermissionStatus.permanentlyDenied) {
+      emit(
+        state.copyWith(
+          status: PengawasanStatus.permissionDenied,
+          errorMessage:
+              "Izin lokasi ditolak permanen. Aktifkan di Pengaturan agar bisa melapor.",
+        ),
+      );
+      return false;
+    } else if (locStatus == AppPermissionStatus.denied) {
+      emit(
+        state.copyWith(
+          errorMessage:
+              "Izin lokasi wajib diberikan untuk mencatat koordinat pelanggaran.",
+        ),
+      );
+      return false;
+    }
+
+    final gpsStatus = await _permissionService.requestPermission(
+      AppPermissionType.locationService,
+    );
+    if (gpsStatus == AppPermissionStatus.permanentlyDenied) {
+      emit(
+        state.copyWith(
+          status: PengawasanStatus.gpsOff,
+          errorMessage: "Sensor GPS belum aktif. Silakan nyalakan GPS HP Anda.",
+        ),
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> _guardCameraAndLocationPermissions() async {
+    final camStatus = await _permissionService.requestPermission(
+      AppPermissionType.camera,
+    );
+    if (camStatus == AppPermissionStatus.permanentlyDenied) {
+      emit(
+        state.copyWith(
+          status: PengawasanStatus.permissionDenied,
+          errorMessage:
+              "Izin kamera ditolak permanen. Aktifkan di Pengaturan untuk foto bukti.",
+        ),
+      );
+      return false;
+    } else if (camStatus == AppPermissionStatus.denied) {
+      emit(
+        state.copyWith(
+          errorMessage:
+              "Izin kamera wajib diberikan untuk mengambil foto bukti.",
+        ),
+      );
+      return false;
+    }
+
+    return await _guardLocationPermissions();
   }
 
   void reset() {

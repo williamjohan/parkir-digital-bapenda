@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
-import 'package:parkir_digital_bapenda/core/services/permission/permission_type.dart';
-import 'package:parkir_digital_bapenda/core/services/permission/permission_wrapper.dart';
-// import 'package:parkir_digital_bapenda/core/utils/debug_mock_scenario.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/keterangan_section_card.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import '../../../../core/utils/photo_utils.dart';
@@ -18,9 +13,7 @@ import '../widgets/jenis_pelanggaran_section.dart';
 import '../widgets/photo_section_card.dart';
 
 class LaporanFormScreen extends StatefulWidget {
-  final IAppLocationService locationService;
-
-  const LaporanFormScreen({super.key, required this.locationService});
+  const LaporanFormScreen({super.key});
 
   @override
   State<LaporanFormScreen> createState() => _LaporanFormScreenState();
@@ -28,8 +21,6 @@ class LaporanFormScreen extends StatefulWidget {
 
 class _LaporanFormScreenState extends State<LaporanFormScreen> {
   final _keteranganController = TextEditingController();
-
-  final ImagePicker _picker = ImagePicker();
   final GlobalKey _photoKey = GlobalKey();
 
   @override
@@ -38,7 +29,7 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cubit = context.read<PengawasanCubit>();
       cubit.loadJenisPelanggaran();
-      cubit.fetchLocation(widget.locationService);
+      cubit.fetchLocation();
     });
   }
 
@@ -151,23 +142,8 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                   placeName: state.placeName,
                   latitude: state.latitude,
                   longitude: state.longitude,
-                  onPickPhoto: () async {
-                    final granted = await PermissionService.ensure(
-                      context,
-                      permissions: const [
-                        PermissionType.camera,
-                        PermissionType.location,
-                        PermissionType.locationService,
-                      ],
-                    );
-
-                    if (!granted || !context.mounted) return;
-
-                    context.read<PengawasanCubit>().pickAndSetPhoto(
-                      picker: _picker,
-                      locationService: widget.locationService,
-                    );
-                  },
+                  onPickPhoto: () =>
+                      context.read<PengawasanCubit>().pickAndSetPhoto(),
                   onRemovePhoto: () =>
                       context.read<PengawasanCubit>().removePhoto(),
                 ),
