@@ -177,7 +177,6 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                     if (!granted || !context.mounted) return;
 
                     context.read<AbsensiCubit>().takePhoto(
-                      widget.locationService,
                     );
                   },
                 ),
