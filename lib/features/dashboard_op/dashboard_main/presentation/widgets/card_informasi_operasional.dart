@@ -154,6 +154,8 @@ class CardInformasiOperasional extends StatelessWidget {
 
 // 🚀 BARU: chip pill kecil — solid + icon putih kalau tersedia,
 // outline abu pudar kalau enggak (biar beda jelas tanpa keliatan "kosong/error")
+// 🚀 GANTI: badge lingkaran sekarang nampilin status (check/close),
+// icon fasilitas (CCTV/EDC/dst) dipindah jadi aksen kecil di sebelah teks
 class _FacilityChip extends StatelessWidget {
   final String label;
   final IconData icon;
@@ -168,8 +170,6 @@ class _FacilityChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // 🚀 GANTI: dulu Row mainAxisSize.min (biar chip mepet ke teks),
-      // sekarang full-width karena bakal diisi ke slot grid
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: isAvailable
@@ -184,6 +184,7 @@ class _FacilityChip extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // 🚀 GANTI: badge sekarang nunjukin status (✓ / ✕), bukan icon fasilitas
           Container(
             width: 20,
             height: 20,
@@ -192,14 +193,14 @@ class _FacilityChip extends StatelessWidget {
               color: isAvailable ? AppColors.success : Colors.grey.shade300,
             ),
             child: Icon(
-              icon,
-              size: 11,
+              isAvailable ? Icons.check_rounded : Icons.close_rounded,
+              size: 13,
               color: isAvailable ? Colors.white : Colors.grey.shade500,
             ),
           ),
           const SizedBox(width: 6),
+
           Expanded(
-            // 🚀 BARU: biar teks gak overflow kalau kolomnya sempit ("QRIS Rompi")
             child: Text(
               label,
               maxLines: 1,
