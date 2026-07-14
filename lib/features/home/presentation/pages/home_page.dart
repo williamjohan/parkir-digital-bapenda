@@ -11,8 +11,12 @@ import 'package:parkir_digital_bapenda/features/home/presentation/widgets/last_a
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/components/pb_permission_gate.dart';
+import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../shared/loading/app_loading_widget.dart';
+import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 import '../cubit/home/home_cubit.dart';
 import '../cubit/home/home_state.dart';
 import '../widgets/animated_home_fab.dart';
@@ -68,6 +72,37 @@ class _HomePageState extends State<HomePage> {
                   isFree: state.isFree,
                   role: state.role,
                   namaUPTB: state.namaJukirFormatted?.shortName,
+                  onCheckOpBeforeRouting: () async {
+                    if (!state.isOpUpToDate) {
+                      await PbShowDialog.show(
+                        showBtnKeluar: true,
+                        context,
+                        title: "Data Berubah",
+                        description:
+                            "Ada perubahan data objek pajak. Silakan login ulang terlebih dahulu.",
+                        buttonText: "Keluar",
+                        onConfirm: () async {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext dialogContext) {
+                              return const Center(
+                                child: AppLoadingWidget(size: 150),
+                              );
+                            },
+                          );
+                          await Future.delayed(
+                            const Duration(milliseconds: 800),
+                          );
+                          await locator<AppAuthCubit>().forceLogout();
+                        },
+                      );
+
+                      return false;
+                    }
+
+                    return true;
+                  },
                 ),
               ),
               body: Stack(
@@ -289,14 +324,54 @@ class _HomePageState extends State<HomePage> {
                                             onTapProses: () {},
                                             onTapGratis: () {},
                                             lihatSemuaOnPressed: () async {
+                                              if (!state.isOpUpToDate) {
+                                                await PbShowDialog.show(
+                                                  showBtnKeluar: true,
+                                                  context,
+                                                  title: "Data Berubah",
+                                                  description:
+                                                      "Ada perubahan data objek pajak. Silakan login ulang terlebih dahulu.",
+                                                  buttonText: "Keluar",
+                                                  onConfirm: () async {
+                                                    showDialog(
+                                                      context: context,
+                                                      barrierDismissible: false,
+                                                      builder:
+                                                          (
+                                                            BuildContext
+                                                            dialogContext,
+                                                          ) {
+                                                            return const Center(
+                                                              child:
+                                                                  AppLoadingWidget(
+                                                                    size: 150,
+                                                                  ),
+                                                            );
+                                                          },
+                                                    );
+                                                    await Future.delayed(
+                                                      const Duration(
+                                                        milliseconds: 800,
+                                                      ),
+                                                    );
+                                                    await locator<
+                                                          AppAuthCubit
+                                                        >()
+                                                        .forceLogout();
+                                                  },
+                                                );
+
+                                                return;
+                                              }
+
                                               final result = await context
                                                   .pushNamed(
                                                     AppRoutes.searchObjekPajak,
                                                     extra: {'role': state.role},
                                                   );
-                                              if (!context.mounted) {
-                                                return;
-                                              }
+
+                                              if (!context.mounted) return;
+
                                               if (result != null) {
                                                 await context
                                                     .read<HomeCubit>()

@@ -53,6 +53,7 @@ mixin _$HomeState {
       throw _privateConstructorUsedError; //Segment Pengawas
   int get laporanPelanggaran => throw _privateConstructorUsedError;
   CheckInOutEntity get checkInOutData => throw _privateConstructorUsedError;
+  bool get isOpUpToDate => throw _privateConstructorUsedError;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -100,6 +101,7 @@ abstract class $HomeStateCopyWith<$Res> {
     RoleLoginDigitalParkir role,
     int laporanPelanggaran,
     CheckInOutEntity checkInOutData,
+    bool isOpUpToDate,
   });
 
   $OpCategoryEntityCopyWith<$Res> get digital;
@@ -156,6 +158,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? role = null,
     Object? laporanPelanggaran = null,
     Object? checkInOutData = null,
+    Object? isOpUpToDate = null,
   }) {
     return _then(
       _value.copyWith(
@@ -291,6 +294,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.checkInOutData
                 : checkInOutData // ignore: cast_nullable_to_non_nullable
                       as CheckInOutEntity,
+            isOpUpToDate: null == isOpUpToDate
+                ? _value.isOpUpToDate
+                : isOpUpToDate // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -380,6 +387,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     RoleLoginDigitalParkir role,
     int laporanPelanggaran,
     CheckInOutEntity checkInOutData,
+    bool isOpUpToDate,
   });
 
   @override
@@ -439,6 +447,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? role = null,
     Object? laporanPelanggaran = null,
     Object? checkInOutData = null,
+    Object? isOpUpToDate = null,
   }) {
     return _then(
       _$HomeStateImpl(
@@ -574,6 +583,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.checkInOutData
             : checkInOutData // ignore: cast_nullable_to_non_nullable
                   as CheckInOutEntity,
+        isOpUpToDate: null == isOpUpToDate
+            ? _value.isOpUpToDate
+            : isOpUpToDate // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -664,6 +677,7 @@ class _$HomeStateImpl implements _HomeState {
       detailAlatCheckIn: [],
       detailAlatCheckOut: [],
     ),
+    this.isOpUpToDate = true,
   }) : _recentTransactions = recentTransactions,
        _sofParkirResults = sofParkirResults;
 
@@ -778,10 +792,13 @@ class _$HomeStateImpl implements _HomeState {
   @override
   @JsonKey()
   final CheckInOutEntity checkInOutData;
+  @override
+  @JsonKey()
+  final bool isOpUpToDate;
 
   @override
   String toString() {
-    return 'HomeState(status: $status, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, checkInOutData: $checkInOutData)';
+    return 'HomeState(status: $status, selectedVehicleForCapture: $selectedVehicleForCapture, actionTimestamp: $actionTimestamp, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, checkInOutData: $checkInOutData, isOpUpToDate: $isOpUpToDate)';
   }
 
   @override
@@ -856,7 +873,9 @@ class _$HomeStateImpl implements _HomeState {
             (identical(other.laporanPelanggaran, laporanPelanggaran) ||
                 other.laporanPelanggaran == laporanPelanggaran) &&
             (identical(other.checkInOutData, checkInOutData) ||
-                other.checkInOutData == checkInOutData));
+                other.checkInOutData == checkInOutData) &&
+            (identical(other.isOpUpToDate, isOpUpToDate) ||
+                other.isOpUpToDate == isOpUpToDate));
   }
 
   @override
@@ -895,6 +914,7 @@ class _$HomeStateImpl implements _HomeState {
     role,
     laporanPelanggaran,
     checkInOutData,
+    isOpUpToDate,
   ]);
 
   /// Create a copy of HomeState
@@ -941,6 +961,7 @@ abstract class _HomeState implements HomeState {
     final RoleLoginDigitalParkir role,
     final int laporanPelanggaran,
     final CheckInOutEntity checkInOutData,
+    final bool isOpUpToDate,
   }) = _$HomeStateImpl;
 
   @override
@@ -1009,6 +1030,8 @@ abstract class _HomeState implements HomeState {
   int get laporanPelanggaran;
   @override
   CheckInOutEntity get checkInOutData;
+  @override
+  bool get isOpUpToDate;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.

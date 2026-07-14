@@ -18,8 +18,6 @@ import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/pengawasan_screen.dart';
 import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_cubit.dart';
 import '../../features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
-import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart';
-import '../../features/daftar_nop/presentation/screens/daftar_nop_screen.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
@@ -100,14 +98,6 @@ class AppRouter {
           path: AppRoutes.login,
           name: AppRoutes.login,
           builder: (context, state) => const LoginScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.daftarNop,
-          name: AppRoutes.daftarNop,
-          builder: (context, state) => BlocProvider(
-            create: (_) => locator<DaftarNopCubit>(),
-            child: const DaftarNopScreen(),
-          ),
         ),
         // pengawas
         GoRoute(

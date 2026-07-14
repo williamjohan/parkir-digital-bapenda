@@ -24,6 +24,7 @@ _$AuthResponseModelImpl _$$AuthResponseModelImplFromJson(
       : OpPengawasAuthModel.fromJson(
           json['opPengawas'] as Map<String, dynamic>,
         ),
+  lastUpdateOp: json['lastUpdateOp'] as String? ?? '',
 );
 
 Map<String, dynamic> _$$AuthResponseModelImplToJson(
@@ -36,6 +37,7 @@ Map<String, dynamic> _$$AuthResponseModelImplToJson(
   'pungutTarif': instance.pungutTarif,
   'nopList': instance.nopList,
   'opPengawas': instance.opPengawas,
+  'lastUpdateOp': instance.lastUpdateOp,
 };
 
 _$NopModelImpl _$$NopModelImplFromJson(Map<String, dynamic> json) =>

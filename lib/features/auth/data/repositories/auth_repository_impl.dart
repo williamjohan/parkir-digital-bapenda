@@ -48,6 +48,11 @@ class AuthRepositoryImpl implements IAuthRepository {
           _simpanNopSecaraParalel(response.nopList);
         }
 
+        //  5. SIMPAN OP LAST UPDATE
+        if (response.lastUpdateOp.isNotEmpty) {
+          await _secureStorage.saveOpLastUpdate(response.lastUpdateOp);
+        }
+
         return const Right(unit);
       }
       return const Left(AuthFailure('Token tidak ditemukan dari server.'));

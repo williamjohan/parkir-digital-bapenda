@@ -78,4 +78,8 @@ class HomeUsecase {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  Future<Either<Failure, bool>> getOpLastUpdate() {
+    return _repository.getOpLastUpdate();
+  }
 }

@@ -16,4 +16,6 @@ abstract class IHomeRepository {
 
   Future<Either<Failure, DashboardSummaryPengawasEntity>>
   getDashboardSummaryPengawas();
+
+  Future<Either<Failure, bool>> getOpLastUpdate();
 }

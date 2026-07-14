@@ -13,6 +13,7 @@ class AuthResponseModel with _$AuthResponseModel {
     @Default(0) int pungutTarif,
     @Default([]) List<NopModel> nopList,
     OpPengawasAuthModel? opPengawas,
+    @Default('') String lastUpdateOp,
   }) = _AuthResponseModel;
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>

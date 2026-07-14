@@ -35,6 +35,8 @@ class HomeCubit extends Cubit<HomeState> {
 
     formatUserName();
 
+    await checkOpLastUpdate(); // <-- tambahkan
+
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboarJukir();
       await _profileUseCase.getProfilePicturePath();
@@ -334,5 +336,18 @@ class HomeCubit extends Cubit<HomeState> {
     AppLogger.debug("isi namaJukirFormatted : $formattedName");
 
     emit(state.copyWith(namaJukirFormatted: formattedName));
+  }
+
+  Future<void> checkOpLastUpdate() async {
+    final result = await _homeUsecase.getOpLastUpdate();
+
+    result.fold(
+      (failure) {
+        AppLogger.error('Gagal mengecek update OP: ${failure.message}');
+      },
+      (isSame) {
+        emit(state.copyWith(isOpUpToDate: isSame));
+      },
+    );
   }
 }

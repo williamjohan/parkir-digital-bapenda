@@ -15,12 +15,14 @@ class HomeDrawer extends StatelessWidget {
   final bool isFree;
   final RoleLoginDigitalParkir role;
   final String? namaUPTB;
+  final Future<bool> Function()? onCheckOpBeforeRouting;
 
   const HomeDrawer({
     super.key,
     required this.isFree,
     required this.role,
     this.namaUPTB,
+    this.onCheckOpBeforeRouting,
   });
 
   @override
@@ -96,11 +98,21 @@ class HomeDrawer extends StatelessWidget {
 
                     if (role == RoleLoginDigitalParkir.jukir ||
                         role == RoleLoginDigitalParkir.pengawas) {
+                      if (!context.mounted) return;
+
                       context.pushNamed(
                         AppRoutes.history,
                         extra: {'isFree': false},
                       );
                     } else {
+                      if (onCheckOpBeforeRouting != null) {
+                        final canNavigate = await onCheckOpBeforeRouting!();
+
+                        if (!context.mounted) return;
+
+                        if (!canNavigate) return;
+                      }
+
                       context.pushNamed(
                         AppRoutes.searchObjekPajak,
                         extra: {'role': role},

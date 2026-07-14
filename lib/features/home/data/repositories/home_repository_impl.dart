@@ -4,13 +4,13 @@ import 'package:parkir_digital_bapenda/features/home/data/datasources/dashboard_
 import 'package:parkir_digital_bapenda/features/home/data/models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
+import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../domain/entities/dashboard_summary_jukir_entity.dart';
 import '../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../domain/entities/dashboard_summary_pengawas.entity.dart';
 import '../../domain/repositories/i_home_repository.dart';
 import '../models/dashboard_summary_jukir/dashboard_summary_jukir_model.dart';
 import '../models/dashboard_summary_pengawas/dashboard_summary_pengawas_model.dart';
-
 //RENCANA REFACTOR KEDEPAN :
 /*
 FUNGSI Getdashboard itu satu , baru didalam nya kita logic , role nya apa, 
@@ -22,53 +22,9 @@ dan Cubit juga bersih , cuma tau panngil loaddashboard summary.
 @LazySingleton(as: IHomeRepository)
 class HomeRepositoryImpl implements IHomeRepository {
   final ISummaryRemoteDataSource _summaryRemoteDS;
+  final ISecureStorageManager _secureStorage;
 
-  HomeRepositoryImpl(this._summaryRemoteDS);
-
-  // @override
-  // Future<Either<Failure, DashboardSummaryJukirModel>> getDashboardSummaryJukir({
-  //   required String nop,
-  // }) async {
-  //   DashboardSummaryJukirModel anchor;
-  //   try {
-  //     anchor = await _summaryRemoteDS.getDashboardSummaryJukir(nop: nop);
-  //     await _secureStorage.saveDashboardAnchor(jsonEncode(anchor.toJson()));
-  //   } catch (e) {
-  //     final savedAnchor = await _secureStorage.getDashboardAnchor();
-
-  //     if (savedAnchor != null) {
-  //       anchor = DashboardSummaryJukirModel.fromJson(jsonDecode(savedAnchor));
-  //     } else {
-  //       anchor = const DashboardSummaryJukirModel(
-  //         jumlahMotorHariIni: 0,
-  //         jumlahMobilHariIni: 0,
-  //         totalNominalHariIni: 0,
-  //         totalNominalBersihUntukWajibPajak: 0,
-  //         totalNominalBersihUntukBapenda: 0,
-  //       );
-  //     }
-  //   }
-  //   try {
-  //     final pendingData = await DatabaseHelper.instance
-  //         .getUnsyncedDailySummary();
-  //     final hybridModel = DashboardSummaryJukirModel(
-  //       jumlahMotorHariIni:
-  //           anchor.jumlahMotorHariIni + (pendingData['motor']?.toInt() ?? 0),
-  //       jumlahMobilHariIni:
-  //           anchor.jumlahMobilHariIni + (pendingData['mobil']?.toInt() ?? 0),
-  //       totalNominalHariIni:
-  //           anchor.totalNominalHariIni +
-  //           (pendingData['nominal']?.toDouble() ?? 0.0),
-  //       totalNominalBersihUntukWajibPajak:
-  //           anchor.totalNominalBersihUntukWajibPajak,
-  //       totalNominalBersihUntukBapenda: anchor.totalNominalBersihUntukBapenda,
-  //     );
-
-  //     return Right(hybridModel);
-  //   } catch (e) {
-  //     return Right(anchor);
-  //   }
-  // }
+  HomeRepositoryImpl(this._summaryRemoteDS, this._secureStorage);
 
   @override
   Future<Either<Failure, DashboardSummaryJukirEntity>>
@@ -115,6 +71,28 @@ class HomeRepositoryImpl implements IHomeRepository {
     try {
       final model = await _summaryRemoteDS.getDashboardSummaryPengawas();
       return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Terjadi kesalahan: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> getOpLastUpdate() async {
+    try {
+      final model = await _summaryRemoteDS.getOpLastUpdate();
+
+      final localDate = await _secureStorage.getOpLastUpdate();
+
+      // sama dengan yang tersimpan
+      if (localDate == model.data) {
+        return const Right(true);
+      }
+
+      // berbeda -> update storage
+      await _secureStorage.saveOpLastUpdate(model.data);
+      return const Right(false);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {

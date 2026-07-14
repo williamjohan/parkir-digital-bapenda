@@ -61,4 +61,7 @@ abstract class ISecureStorageManager {
   Future<void> saveQrisLastUpdate(String dateString);
   Future<String?> getQrisLastUpdate();
   Future<void> clearQrisLastUpdate();
+  Future<void> saveOpLastUpdate(String dateString);
+  Future<String?> getOpLastUpdate();
+  Future<void> clearOpLastUpdate();
 }

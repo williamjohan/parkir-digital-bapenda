@@ -107,5 +107,6 @@ class HomeState with _$HomeState {
       ),
     )
     CheckInOutEntity checkInOutData,
+    @Default(true) bool isOpUpToDate,
   }) = _HomeState;
 }

@@ -39,16 +39,6 @@ import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
-import '../../features/daftar_nop/data/datasources/daftar_nop_datasource.dart'
-    as _i17;
-import '../../features/daftar_nop/data/repositories/daftar_nop_repository_impl.dart'
-    as _i66;
-import '../../features/daftar_nop/domain/repositories/daftar_nop_repository.dart'
-    as _i849;
-import '../../features/daftar_nop/domain/usecases/daftar_nop_datasource.dart'
-    as _i819;
-import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart'
-    as _i915;
 import '../../features/dashboard_op/dashboard_main/data/datasources/dashboard_op_datasource.dart'
     as _i905;
 import '../../features/dashboard_op/dashboard_main/data/repositories/dashboard_op_repository_impl.dart'
@@ -104,6 +94,13 @@ import '../../features/jadwal/domain/repositories/i_jadwal_repositories.dart'
     as _i394;
 import '../../features/jadwal/domain/usecases/jadwal_usecase.dart' as _i853;
 import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart' as _i367;
+import '../../features/objek_pajak/data/datasources/nop_remote_datasource.dart'
+    as _i115;
+import '../../features/objek_pajak/data/repositories/op_repository_impl.dart'
+    as _i633;
+import '../../features/objek_pajak/domain/repositories/i_nop_repository.dart'
+    as _i972;
+import '../../features/objek_pajak/domain/usecases/nop_usecase.dart' as _i521;
 import '../../features/payment/data/datasources/qris_signalr_datasource.dart'
     as _i57;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
@@ -287,12 +284,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i896.ITransactionHistoryRemoteDataSource>(
     () => _i896.TransactionHistoryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i17.DaftarNopDatasource>(
-    () => _i17.DaftarNopDatasourceImpl(gh<_i361.Dio>()),
-  );
-  gh.lazySingleton<_i849.DaftarNopRepository>(
-    () => _i66.DaftarNopRepositoryImpl(gh<_i17.DaftarNopDatasource>()),
-  );
   gh.lazySingleton<_i502.IQrisRemoteDataSource>(
     () => _i502.QrisRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -305,11 +296,11 @@ _i174.GetIt init(
   gh.lazySingleton<_i920.DataJukirDatasource>(
     () => _i920.DataJukirDatasourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i115.INopRemoteDataSource>(
+    () => _i115.NopRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i394.IJadwalRepository>(
     () => _i1061.JadwalRepositoryImpl(gh<_i595.IJadwalRemoteDataSource>()),
-  );
-  gh.lazySingleton<_i819.GetDaftarNopUsecase>(
-    () => _i819.GetDaftarNopUsecase(gh<_i849.DaftarNopRepository>()),
   );
   gh.lazySingleton<_i606.IAbsensiRemoteDataSource>(
     () => _i606.AbsensiRemoteDataSourceImpl(
@@ -332,6 +323,15 @@ _i174.GetIt init(
   gh.lazySingleton<_i565.DataJukirRepository>(
     () => _i844.DataJukirRepositoryImpl(gh<_i920.DataJukirDatasource>()),
   );
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(
+      gh<_i535.ISummaryRemoteDataSource>(),
+      gh<_i1015.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i972.INopRepository>(
+    () => _i633.NopRepositoryImpl(gh<_i115.INopRemoteDataSource>()),
+  );
   gh.lazySingleton<_i534.RealisasiRepository>(
     () => _i407.RealisasiRepositoryImpl(gh<_i135.RealisasiRemoteDataSource>()),
   );
@@ -349,9 +349,6 @@ _i174.GetIt init(
     () => _i886.DetailRealisasiOpRepositoryImpl(
       gh<_i676.DetailRealisasiOpRemoteDataSource>(),
     ),
-  );
-  gh.lazySingleton<_i274.IHomeRepository>(
-    () => _i76.HomeRepositoryImpl(gh<_i535.ISummaryRemoteDataSource>()),
   );
   gh.factory<_i506.CheckUpdateUseCase>(
     () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
@@ -428,14 +425,11 @@ _i174.GetIt init(
   gh.factory<_i367.JadwalCubit>(
     () => _i367.JadwalCubit(gh<_i853.JadwalUseCase>()),
   );
-  gh.factory<_i915.DaftarNopCubit>(
-    () => _i915.DaftarNopCubit(
-      gh<_i819.GetDaftarNopUsecase>(),
-      gh<_i654.DatabaseHelper2>(),
-    ),
-  );
   gh.lazySingleton<_i644.GetSummaryDashboardOpUsecase>(
     () => _i644.GetSummaryDashboardOpUsecase(gh<_i23.DashboardOpRepository>()),
+  );
+  gh.lazySingleton<_i521.NopUsecase>(
+    () => _i521.NopUsecase(gh<_i972.INopRepository>()),
   );
   gh.factory<_i36.ProfileCubit>(
     () => _i36.ProfileCubit(gh<_i996.ProfileUseCase>()),

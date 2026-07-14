@@ -6,6 +6,7 @@ import '../../../../core/errors/exception.dart';
 import '../models/dashboard_summary_jukir/dashboard_summary_jukir_model.dart';
 import '../models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
 import '../models/dashboard_summary_pengawas/dashboard_summary_pengawas_model.dart';
+import '../models/op_last_update/op_last_update_model.dart';
 
 abstract class ISummaryRemoteDataSource {
   Future<DashboardSummaryJukirModel> getDashboardSummaryJukir({
@@ -17,6 +18,8 @@ abstract class ISummaryRemoteDataSource {
     String? tglAkhir,
   });
   Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas();
+
+  Future<OpLastUpdateModel> getOpLastUpdate();
 }
 
 @LazySingleton(as: ISummaryRemoteDataSource)
@@ -157,6 +160,40 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
       throw ServerException(
         statusCode: e.response?.statusCode ?? 500,
         message: e.message ?? 'Terjadi kesalahan koneksi saat memuat dashboard',
+      );
+    } catch (e) {
+      throw ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<OpLastUpdateModel> getOpLastUpdate() async {
+    try {
+      final response = await _dio.get(
+        ApiEndpoints.opLastUpdate,
+      ); // Sesuaikan endpoint
+
+      final result = OpLastUpdateModel.fromJson(response.data);
+
+      if (result.isSuccess == true) {
+        return result;
+      } else {
+        throw ServerException(
+          statusCode: result.statusCode != 0 ? result.statusCode : 500,
+          message: result.message.isNotEmpty
+              ? result.message
+              : 'Gagal mengambil tanggal perubahan data objek pajak',
+        );
+      }
+    } on DioException catch (e) {
+      throw ServerException(
+        statusCode: e.response?.statusCode ?? 500,
+        message:
+            e.message ??
+            'Terjadi kesalahan koneksi saat memuat data objek pajak',
       );
     } catch (e) {
       throw ServerException(
