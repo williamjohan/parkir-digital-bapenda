@@ -35,8 +35,6 @@ class HomeCubit extends Cubit<HomeState> {
 
     formatUserName();
 
-    await checkOpLastUpdate(); // <-- tambahkan
-
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboarJukir();
       await _profileUseCase.getProfilePicturePath();
@@ -44,6 +42,7 @@ class HomeCubit extends Cubit<HomeState> {
       await loadDashboardPengawas();
     } else {
       await _loadDashboardNonJukir();
+      await checkOpLastUpdate();
       return;
     }
 
