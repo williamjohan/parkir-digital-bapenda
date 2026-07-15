@@ -135,7 +135,7 @@ flutter:
   assets:
     - .env
     - .env.demo
-    - .env.prod
+    - .env.jukir
     - assets/images/
     - assets/lottie/
     - assets/iconlogo/

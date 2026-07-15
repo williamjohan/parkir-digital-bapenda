@@ -18,7 +18,7 @@ import 'features/update/presentation/widgets/force_update_overlay_card.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = BapendaHttpOverrides();
-  const String envFileName = appFlavor == 'demo' ? '.env.demo' : '.env.prod';
+  const String envFileName = appFlavor == 'demo' ? '.env.demo' : '.env.jukir';
   await dotenv.load(fileName: envFileName);
   await initializeDateFormatting('id_ID', null);
   configureDependencies();
