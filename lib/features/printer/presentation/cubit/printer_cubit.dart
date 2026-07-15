@@ -28,7 +28,6 @@ class PrinterCubit extends Cubit<PrinterState> {
     this._secureStorage,
     this._permissionService,
   ) : super(const PrinterState.initial()) {
-    // 🚀 SINGLE SOURCE OF TRUTH (Sangat ringkas berkat Freezed)
     _connectionSub = _printerService.connectionChanges.listen((device) {
       if (isClosed) return;
       state.maybeMap(
@@ -359,6 +358,14 @@ class PrinterCubit extends Cubit<PrinterState> {
           emit(s.copyWith(connectedDevice: null, savedMacAddress: null)),
       orElse: () {},
     );
+  }
+
+  Future<void> openAppSettings() async {
+    await _permissionService.openSettings();
+  }
+
+  Future<void> openBluetoothSettings() async {
+    await _permissionService.openBluetoothSettings();
   }
 
   @override

@@ -1,4 +1,3 @@
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
@@ -6,9 +5,7 @@ import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
-import '../../../../core/di/injection.dart';
 import '../../../../core/enums/app_enums.dart';
-import '../../../../core/services/permission/i_permission_service.dart';
 import '../../../../shared/loading/loading_overlay.dart';
 import '../cubit/printer_cubit.dart';
 import '../cubit/printer_state.dart';
@@ -92,9 +89,8 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage>
                   context,
                   type: AppPermissionType.bluetooth,
                   status: AppPermissionStatus.permanentlyDenied,
-                  onActionPressed: () {
-                    locator<IPermissionService>().openSettings();
-                  },
+                  onActionPressed: () =>
+                      context.read<PrinterCubit>().openAppSettings(),
                 );
               },
               bluetoothOffRequiresAction: (_) {
@@ -102,11 +98,8 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage>
                   context,
                   type: AppPermissionType.bluetooth,
                   status: AppPermissionStatus.permanentlyDenied,
-                  onActionPressed: () {
-                    AppSettings.openAppSettings(
-                      type: AppSettingsType.bluetooth,
-                    );
-                  },
+                  onActionPressed: () =>
+                      context.read<PrinterCubit>().openBluetoothSettings(),
                 );
               },
               orElse: () {},

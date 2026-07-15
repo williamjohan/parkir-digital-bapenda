@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:geolocator/geolocator.dart'; // Dibutuhkan untuk mengecek & membuka setting GPS
 import 'package:injectable/injectable.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -69,6 +70,11 @@ class PermissionServiceImpl implements IPermissionService {
       '🛰️ [PermissionService] Mengarahkan user ke GPS Hardware Settings',
     );
     await Geolocator.openLocationSettings();
+  }
+
+  @override
+  Future<void> openBluetoothSettings() async {
+    await AppSettings.openAppSettings(type: AppSettingsType.bluetooth);
   }
 
   // ===========================================================================

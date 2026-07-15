@@ -7,4 +7,6 @@ abstract class IPermissionService {
 
   /// Membuka pengaturan native HP jika user sudah menolak secara permanen
   Future<void> openSettings();
+
+  Future<void> openBluetoothSettings();
 }
