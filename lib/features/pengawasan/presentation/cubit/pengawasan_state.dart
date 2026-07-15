@@ -4,6 +4,8 @@ import 'package:parkir_digital_bapenda/features/pengawasan/domain/entities/jenis
 import 'package:parkir_digital_bapenda/features/pengawasan/domain/entities/laporan_pengawasan/laporan_pengawasan_entity.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/domain/entities/request_laporan_pengawasan_entity/request_laporan_pengawasan_entity.dart';
 
+import '../../../../core/enums/app_enums.dart';
+
 part 'pengawasan_state.freezed.dart';
 
 // 1. TAMBAHKAN ENUM STATUS UNTUK TRIGGER DIALOG PENGATURAN DI UI
@@ -23,7 +25,7 @@ class PengawasanState with _$PengawasanState {
   const factory PengawasanState({
     // 🚀 2. TAMBAHKAN PROPERTI STATUS
     @Default(PengawasanStatus.initial) PengawasanStatus status,
-
+    AppPermissionType? deniedPermissionType,
     @Default(RequestLaporanPengawasanEntity())
     RequestLaporanPengawasanEntity request,
 

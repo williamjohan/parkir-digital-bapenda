@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
@@ -9,6 +8,9 @@ import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/prese
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_number_field.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_photo_widget.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
+import '../../../../../core/design_system/components/pb_permission_dialog.dart';
+import '../../../../../core/design_system/components/pb_show_dialog.dart';
+import '../../../../../core/enums/app_enums.dart';
 import '../cubit/absensi_cubit.dart';
 import '../cubit/absensi_state.dart';
 import '../widgets/instrument_toggle_widget.dart';
@@ -106,23 +108,42 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
     return BlocConsumer<AbsensiCubit, AbsensiState>(
       listenWhen: (prev, curr) => prev.status != curr.status,
       listener: (context, state) {
-        if (state.status == AbsensiStatus.failure) {
-          FormResultDialog.showError(
-            context,
-            title: "Gagal",
-            description: state.errorMessage.isNotEmpty
-                ? state.errorMessage
-                : "Terjadi kesalahan, silakan coba lagi",
-            onConfirm: () {},
-          );
-        } else if (state.status == AbsensiStatus.success) {
-          FormResultDialog.showSuccess(
+        if (state.status == AbsensiStatus.success) {
+          PbShowDialog.show(
             context,
             title: _isCheckIn ? "Check In Berhasil" : "Check Out Berhasil",
             description: _isCheckIn
                 ? "Absensi check in kamu sudah tersimpan"
                 : "Absensi check out kamu sudah tersimpan",
+            icon: Icons.check_circle_rounded,
+            iconColor: AppColors.success,
+            buttonText: "OK",
             onConfirm: () => Navigator.of(context).pop(true),
+          );
+        } else if (state.status == AbsensiStatus.permissionDenied) {
+          PbPermissionDialog.show(
+            context,
+            type: state.deniedPermissionType ?? AppPermissionType.camera,
+            status: AppPermissionStatus.permanentlyDenied,
+            onActionPressed: () =>
+                context.read<AbsensiCubit>().openAppSettings(),
+          );
+        } else if (state.status == AbsensiStatus.gpsOff) {
+          PbPermissionDialog.show(
+            context,
+            type: AppPermissionType.locationService,
+            status: AppPermissionStatus.permanentlyDenied,
+            onActionPressed: () =>
+                context.read<AbsensiCubit>().openLocationSettings(),
+          );
+        } else if (state.status == AbsensiStatus.failure) {
+          PbShowDialog.show(
+            context,
+            title: "Gagal",
+            description: state.errorMessage.isNotEmpty
+                ? state.errorMessage
+                : "Terjadi kesalahan, silakan coba lagi",
+            buttonText: "Tutup",
           );
         }
       },

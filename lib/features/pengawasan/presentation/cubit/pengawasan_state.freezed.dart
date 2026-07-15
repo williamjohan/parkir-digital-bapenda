@@ -19,6 +19,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$PengawasanState {
   // 🚀 2. TAMBAHKAN PROPERTI STATUS
   PengawasanStatus get status => throw _privateConstructorUsedError;
+  AppPermissionType? get deniedPermissionType =>
+      throw _privateConstructorUsedError;
   RequestLaporanPengawasanEntity get request =>
       throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
@@ -57,6 +59,7 @@ abstract class $PengawasanStateCopyWith<$Res> {
   @useResult
   $Res call({
     PengawasanStatus status,
+    AppPermissionType? deniedPermissionType,
     RequestLaporanPengawasanEntity request,
     bool isLoading,
     bool isLoadingLaporan,
@@ -95,6 +98,7 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
   @override
   $Res call({
     Object? status = null,
+    Object? deniedPermissionType = freezed,
     Object? request = null,
     Object? isLoading = null,
     Object? isLoadingLaporan = null,
@@ -119,6 +123,10 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as PengawasanStatus,
+            deniedPermissionType: freezed == deniedPermissionType
+                ? _value.deniedPermissionType
+                : deniedPermissionType // ignore: cast_nullable_to_non_nullable
+                      as AppPermissionType?,
             request: null == request
                 ? _value.request
                 : request // ignore: cast_nullable_to_non_nullable
@@ -216,6 +224,7 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
   @useResult
   $Res call({
     PengawasanStatus status,
+    AppPermissionType? deniedPermissionType,
     RequestLaporanPengawasanEntity request,
     bool isLoading,
     bool isLoadingLaporan,
@@ -254,6 +263,7 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? status = null,
+    Object? deniedPermissionType = freezed,
     Object? request = null,
     Object? isLoading = null,
     Object? isLoadingLaporan = null,
@@ -278,6 +288,10 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as PengawasanStatus,
+        deniedPermissionType: freezed == deniedPermissionType
+            ? _value.deniedPermissionType
+            : deniedPermissionType // ignore: cast_nullable_to_non_nullable
+                  as AppPermissionType?,
         request: null == request
             ? _value.request
             : request // ignore: cast_nullable_to_non_nullable
@@ -356,6 +370,7 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
 class _$PengawasanStateImpl extends _PengawasanState {
   const _$PengawasanStateImpl({
     this.status = PengawasanStatus.initial,
+    this.deniedPermissionType,
     this.request = const RequestLaporanPengawasanEntity(),
     this.isLoading = false,
     this.isLoadingLaporan = false,
@@ -384,6 +399,8 @@ class _$PengawasanStateImpl extends _PengawasanState {
   @override
   @JsonKey()
   final PengawasanStatus status;
+  @override
+  final AppPermissionType? deniedPermissionType;
   @override
   @JsonKey()
   final RequestLaporanPengawasanEntity request;
@@ -449,7 +466,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
 
   @override
   String toString() {
-    return 'PengawasanState(status: $status, request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, keteranganText: $keteranganText, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
+    return 'PengawasanState(status: $status, deniedPermissionType: $deniedPermissionType, request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, keteranganText: $keteranganText, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
   }
 
   @override
@@ -458,6 +475,10 @@ class _$PengawasanStateImpl extends _PengawasanState {
         (other.runtimeType == runtimeType &&
             other is _$PengawasanStateImpl &&
             (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(
+              other.deniedPermissionType,
+              deniedPermissionType,
+            ) &&
             (identical(other.request, request) || other.request == request) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
@@ -497,9 +518,10 @@ class _$PengawasanStateImpl extends _PengawasanState {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     status,
+    const DeepCollectionEquality().hash(deniedPermissionType),
     request,
     isLoading,
     isLoadingLaporan,
@@ -517,7 +539,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
     const DeepCollectionEquality().hash(_jenisPelanggaran),
     const DeepCollectionEquality().hash(_laporan),
     const DeepCollectionEquality().hash(_laporanFake),
-  );
+  ]);
 
   /// Create a copy of PengawasanState
   /// with the given fields replaced by the non-null parameter values.
@@ -534,6 +556,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
 abstract class _PengawasanState extends PengawasanState {
   const factory _PengawasanState({
     final PengawasanStatus status,
+    final AppPermissionType? deniedPermissionType,
     final RequestLaporanPengawasanEntity request,
     final bool isLoading,
     final bool isLoadingLaporan,
@@ -557,6 +580,8 @@ abstract class _PengawasanState extends PengawasanState {
   // 🚀 2. TAMBAHKAN PROPERTI STATUS
   @override
   PengawasanStatus get status;
+  @override
+  AppPermissionType? get deniedPermissionType;
   @override
   RequestLaporanPengawasanEntity get request;
   @override

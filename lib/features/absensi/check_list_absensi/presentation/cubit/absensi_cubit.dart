@@ -64,6 +64,8 @@ class AbsensiCubit extends Cubit<AbsensiState> {
   // --- AMBIL FOTO  ---
   Future<void> takePhoto() async {
     try {
+      emit(state.copyWith(status: AbsensiStatus.initial, errorMessage: ''));
+
       final canProceed = await _guardCameraAndLocationPermissions();
       if (!canProceed || isClosed) return;
 
@@ -187,16 +189,18 @@ class AbsensiCubit extends Cubit<AbsensiState> {
       emit(
         state.copyWith(
           status: AbsensiStatus.permissionDenied,
+          deniedPermissionType: AppPermissionType.location,
           errorMessage:
-              "Izin lokasi ditolak permanen. Aktifkan di Pengaturan agar bisa absen.",
+              "Izin lokasi ditolak permanen. Aktifkan di Pengaturan agar bisa melanjutkan.",
         ),
       );
       return false;
     } else if (locStatus == AppPermissionStatus.denied) {
       emit(
         state.copyWith(
+          status: AbsensiStatus.failure,
           errorMessage:
-              "Izin lokasi wajib diberikan untuk mencatat koordinat absensi.",
+              "Izin lokasi wajib diberikan untuk mencatat koordinat pelanggaran.",
         ),
       );
       return false;
@@ -209,6 +213,7 @@ class AbsensiCubit extends Cubit<AbsensiState> {
       emit(
         state.copyWith(
           status: AbsensiStatus.gpsOff,
+          deniedPermissionType: AppPermissionType.locationService,
           errorMessage: "Sensor GPS belum aktif. Silakan nyalakan GPS HP Anda.",
         ),
       );
@@ -226,21 +231,30 @@ class AbsensiCubit extends Cubit<AbsensiState> {
       emit(
         state.copyWith(
           status: AbsensiStatus.permissionDenied,
+          deniedPermissionType: AppPermissionType.camera,
           errorMessage:
-              "Izin kamera ditolak permanen. Aktifkan di Pengaturan untuk foto wajah.",
+              "Izin kamera ditolak permanen. Aktifkan di Pengaturan OS.",
         ),
       );
       return false;
     } else if (camStatus == AppPermissionStatus.denied) {
       emit(
         state.copyWith(
+          status: AbsensiStatus.failure,
           errorMessage:
-              "Izin kamera wajib diberikan untuk mengambil foto wajah.",
+              "Izin kamera wajib diberikan untuk mengambil foto bukti.",
         ),
       );
       return false;
     }
-
     return await _guardLocationPermissions();
+  }
+
+  Future<void> openAppSettings() async {
+    await _permissionService.openSettings();
+  }
+
+  Future<void> openLocationSettings() async {
+    await _permissionService.openLocationSettings();
   }
 }

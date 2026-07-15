@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_show_dialog.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/keterangan_section_card.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
+import '../../../../core/design_system/components/pb_permission_dialog.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/utils/photo_utils.dart';
 import '../cubit/pengawasan_cubit.dart';
 import '../cubit/pengawasan_state.dart';
@@ -93,22 +95,43 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<PengawasanCubit, PengawasanState>(
       listenWhen: (prev, curr) =>
+          prev.status != curr.status ||
           prev.isSuccess != curr.isSuccess ||
           prev.errorMessage != curr.errorMessage,
       listener: (context, state) {
         if (state.isSuccess) {
-          FormResultDialog.showSuccess(
+          PbShowDialog.show(
             context,
             title: "Laporan Berhasil",
             description: "Laporan pelanggaran kamu sudah tersimpan",
+            icon: Icons.check_circle_rounded,
+            iconColor: AppColors.success,
+            buttonText: "OK",
             onConfirm: () => Navigator.of(context).pop(true),
           );
-        } else if (state.errorMessage != null) {
-          FormResultDialog.showError(
+        } else if (state.status == PengawasanStatus.permissionDenied) {
+          PbPermissionDialog.show(
+            context,
+            type: state.deniedPermissionType ?? AppPermissionType.camera,
+            status: AppPermissionStatus.permanentlyDenied,
+            onActionPressed: () =>
+                context.read<PengawasanCubit>().openAppSettings(),
+          );
+        } else if (state.status == PengawasanStatus.gpsOff) {
+          PbPermissionDialog.show(
+            context,
+            type: AppPermissionType.locationService,
+            status: AppPermissionStatus.permanentlyDenied,
+            onActionPressed: () =>
+                context.read<PengawasanCubit>().openLocationSettings(),
+          );
+        } else if (state.status == PengawasanStatus.failure &&
+            state.errorMessage != null) {
+          PbShowDialog.show(
             context,
             title: "Gagal",
             description: state.errorMessage!,
-            onConfirm: () {},
+            buttonText: "Tutup",
           );
         }
       },
@@ -165,11 +188,6 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                   onChanged: context.read<PengawasanCubit>().setKeterangan,
                 ),
                 const SizedBox(height: 24),
-                // const Positioned(
-                //   bottom: 16,
-                //   right: 16,
-                //   child: MockScenarioFab(),
-                // ),
               ],
             ),
             bottomNavigationBar: Padding(

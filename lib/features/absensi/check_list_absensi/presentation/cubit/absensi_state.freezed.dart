@@ -18,7 +18,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$AbsensiState {
   AbsensiStatus get status => throw _privateConstructorUsedError;
-  String get errorMessage =>
+  String get errorMessage => throw _privateConstructorUsedError;
+  AppPermissionType? get deniedPermissionType =>
       throw _privateConstructorUsedError; // --- STATE UNTUK UI FORM ---
   File? get rawPhoto =>
       throw _privateConstructorUsedError; // Foto asli sebelum di-watermark
@@ -55,6 +56,7 @@ abstract class $AbsensiStateCopyWith<$Res> {
   $Res call({
     AbsensiStatus status,
     String errorMessage,
+    AppPermissionType? deniedPermissionType,
     File? rawPhoto,
     File? watermarkedPhoto,
     DateTime? photoTakenAt,
@@ -89,6 +91,7 @@ class _$AbsensiStateCopyWithImpl<$Res, $Val extends AbsensiState>
   $Res call({
     Object? status = null,
     Object? errorMessage = null,
+    Object? deniedPermissionType = freezed,
     Object? rawPhoto = freezed,
     Object? watermarkedPhoto = freezed,
     Object? photoTakenAt = freezed,
@@ -114,6 +117,10 @@ class _$AbsensiStateCopyWithImpl<$Res, $Val extends AbsensiState>
                 ? _value.errorMessage
                 : errorMessage // ignore: cast_nullable_to_non_nullable
                       as String,
+            deniedPermissionType: freezed == deniedPermissionType
+                ? _value.deniedPermissionType
+                : deniedPermissionType // ignore: cast_nullable_to_non_nullable
+                      as AppPermissionType?,
             rawPhoto: freezed == rawPhoto
                 ? _value.rawPhoto
                 : rawPhoto // ignore: cast_nullable_to_non_nullable
@@ -188,6 +195,7 @@ abstract class _$$AbsensiStateImplCopyWith<$Res>
   $Res call({
     AbsensiStatus status,
     String errorMessage,
+    AppPermissionType? deniedPermissionType,
     File? rawPhoto,
     File? watermarkedPhoto,
     DateTime? photoTakenAt,
@@ -221,6 +229,7 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
     Object? errorMessage = null,
+    Object? deniedPermissionType = freezed,
     Object? rawPhoto = freezed,
     Object? watermarkedPhoto = freezed,
     Object? photoTakenAt = freezed,
@@ -246,6 +255,10 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
             ? _value.errorMessage
             : errorMessage // ignore: cast_nullable_to_non_nullable
                   as String,
+        deniedPermissionType: freezed == deniedPermissionType
+            ? _value.deniedPermissionType
+            : deniedPermissionType // ignore: cast_nullable_to_non_nullable
+                  as AppPermissionType?,
         rawPhoto: freezed == rawPhoto
             ? _value.rawPhoto
             : rawPhoto // ignore: cast_nullable_to_non_nullable
@@ -313,6 +326,7 @@ class _$AbsensiStateImpl extends _AbsensiState {
   const _$AbsensiStateImpl({
     this.status = AbsensiStatus.initial,
     this.errorMessage = '',
+    this.deniedPermissionType,
     this.rawPhoto,
     this.watermarkedPhoto,
     this.photoTakenAt,
@@ -335,6 +349,8 @@ class _$AbsensiStateImpl extends _AbsensiState {
   @override
   @JsonKey()
   final String errorMessage;
+  @override
+  final AppPermissionType? deniedPermissionType;
   // --- STATE UNTUK UI FORM ---
   @override
   final File? rawPhoto;
@@ -377,7 +393,7 @@ class _$AbsensiStateImpl extends _AbsensiState {
 
   @override
   String toString() {
-    return 'AbsensiState(status: $status, errorMessage: $errorMessage, rawPhoto: $rawPhoto, watermarkedPhoto: $watermarkedPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, motorText: $motorText, mobilText: $mobilText, edc: $edc, qris: $qris, tsPark: $tsPark)';
+    return 'AbsensiState(status: $status, errorMessage: $errorMessage, deniedPermissionType: $deniedPermissionType, rawPhoto: $rawPhoto, watermarkedPhoto: $watermarkedPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, motorText: $motorText, mobilText: $mobilText, edc: $edc, qris: $qris, tsPark: $tsPark)';
   }
 
   @override
@@ -388,6 +404,8 @@ class _$AbsensiStateImpl extends _AbsensiState {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
+            (identical(other.deniedPermissionType, deniedPermissionType) ||
+                other.deniedPermissionType == deniedPermissionType) &&
             (identical(other.rawPhoto, rawPhoto) ||
                 other.rawPhoto == rawPhoto) &&
             (identical(other.watermarkedPhoto, watermarkedPhoto) ||
@@ -420,6 +438,7 @@ class _$AbsensiStateImpl extends _AbsensiState {
     runtimeType,
     status,
     errorMessage,
+    deniedPermissionType,
     rawPhoto,
     watermarkedPhoto,
     photoTakenAt,
@@ -449,6 +468,7 @@ abstract class _AbsensiState extends AbsensiState {
   const factory _AbsensiState({
     final AbsensiStatus status,
     final String errorMessage,
+    final AppPermissionType? deniedPermissionType,
     final File? rawPhoto,
     final File? watermarkedPhoto,
     final DateTime? photoTakenAt,
@@ -469,7 +489,9 @@ abstract class _AbsensiState extends AbsensiState {
   @override
   AbsensiStatus get status;
   @override
-  String get errorMessage; // --- STATE UNTUK UI FORM ---
+  String get errorMessage;
+  @override
+  AppPermissionType? get deniedPermissionType; // --- STATE UNTUK UI FORM ---
   @override
   File? get rawPhoto; // Foto asli sebelum di-watermark
   @override

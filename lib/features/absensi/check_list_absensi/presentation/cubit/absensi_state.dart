@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../../core/enums/app_enums.dart';
+
 part 'absensi_state.freezed.dart';
 
 // TAMBAHAN:  permissionDenied dan gpsOff agar UI tahu kapan harus memunculkan dialog Pengaturan
@@ -20,7 +22,7 @@ class AbsensiState with _$AbsensiState {
   const factory AbsensiState({
     @Default(AbsensiStatus.initial) AbsensiStatus status,
     @Default('') String errorMessage,
-
+    AppPermissionType? deniedPermissionType,
     // --- STATE UNTUK UI FORM ---
     File? rawPhoto, // Foto asli sebelum di-watermark
     File? watermarkedPhoto, // Foto hasil watermark, siap dikirim

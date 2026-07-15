@@ -76,8 +76,16 @@ class PengawasanCubit extends Cubit<PengawasanState> {
 
   // --- LOGIC AMBIL FOTO MENTAH ---
   Future<void> pickAndSetPhoto() async {
+    // (Atau takePhoto di absensi)
     try {
-      // 🛡️ PERTAHANAN 2: Cek izin kamera & GPS sebelum buka kamera
+      emit(
+        state.copyWith(
+          status: PengawasanStatus.initial, // (Atau AbsensiStatus.initial)
+          errorMessage: null,
+        ),
+      );
+
+      // 🛡️ 2. Baru panggil pertahanan perizinan
       final canProceed = await _guardCameraAndLocationPermissions();
       if (!canProceed || isClosed) return;
 
@@ -91,7 +99,6 @@ class PengawasanCubit extends Cubit<PengawasanState> {
         ),
       );
 
-      // Otomatis langsung perbarui lokasi begitu foto didapatkan
       await fetchLocation();
     } catch (e) {
       if (isClosed) return;
@@ -221,14 +228,16 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       emit(
         state.copyWith(
           status: PengawasanStatus.permissionDenied,
+          deniedPermissionType: AppPermissionType.location,
           errorMessage:
-              "Izin lokasi ditolak permanen. Aktifkan di Pengaturan agar bisa melapor.",
+              "Izin lokasi ditolak permanen. Aktifkan di Pengaturan agar bisa melanjutkan.",
         ),
       );
       return false;
     } else if (locStatus == AppPermissionStatus.denied) {
       emit(
         state.copyWith(
+          status: PengawasanStatus.failure,
           errorMessage:
               "Izin lokasi wajib diberikan untuk mencatat koordinat pelanggaran.",
         ),
@@ -243,6 +252,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       emit(
         state.copyWith(
           status: PengawasanStatus.gpsOff,
+          deniedPermissionType: AppPermissionType.locationService,
           errorMessage: "Sensor GPS belum aktif. Silakan nyalakan GPS HP Anda.",
         ),
       );
@@ -260,22 +270,31 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       emit(
         state.copyWith(
           status: PengawasanStatus.permissionDenied,
+          deniedPermissionType: AppPermissionType.camera,
           errorMessage:
-              "Izin kamera ditolak permanen. Aktifkan di Pengaturan untuk foto bukti.",
+              "Izin kamera ditolak permanen. Aktifkan di Pengaturan OS.",
         ),
       );
       return false;
     } else if (camStatus == AppPermissionStatus.denied) {
       emit(
         state.copyWith(
+          status: PengawasanStatus.failure,
           errorMessage:
               "Izin kamera wajib diberikan untuk mengambil foto bukti.",
         ),
       );
       return false;
     }
-
     return await _guardLocationPermissions();
+  }
+
+  Future<void> openAppSettings() async {
+    await _permissionService.openSettings();
+  }
+
+  Future<void> openLocationSettings() async {
+    await _permissionService.openLocationSettings();
   }
 
   void reset() {
