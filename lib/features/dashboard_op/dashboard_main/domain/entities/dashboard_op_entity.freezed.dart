@@ -34,6 +34,8 @@ mixin _$DashboardOpEntity {
   List<SofEntity> get sofList => throw _privateConstructorUsedError;
   List<AlatDigitalEntity> get alatDigitalList =>
       throw _privateConstructorUsedError;
+  TaxSurveillanceEntity? get taxSurveillance =>
+      throw _privateConstructorUsedError;
   int get tarifMotor => throw _privateConstructorUsedError;
   int get tarifMobil => throw _privateConstructorUsedError;
   String get jadwalOperasional => throw _privateConstructorUsedError;
@@ -66,12 +68,14 @@ abstract class $DashboardOpEntityCopyWith<$Res> {
     List<RiwayatPendapatanEntity> riwayatList,
     List<SofEntity> sofList,
     List<AlatDigitalEntity> alatDigitalList,
+    TaxSurveillanceEntity? taxSurveillance,
     int tarifMotor,
     int tarifMobil,
     String jadwalOperasional,
   });
 
   $RealisasiTahunIniEntityCopyWith<$Res> get realisasiTahunIni;
+  $TaxSurveillanceEntityCopyWith<$Res>? get taxSurveillance;
 }
 
 /// @nodoc
@@ -102,6 +106,7 @@ class _$DashboardOpEntityCopyWithImpl<$Res, $Val extends DashboardOpEntity>
     Object? riwayatList = null,
     Object? sofList = null,
     Object? alatDigitalList = null,
+    Object? taxSurveillance = freezed,
     Object? tarifMotor = null,
     Object? tarifMobil = null,
     Object? jadwalOperasional = null,
@@ -162,6 +167,10 @@ class _$DashboardOpEntityCopyWithImpl<$Res, $Val extends DashboardOpEntity>
                 ? _value.alatDigitalList
                 : alatDigitalList // ignore: cast_nullable_to_non_nullable
                       as List<AlatDigitalEntity>,
+            taxSurveillance: freezed == taxSurveillance
+                ? _value.taxSurveillance
+                : taxSurveillance // ignore: cast_nullable_to_non_nullable
+                      as TaxSurveillanceEntity?,
             tarifMotor: null == tarifMotor
                 ? _value.tarifMotor
                 : tarifMotor // ignore: cast_nullable_to_non_nullable
@@ -190,6 +199,22 @@ class _$DashboardOpEntityCopyWithImpl<$Res, $Val extends DashboardOpEntity>
       return _then(_value.copyWith(realisasiTahunIni: value) as $Val);
     });
   }
+
+  /// Create a copy of DashboardOpEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TaxSurveillanceEntityCopyWith<$Res>? get taxSurveillance {
+    if (_value.taxSurveillance == null) {
+      return null;
+    }
+
+    return $TaxSurveillanceEntityCopyWith<$Res>(_value.taxSurveillance!, (
+      value,
+    ) {
+      return _then(_value.copyWith(taxSurveillance: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -215,6 +240,7 @@ abstract class _$$DashboardOpEntityImplCopyWith<$Res>
     List<RiwayatPendapatanEntity> riwayatList,
     List<SofEntity> sofList,
     List<AlatDigitalEntity> alatDigitalList,
+    TaxSurveillanceEntity? taxSurveillance,
     int tarifMotor,
     int tarifMobil,
     String jadwalOperasional,
@@ -222,6 +248,8 @@ abstract class _$$DashboardOpEntityImplCopyWith<$Res>
 
   @override
   $RealisasiTahunIniEntityCopyWith<$Res> get realisasiTahunIni;
+  @override
+  $TaxSurveillanceEntityCopyWith<$Res>? get taxSurveillance;
 }
 
 /// @nodoc
@@ -251,6 +279,7 @@ class __$$DashboardOpEntityImplCopyWithImpl<$Res>
     Object? riwayatList = null,
     Object? sofList = null,
     Object? alatDigitalList = null,
+    Object? taxSurveillance = freezed,
     Object? tarifMotor = null,
     Object? tarifMobil = null,
     Object? jadwalOperasional = null,
@@ -310,6 +339,10 @@ class __$$DashboardOpEntityImplCopyWithImpl<$Res>
             ? _value._alatDigitalList
             : alatDigitalList // ignore: cast_nullable_to_non_nullable
                   as List<AlatDigitalEntity>,
+        taxSurveillance: freezed == taxSurveillance
+            ? _value.taxSurveillance
+            : taxSurveillance // ignore: cast_nullable_to_non_nullable
+                  as TaxSurveillanceEntity?,
         tarifMotor: null == tarifMotor
             ? _value.tarifMotor
             : tarifMotor // ignore: cast_nullable_to_non_nullable
@@ -344,6 +377,7 @@ class _$DashboardOpEntityImpl extends _DashboardOpEntity {
     required final List<RiwayatPendapatanEntity> riwayatList,
     required final List<SofEntity> sofList,
     final List<AlatDigitalEntity> alatDigitalList = const [],
+    this.taxSurveillance,
     required this.tarifMotor,
     required this.tarifMobil,
     required this.jadwalOperasional,
@@ -398,6 +432,8 @@ class _$DashboardOpEntityImpl extends _DashboardOpEntity {
   }
 
   @override
+  final TaxSurveillanceEntity? taxSurveillance;
+  @override
   final int tarifMotor;
   @override
   final int tarifMobil;
@@ -406,7 +442,7 @@ class _$DashboardOpEntityImpl extends _DashboardOpEntity {
 
   @override
   String toString() {
-    return 'DashboardOpEntity(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList, alatDigitalList: $alatDigitalList, tarifMotor: $tarifMotor, tarifMobil: $tarifMobil, jadwalOperasional: $jadwalOperasional)';
+    return 'DashboardOpEntity(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList, alatDigitalList: $alatDigitalList, taxSurveillance: $taxSurveillance, tarifMotor: $tarifMotor, tarifMobil: $tarifMobil, jadwalOperasional: $jadwalOperasional)';
   }
 
   @override
@@ -451,6 +487,8 @@ class _$DashboardOpEntityImpl extends _DashboardOpEntity {
               other._alatDigitalList,
               _alatDigitalList,
             ) &&
+            (identical(other.taxSurveillance, taxSurveillance) ||
+                other.taxSurveillance == taxSurveillance) &&
             (identical(other.tarifMotor, tarifMotor) ||
                 other.tarifMotor == tarifMotor) &&
             (identical(other.tarifMobil, tarifMobil) ||
@@ -475,6 +513,7 @@ class _$DashboardOpEntityImpl extends _DashboardOpEntity {
     const DeepCollectionEquality().hash(_riwayatList),
     const DeepCollectionEquality().hash(_sofList),
     const DeepCollectionEquality().hash(_alatDigitalList),
+    taxSurveillance,
     tarifMotor,
     tarifMobil,
     jadwalOperasional,
@@ -507,6 +546,7 @@ abstract class _DashboardOpEntity extends DashboardOpEntity {
     required final List<RiwayatPendapatanEntity> riwayatList,
     required final List<SofEntity> sofList,
     final List<AlatDigitalEntity> alatDigitalList,
+    final TaxSurveillanceEntity? taxSurveillance,
     required final int tarifMotor,
     required final int tarifMobil,
     required final String jadwalOperasional,
@@ -539,6 +579,8 @@ abstract class _DashboardOpEntity extends DashboardOpEntity {
   List<SofEntity> get sofList;
   @override
   List<AlatDigitalEntity> get alatDigitalList;
+  @override
+  TaxSurveillanceEntity? get taxSurveillance;
   @override
   int get tarifMotor;
   @override
@@ -1424,4 +1466,225 @@ abstract class _AlatDigitalEntity implements AlatDigitalEntity {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AlatDigitalEntityImplCopyWith<_$AlatDigitalEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$TaxSurveillanceEntity {
+  String get bulan => throw _privateConstructorUsedError;
+  String get totalRealisasiMotor => throw _privateConstructorUsedError;
+  String get totalRealisasiMobil => throw _privateConstructorUsedError;
+  String get totalRealisasiBulan => throw _privateConstructorUsedError;
+
+  /// Create a copy of TaxSurveillanceEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $TaxSurveillanceEntityCopyWith<TaxSurveillanceEntity> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaxSurveillanceEntityCopyWith<$Res> {
+  factory $TaxSurveillanceEntityCopyWith(
+    TaxSurveillanceEntity value,
+    $Res Function(TaxSurveillanceEntity) then,
+  ) = _$TaxSurveillanceEntityCopyWithImpl<$Res, TaxSurveillanceEntity>;
+  @useResult
+  $Res call({
+    String bulan,
+    String totalRealisasiMotor,
+    String totalRealisasiMobil,
+    String totalRealisasiBulan,
+  });
+}
+
+/// @nodoc
+class _$TaxSurveillanceEntityCopyWithImpl<
+  $Res,
+  $Val extends TaxSurveillanceEntity
+>
+    implements $TaxSurveillanceEntityCopyWith<$Res> {
+  _$TaxSurveillanceEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of TaxSurveillanceEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bulan = null,
+    Object? totalRealisasiMotor = null,
+    Object? totalRealisasiMobil = null,
+    Object? totalRealisasiBulan = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            bulan: null == bulan
+                ? _value.bulan
+                : bulan // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalRealisasiMotor: null == totalRealisasiMotor
+                ? _value.totalRealisasiMotor
+                : totalRealisasiMotor // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalRealisasiMobil: null == totalRealisasiMobil
+                ? _value.totalRealisasiMobil
+                : totalRealisasiMobil // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalRealisasiBulan: null == totalRealisasiBulan
+                ? _value.totalRealisasiBulan
+                : totalRealisasiBulan // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$TaxSurveillanceEntityImplCopyWith<$Res>
+    implements $TaxSurveillanceEntityCopyWith<$Res> {
+  factory _$$TaxSurveillanceEntityImplCopyWith(
+    _$TaxSurveillanceEntityImpl value,
+    $Res Function(_$TaxSurveillanceEntityImpl) then,
+  ) = __$$TaxSurveillanceEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    String bulan,
+    String totalRealisasiMotor,
+    String totalRealisasiMobil,
+    String totalRealisasiBulan,
+  });
+}
+
+/// @nodoc
+class __$$TaxSurveillanceEntityImplCopyWithImpl<$Res>
+    extends
+        _$TaxSurveillanceEntityCopyWithImpl<$Res, _$TaxSurveillanceEntityImpl>
+    implements _$$TaxSurveillanceEntityImplCopyWith<$Res> {
+  __$$TaxSurveillanceEntityImplCopyWithImpl(
+    _$TaxSurveillanceEntityImpl _value,
+    $Res Function(_$TaxSurveillanceEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of TaxSurveillanceEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bulan = null,
+    Object? totalRealisasiMotor = null,
+    Object? totalRealisasiMobil = null,
+    Object? totalRealisasiBulan = null,
+  }) {
+    return _then(
+      _$TaxSurveillanceEntityImpl(
+        bulan: null == bulan
+            ? _value.bulan
+            : bulan // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalRealisasiMotor: null == totalRealisasiMotor
+            ? _value.totalRealisasiMotor
+            : totalRealisasiMotor // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalRealisasiMobil: null == totalRealisasiMobil
+            ? _value.totalRealisasiMobil
+            : totalRealisasiMobil // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalRealisasiBulan: null == totalRealisasiBulan
+            ? _value.totalRealisasiBulan
+            : totalRealisasiBulan // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$TaxSurveillanceEntityImpl implements _TaxSurveillanceEntity {
+  const _$TaxSurveillanceEntityImpl({
+    required this.bulan,
+    required this.totalRealisasiMotor,
+    required this.totalRealisasiMobil,
+    required this.totalRealisasiBulan,
+  });
+
+  @override
+  final String bulan;
+  @override
+  final String totalRealisasiMotor;
+  @override
+  final String totalRealisasiMobil;
+  @override
+  final String totalRealisasiBulan;
+
+  @override
+  String toString() {
+    return 'TaxSurveillanceEntity(bulan: $bulan, totalRealisasiMotor: $totalRealisasiMotor, totalRealisasiMobil: $totalRealisasiMobil, totalRealisasiBulan: $totalRealisasiBulan)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaxSurveillanceEntityImpl &&
+            (identical(other.bulan, bulan) || other.bulan == bulan) &&
+            (identical(other.totalRealisasiMotor, totalRealisasiMotor) ||
+                other.totalRealisasiMotor == totalRealisasiMotor) &&
+            (identical(other.totalRealisasiMobil, totalRealisasiMobil) ||
+                other.totalRealisasiMobil == totalRealisasiMobil) &&
+            (identical(other.totalRealisasiBulan, totalRealisasiBulan) ||
+                other.totalRealisasiBulan == totalRealisasiBulan));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    bulan,
+    totalRealisasiMotor,
+    totalRealisasiMobil,
+    totalRealisasiBulan,
+  );
+
+  /// Create a copy of TaxSurveillanceEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaxSurveillanceEntityImplCopyWith<_$TaxSurveillanceEntityImpl>
+  get copyWith =>
+      __$$TaxSurveillanceEntityImplCopyWithImpl<_$TaxSurveillanceEntityImpl>(
+        this,
+        _$identity,
+      );
+}
+
+abstract class _TaxSurveillanceEntity implements TaxSurveillanceEntity {
+  const factory _TaxSurveillanceEntity({
+    required final String bulan,
+    required final String totalRealisasiMotor,
+    required final String totalRealisasiMobil,
+    required final String totalRealisasiBulan,
+  }) = _$TaxSurveillanceEntityImpl;
+
+  @override
+  String get bulan;
+  @override
+  String get totalRealisasiMotor;
+  @override
+  String get totalRealisasiMobil;
+  @override
+  String get totalRealisasiBulan;
+
+  /// Create a copy of TaxSurveillanceEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TaxSurveillanceEntityImplCopyWith<_$TaxSurveillanceEntityImpl>
+  get copyWith => throw _privateConstructorUsedError;
 }

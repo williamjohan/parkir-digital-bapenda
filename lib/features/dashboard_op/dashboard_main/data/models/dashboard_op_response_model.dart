@@ -23,7 +23,7 @@ class DashboardOpResponseModel with _$DashboardOpResponseModel {
     required List<RiwayatPendapatanModel> riwayatList,
     required List<SofModel> sofList,
     @Default([]) List<AlatDigitalModel> alatDigitalList,
-
+    TaxSurveillanceModel? taxSurveillance,
     required int tarifMotor,
     required int tarifMobil,
     required String jadwalOperasional,
@@ -86,4 +86,17 @@ class AlatDigitalModel with _$AlatDigitalModel {
 
   factory AlatDigitalModel.fromJson(Map<String, dynamic> json) =>
       _$AlatDigitalModelFromJson(json);
+}
+
+@freezed
+class TaxSurveillanceModel with _$TaxSurveillanceModel {
+  const factory TaxSurveillanceModel({
+    required String bulan,
+    required String totalRealisasiMotor,
+    required String totalRealisasiMobil,
+    required String totalRealisasiBulan,
+  }) = _TaxSurveillanceModel;
+
+  factory TaxSurveillanceModel.fromJson(Map<String, dynamic> json) =>
+      _$TaxSurveillanceModelFromJson(json);
 }

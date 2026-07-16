@@ -22,7 +22,7 @@ class RealisasiRemoteDataSourceImpl implements RealisasiRemoteDataSource {
       AppLogger.info('Request Realisasi Seluruh OP Tahun: $tahun');
 
       final response = await _dio.get(
-        ApiEndpoints.summayRealisasiOpDev,
+        ApiEndpoints.summaryRealisasiDev,
         queryParameters: {'tahun': tahun},
       );
 

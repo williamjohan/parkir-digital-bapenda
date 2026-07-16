@@ -57,6 +57,14 @@ class DashboardOpMapper {
       tarifMotor: model.tarifMotor,
       tarifMobil: model.tarifMobil,
       jadwalOperasional: model.jadwalOperasional,
+      taxSurveillance: model.taxSurveillance == null
+          ? null
+          : TaxSurveillanceEntity(
+              bulan: model.taxSurveillance!.bulan,
+              totalRealisasiMotor: model.taxSurveillance!.totalRealisasiMotor,
+              totalRealisasiMobil: model.taxSurveillance!.totalRealisasiMobil,
+              totalRealisasiBulan: model.taxSurveillance!.totalRealisasiBulan,
+            ),
     );
   }
 }

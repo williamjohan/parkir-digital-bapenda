@@ -475,10 +475,8 @@ class _$PengawasanStateImpl extends _PengawasanState {
         (other.runtimeType == runtimeType &&
             other is _$PengawasanStateImpl &&
             (identical(other.status, status) || other.status == status) &&
-            const DeepCollectionEquality().equals(
-              other.deniedPermissionType,
-              deniedPermissionType,
-            ) &&
+            (identical(other.deniedPermissionType, deniedPermissionType) ||
+                other.deniedPermissionType == deniedPermissionType) &&
             (identical(other.request, request) || other.request == request) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
@@ -521,7 +519,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
   int get hashCode => Object.hashAll([
     runtimeType,
     status,
-    const DeepCollectionEquality().hash(deniedPermissionType),
+    deniedPermissionType,
     request,
     isLoading,
     isLoadingLaporan,
