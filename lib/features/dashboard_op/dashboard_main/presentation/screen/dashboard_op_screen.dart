@@ -121,9 +121,9 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                           enabled: state.loading,
                           child: CardTaxSurveillance(
                             month:
-                                "Juli", // TODO: ganti dinamis kalau nanti ada toggle periode
+                                "Juli",
                             totalNominal:
-                                0, // TODO: sambungkan ke field pengawasan pajak di state.data
+                                0, 
                             nominalMotor: 0, // TODO
                             nominalMobil: 0, // TODO
                             onLihatSemua: () {
