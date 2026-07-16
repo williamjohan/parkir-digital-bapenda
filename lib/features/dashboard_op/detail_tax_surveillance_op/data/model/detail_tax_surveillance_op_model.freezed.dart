@@ -23,13 +23,10 @@ TaxSurveillanceDetailRequestModel _$TaxSurveillanceDetailRequestModelFromJson(
 
 /// @nodoc
 mixin _$TaxSurveillanceDetailRequestModel {
-  @JsonKey(name: 'nop')
   String get nop => throw _privateConstructorUsedError;
   @ServerUtcDateTimeConverter()
-  @JsonKey(name: 'start_date')
   DateTime get startDate => throw _privateConstructorUsedError;
   @ServerUtcDateTimeConverter()
-  @JsonKey(name: 'end_date')
   DateTime get endDate => throw _privateConstructorUsedError;
 
   /// Serializes this TaxSurveillanceDetailRequestModel to a JSON map.
@@ -54,11 +51,9 @@ abstract class $TaxSurveillanceDetailRequestModelCopyWith<$Res> {
       >;
   @useResult
   $Res call({
-    @JsonKey(name: 'nop') String nop,
-    @ServerUtcDateTimeConverter()
-    @JsonKey(name: 'start_date')
-    DateTime startDate,
-    @ServerUtcDateTimeConverter() @JsonKey(name: 'end_date') DateTime endDate,
+    String nop,
+    @ServerUtcDateTimeConverter() DateTime startDate,
+    @ServerUtcDateTimeConverter() DateTime endDate,
   });
 }
 
@@ -114,11 +109,9 @@ abstract class _$$TaxSurveillanceDetailRequestModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @JsonKey(name: 'nop') String nop,
-    @ServerUtcDateTimeConverter()
-    @JsonKey(name: 'start_date')
-    DateTime startDate,
-    @ServerUtcDateTimeConverter() @JsonKey(name: 'end_date') DateTime endDate,
+    String nop,
+    @ServerUtcDateTimeConverter() DateTime startDate,
+    @ServerUtcDateTimeConverter() DateTime endDate,
   });
 }
 
@@ -168,13 +161,9 @@ class __$$TaxSurveillanceDetailRequestModelImplCopyWithImpl<$Res>
 class _$TaxSurveillanceDetailRequestModelImpl
     implements _TaxSurveillanceDetailRequestModel {
   const _$TaxSurveillanceDetailRequestModelImpl({
-    @JsonKey(name: 'nop') required this.nop,
-    @ServerUtcDateTimeConverter()
-    @JsonKey(name: 'start_date')
-    required this.startDate,
-    @ServerUtcDateTimeConverter()
-    @JsonKey(name: 'end_date')
-    required this.endDate,
+    required this.nop,
+    @ServerUtcDateTimeConverter() required this.startDate,
+    @ServerUtcDateTimeConverter() required this.endDate,
   });
 
   factory _$TaxSurveillanceDetailRequestModelImpl.fromJson(
@@ -182,15 +171,12 @@ class _$TaxSurveillanceDetailRequestModelImpl
   ) => _$$TaxSurveillanceDetailRequestModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'nop')
   final String nop;
   @override
   @ServerUtcDateTimeConverter()
-  @JsonKey(name: 'start_date')
   final DateTime startDate;
   @override
   @ServerUtcDateTimeConverter()
-  @JsonKey(name: 'end_date')
   final DateTime endDate;
 
   @override
@@ -235,13 +221,9 @@ class _$TaxSurveillanceDetailRequestModelImpl
 abstract class _TaxSurveillanceDetailRequestModel
     implements TaxSurveillanceDetailRequestModel {
   const factory _TaxSurveillanceDetailRequestModel({
-    @JsonKey(name: 'nop') required final String nop,
-    @ServerUtcDateTimeConverter()
-    @JsonKey(name: 'start_date')
-    required final DateTime startDate,
-    @ServerUtcDateTimeConverter()
-    @JsonKey(name: 'end_date')
-    required final DateTime endDate,
+    required final String nop,
+    @ServerUtcDateTimeConverter() required final DateTime startDate,
+    @ServerUtcDateTimeConverter() required final DateTime endDate,
   }) = _$TaxSurveillanceDetailRequestModelImpl;
 
   factory _TaxSurveillanceDetailRequestModel.fromJson(
@@ -249,15 +231,12 @@ abstract class _TaxSurveillanceDetailRequestModel
   ) = _$TaxSurveillanceDetailRequestModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'nop')
   String get nop;
   @override
   @ServerUtcDateTimeConverter()
-  @JsonKey(name: 'start_date')
   DateTime get startDate;
   @override
   @ServerUtcDateTimeConverter()
-  @JsonKey(name: 'end_date')
   DateTime get endDate;
 
   /// Create a copy of TaxSurveillanceDetailRequestModel
@@ -278,11 +257,8 @@ TaxSurveillanceDetailResponseModel _$TaxSurveillanceDetailResponseModelFromJson(
 
 /// @nodoc
 mixin _$TaxSurveillanceDetailResponseModel {
-  @JsonKey(name: 'jenis_kendaraan', defaultValue: 'Tidak Diketahui')
   String get jenisKendaraan => throw _privateConstructorUsedError;
-  @JsonKey(name: 'nominal', defaultValue: 0)
   int get nominal => throw _privateConstructorUsedError;
-  @JsonKey(name: 'tgl')
   DateTime get tgl => throw _privateConstructorUsedError;
 
   /// Serializes this TaxSurveillanceDetailResponseModel to a JSON map.
@@ -308,12 +284,7 @@ abstract class $TaxSurveillanceDetailResponseModelCopyWith<$Res> {
         TaxSurveillanceDetailResponseModel
       >;
   @useResult
-  $Res call({
-    @JsonKey(name: 'jenis_kendaraan', defaultValue: 'Tidak Diketahui')
-    String jenisKendaraan,
-    @JsonKey(name: 'nominal', defaultValue: 0) int nominal,
-    @JsonKey(name: 'tgl') DateTime tgl,
-  });
+  $Res call({String jenisKendaraan, int nominal, DateTime tgl});
 }
 
 /// @nodoc
@@ -367,12 +338,7 @@ abstract class _$$TaxSurveillanceDetailResponseModelImplCopyWith<$Res>
   ) = __$$TaxSurveillanceDetailResponseModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    @JsonKey(name: 'jenis_kendaraan', defaultValue: 'Tidak Diketahui')
-    String jenisKendaraan,
-    @JsonKey(name: 'nominal', defaultValue: 0) int nominal,
-    @JsonKey(name: 'tgl') DateTime tgl,
-  });
+  $Res call({String jenisKendaraan, int nominal, DateTime tgl});
 }
 
 /// @nodoc
@@ -421,10 +387,9 @@ class __$$TaxSurveillanceDetailResponseModelImplCopyWithImpl<$Res>
 class _$TaxSurveillanceDetailResponseModelImpl
     implements _TaxSurveillanceDetailResponseModel {
   const _$TaxSurveillanceDetailResponseModelImpl({
-    @JsonKey(name: 'jenis_kendaraan', defaultValue: 'Tidak Diketahui')
     required this.jenisKendaraan,
-    @JsonKey(name: 'nominal', defaultValue: 0) required this.nominal,
-    @JsonKey(name: 'tgl') required this.tgl,
+    required this.nominal,
+    required this.tgl,
   });
 
   factory _$TaxSurveillanceDetailResponseModelImpl.fromJson(
@@ -432,13 +397,10 @@ class _$TaxSurveillanceDetailResponseModelImpl
   ) => _$$TaxSurveillanceDetailResponseModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'jenis_kendaraan', defaultValue: 'Tidak Diketahui')
   final String jenisKendaraan;
   @override
-  @JsonKey(name: 'nominal', defaultValue: 0)
   final int nominal;
   @override
-  @JsonKey(name: 'tgl')
   final DateTime tgl;
 
   @override
@@ -483,10 +445,9 @@ class _$TaxSurveillanceDetailResponseModelImpl
 abstract class _TaxSurveillanceDetailResponseModel
     implements TaxSurveillanceDetailResponseModel {
   const factory _TaxSurveillanceDetailResponseModel({
-    @JsonKey(name: 'jenis_kendaraan', defaultValue: 'Tidak Diketahui')
     required final String jenisKendaraan,
-    @JsonKey(name: 'nominal', defaultValue: 0) required final int nominal,
-    @JsonKey(name: 'tgl') required final DateTime tgl,
+    required final int nominal,
+    required final DateTime tgl,
   }) = _$TaxSurveillanceDetailResponseModelImpl;
 
   factory _TaxSurveillanceDetailResponseModel.fromJson(
@@ -494,13 +455,10 @@ abstract class _TaxSurveillanceDetailResponseModel
   ) = _$TaxSurveillanceDetailResponseModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'jenis_kendaraan', defaultValue: 'Tidak Diketahui')
   String get jenisKendaraan;
   @override
-  @JsonKey(name: 'nominal', defaultValue: 0)
   int get nominal;
   @override
-  @JsonKey(name: 'tgl')
   DateTime get tgl;
 
   /// Create a copy of TaxSurveillanceDetailResponseModel

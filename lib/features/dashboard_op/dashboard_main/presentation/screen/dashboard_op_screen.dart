@@ -117,7 +117,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                       
+                        // if (state.showTSCard) ...[
                           Skeletonizer(
                             enabled: state.loading,
                             child: CardTaxSurveillance(
@@ -153,6 +153,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
+                        //],
                         Skeletonizer(
                           enabled: state.loading,
                           child: CardRealisasiOp(

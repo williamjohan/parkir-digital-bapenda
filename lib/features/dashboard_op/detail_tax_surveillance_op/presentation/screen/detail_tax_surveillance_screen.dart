@@ -1,73 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/detail_tax_surveillance_op/presentation/cubit/detail_tax_surveillance_cubit.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/detail_tax_surveillance_op/presentation/cubit/detail_tax_surveillance_state.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../../core/di/injection.dart'; // 🆕 locator
+import '../../domain/entities/detail_tax_surveillance_op_entity.dart';
 import '../widgets/tax_surveillance_item_card.dart';
 
-class DetailTaxSurveillanceScreen extends StatefulWidget {
+class DetailTaxSurveillanceScreen extends StatelessWidget {
   final String? nop;
 
   const DetailTaxSurveillanceScreen({super.key, this.nop});
 
   @override
-  State<DetailTaxSurveillanceScreen> createState() =>
-      _DetailTaxSurveillanceScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => locator<DetailTaxSurveillanceCubit>()..fetchDefault(nop ?? ''),
+      child: _DetailTaxSurveillanceView(nop: nop),
+    );
+  }
 }
 
-class _DetailTaxSurveillanceScreenState
-    extends State<DetailTaxSurveillanceScreen> {
-  late DateTime _startDate;
-  late DateTime _endDate;
+class _DetailTaxSurveillanceView extends StatefulWidget {
+  final String? nop;
 
-  // 🆕 filter kategori aktif: 'SEMUA' | 'MOBIL' | 'MOTOR'
-  String _selectedKategori = 'SEMUA';
-
-  // 🚧 DUMMY — nanti diganti fetch dari usecase asli
-  final List<TaxSurveillanceItemData> _dummyItems = [
-    TaxSurveillanceItemData(
-      kategori: 'Motor',
-      nominal: 10000,
-      tanggal: DateTime(2026, 7, 14),
-    ),
-    TaxSurveillanceItemData(
-      kategori: 'Mobil',
-      nominal: 25000,
-      tanggal: DateTime(2026, 7, 14),
-    ),
-    TaxSurveillanceItemData(
-      kategori: 'Motor',
-      nominal: 15000,
-      tanggal: DateTime(2026, 7, 13),
-    ),
-    TaxSurveillanceItemData(
-      kategori: 'Mobil',
-      nominal: 30000,
-      tanggal: DateTime(2026, 7, 12),
-    ),
-    TaxSurveillanceItemData(
-      kategori: 'Motor',
-      nominal: 12000,
-      tanggal: DateTime(2026, 7, 10),
-    ),
-  ];
-
-  // 🆕 hasil filter berdasarkan _selectedKategori
-  List<TaxSurveillanceItemData> get _filteredItems {
-    if (_selectedKategori == 'SEMUA') return _dummyItems;
-    final target = _selectedKategori == 'MOBIL' ? 'mobil' : 'motor';
-    return _dummyItems
-        .where((item) => item.kategori.toLowerCase() == target)
-        .toList();
-  }
+  const _DetailTaxSurveillanceView({this.nop});
 
   @override
-  void initState() {
-    super.initState();
-    final now = DateTime.now();
-    _startDate = DateTime(now.year, now.month, 1);
-    _endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
-  }
+  State<_DetailTaxSurveillanceView> createState() =>
+      _DetailTaxSurveillanceViewState();
+}
 
+class _DetailTaxSurveillanceViewState
+    extends State<_DetailTaxSurveillanceView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,39 +54,135 @@ class _DetailTaxSurveillanceScreenState
         foregroundColor: Colors.black,
         iconTheme: const IconThemeData(color: AppColors.primary),
       ),
-      body: Column(
-        children: [
-          RangeFilterWidget(
-            onApply:
-                ({
-                  required String startDate,
-                  required String endDate,
-                  required String startTime,
-                  required String endTime,
-                }) {
-                  setState(() {
-                    _startDate = DateTime.parse("$startDate $startTime");
-                    _endDate = DateTime.parse("$endDate $endTime");
-                  });
-                  // TODO: panggil fetch data asli pakai _startDate & _endDate
-                },
+      body: BlocBuilder<DetailTaxSurveillanceCubit, DetailTaxSurveillanceState>(
+        builder: (context, state) {
+          return Column(
+            children: [
+              RangeFilterWidget(
+                onApply:
+                    ({
+                      required String startDate,
+                      required String endDate,
+                      required String startTime,
+                      required String endTime,
+                    }) {
+                      final start = DateTime.parse("$startDate $startTime");
+                      final end = DateTime.parse("$endDate $endTime");
+                      context.read<DetailTaxSurveillanceCubit>().fetchFiltered(
+                        widget.nop ?? '',
+                        start,
+                        end,
+                      );
+                    },
+              ),
+              if (state is TaxSurveillanceLoaded) _buildFilterSection(state),
+              const Divider(height: 1, color: AppColors.border),
+              Expanded(child: _buildBody(state)),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBody(DetailTaxSurveillanceState state) {
+    if (state is DetailTaxSurveillanceLoading) {
+      return _buildSkeletonList();
+    }
+
+    if (state is TaxSurveillanceError) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: AppColors.textHint),
+              const SizedBox(height: 12),
+              Text(
+                state.message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.textHint),
+              ),
+            ],
           ),
-          _buildFilterSection(), // 🆕
-          const Divider(height: 1, color: AppColors.border),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                if (_filteredItems.isEmpty)
-                  _buildEmptyState() // 🆕
-                else
-                  ..._filteredItems.map(
-                    (item) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: TaxSurveillanceItemCard(item: item),
-                    ),
-                  ),
-              ],
+        ),
+      );
+    }
+
+    if (state is TaxSurveillanceLoaded) {
+      if (state.isFilterLoading) {
+        return _buildSkeletonList();
+      }
+
+      final items = state.filteredItems;
+
+      if (items.isEmpty) {
+        return _buildEmptyState();
+      }
+
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              'DIPERTAHANKAN',
+              style: AppTypography.caption.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textSecondary,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+          ...items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: TaxSurveillanceItemCard(
+                item: TaxSurveillanceItemData(
+                  kategori: item.jenisKendaraan,
+                  nominal: item.nominal,
+                  tanggal: item.tgl,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // TaxSurveillanceInitial
+    return const SizedBox();
+  }
+
+  Widget _buildSkeletonList() {
+    return Skeletonizer(
+      enabled: true,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              'DIPERTAHANKAN',
+              style: AppTypography.caption.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textSecondary,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+          ...List.generate(
+            5,
+            (_) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: TaxSurveillanceItemCard(
+                item: TaxSurveillanceItemData(
+                  kategori: 'Motor',
+                  nominal: 10000,
+                  tanggal: DateTime.now(),
+                ),
+              ),
             ),
           ),
         ],
@@ -126,33 +190,48 @@ class _DetailTaxSurveillanceScreenState
     );
   }
 
-  // 🆕 filter chip SEMUA/MOBIL/MOTOR
-  Widget _buildFilterSection() {
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          color: Colors.white,
-          padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 8),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildFilterChip('SEMUA', 'Semua'),
-                const SizedBox(width: 8),
-                _buildFilterChip('MOBIL', 'Mobil'),
-                const SizedBox(width: 8),
-                _buildFilterChip('MOTOR', 'Motor'),
-              ],
-            ),
+  Widget _buildEmptyState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.receipt_long, size: 80, color: AppColors.textHint),
+          SizedBox(height: 16),
+          Text(
+            'Tidak ada data untuk filter ini.',
+            style: TextStyle(color: AppColors.textHint),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildFilterChip(String value, String label) {
-    final bool isSelected = value == _selectedKategori;
+  Widget _buildFilterSection(TaxSurveillanceLoaded state) {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _buildFilterChip(state, 'SEMUA', 'Semua'),
+            const SizedBox(width: 8),
+            _buildFilterChip(state, 'MOBIL', 'Mobil'),
+            const SizedBox(width: 8),
+            _buildFilterChip(state, 'MOTOR', 'Motor'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(
+    TaxSurveillanceLoaded state,
+    String value,
+    String label,
+  ) {
+    final bool isSelected = value == state.selectedKategori;
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -165,30 +244,9 @@ class _DetailTaxSurveillanceScreenState
       side: BorderSide(color: isSelected ? Colors.blue : Colors.grey.shade300),
       onSelected: (bool selected) {
         if (selected) {
-          setState(() => _selectedKategori = value);
-          // TODO: kalau udah backend asli, panggil fetch/filter remote di sini
-          // pakai jenisKendaraan sesuai value (SEMUA=0, MOBIL=1, MOTOR=2)
+          context.read<DetailTaxSurveillanceCubit>().applyFilter(value);
         }
       },
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return const Padding(
-      padding: EdgeInsets.only(top: 60),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.receipt_long, size: 80, color: AppColors.textHint),
-            SizedBox(height: 16),
-            Text(
-              'Tidak ada data untuk filter ini.',
-              style: TextStyle(color: AppColors.textHint),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

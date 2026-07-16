@@ -69,6 +69,16 @@ import '../../features/dashboard_op/detail_realisasi_op/domain/usecases/get_deta
     as _i709;
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart'
     as _i468;
+import '../../features/dashboard_op/detail_tax_surveillance_op/data/datasources/detail_tax_surveillance_op_datasources.dart'
+    as _i460;
+import '../../features/dashboard_op/detail_tax_surveillance_op/data/repositories/detail_tax_surveillance_op_repository_impl.dart'
+    as _i934;
+import '../../features/dashboard_op/detail_tax_surveillance_op/domain/repositories/i_detail_tax_surveillance_op_repository.dart'
+    as _i138;
+import '../../features/dashboard_op/detail_tax_surveillance_op/domain/usecases/detail_tax_surveillance_op_repository_usecase.dart'
+    as _i429;
+import '../../features/dashboard_op/detail_tax_surveillance_op/presentation/cubit/detail_tax_surveillance_cubit.dart'
+    as _i588;
 import '../../features/home/data/datasources/dashboard_summary_remote_datasource.dart'
     as _i535;
 import '../../features/home/data/repositories/home_repository_impl.dart'
@@ -311,6 +321,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(
     () => _i847.ProfileRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i460.ITaxSurveillanceRemoteDataSource>(
+    () => _i460.TaxSurveillanceRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i926.PengawasanDatasource>(
     () => _i926.PengawasanDatasourceImpl(
       gh<_i361.Dio>(),
@@ -364,6 +377,11 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i334.DashboardOpRepository>(
     () => _i606.DashboardOpRepositoryImpl(gh<_i905.DashboardOpDatasource>()),
+  );
+  gh.lazySingleton<_i138.ITaxSurveillanceRepository>(
+    () => _i934.TaxSurveillanceRepositoryImpl(
+      gh<_i460.ITaxSurveillanceRemoteDataSource>(),
+    ),
   );
   gh.lazySingleton<_i709.GetDetailRealisasiOpUseCase>(
     () => _i709.GetDetailRealisasiOpUseCase(
@@ -424,6 +442,12 @@ _i174.GetIt init(
   );
   gh.factory<_i367.JadwalCubit>(
     () => _i367.JadwalCubit(gh<_i853.JadwalUseCase>()),
+  );
+  gh.lazySingleton<_i429.TaxSurveillanceUseCase>(
+    () => _i429.TaxSurveillanceUseCase(gh<_i138.ITaxSurveillanceRepository>()),
+  );
+  gh.factory<_i588.DetailTaxSurveillanceCubit>(
+    () => _i588.DetailTaxSurveillanceCubit(gh<_i429.TaxSurveillanceUseCase>()),
   );
   gh.lazySingleton<_i521.NopUsecase>(
     () => _i521.NopUsecase(gh<_i972.INopRepository>()),
