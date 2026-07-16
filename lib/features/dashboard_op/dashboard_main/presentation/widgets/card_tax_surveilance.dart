@@ -5,7 +5,7 @@ import '../../../../../core/utils/currency_formatter.dart';
 
 class CardTaxSurveillance extends StatelessWidget {
   /// contoh: "Hari Ini" atau "Bulan Ini" — dipasang di belakang judul
-  final String periodLabel;
+  final String month;
   final int totalNominal;
   final int nominalMotor;
   final int nominalMobil;
@@ -13,7 +13,7 @@ class CardTaxSurveillance extends StatelessWidget {
 
   const CardTaxSurveillance({
     super.key,
-    required this.periodLabel,
+    required this.month,
     required this.totalNominal,
     required this.nominalMotor,
     required this.nominalMobil,
@@ -40,17 +40,22 @@ class CardTaxSurveillance extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.policy_rounded,
-                size: 18,
-                color: AppColors.primary,
+              const Padding(
+                padding: EdgeInsets.only(top: 2),
+                child: Icon(
+                  Icons.policy_rounded,
+                  size: 18,
+                  color: AppColors.primary,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  "Tax Surveillance $periodLabel",
+                  "Tax Surveillance Bulan $month",
                   style: AppTypography.bodySemiBold,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -60,7 +65,7 @@ class CardTaxSurveillance extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 4,
-                    horizontal: 4,
+                    horizontal: 6,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -113,6 +118,7 @@ class CardTaxSurveillance extends StatelessWidget {
                   icon: Icons.two_wheeler_rounded,
                   label: "Motor",
                   nominal: nominalMotor,
+                  color: AppColors.success,
                 ),
               ),
               Container(width: 1, height: 52, color: AppColors.border),
@@ -123,6 +129,7 @@ class CardTaxSurveillance extends StatelessWidget {
                     icon: Icons.directions_car_rounded,
                     label: "Mobil",
                     nominal: nominalMobil,
+                    color: AppColors.info,
                   ),
                 ),
               ),
@@ -138,11 +145,13 @@ class _VehicleAmount extends StatelessWidget {
   final IconData icon;
   final String label;
   final int nominal;
+  final Color color;
 
   const _VehicleAmount({
     required this.icon,
     required this.label,
     required this.nominal,
+    required this.color,
   });
 
   @override
@@ -151,19 +160,21 @@ class _VehicleAmount extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 16, color: AppColors.textSecondary),
+            Icon(icon, size: 20, color: color),
             const SizedBox(width: 6),
-            Text(label, style: AppTypography.caption),
+            Text(
+              label,
+              style: AppTypography.caption.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 6),
-        Text(
-          CurrencyFormatter.toIdr(nominal),
-          style: AppTypography.bodySemiBold.copyWith(
-            color: AppColors.textPrimary,
-          ),
-        ),
+        const SizedBox(height: 4),
+        Text(CurrencyFormatter.toIdr(nominal), style: AppTypography.bodySemiBold.copyWith(color: color)),
       ],
     );
   }

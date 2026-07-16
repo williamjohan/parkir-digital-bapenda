@@ -120,8 +120,8 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                         Skeletonizer(
                           enabled: state.loading,
                           child: CardTaxSurveillance(
-                            periodLabel:
-                                "Hari Ini", // TODO: ganti dinamis kalau nanti ada toggle periode
+                            month:
+                                "Juli", // TODO: ganti dinamis kalau nanti ada toggle periode
                             totalNominal:
                                 0, // TODO: sambungkan ke field pengawasan pajak di state.data
                             nominalMotor: 0, // TODO
