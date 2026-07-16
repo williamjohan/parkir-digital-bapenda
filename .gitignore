@@ -50,3 +50,9 @@ app.*.map.json
 .env.local
 .env.*.local
 .fvm/
+
+# --- SECURE CREDENTIALS & KEYSTORES (DO NOT COMMIT) ---
+*.jks
+*.keystore
+key.properties
+android/key.properties
