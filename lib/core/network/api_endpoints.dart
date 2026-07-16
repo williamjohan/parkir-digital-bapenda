@@ -63,4 +63,5 @@ class ApiEndpoints {
       '/api/mobile/parking/laporan-pendapatan-sof-dev';
 
   static const String opLastUpdate = '/api/mobile/parking/get-op-last-update';
+  static const String taxSurveillanceDetail = '';
 }
