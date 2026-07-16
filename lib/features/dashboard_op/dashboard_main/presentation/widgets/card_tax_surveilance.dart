@@ -6,9 +6,9 @@ import '../../../../../core/utils/currency_formatter.dart';
 class CardTaxSurveillance extends StatelessWidget {
   /// contoh: "Hari Ini" atau "Bulan Ini" — dipasang di belakang judul
   final String month;
-  final int totalNominal;
-  final int nominalMotor;
-  final int nominalMobil;
+  final String totalNominal;
+  final String nominalMotor;
+  final String nominalMobil;
   final VoidCallback onLihatSemua;
 
   const CardTaxSurveillance({
@@ -144,7 +144,7 @@ class CardTaxSurveillance extends StatelessWidget {
 class _VehicleAmount extends StatelessWidget {
   final IconData icon;
   final String label;
-  final int nominal;
+  final String nominal;
   final Color color;
 
   const _VehicleAmount({
