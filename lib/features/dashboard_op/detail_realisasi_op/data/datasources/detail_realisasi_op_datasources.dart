@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
 import '../model/detail_realisasi_op_model.dart';
 
 abstract class DetailRealisasiOpRemoteDataSource {
@@ -23,7 +24,7 @@ class DetailRealisasiOpRemoteDataSourceImpl
   }) async {
     try {
       final response = await _dio.get(
-        '/api/mobile/parking/get-summary-op-realisasi-dev',
+        ApiEndpoints.summaryRealiasiOpDev,
         queryParameters: {'nop': nop, 'tahun': tahun.toString()},
       );
 

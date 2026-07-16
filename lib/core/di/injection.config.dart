@@ -43,8 +43,8 @@ import '../../features/dashboard_op/dashboard_main/data/datasources/dashboard_op
     as _i905;
 import '../../features/dashboard_op/dashboard_main/data/repositories/dashboard_op_repository_impl.dart'
     as _i606;
-import '../../features/dashboard_op/dashboard_main/domain/repositories/dashboard_op_repository.dart'
-    as _i23;
+import '../../features/dashboard_op/dashboard_main/domain/repositories/i_dashboard_op_repository.dart'
+    as _i334;
 import '../../features/dashboard_op/dashboard_main/domain/usecases/dashboard_op_usecase.dart'
     as _i644;
 import '../../features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart'
@@ -362,13 +362,13 @@ _i174.GetIt init(
       gh<_i1015.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i334.DashboardOpRepository>(
+    () => _i606.DashboardOpRepositoryImpl(gh<_i905.DashboardOpDatasource>()),
+  );
   gh.lazySingleton<_i709.GetDetailRealisasiOpUseCase>(
     () => _i709.GetDetailRealisasiOpUseCase(
       gh<_i416.DetailRealisasiOpRepository>(),
     ),
-  );
-  gh.lazySingleton<_i23.DashboardOpRepository>(
-    () => _i606.DashboardOpRepositoryImpl(gh<_i905.DashboardOpDatasource>()),
   );
   gh.lazySingleton<_i254.GetDataJukirUseCase>(
     () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),
@@ -425,9 +425,6 @@ _i174.GetIt init(
   gh.factory<_i367.JadwalCubit>(
     () => _i367.JadwalCubit(gh<_i853.JadwalUseCase>()),
   );
-  gh.lazySingleton<_i644.GetSummaryDashboardOpUsecase>(
-    () => _i644.GetSummaryDashboardOpUsecase(gh<_i23.DashboardOpRepository>()),
-  );
   gh.lazySingleton<_i521.NopUsecase>(
     () => _i521.NopUsecase(gh<_i972.INopRepository>()),
   );
@@ -436,6 +433,9 @@ _i174.GetIt init(
   );
   gh.factory<_i402.DataJukirCubit>(
     () => _i402.DataJukirCubit(gh<_i254.GetDataJukirUseCase>()),
+  );
+  gh.lazySingleton<_i644.GetSummaryDashboardOpUsecase>(
+    () => _i644.GetSummaryDashboardOpUsecase(gh<_i334.DashboardOpRepository>()),
   );
   gh.lazySingleton<_i259.GetSofBreakdownUseCase>(
     () =>

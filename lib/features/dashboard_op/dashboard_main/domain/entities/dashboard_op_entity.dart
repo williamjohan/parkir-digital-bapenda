@@ -25,7 +25,7 @@ class DashboardOpEntity with _$DashboardOpEntity {
     required List<SofEntity> sofList,
 
     @Default([]) List<AlatDigitalEntity> alatDigitalList,
-
+    TaxSurveillanceEntity? taxSurveillance,
     required int tarifMotor,
     required int tarifMobil,
     required String jadwalOperasional,
@@ -84,4 +84,14 @@ class AlatDigitalEntity with _$AlatDigitalEntity {
     required String nama,
     required bool status,
   }) = _AlatDigitalEntity;
+}
+
+@freezed
+class TaxSurveillanceEntity with _$TaxSurveillanceEntity {
+  const factory TaxSurveillanceEntity({
+    required String bulan,
+    required String totalRealisasiMotor,
+    required String totalRealisasiMobil,
+    required String totalRealisasiBulan,
+  }) = _TaxSurveillanceEntity;
 }
