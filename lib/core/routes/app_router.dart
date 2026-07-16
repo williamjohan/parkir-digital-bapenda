@@ -16,6 +16,7 @@ import 'package:parkir_digital_bapenda/features/pengawasan/presentation/cubit/pe
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/detail_laporan_pengawasan.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/laporan_form_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/pengawasan_screen.dart';
+import 'package:parkir_digital_bapenda/features/update/presentation/pages/update_playstore_page.dart';
 import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_cubit.dart';
 import '../../features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
@@ -342,6 +343,11 @@ class AppRouter {
           path: AppRoutes.update,
           name: AppRoutes.update,
           builder: (context, state) => const UpdatePage(),
+        ),
+        GoRoute(
+          path: AppRoutes.updatePlaystore,
+          name: AppRoutes.updatePlaystore,
+          builder: (context, state) => const UpdatePlaystorePage(),
         ),
       ],
     );

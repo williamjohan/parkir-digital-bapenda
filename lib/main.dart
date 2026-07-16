@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:ui';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,13 +17,31 @@ import 'features/printer/presentation/cubit/printer_cubit.dart';
 import 'features/update/presentation/cubit/check_update_cubit.dart';
 import 'features/update/presentation/cubit/check_update_state.dart';
 import 'features/update/presentation/widgets/force_update_overlay_card.dart';
+import 'features/update/presentation/widgets/force_update_playstore_card.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = BapendaHttpOverrides();
-  const String envFileName = appFlavor == 'demo' ? '.env.demo' : '.env.jukir';
+  final String envFileName = switch (appFlavor) {
+    'demo' => '.env.demo',
+    'jukir' => '.env.jukir',
+    _ => '.env',
+  };
   await dotenv.load(fileName: envFileName);
   await initializeDateFormatting('id_ID', null);
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   configureDependencies();
   runApp(const MyApp());
 }
@@ -99,7 +120,9 @@ class MyApp extends StatelessWidget {
                               alpha: 0.85,
                             ), // Backdrop gelap
                             alignment: Alignment.center,
-                            child: ForceUpdateOverlayCard(update: state.update),
+                            child: appFlavor == 'playstore'
+                                ? ForceUpdatePlaystoreCard(update: state.update)
+                                : ForceUpdateOverlayCard(update: state.update),
                           ),
                         );
                       }

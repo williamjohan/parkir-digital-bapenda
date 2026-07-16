@@ -2,12 +2,13 @@ name: parkir_digital_bapenda
 description: "Untuk Melakukan Pembayaran Parkir Secara Digital Di Kota Surabaya"
 publish_to: "none"
 
-# versionName: 1.0.0 (Yang dilihat User)
-# buildNumber: 1     (Yang dibaca sistem OTA)
-version: 1.5.1+16
+# --- VERSIONING SYSTEM ---
+# Versi web bapenda (existing sideload): 1.5.1+16
+# Versi rilis perdana Play Store:
+version: 1.0.0+1
 
 environment:
-  sdk: ^3.9.2 # Pastikan versi SDK ini sesuai dengan instalasi lokalmu
+  sdk: ^3.9.2
 
 dependencies:
   flutter:
@@ -46,10 +47,12 @@ dependencies:
   connectivity_plus: ^7.1.1
   image_picker: ^1.1.2
   geocoding: ^4.0.0
+  flutter_classic_bluetooth: ^0.1.3
 
-  # --- OTA Update System ---
+  # --- OTA Update & External Routing ---
   ota_update: ^7.1.0
   package_info_plus: ^9.0.1
+  url_launcher: ^6.3.1 
 
   # --- Machine Learning (OCR) ---
   google_mlkit_text_recognition: ^0.14.0
@@ -65,7 +68,6 @@ dependencies:
   skeletonizer: ^2.1.3
   flutter_speed_dial: ^7.0.0
   lru: ^1.0.3
-  
 
   # --- Utilities & Helpers ---
   flutter_dotenv: ^6.0.0
@@ -80,10 +82,11 @@ dependencies:
   pointycastle: ^4.0.0
   qr_flutter: ^4.1.0
   webview_flutter: 4.13.1
-  flutter_classic_bluetooth: ^0.1.3
+  firebase_core: ^4.12.1
+  firebase_crashlytics: ^5.2.6
 
   # --- Audio ---
-  audioplayers: ^5.2.1 
+  audioplayers: ^5.2.1
   flutter_tts: ^4.0.2
 
 dev_dependencies:
@@ -97,8 +100,9 @@ dev_dependencies:
   json_serializable: ^6.8.0
   freezed: ^2.5.2
 
-  # --- App Icons & Naming ---
+  # --- App Icons & Splash Screen ---
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.4 
 
 # --- CONFIGURATION ---
 flutter_launcher_icons:
@@ -109,7 +113,6 @@ flutter_launcher_icons:
 flutter_native_splash:
   color: "#FFFFFF"
   image: assets/iconlogo/ScreensaverTS_Park.png
-
   android_12:
     image: assets/iconlogo/ScreensaverTS_Park.png
     color: "#FFFFFF"

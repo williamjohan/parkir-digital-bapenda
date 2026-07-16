@@ -11,6 +11,7 @@ class AppRoutes {
   static const String printerSetting = '/printer-settings';
   static const String transaction = '/transaction';
   static const String update = '/update';
+  static const String updatePlaystore = '/update-playstore';
   static const String searchObjekPajak = '/op';
   static const String dashboardObjekPajak = '/dashboard-op';
   static const String detailRekapJenisPembayaran =

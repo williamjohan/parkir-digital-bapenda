@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
@@ -236,7 +237,11 @@ class HomeDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    context.pushNamed(AppRoutes.update);
+                    if (appFlavor == 'playstore') {
+                      context.pushNamed(AppRoutes.updatePlaystore);
+                    } else {
+                      context.pushNamed(AppRoutes.update);
+                    }
                   },
                 ),
               ],
