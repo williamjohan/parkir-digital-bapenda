@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_income_summary.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_informasi_operasional.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_tax_surveilance.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/header_dashboard_op_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
@@ -112,6 +113,22 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                               );
                             },
                             riwayat: state.data?.riwayatList ?? [],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // 🚀 CARD BARU
+                        Skeletonizer(
+                          enabled: state.loading,
+                          child: CardTaxSurveillance(
+                            periodLabel:
+                                "Hari Ini", // TODO: ganti dinamis kalau nanti ada toggle periode
+                            totalNominal:
+                                0, // TODO: sambungkan ke field pengawasan pajak di state.data
+                            nominalMotor: 0, // TODO
+                            nominalMobil: 0, // TODO
+                            onLihatSemua: () {
+                              // TODO: arahkan ke halaman detail tax surveillance
+                            },
                           ),
                         ),
                         const SizedBox(height: 16),
