@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_status_snackbar.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/main_absensi_widget.dart';
@@ -26,7 +27,6 @@ import '../widgets/home_header_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -44,21 +44,61 @@ class _HomePageState extends State<HomePage> {
     await context.read<HomeCubit>().initialize();
     if (_isFirstLoad) {
       _isFirstLoad = false;
-
-      // 🚀 TAMBAHKAN PENGECEKAN PERMISSION DI SINI
-      // Gunakan mounted untuk memastikan widget Home masih aktif sebelum menampilkan pop-up
-      if (mounted) {
-        // await context.read<PrinterCubit>().checkAndRequestPermissions();
-      }
+      if (mounted) {}
     }
+  }
+
+  //Menangani auto-redirect menggunakan GoRouter
+  void _handleAutoRedirect(BuildContext context, HomeState state) {
+    final session = state.recoveredSession;
+    if (session == null) return;
+
+    context.read<HomeCubit>().clearRecoveredSession();
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!context.mounted) return;
+
+      PbStatusSnackbar.show(
+        context,
+        message: "Sesi foto dipulihkan otomatis. Mengalihkan ke form...",
+        isInfo: true,
+        isError: false,
+      );
+
+      switch (session.intent) {
+        case CameraModuleIntent.absensiCheckIn:
+          context.push(
+            AppRoutes.absensi,
+            extra: {'type': ShiftFormType.checkIn, 'file': session.file},
+          );
+          break;
+
+        case CameraModuleIntent.absensiCheckOut:
+          context.push(
+            AppRoutes.absensi,
+            extra: {'type': ShiftFormType.checkOut, 'file': session.file},
+          );
+          break;
+
+        case CameraModuleIntent.pengawasan:
+          context.push(AppRoutes.addLaporanPelanggaran, extra: session.file);
+          break;
+
+        case CameraModuleIntent.unknown:
+          break;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<HomeCubit, HomeState>(
       listenWhen: (previous, current) =>
-          previous.actionTimestamp != current.actionTimestamp,
-      listener: (context, state) async {},
+          previous.recoveredSession != current.recoveredSession &&
+          current.recoveredSession != null,
+      listener: (context, state) {
+        _handleAutoRedirect(context, state);
+      },
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           return SafeArea(

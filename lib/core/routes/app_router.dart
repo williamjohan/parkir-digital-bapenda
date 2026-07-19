@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -125,10 +127,15 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.addLaporanPelanggaran,
           name: AppRoutes.addLaporanPelanggaran,
-          builder: (context, state) => BlocProvider(
-            create: (_) => locator<PengawasanCubit>(),
-            child: const LaporanFormScreen(),
-          ),
+          builder: (context, state) {
+            // Tangkap objek File dari parameter extra (jika datang dari LMK Recovery)
+            final recoveredFile = state.extra as File?;
+
+            return BlocProvider(
+              create: (_) => locator<PengawasanCubit>(),
+              child: LaporanFormScreen(recoveredPhoto: recoveredFile),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.home,
@@ -142,11 +149,26 @@ class AppRouter {
           path: AppRoutes.absensi,
           name: AppRoutes.absensi,
           builder: (context, state) {
-            final type = state.extra as ShiftFormType? ?? ShiftFormType.checkIn;
+            // 🚀 1. Siapkan variabel penampung
+            ShiftFormType type = ShiftFormType.checkIn;
+            File? recoveredFile;
+
+            if (state.extra is ShiftFormType) {
+              // Skenario Normal: User klik menu check-in/out dari drawer atau dashboard
+              type = state.extra as ShiftFormType;
+            } else if (state.extra is Map<String, dynamic>) {
+              // Skenario LMK Recovery: Satpam Dashboard melempar Map berisi type & file
+              final args = state.extra as Map<String, dynamic>;
+              type = args['type'] as ShiftFormType? ?? ShiftFormType.checkIn;
+              recoveredFile = args['file'] as File?;
+            }
 
             return BlocProvider(
               create: (_) => locator<AbsensiCubit>(),
-              child: ShiftFormScreen(type: type),
+              child: AbsensiCheckListScreen(
+                type: type,
+                recoveredPhoto: recoveredFile,
+              ),
             );
           },
         ),

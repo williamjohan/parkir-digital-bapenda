@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import 'package:parkir_digital_bapenda/core/utils/photo_utils.dart';
+import 'package:parkir_digital_bapenda/core/utils/watermark_utils.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_header_widget.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_number_field.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/absen_photo_widget.dart';
@@ -15,18 +17,21 @@ import '../cubit/absensi_cubit.dart';
 import '../cubit/absensi_state.dart';
 import '../widgets/instrument_toggle_widget.dart';
 
-enum ShiftFormType { checkIn, checkOut }
-
-class ShiftFormScreen extends StatefulWidget {
+class AbsensiCheckListScreen extends StatefulWidget {
   final ShiftFormType type;
+  final File? recoveredPhoto;
 
-  const ShiftFormScreen({super.key, required this.type});
+  const AbsensiCheckListScreen({
+    super.key,
+    required this.type,
+    this.recoveredPhoto,
+  });
 
   @override
-  State<ShiftFormScreen> createState() => _ShiftFormScreenState();
+  State<AbsensiCheckListScreen> createState() => _AbsensiCheckListScreenState();
 }
 
-class _ShiftFormScreenState extends State<ShiftFormScreen> {
+class _AbsensiCheckListScreenState extends State<AbsensiCheckListScreen> {
   final _motorController = TextEditingController();
   final _mobilController = TextEditingController();
   final _photoKey = GlobalKey();
@@ -43,7 +48,9 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AbsensiCubit>().fetchLocation();
+      context.read<AbsensiCubit>().initPage(
+        recoveredPhoto: widget.recoveredPhoto,
+      );
     });
   }
 
@@ -80,7 +87,7 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
 
     cubit.setCapturing(true);
     await Future.delayed(const Duration(milliseconds: 300));
-    final capturedFile = await PhotoUtils.captureWatermarkedImage(_photoKey);
+    final capturedFile = await PhotoUtils.setWatermarkImage(_photoKey);
     cubit.setCapturing(false);
 
     if (capturedFile == null) {
@@ -183,7 +190,9 @@ class _ShiftFormScreenState extends State<ShiftFormScreen> {
                   state: state,
                   photoKey: _photoKey,
                   onTap: () {
-                    context.read<AbsensiCubit>().takePhoto();
+                    context.read<AbsensiCubit>().takePhoto(
+                      isCheckIn: _isCheckIn,
+                    );
                   },
                 ),
                 const SizedBox(height: 16),

@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/core/services/camera/camera_service.dart';
 import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
 import '../../../../../core/enums/app_enums.dart';
+import '../../../../../core/services/camera/i_camera_service.dart';
 import '../../../../../core/services/permission/i_permission_service.dart';
 import '../../domain/entities/absensi_entity.dart';
 import '../../domain/usecases/absensi_usecase.dart';
@@ -16,9 +16,27 @@ class AbsensiCubit extends Cubit<AbsensiState> {
   final AbsensiUsecase _usecase;
   final IPermissionService _permissionService;
   final IAppLocationService _locationService;
+  final ICameraService _cameraService;
 
-  AbsensiCubit(this._usecase, this._permissionService, this._locationService)
-    : super(const AbsensiState());
+  AbsensiCubit(
+    this._usecase,
+    this._permissionService,
+    this._locationService,
+    this._cameraService,
+  ) : super(const AbsensiState());
+
+  Future<void> initPage({File? recoveredPhoto}) async {
+    if (recoveredPhoto != null) {
+      emit(
+        state.copyWith(
+          rawPhoto: recoveredPhoto,
+          photoTakenAt: DateTime.now(),
+          errorMessage: '',
+        ),
+      );
+    }
+    await fetchLocation();
+  }
 
   // --- LOGIC LOKASI ---
   Future<void> fetchLocation() async {
@@ -62,14 +80,18 @@ class AbsensiCubit extends Cubit<AbsensiState> {
   }
 
   // --- AMBIL FOTO  ---
-  Future<void> takePhoto() async {
+  Future<void> takePhoto({required bool isCheckIn}) async {
     try {
       emit(state.copyWith(status: AbsensiStatus.initial, errorMessage: ''));
 
       final canProceed = await _guardCameraAndLocationPermissions();
       if (!canProceed || isClosed) return;
 
-      final file = await CameraService.takePhoto();
+      final intentTag = isCheckIn
+          ? CameraModuleIntent.absensiCheckIn
+          : CameraModuleIntent.absensiCheckOut;
+
+      final file = await _cameraService.takePhoto(intent: intentTag);
       if (file == null) return;
 
       emit(state.copyWith(rawPhoto: file, photoTakenAt: DateTime.now()));

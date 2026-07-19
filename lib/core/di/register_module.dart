@@ -4,9 +4,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:parkir_digital_bapenda/core/network/connectivity_check_interceptor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../network/dio_auth_interceptor.dart';
 import '../network/env_config.dart';
 import '../network/resilent_dns_resolver.dart';
@@ -216,4 +218,11 @@ abstract class RegisterModule {
   @lazySingleton
   IAudioNotificationService get audioNotificationService =>
       AudioNotificationServiceImpl()..init();
+
+  @lazySingleton
+  ImagePicker get imagePicker => ImagePicker();
+
+  @preResolve
+  @lazySingleton
+  Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
 }

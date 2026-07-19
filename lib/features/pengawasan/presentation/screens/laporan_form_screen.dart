@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
@@ -8,15 +10,15 @@ import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/enums/app_enums.dart';
-import '../../../../core/utils/photo_utils.dart';
+import '../../../../core/utils/watermark_utils.dart';
 import '../cubit/pengawasan_cubit.dart';
 import '../cubit/pengawasan_state.dart';
 import '../widgets/jenis_pelanggaran_section.dart';
 import '../widgets/photo_section_card.dart';
 
 class LaporanFormScreen extends StatefulWidget {
-  const LaporanFormScreen({super.key});
-
+  final File? recoveredPhoto;
+  const LaporanFormScreen({super.key, this.recoveredPhoto});
   @override
   State<LaporanFormScreen> createState() => _LaporanFormScreenState();
 }
@@ -29,9 +31,9 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final cubit = context.read<PengawasanCubit>();
-      cubit.loadJenisPelanggaran();
-      cubit.fetchLocation();
+      context.read<PengawasanCubit>().initPage(
+        recoveredPhoto: widget.recoveredPhoto,
+      );
     });
   }
 
@@ -68,7 +70,7 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
     // 1. Jalankan proses pembuatan watermark gambar
     cubit.setCapturing(true);
     await Future.delayed(const Duration(milliseconds: 300));
-    final capturedFile = await PhotoUtils.captureWatermarkedImage(_photoKey);
+    final capturedFile = await PhotoUtils.setWatermarkImage(_photoKey);
     cubit.setCapturing(false);
 
     if (capturedFile == null) {

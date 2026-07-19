@@ -7,7 +7,7 @@ class PbStatusSnackbar {
     BuildContext context, {
     required String message,
     bool isError = false,
-    bool isInfo = false, // 🚀 NEW: Tambahan parameter untuk status Pending/Info
+    bool isInfo = false,
     Duration duration = const Duration(seconds: 3),
     IconData? customIcon,
   }) {

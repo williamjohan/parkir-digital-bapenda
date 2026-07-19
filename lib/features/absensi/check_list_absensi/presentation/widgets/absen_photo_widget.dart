@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import 'package:parkir_digital_bapenda/core/utils/photo_utils.dart';
+import 'package:parkir_digital_bapenda/core/utils/watermark_utils.dart';
 import '../cubit/absensi_state.dart';
 
 class AbsenPhotoWidget extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../../../core/enums/app_enums.dart';
+import '../../../../../core/services/camera/recovered_camera_session.dart';
 import '../../../../transaction_history/data/models/history_item_model.dart';
 import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
@@ -12,8 +13,8 @@ enum HomeStatus { initial, loading, success, failure }
 class HomeState with _$HomeState {
   const factory HomeState({
     @Default(HomeStatus.initial) HomeStatus status,
+    RecoveredCameraSession? recoveredSession,
     String? selectedVehicleForCapture,
-    int? actionTimestamp,
     @Default(0) int motorCount,
     @Default(0) int mobilCount,
     @Default(0.0) double totalPendapatan,

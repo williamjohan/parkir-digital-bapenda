@@ -1,12 +1,11 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/domain/entities/laporan_pengawasan/laporan_pengawasan_entity.dart';
 import '../../../../core/enums/app_enums.dart';
+import '../../../../core/services/camera/i_camera_service.dart';
 import '../../../../core/services/location/i_app_location_service.dart';
 import '../../../../core/services/permission/i_permission_service.dart';
-import '../../../../core/utils/photo_utils.dart';
 import '../../domain/constants/jenis_pelanggaran_dummy.dart';
 import '../../domain/usecases/pengawasan_usecase.dart';
 import 'pengawasan_state.dart';
@@ -17,17 +16,32 @@ class PengawasanCubit extends Cubit<PengawasanState> {
   final GetLaporanPengawasanUsecase _getLaporanPengawasanUsecase;
   final IPermissionService _permissionService;
   final IAppLocationService _locationService;
-  final ImagePicker _picker = ImagePicker();
+  final ICameraService _cameraService;
 
   PengawasanCubit(
     this._addPengawasanUsecase,
     this._getLaporanPengawasanUsecase,
     this._permissionService,
     this._locationService,
+    this._cameraService,
   ) : super(const PengawasanState());
 
-  void loadJenisPelanggaran() {
+  Future<void> initPage({File? recoveredPhoto}) async {
+    // 1. Muat master data jenis pelanggaran
     emit(state.copyWith(jenisPelanggaran: dummyJenisPelanggaran));
+
+    // 2. Jika halaman dibuka hasil lemparan LMK(Low Memory Killer) dari Home bawa foto selamat:
+    if (recoveredPhoto != null) {
+      emit(
+        state.copyWith(
+          rawPhoto: recoveredPhoto,
+          photoTakenAt: DateTime.now(),
+          errorMessage: null,
+        ),
+      );
+    }
+
+    await fetchLocation();
   }
 
   // Langsung emit ke state.request
@@ -74,30 +88,23 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     }
   }
 
-  // --- LOGIC AMBIL FOTO MENTAH ---
+  // --- LOGIC AMBIL FOTO  ---
   Future<void> pickAndSetPhoto() async {
-    // (Atau takePhoto di absensi)
     try {
       emit(
-        state.copyWith(
-          status: PengawasanStatus.initial, // (Atau AbsensiStatus.initial)
-          errorMessage: null,
-        ),
+        state.copyWith(status: PengawasanStatus.initial, errorMessage: null),
       );
 
-      // 🛡️ 2. Baru panggil pertahanan perizinan
       final canProceed = await _guardCameraAndLocationPermissions();
       if (!canProceed || isClosed) return;
 
-      final XFile? image = await PhotoUtils.pickPhoto(_picker);
-      if (image == null) return;
-
-      emit(
-        state.copyWith(
-          rawPhoto: File(image.path),
-          photoTakenAt: DateTime.now(),
-        ),
+      //  Panggil lewat ICameraService dengan KTP modul Pengawasan!
+      final file = await _cameraService.takePhoto(
+        intent: CameraModuleIntent.pengawasan,
       );
+      if (file == null) return;
+
+      emit(state.copyWith(rawPhoto: file, photoTakenAt: DateTime.now()));
 
       await fetchLocation();
     } catch (e) {
@@ -169,14 +176,6 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       );
     }
   }
-
-  // void setFoto(File foto) {
-  //   emit(state.copyWith(request: state.request.copyWith(buktiFoto: foto)));
-  // }
-
-  // void removeFoto() {
-  //   emit(state.copyWith(request: state.request.copyWith(buktiFoto: null)));
-  // }
 
   Future<void> getLaporanPengawasan() async {
     if (!isClosed) {

@@ -6,8 +6,7 @@ import 'package:parkir_digital_bapenda/features/transaction_history/presentation
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
-import '../../../../../core/di/injection.dart'; // 🆕 locator
-import '../../domain/entities/detail_tax_surveillance_op_entity.dart';
+import '../../../../../core/di/injection.dart';
 import '../widgets/tax_surveillance_item_card.dart';
 
 class DetailTaxSurveillanceScreen extends StatelessWidget {
@@ -18,7 +17,8 @@ class DetailTaxSurveillanceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => locator<DetailTaxSurveillanceCubit>()..fetchDefault(nop ?? ''),
+      create: (_) =>
+          locator<DetailTaxSurveillanceCubit>()..fetchDefault(nop ?? ''),
       child: _DetailTaxSurveillanceView(nop: nop),
     );
   }
@@ -97,7 +97,11 @@ class _DetailTaxSurveillanceViewState
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.textHint),
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: AppColors.textHint,
+              ),
               const SizedBox(height: 12),
               Text(
                 state.message,

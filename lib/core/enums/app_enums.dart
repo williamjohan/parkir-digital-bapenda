@@ -80,3 +80,7 @@ enum AppPermissionType {
 }
 
 enum AppPermissionStatus { granted, denied, permanentlyDenied }
+
+enum CameraModuleIntent { absensiCheckIn, absensiCheckOut, pengawasan, unknown }
+
+enum ShiftFormType { checkIn, checkOut }

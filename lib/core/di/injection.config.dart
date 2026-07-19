@@ -12,7 +12,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:image_picker/image_picker.dart' as _i183;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import '../../features/absensi/check_list_absensi/data/datasources/absensi_remote_datasource.dart'
     as _i606;
@@ -191,6 +193,8 @@ import '../network/connectivity_check_interceptor.dart' as _i344;
 import '../network/dio_auth_interceptor.dart' as _i817;
 import '../network/network_cubit.dart' as _i11;
 import '../services/audio/i_audio_notification_service.dart' as _i827;
+import '../services/camera/camera_service.dart' as _i0;
+import '../services/camera/i_camera_service.dart' as _i571;
 import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
 import '../services/location/app_location_services_impl.dart' as _i35;
@@ -205,16 +209,21 @@ import '../storage/secure_storage_manager.dart' as _i1042;
 import 'register_module.dart' as _i291;
 
 // initializes the registration of main-scope dependencies inside of GetIt
-_i174.GetIt init(
+Future<_i174.GetIt> init(
   _i174.GetIt getIt, {
   String? environment,
   _i526.EnvironmentFilter? environmentFilter,
-}) {
+}) async {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
   gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
   gh.lazySingleton<_i827.IAudioNotificationService>(
     () => registerModule.audioNotificationService,
+  );
+  gh.lazySingleton<_i183.ImagePicker>(() => registerModule.imagePicker);
+  await gh.lazySingletonAsync<_i460.SharedPreferences>(
+    () => registerModule.prefs,
+    preResolve: true,
   );
   gh.lazySingleton<_i654.DatabaseHelper2>(() => _i654.DatabaseHelper2());
   gh.lazySingleton<_i57.QrisSignalRDatasource>(
@@ -238,6 +247,12 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i164.IPermissionService>(
     () => _i1018.PermissionServiceImpl(),
+  );
+  gh.lazySingleton<_i571.ICameraService>(
+    () => _i0.CameraService(
+      gh<_i183.ImagePicker>(),
+      gh<_i460.SharedPreferences>(),
+    ),
   );
   gh.lazySingleton<_i344.ConnectivityCheckInterceptor>(
     () => _i344.ConnectivityCheckInterceptor(gh<_i895.Connectivity>()),
@@ -503,29 +518,33 @@ _i174.GetIt init(
       gh<_i127.CheckDeviceUuidUseCase>(),
     ),
   );
+  gh.factory<_i513.PaymentCubit>(
+    () =>
+        _i513.PaymentCubit(gh<_i718.QrisUsecase>(), gh<_i808.PaymentUseCase>()),
+  );
+  gh.lazySingleton<_i207.HomeUsecase>(
+    () => _i207.HomeUsecase(
+      gh<_i274.IHomeRepository>(),
+      gh<_i502.ITransactionHistoryRepository>(),
+    ),
+  );
   gh.factory<_i527.PengawasanCubit>(
     () => _i527.PengawasanCubit(
       gh<_i437.AddPengawasanUsecase>(),
       gh<_i437.GetLaporanPengawasanUsecase>(),
       gh<_i164.IPermissionService>(),
       gh<_i988.IAppLocationService>(),
+      gh<_i571.ICameraService>(),
     ),
   );
-  gh.factory<_i513.PaymentCubit>(
-    () =>
-        _i513.PaymentCubit(gh<_i718.QrisUsecase>(), gh<_i808.PaymentUseCase>()),
-  );
-  gh.factory<_i875.AbsensiCubit>(
-    () => _i875.AbsensiCubit(
-      gh<_i708.AbsensiUsecase>(),
-      gh<_i164.IPermissionService>(),
-      gh<_i988.IAppLocationService>(),
-    ),
-  );
-  gh.lazySingleton<_i207.HomeUsecase>(
-    () => _i207.HomeUsecase(
-      gh<_i274.IHomeRepository>(),
-      gh<_i502.ITransactionHistoryRepository>(),
+  gh.factory<_i273.HomeCubit>(
+    () => _i273.HomeCubit(
+      gh<_i207.HomeUsecase>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i718.QrisUsecase>(),
+      gh<_i654.DatabaseHelper2>(),
+      gh<_i996.ProfileUseCase>(),
+      gh<_i571.ICameraService>(),
     ),
   );
   gh.factory<_i376.PendapatanDigitalCubit>(
@@ -537,13 +556,12 @@ _i174.GetIt init(
   gh.factory<_i264.LoginCubit>(
     () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
   );
-  gh.factory<_i273.HomeCubit>(
-    () => _i273.HomeCubit(
-      gh<_i207.HomeUsecase>(),
-      gh<_i1015.ISecureStorageManager>(),
-      gh<_i718.QrisUsecase>(),
-      gh<_i654.DatabaseHelper2>(),
-      gh<_i996.ProfileUseCase>(),
+  gh.factory<_i875.AbsensiCubit>(
+    () => _i875.AbsensiCubit(
+      gh<_i708.AbsensiUsecase>(),
+      gh<_i164.IPermissionService>(),
+      gh<_i988.IAppLocationService>(),
+      gh<_i571.ICameraService>(),
     ),
   );
   return getIt;
