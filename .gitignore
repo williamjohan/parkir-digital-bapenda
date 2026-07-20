@@ -56,5 +56,10 @@ app.*.map.json
 *.keystore
 key.properties
 android/key.properties
-google-services.json
+
+# Firebase & Google Services Secrets
 **/google-services.json
+**/GoogleService-Info.plist
+google-services.json
+**/playstore/google-services.json
+**/demo/google-services.json
