@@ -9,4 +9,6 @@ final GetIt locator = GetIt.instance;
   preferRelativeImports: true,
   asExtension: false,
 )
-void configureDependencies() => init(locator);
+Future<void> configureDependencies() async {
+  await init(locator);
+}

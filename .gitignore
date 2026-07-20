@@ -60,6 +60,3 @@ android/key.properties
 # Firebase & Google Services Secrets
 **/google-services.json
 **/GoogleService-Info.plist
-google-services.json
-**/playstore/google-services.json
-**/demo/google-services.json

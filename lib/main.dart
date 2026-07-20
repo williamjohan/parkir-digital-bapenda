@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,30 +21,115 @@ import 'features/update/presentation/widgets/force_update_overlay_card.dart';
 import 'features/update/presentation/widgets/force_update_playstore_card.dart';
 import 'firebase_options.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  HttpOverrides.global = BapendaHttpOverrides();
-  final String envFileName = switch (appFlavor) {
-    'demo' => '.env.demo',
-    'jukir' => '.env.jukir',
-    _ => '.env',
-  };
-  await dotenv.load(fileName: envFileName);
-  await initializeDateFormatting('id_ID', null);
+void main() {
+  runZonedGuarded(
+    () async {
+      // 1. MUTLAK: Binding dipanggil DI DALAM zona yang sama dengan runApp
+      WidgetsFlutterBinding.ensureInitialized();
+      HttpOverrides.global = BapendaHttpOverrides();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      // 2. Pasang global error handler PALING AWAL, sebelum langkah bootstrap
+      //    lain yang bisa gagal (dotenv/date-formatting/Firebase). Kalau dipasang
+      //    belakangan dan salah satu langkah itu throw, handler ini tidak pernah
+      //    aktif dan crash setelahnya tidak akan ke-report ke Crashlytics.
+      FlutterError.onError = (errorDetails) {
+        if (Firebase.apps.isNotEmpty) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+        }
+      };
+      PlatformDispatcher.instance.onError = (error, stack) {
+        if (Firebase.apps.isNotEmpty) {
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        }
+        return true;
+      };
 
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
+      // 3. DEFENSIVE INITIALIZATION (dotenv, date formatting, Firebase)
+      try {
+        final String envFileName = switch (appFlavor) {
+          'demo' => '.env.demo',
+          'jukir' => '.env.jukir',
+          _ => '.env',
+        };
 
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+        await dotenv.load(fileName: envFileName);
+        await initializeDateFormatting('id_ID', null);
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } catch (e, stackTrace) {
+        debugPrint("⚠️ BOOTSTRAP DEGRADED (Non-Fatal): $e");
+        if (Firebase.apps.isNotEmpty) {
+          FirebaseCrashlytics.instance.recordError(e, stackTrace, fatal: false);
+        }
+      }
 
-  configureDependencies();
-  runApp(const MyApp());
+      // 4. Dependency Injection — WAJIB di-await, jangan sampai runApp()
+      //    jalan sebelum semua registrasi GetIt selesai.
+      try {
+        await configureDependencies();
+      } catch (e, stackTrace) {
+        if (Firebase.apps.isNotEmpty) {
+          FirebaseCrashlytics.instance.recordError(e, stackTrace, fatal: true);
+        }
+        // Jangan biarkan app hang tanpa UI di splash screen native.
+        // Tampilkan fallback screen supaya user tahu harus restart app.
+        runApp(const _BootstrapFailedApp());
+        return;
+      }
+
+      // 5. RUN APP DI DALAM ZONA YANG SAMA DENGAN BINDINGS
+      runApp(const MyApp());
+    },
+    (error, stackTrace) {
+      debugPrint("❌ UNCAUGHT ISOLATE EXCEPTION: $error");
+      if (Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.recordError(
+          error,
+          stackTrace,
+          fatal: true,
+        );
+      }
+    },
+  );
+}
+
+/// Fallback screen jika Dependency Injection gagal total saat bootstrap.
+/// Mencegah aplikasi "diam" tanpa UI di splash screen native selamanya.
+class _BootstrapFailedApp extends StatelessWidget {
+  const _BootstrapFailedApp();
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+                SizedBox(height: 16),
+                Text(
+                  'Gagal memuat aplikasi',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Silakan tutup dan buka kembali aplikasi. Jika masalah berlanjut, hubungi admin.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -108,17 +194,13 @@ class MyApp extends StatelessWidget {
                   ),
 
                   // 3. FORCE UPDATE OVERLAY (Mengunci Total Layar)
-                  // Karena berada di Stack paling atas, dia menutupi seluruh aplikasi
-                  // Tanpa perlu showDialog, tanpa Navigator, 100% anti-crash!
                   BlocBuilder<CheckUpdateCubit, CheckUpdateState>(
                     builder: (context, state) {
                       if (state is CheckUpdateAvailable &&
                           state.update.isForceUpdate) {
                         return Positioned.fill(
                           child: Container(
-                            color: Colors.black.withValues(
-                              alpha: 0.85,
-                            ), // Backdrop gelap
+                            color: Colors.black.withValues(alpha: 0.85),
                             alignment: Alignment.center,
                             child: appFlavor == 'playstore'
                                 ? ForceUpdatePlaystoreCard(update: state.update)
