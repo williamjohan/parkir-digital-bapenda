@@ -3,9 +3,9 @@ description: "Untuk Melakukan Pembayaran Parkir Secara Digital Di Kota Surabaya"
 publish_to: "none"
 
 # --- VERSIONING SYSTEM ---
-# Versi web bapenda (existing sideload): 1.5.1+1
+# Versi web bapenda (existing sideload): 1.6.0+18
 # Versi rilis perdana Play Store:
-version: 1.6.0+18
+version: 2.0.0+21
 
 environment:
   sdk: ^3.9.2

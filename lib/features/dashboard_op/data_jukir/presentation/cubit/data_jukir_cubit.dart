@@ -29,8 +29,8 @@ class DataJukirCubit extends Cubit<DataJukirState> {
               totalKendaraan: 0,
               totalNominal: 0,
               usernameList: [
-                UsernameEntity(username: '', namaPetugas: '', fotoBase64: ''),
-                UsernameEntity(username: '', namaPetugas: '', fotoBase64: ''),
+                UsernameEntity(username: 'loading', namaPetugas: 'Loading...'),
+                UsernameEntity(username: 'loading', namaPetugas: 'Loading...'),
               ],
             ),
           ),

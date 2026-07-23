@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,7 +37,9 @@ class _DataJukirListScreenState extends State<DataJukirListScreen> {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
         elevation: 0,
         foregroundColor: Colors.black,
         iconTheme: const IconThemeData(color: AppColors.primary),
@@ -157,17 +158,14 @@ class _JukirCard extends StatelessWidget {
                     28 + 2.5,
                   ), // Area ripple sesuai ukuran avatar+border
                   onTap: () {
-                    final bytes = _ProfileImage._decodeImage(item.fotoBase64);
+                    final bytes = item.fotoBytes;
                     if (bytes != null) {
                       _showPhotoPreviewModal(context, bytes);
                     }
                   },
                   child: Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      // border: BorderSide(color: Colors.blue.shade100, width: 2.5),
-                    ),
-                    child: _ProfileImage(base64: item.fotoBase64),
+                    decoration: const BoxDecoration(shape: BoxShape.circle),
+                    child: _ProfileImage(bytes: item.fotoBytes),
                   ),
                 ),
               ),
@@ -328,33 +326,42 @@ class _JukirCard extends StatelessWidget {
 }
 
 class _ProfileImage extends StatelessWidget {
-  const _ProfileImage({required this.base64});
+  const _ProfileImage({required this.bytes});
 
-  final String base64;
-
-  // CHANGED: Menjadi static method agar bisa dipanggil dari _JukirCard
-  static Uint8List? _decodeImage(String value) {
-    try {
-      var image = value;
-
-      if (image.contains(',')) {
-        image = image.split(',').last;
-      }
-
-      return base64Decode(image);
-    } catch (_) {
-      return null;
-    }
-  }
+  final Uint8List? bytes;
 
   @override
   Widget build(BuildContext context) {
-    final bytes = _decodeImage(base64);
-
-    if (bytes == null) {
-      return const CircleAvatar(radius: 28, child: Icon(Icons.person));
+    // UI langsung merender tanpa komputasi apa pun!
+    if (bytes == null || bytes!.isEmpty) {
+      return _buildFallbackIcon();
     }
 
-    return CircleAvatar(radius: 28, backgroundImage: MemoryImage(bytes));
+    return SizedBox(
+      width: 56,
+      height: 56,
+      child: ClipOval(
+        child: Image.memory(
+          bytes!,
+          fit: BoxFit.cover,
+          gaplessPlayback: true, // Mencegah flicker saat list di-scroll
+          errorBuilder: (context, error, stackTrace) {
+            // MENANGKAP ERROR DARI SKIA/NATIVE ENGINE
+            return _buildFallbackIcon(isError: true);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackIcon({bool isError = false}) {
+    return CircleAvatar(
+      radius: 28,
+      backgroundColor: isError ? Colors.red.shade50 : Colors.grey.shade200,
+      child: Icon(
+        isError ? Icons.broken_image_rounded : Icons.person_rounded,
+        color: isError ? Colors.red.shade300 : Colors.grey.shade500,
+      ),
+    );
   }
 }

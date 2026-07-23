@@ -1,3 +1,4 @@
+import 'dart:typed_data'; // Tambahkan import ini
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'data_jukir_entity.freezed.dart';
@@ -25,6 +26,6 @@ class UsernameEntity with _$UsernameEntity {
   const factory UsernameEntity({
     required String username,
     required String namaPetugas,
-    required String fotoBase64,
+    Uint8List? fotoBytes,
   }) = _UsernameEntity;
 }
