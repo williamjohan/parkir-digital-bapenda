@@ -218,13 +218,22 @@ class HomeHeaderWidget extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
+              const SizedBox(height: 4),
+              Text(
+                "Kecamatan : fix needed",
+                style: AppTypography.bodySemiBold.copyWith(
+                  fontSize: 12,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
           PbPrimaryButton(
-            text: "Lihat Data Jukir",
+            text: "Ubah Objek Pajak",
             variant: PbButtonVariant.outlinedSecondaryLight,
             onPressed: onPressed,
+            iconLeft: Icons.loop,
           ),
         ],
       ),
