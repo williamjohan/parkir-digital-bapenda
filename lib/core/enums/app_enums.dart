@@ -84,3 +84,42 @@ enum AppPermissionStatus { granted, denied, permanentlyDenied }
 enum CameraModuleIntent { absensiCheckIn, absensiCheckOut, pengawasan, unknown }
 
 enum ShiftFormType { checkIn, checkOut }
+
+enum ShiftPengawasan {
+  shift1(id: 1, label: 'Shift 1', timeRange: '10:00 - 14:00'),
+  shift2(id: 2, label: 'Shift 2', timeRange: '17:00 - 21:00');
+
+  final int id;
+  final String label;
+  final String timeRange;
+
+  const ShiftPengawasan({
+    required this.id,
+    required this.label,
+    required this.timeRange,
+  });
+
+  static ShiftPengawasan fromId(int id) {
+    return ShiftPengawasan.values.firstWhere(
+      (shift) => shift.id == id,
+      orElse: () => ShiftPengawasan.shift1,
+    );
+  }
+}
+
+enum JenisPengawasan {
+  tju(code: 'TJU', label: 'TJU'),
+  objekPajak(code: 'OP', label: 'Objek Pajak');
+
+  final String code;
+  final String label;
+
+  const JenisPengawasan({required this.code, required this.label});
+
+  static JenisPengawasan fromCode(String code) {
+    return JenisPengawasan.values.firstWhere(
+      (jenis) => jenis.code == code,
+      orElse: () => JenisPengawasan.objekPajak,
+    );
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../enums/app_enums.dart';
 import 'preference_keys.dart';
 
 @lazySingleton
@@ -8,34 +9,48 @@ class AppPreferences {
 
   AppPreferences(this._prefs);
 
-  // --- JENIS OBJEK PENGAWASAN ---
-  Future<bool> saveJenisObjekPengawasan(String value) async {
-    return await _prefs.setString(PreferenceKeys.jenisObjekPengawasan, value);
+  // ---------------------------------------------------------------------------
+  // --- JENIS OBJEK PENGAWASAN (Disimpan sebagai String Code) ---
+  // ---------------------------------------------------------------------------
+  Future<bool> saveJenisObjekPengawasan(JenisPengawasan jenis) async {
+    // Mengekstrak 'code' dari Enum untuk disimpan sebagai String
+    return await _prefs.setString(
+      PreferenceKeys.jenisObjekPengawasan,
+      jenis.code,
+    );
   }
 
-  String? getjJnisObjekPengawasan() {
-    return _prefs.getString(PreferenceKeys.jenisObjekPengawasan);
+  JenisPengawasan? getJenisObjekPengawasan() {
+    final code = _prefs.getString(PreferenceKeys.jenisObjekPengawasan);
+    if (code == null) return null;
+    return JenisPengawasan.fromCode(code);
   }
 
   Future<bool> removeJenisObjekPengawasan() async {
     return await _prefs.remove(PreferenceKeys.jenisObjekPengawasan);
   }
 
-  // --- SHIFT OBJEK PENGAWASAN ---
-  Future<bool> saveShiftObjekPengawasan(String value) async {
-    return await _prefs.setString(PreferenceKeys.shiftObjekPengawasan, value);
+  // ---------------------------------------------------------------------------
+  // --- SHIFT OBJEK PENGAWASAN (Disimpan sebagai Integer ID) ---
+  // ---------------------------------------------------------------------------
+  Future<bool> saveShiftObjekPengawasan(ShiftPengawasan shift) async {
+    return await _prefs.setInt(PreferenceKeys.shiftObjekPengawasan, shift.id);
   }
 
-  String? getShiftObjekPengawasan() {
-    return _prefs.getString(PreferenceKeys.shiftObjekPengawasan);
+  ShiftPengawasan? getShiftObjekPengawasan() {
+    final id = _prefs.getInt(PreferenceKeys.shiftObjekPengawasan);
+    if (id == null) return null;
+
+    return ShiftPengawasan.fromId(id);
   }
 
   Future<bool> removeShiftObjekPengawasan() async {
     return await _prefs.remove(PreferenceKeys.shiftObjekPengawasan);
   }
 
-  // --- NOMOR OBJEK PENGAWASAN  ---
-
+  // ---------------------------------------------------------------------------
+  // --- NOMOR OBJEK PENGAWASAN (Tetap String Bebas) ---
+  // ---------------------------------------------------------------------------
   Future<bool> saveNomorObjekPengawasan(String value) async {
     return await _prefs.setString(PreferenceKeys.nomorObjekPengawasan, value);
   }
@@ -48,7 +63,11 @@ class AppPreferences {
     return await _prefs.remove(PreferenceKeys.nomorObjekPengawasan);
   }
 
-  /// Menghapus SELURUH data di dalam SharedPreferences
+  // ---------------------------------------------------------------------------
+  // --- PEMBERSIHAN ---
+  // ---------------------------------------------------------------------------
+
+  /// Menghapus SELURUH data di dalam SharedPreferences saat Logout
   Future<bool> clearAllPreferences() async {
     return await _prefs.clear();
   }
