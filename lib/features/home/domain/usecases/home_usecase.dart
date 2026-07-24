@@ -8,6 +8,7 @@ import '../../../transaction_history/data/models/history_item_model.dart';
 import '../../../transaction_history/domain/repositories/i_transaction_history_repository.dart';
 import '../entities/dashboard_summary_non_jukir_entity.dart';
 import '../entities/dashboard_summary_pengawas.entity.dart';
+import '../entities/rekap_wilayah_entity.dart';
 import '../repositories/i_home_repository.dart';
 
 @lazySingleton
@@ -98,4 +99,8 @@ class HomeUsecase {
   JenisPengawasan? getJenisObjekPengawasan() =>
       _repository.getJenisObjekPengawasan();
   String? getNamaObjekPengawasan() => _repository.getNamaObjekPengawasan();
+
+  Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan() async {
+    return await _repository.getRekapWilayahKecamatan();
+  }
 }

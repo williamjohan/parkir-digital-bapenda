@@ -253,14 +253,8 @@ class HomeHeaderWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(
-          Icons.location_off_rounded,
-          color: Colors.white.withValues(alpha: 0.8),
-          size: 32,
-        ),
-        const SizedBox(height: 8),
         Text(
-          "Belum Ada Objek Pengawasan",
+          "Selamat Datang",
           style: AppTypography.heading6.copyWith(color: Colors.white),
         ),
         const SizedBox(height: 4),

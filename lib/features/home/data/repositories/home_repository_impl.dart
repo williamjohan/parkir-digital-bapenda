@@ -2,14 +2,17 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/home/data/datasources/dashboard_summary_remote_datasource.dart';
 import 'package:parkir_digital_bapenda/features/home/data/models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
+import 'package:parkir_digital_bapenda/features/home/data/models/dashboard_summary_pengawas/rekap_wilayah_model.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/app_preferences.dart';
 import '../../../../core/storage/i_secure_storage_manager.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/dashboard_summary_jukir_entity.dart';
 import '../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../domain/entities/dashboard_summary_pengawas.entity.dart';
+import '../../domain/entities/rekap_wilayah_entity.dart';
 import '../../domain/repositories/i_home_repository.dart';
 import '../models/dashboard_summary_jukir/dashboard_summary_jukir_model.dart';
 import '../models/dashboard_summary_pengawas/dashboard_summary_pengawas_model.dart';
@@ -129,4 +132,26 @@ class HomeRepositoryImpl implements IHomeRepository {
 
   @override
   String? getNamaObjekPengawasan() => _appPreferences.getNamaObjekPengawasan();
+
+  @override
+  Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan() async {
+    try {
+      final response = await _summaryRemoteDS.getRekapWilayah();
+
+      if (response.data == null) {
+        return const Left(ServerFailure('Data rekap wilayah kosong.'));
+      }
+
+      final entity = response.data!.toEntity();
+
+      return Right(entity);
+    } on ServerException catch (e) {
+      // Tangkap error spesifik dari Backend
+      return Left(ServerFailure(e.message));
+    } catch (e, stackTrace) {
+      // Tangkap error tak terduga (parsing error, dsb)
+      AppLogger.error('Repository Error Get Rekap Wilayah', e, stackTrace);
+      return const Left(ServerFailure('Terjadi kesalahan pada sistem.'));
+    }
+  }
 }
