@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_datepicker_field.dart';
-import 'package:skeletonizer/skeletonizer.dart'; // TODO: sesuaikan path aslinya
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../widget/jadwal_card_item.dart';
