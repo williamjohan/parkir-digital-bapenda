@@ -1,11 +1,18 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 
-part 'jenis_pelanggaran_entity.freezed.dart';
+import '../../../../../core/enums/app_enums.dart';
 
-@freezed
-class JenisPelanggaranEntity with _$JenisPelanggaranEntity {
-  const factory JenisPelanggaranEntity({
-    required int id,
-    required String nama,
-  }) = _JenisPelanggaranEntity;
+class JenisPelanggaranEntity extends Equatable {
+  final int id;
+  final String namaPelanggaran;
+  final JenisPengawasan jenisPelanggaran;
+
+  const JenisPelanggaranEntity({
+    required this.id,
+    required this.namaPelanggaran,
+    required this.jenisPelanggaran,
+  });
+
+  @override
+  List<Object?> get props => [id, namaPelanggaran, jenisPelanggaran];
 }

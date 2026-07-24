@@ -66,4 +66,6 @@ class ApiEndpoints {
   static const String taxSurveillanceDetail = '';
 
   static const String opPengawasList = '/api/mobile/parking/op-pengawas-list';
+  static const String jenisPelanggaran =
+      '/api/mobile/parking/pengawas-master-jenis-pelanggaran';
 }

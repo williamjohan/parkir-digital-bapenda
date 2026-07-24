@@ -44,7 +44,9 @@ class _LaporanPelanggaranScreenState extends State<LaporanPelanggaranScreen> {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
         elevation: 0,
         foregroundColor: Colors.black,
         iconTheme: const IconThemeData(color: AppColors.primary),
@@ -123,7 +125,8 @@ class _LaporanPelanggaranScreenState extends State<LaporanPelanggaranScreen> {
                       context.pushNamed(
                         AppRoutes.detailLaporanPelanggaran,
                         extra: {
-                          'namaJenisPelanggaran': jenisPelanggaran.nama,
+                          'namaJenisPelanggaran':
+                              jenisPelanggaran.namaPelanggaran,
                           'keterangan': laporan.ketPel,
                           'foto': laporan.fotoPelaporan,
                         },

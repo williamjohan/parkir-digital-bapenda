@@ -31,7 +31,7 @@ class JenisPelanggaranSection extends StatelessWidget {
       child: PbDropdown<JenisPelanggaranEntity>(
         hintText: 'Pilih jenis pelanggaran',
         value: selectedValue,
-        itemLabel: (item) => item.nama,
+        itemLabel: (item) => item.namaPelanggaran,
         onTap: () {
           PbBasicBottomSheet.show(
             context: context,
@@ -66,7 +66,7 @@ class JenisPelanggaranSection extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              item.nama,
+                              item.namaPelanggaran,
                               style: AppTypography.caption.copyWith(
                                 color: isSelected
                                     ? AppColors.primary
