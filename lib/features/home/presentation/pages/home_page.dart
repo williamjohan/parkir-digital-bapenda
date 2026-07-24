@@ -22,6 +22,7 @@ import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
 import '../cubit/home/home_cubit.dart';
 import '../cubit/home/home_state.dart';
 import '../widgets/animated_home_fab.dart';
+import '../widgets/card_laporan_pelanggaran_widget.dart';
 import '../widgets/card_rekap_jenis_pembayaran_widget.dart';
 import '../widgets/card_rekap_kendaraan_widget.dart';
 import '../widgets/home_header_widget.dart';
@@ -102,6 +103,12 @@ class _HomePageState extends State<HomePage> {
       },
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
+          final isPengawas = state.role == RoleLoginDigitalParkir.pengawas;
+          final isBapendaPengawas =
+              state.jenisPengawasan == JenisPengawasan.bapenda;
+          final shouldShowRekapKendaraan =
+              !isPengawas || (isPengawas && isBapendaPengawas);
+
           return SafeArea(
             top: false,
             bottom: true,
@@ -138,20 +145,16 @@ class _HomePageState extends State<HomePage> {
                           await locator<AppAuthCubit>().forceLogout();
                         },
                       );
-
                       return false;
                     }
-
                     return true;
                   },
                 ),
               ),
               body: Stack(
                 children: [
-                  // 🚀 1. ENTERPRISE GOVERNMENT BACKGROUND DECORATION
                   Container(
-                    height:
-                        330, // Sedikit dipertinggi agar aman untuk kartu Jukir/Pengawas
+                    height: 330,
                     width: double.infinity,
                     decoration: const BoxDecoration(
                       gradient: AppColors.headerGradient,
@@ -173,29 +176,25 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-
                         Positioned(
                           top: -10,
                           right: -15,
                           child: ShaderMask(
-                            // ShaderMask melarutkan gambar dari jelas di atas -> transparan di bawah
                             shaderCallback: (Rect bounds) {
                               return const LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Colors.white, // Atas: Jelas
-                                  Colors.white, // Tengah: Jelas
-                                  Colors
-                                      .transparent, // Bawah: Hilang total (agar tidak menabrak kartu!)
+                                  Colors.white,
+                                  Colors.white,
+                                  Colors.transparent,
                                 ],
                                 stops: [0.0, 0.4, 0.85],
                               ).createShader(bounds);
                             },
                             blendMode: BlendMode.dstIn,
                             child: Opacity(
-                              opacity:
-                                  0.18, // Opacity pas, tidak terlalu terang & tidak gelap
+                              opacity: 0.18,
                               child: Image.asset(
                                 AppAssetImages.logosurabayasiloute,
                                 height: 240,
@@ -222,17 +221,11 @@ class _HomePageState extends State<HomePage> {
                               nop: state.nop,
                               namalokasi: state.namaLokasi,
                               namaObjekPajak: state.namaOp,
-
-                              // 🚀 1. SUPLAI DATA BARU KE HEADER
                               status: state.status,
                               shift: state.shiftPengawasan,
                               jenis: state.jenisPengawasan,
-
-                              // 🚀 2. AWAITING NAVIGATOR
                               onPressed: () async {
-                                // Ganti dengan rute pencarian Anda
                                 await context.pushNamed(AppRoutes.opPengawas);
-                                // Paksa refresh setelah layar pencarian ditutup
                                 if (context.mounted) {
                                   context.read<HomeCubit>().initialize();
                                 }
@@ -355,30 +348,26 @@ class _HomePageState extends State<HomePage> {
                                           ),
 
                                           // CARD REKAP KENDARAAN
-                                          PbPermissionGate(
-                                            allowedRoles: const [
-                                              RoleLoginDigitalParkir.jukir,
-                                              RoleLoginDigitalParkir.bapenda,
-                                              RoleLoginDigitalParkir.wp,
-                                              RoleLoginDigitalParkir.pengawas,
-                                            ],
-                                            currentRole: state.role,
-                                            child: Skeletonizer(
-                                              enabled:
-                                                  state.status ==
-                                                  HomeStatus.loading,
-                                              child: CardRekapKendaraanWidget(
-                                                isShowPelanggaran:
-                                                    state.role ==
-                                                    RoleLoginDigitalParkir
-                                                        .pengawas,
-                                                motorCount: state.motorCount,
-                                                mobilCount: state.mobilCount,
-                                                laporanPelanggaran:
-                                                    state.laporanPelanggaran,
+                                          if (shouldShowRekapKendaraan)
+                                            PbPermissionGate(
+                                              allowedRoles: const [
+                                                RoleLoginDigitalParkir.jukir,
+                                                RoleLoginDigitalParkir.bapenda,
+                                                RoleLoginDigitalParkir.wp,
+                                                RoleLoginDigitalParkir
+                                                    .pengawas, // Masih diizinkan di sini, kita saring via 'if' di atas
+                                              ],
+                                              currentRole: state.role,
+                                              child: Skeletonizer(
+                                                enabled:
+                                                    state.status ==
+                                                    HomeStatus.loading,
+                                                child: CardRekapKendaraanWidget(
+                                                  motorCount: state.motorCount,
+                                                  mobilCount: state.mobilCount,
+                                                ),
                                               ),
                                             ),
-                                          ),
 
                                           // CARD TOTAL OP
                                           PbPermissionGate(
@@ -469,9 +458,9 @@ class _HomePageState extends State<HomePage> {
                                                           },
                                                         );
 
-                                                    if (!context.mounted)
+                                                    if (!context.mounted) {
                                                       return;
-
+                                                    }
                                                     if (result != null) {
                                                       await context
                                                           .read<HomeCubit>()
@@ -530,8 +519,25 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                             ),
                                           ),
-                                          // SizedBox(height: 16),
-                                          // CardRekapLaporan(),
+
+                                          // CARD LAPORAN PELANGGARAN
+                                          PbPermissionGate(
+                                            allowedRoles: const [
+                                              RoleLoginDigitalParkir
+                                                  .pengawas, // Eksklusif hanya untuk Pengawas
+                                            ],
+                                            currentRole: state.role,
+                                            child: Skeletonizer(
+                                              enabled:
+                                                  state.status ==
+                                                  HomeStatus.loading,
+                                              child:
+                                                  CardLaporanPelanggaranWidget(
+                                                    laporanPelanggaran: state
+                                                        .laporanPelanggaran,
+                                                  ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -544,9 +550,6 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
 
-              // floatingActionButton: FeatureFlags.enableCreateOrderFeature
-              //     ? AnimatedHomeFab(currentRole: state.role)
-              //     : null,
               floatingActionButton: Skeletonizer(
                 enabled: state.status == HomeStatus.loading,
                 child: AnimatedHomeFab(
