@@ -7,7 +7,7 @@ import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
 
 part 'home_state.freezed.dart';
 
-enum HomeStatus { initial, loading, success, failure }
+enum HomeStatus { initial, loading, needsSelection, success, failure }
 
 @freezed
 class HomeState with _$HomeState {
@@ -84,6 +84,8 @@ class HomeState with _$HomeState {
 
     //Segment Pengawas
     @Default(0) int laporanPelanggaran,
+    ShiftPengawasan? shiftPengawasan,
+    JenisPengawasan? jenisPengawasan,
     @Default(
       CheckInOutEntity(
         idEvent: 0,

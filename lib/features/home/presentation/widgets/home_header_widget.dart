@@ -2,22 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/enums/app_enums.dart';
+import '../cubit/home/home_state.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
   final String nop;
   final String? namaObjekPajak;
-  final String? namalokasi; // Properti baru untuk alamat OP
+  final String? namalokasi;
   final RoleLoginDigitalParkir role;
+  final HomeStatus status;
+  final ShiftPengawasan? shift;
+  final JenisPengawasan? jenis;
   final VoidCallback? onPressed;
 
   const HomeHeaderWidget({
     super.key,
+    required this.status,
     required this.namaJukir,
     required this.nop,
     this.namaObjekPajak,
     this.namalokasi,
     required this.role,
+    this.shift,
+    this.jenis,
     required this.onPressed,
   });
 
@@ -186,57 +193,17 @@ class HomeHeaderWidget extends StatelessWidget {
 
   // 🔹 SLOT 2: KARTU AKSI PENGAWAS
   Widget _buildPengawasActionCard() {
+    final bool isUnassigned = status == HomeStatus.needsSelection;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all(isUnassigned ? 16 : 12),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(width: 8),
-              Text(
-                "Lokasi : $namaObjekPajak",
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.bodySemiBold.copyWith(
-                  fontSize: 12,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "NOP : $nop",
-                style: AppTypography.bodySemiBold.copyWith(
-                  fontSize: 12,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "Kecamatan : fix needed",
-                style: AppTypography.bodySemiBold.copyWith(
-                  fontSize: 12,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          PbPrimaryButton(
-            text: "Ubah Objek Pajak",
-            variant: PbButtonVariant.outlinedSecondaryLight,
-            onPressed: onPressed,
-            iconLeft: Icons.loop,
-          ),
-        ],
-      ),
+      child: isUnassigned ? _buildZeroStateHeader() : _buildAssignedHeader(),
     );
   }
 
@@ -279,6 +246,80 @@ class HomeHeaderWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildZeroStateHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.location_off_rounded,
+          color: Colors.white.withValues(alpha: 0.8),
+          size: 32,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "Belum Ada Objek Pengawasan",
+          style: AppTypography.heading6.copyWith(color: Colors.white),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "Mohon pilih Objek Pengawasan dan Shift terlebih dahulu untuk mulai bekerja.",
+          textAlign: TextAlign.center,
+          style: AppTypography.bodySmall.copyWith(
+            color: Colors.white.withValues(alpha: 0.8),
+          ),
+        ),
+        const SizedBox(height: 16),
+        PbPrimaryButton(
+          text: "Pilih Objek Pengawasan",
+          variant: PbButtonVariant.secondaryLight,
+          iconLeft: Icons.search,
+          onPressed: onPressed, // Memanggil navigasi dari Parent
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAssignedHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Lokasi : ${namaObjekPajak ?? '-'}",
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: AppTypography.bodySemiBold.copyWith(
+            fontSize: 12,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "NOP : $nop",
+          style: AppTypography.bodySemiBold.copyWith(
+            fontSize: 12,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          // Menampilkan label enum yang disuntikkan
+          "Shift : ${shift?.label ?? '-'}  |  Jenis : ${jenis?.label ?? '-'}",
+          style: AppTypography.bodySemiBold.copyWith(
+            fontSize: 12,
+            color: Colors.yellowAccent,
+          ),
+        ),
+        const SizedBox(height: 12),
+        PbPrimaryButton(
+          text: "Ubah Objek Pengawasan",
+          variant: PbButtonVariant.outlinedSecondaryLight,
+          onPressed: onPressed,
+          iconLeft: Icons.loop,
+        ),
+      ],
     );
   }
 }

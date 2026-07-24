@@ -3,6 +3,8 @@ import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
 import '../../../../core/errors/exception.dart';
+import '../../../../core/network/dio_error_handler.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../models/dashboard_summary_jukir/dashboard_summary_jukir_model.dart';
 import '../models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
 import '../models/dashboard_summary_pengawas/dashboard_summary_pengawas_model.dart';
@@ -17,7 +19,11 @@ abstract class ISummaryRemoteDataSource {
     String? tglAwal,
     String? tglAkhir,
   });
-  Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas();
+  Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas({
+    required String nomorObjek,
+    required int shift,
+    required String jenis,
+  });
 
   Future<OpLastUpdateModel> getOpLastUpdate();
 }
@@ -138,10 +144,15 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   }
 
   @override
-  Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas() async {
+  Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas({
+    required String nomorObjek,
+    required int shift,
+    required String jenis,
+  }) async {
     try {
       final response = await _dio.get(
         ApiEndpoints.pengawasDashboardRosterSummaryDev,
+        queryParameters: {'nop': nomorObjek, 'shift': shift, 'jenis': jenis},
       ); // Sesuaikan endpoint
 
       final result = DashboardSummaryPengawasModel.fromJson(response.data);
@@ -157,14 +168,14 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
         );
       }
     } on DioException catch (e) {
-      throw ServerException(
-        statusCode: e.response?.statusCode ?? 500,
-        message: e.message ?? 'Terjadi kesalahan koneksi saat memuat dashboard',
-      );
-    } catch (e) {
-      throw ServerException(
+      AppLogger.error('>>> [DIO ERROR] ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error Get Dashboard Pengawas', e, stackTrace);
+
+      throw const ServerException(
         statusCode: 500,
-        message: 'Terjadi kesalahan internal: ${e.toString()}',
+        message: 'Terjadi kesalahan internal.',
       );
     }
   }

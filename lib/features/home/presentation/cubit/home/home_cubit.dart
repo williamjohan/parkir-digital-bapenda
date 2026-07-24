@@ -39,7 +39,6 @@ class HomeCubit extends Cubit<HomeState> {
       AppLogger.debug(
         '>>> [HOME SATPAM] Menemukan sesi tertinggal untuk: ${recoveredSession.intent}',
       );
-      // Pancarkan sesi ke UI agar segera di-redirect!
       emit(state.copyWith(recoveredSession: recoveredSession));
     }
 
@@ -51,7 +50,36 @@ class HomeCubit extends Cubit<HomeState> {
       await loadDashboarJukir();
       await _profileUseCase.getProfilePicturePath();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
-      await loadDashboardPengawas();
+      final activeNop = _homeUsecase.getNomorObjekPengawasan();
+      final activeShift = _homeUsecase.getShiftObjekPengawasan();
+      final activeJenis = _homeUsecase.getJenisObjekPengawasan();
+
+      //  2. GUARD CLAUSE (Zero State Logic)
+      // Jika salah satu data belum lengkap, hentikan eksekusi API.
+      if (activeNop == null ||
+          activeNop.isEmpty ||
+          activeShift == null ||
+          activeJenis == null) {
+        emit(state.copyWith(status: HomeStatus.needsSelection));
+        return; //
+      }
+
+      // 3. JIKA DATA LENGKAP: Simpan ke State agar UI merender Header Dashboard
+      emit(
+        state.copyWith(
+          nop: activeNop,
+          shiftPengawasan: activeShift,
+          jenisPengawasan: activeJenis,
+        ),
+      );
+
+      // 4. TEMBAK API
+      // Kirim parameter tersebut ke fungsi loadDashboardPengawas
+      await loadDashboardPengawas(
+        nomorObjek: activeNop,
+        shift: activeShift.id,
+        jenis: activeJenis.label,
+      );
     } else {
       await _loadDashboardNonJukir();
       await checkOpLastUpdate();
@@ -118,10 +146,18 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> loadDashboardPengawas() async {
+  Future<void> loadDashboardPengawas({
+    required String nomorObjek,
+    required int shift,
+    required String jenis,
+  }) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
-    final result = await _homeUsecase.getDashboardSummaryPengawas();
+    final result = await _homeUsecase.getDashboardSummaryPengawas(
+      nomorObjek: nomorObjek,
+      shift: shift,
+      jenis: jenis,
+    );
 
     result.fold(
       (failure) {

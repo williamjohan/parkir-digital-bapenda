@@ -14,6 +14,7 @@ import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
+import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
@@ -221,11 +222,20 @@ class _HomePageState extends State<HomePage> {
                               nop: state.nop,
                               namalokasi: state.namaLokasi,
                               namaObjekPajak: state.namaOp,
-                              onPressed: () {
-                                context.pushNamed(
-                                  AppRoutes.dataJukirList,
-                                  extra: {'nop': state.nop},
-                                );
+
+                              // 🚀 1. SUPLAI DATA BARU KE HEADER
+                              status: state.status,
+                              shift: state.shiftPengawasan,
+                              jenis: state.jenisPengawasan,
+
+                              // 🚀 2. AWAITING NAVIGATOR
+                              onPressed: () async {
+                                // Ganti dengan rute pencarian Anda
+                                await context.pushNamed(AppRoutes.opPengawas);
+                                // Paksa refresh setelah layar pencarian ditutup
+                                if (context.mounted) {
+                                  context.read<HomeCubit>().initialize();
+                                }
                               },
                             ),
                           ),
@@ -243,236 +253,289 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
 
-                            child: RefreshIndicator(
-                              color: AppColors.primary,
-                              onRefresh: _loadData,
-                              child: SingleChildScrollView(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    // CARD ABSENSI
-                                    PbPermissionGate(
-                                      allowedRoles: const [
-                                        RoleLoginDigitalParkir.pengawas,
+                            child:
+                                state.role == RoleLoginDigitalParkir.pengawas &&
+                                    state.status == HomeStatus.needsSelection
+                                // TAMPILAN BODY KOSONG JIKA BELUM PILIH OP
+                                ? Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.assignment_late_rounded,
+                                          size: 64,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          "Data Dashboard Belum Tersedia",
+                                          style: AppTypography.heading6
+                                              .copyWith(
+                                                color: Colors.grey.shade600,
+                                              ),
+                                        ),
+                                        Text(
+                                          "Silakan pilih objek di atas.",
+                                          style: AppTypography.bodySmall
+                                              .copyWith(
+                                                color: Colors.grey.shade500,
+                                              ),
+                                        ),
                                       ],
-                                      currentRole: state.role,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 16,
-                                        ),
-                                        child: Skeletonizer(
-                                          enabled:
-                                              state.status ==
-                                              HomeStatus.loading,
-                                          child: MainAbsensiWidget(
-                                            absensiData: state.checkInOutData,
-                                          ),
-                                        ),
-                                      ),
                                     ),
-
-                                    // CARD TOTAL PENDAPATAN
-                                    PbPermissionGate(
-                                      allowedRoles: const [
-                                        RoleLoginDigitalParkir.jukir,
-                                        RoleLoginDigitalParkir.wp,
-                                        RoleLoginDigitalParkir.bapenda,
-                                        RoleLoginDigitalParkir.pengawas,
-                                      ],
-                                      currentRole: state.role,
-                                      child: Padding(
-                                        padding: const EdgeInsetsGeometry.only(
-                                          bottom: 16,
-                                        ),
-                                        child: Skeletonizer(
-                                          enabled:
-                                              state.status ==
-                                              HomeStatus.loading,
-                                          child: CardTotalPendapatan(
-                                            totalKotor: state.totalPendapatan
-                                                .toString(),
-                                            persentasePajak:
-                                                "10", // Dummy statis sesuai kesepakatan
-                                            nominalPajak: state.totalPajak
-                                                .toInt()
-                                                .toString(), // Data Real API
-                                            totalBersih: state.totalBersih
-                                                .toInt()
-                                                .toString(), // Data Real API
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    // CARD REKAP KENDARAAN
-                                    PbPermissionGate(
-                                      allowedRoles: const [
-                                        RoleLoginDigitalParkir.jukir,
-                                        RoleLoginDigitalParkir.bapenda,
-                                        RoleLoginDigitalParkir.wp,
-                                        RoleLoginDigitalParkir.pengawas,
-                                      ],
-                                      currentRole: state.role,
-                                      child: Skeletonizer(
-                                        enabled:
-                                            state.status == HomeStatus.loading,
-                                        child: CardRekapKendaraanWidget(
-                                          isShowPelanggaran:
-                                              state.role ==
+                                  )
+                                // TAMPILAN NORMAL (DASHBOARD) JIKA SUDAH PILIH / ROLE LAIN
+                                : RefreshIndicator(
+                                    color: AppColors.primary,
+                                    onRefresh: _loadData,
+                                    child: SingleChildScrollView(
+                                      physics:
+                                          const AlwaysScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          // CARD ABSENSI
+                                          PbPermissionGate(
+                                            allowedRoles: const [
                                               RoleLoginDigitalParkir.pengawas,
-                                          motorCount: state.motorCount,
-                                          mobilCount: state.mobilCount,
-                                          laporanPelanggaran:
-                                              state.laporanPelanggaran,
-                                        ),
-                                      ),
-                                    ),
+                                            ],
+                                            currentRole: state.role,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 16,
+                                              ),
+                                              child: Skeletonizer(
+                                                enabled:
+                                                    state.status ==
+                                                    HomeStatus.loading,
+                                                child: MainAbsensiWidget(
+                                                  absensiData:
+                                                      state.checkInOutData,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
 
-                                    // CARD TOTAL OP
-                                    PbPermissionGate(
-                                      allowedRoles: const [
-                                        RoleLoginDigitalParkir.bapenda,
-                                        RoleLoginDigitalParkir.wp,
-                                      ],
-                                      currentRole: state.role,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 16,
-                                        ),
-                                        child: Skeletonizer(
-                                          enabled:
-                                              state.status ==
-                                              HomeStatus.loading,
-                                          child: CardTotalOpWidget(
-                                            totalObjekPajak: state.totalOp,
-                                            digitalPercent:
-                                                state.berbayar.persentase,
-                                            jmlDigital: state.berbayar.digital,
-                                            jmlEdc: state.detail.totalEdc,
-                                            jmlQris:
-                                                state.detail.totalRompiQris,
-                                            jmlCctv:
-                                                state.detail.totalCctvCounting,
-                                            jmlTs: state.detail.totalTs,
-                                            jmlProsesDigital:
-                                                state.berbayar.nonDigital,
-                                            jmlGratis: state.totalNonTarif,
-                                            onTapDigital: () {},
-                                            onTapProses: () {},
-                                            onTapGratis: () {},
-                                            lihatSemuaOnPressed: () async {
-                                              if (!state.isOpUpToDate) {
-                                                await PbShowDialog.show(
-                                                  showBtnKeluar: true,
-                                                  context,
-                                                  title: "Data Berubah",
-                                                  description:
-                                                      "Ada perubahan data objek pajak. Silakan login ulang terlebih dahulu.",
-                                                  buttonText: "Keluar",
-                                                  onConfirm: () async {
-                                                    showDialog(
-                                                      context: context,
-                                                      barrierDismissible: false,
-                                                      builder:
-                                                          (
-                                                            BuildContext
-                                                            dialogContext,
-                                                          ) {
-                                                            return const Center(
-                                                              child:
-                                                                  AppLoadingWidget(
-                                                                    size: 150,
-                                                                  ),
-                                                            );
+                                          // CARD TOTAL PENDAPATAN
+                                          PbPermissionGate(
+                                            allowedRoles: const [
+                                              RoleLoginDigitalParkir.jukir,
+                                              RoleLoginDigitalParkir.wp,
+                                              RoleLoginDigitalParkir.bapenda,
+                                              RoleLoginDigitalParkir.pengawas,
+                                            ],
+                                            currentRole: state.role,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsetsGeometry.only(
+                                                    bottom: 16,
+                                                  ),
+                                              child: Skeletonizer(
+                                                enabled:
+                                                    state.status ==
+                                                    HomeStatus.loading,
+                                                child: CardTotalPendapatan(
+                                                  totalKotor: state
+                                                      .totalPendapatan
+                                                      .toString(),
+                                                  persentasePajak:
+                                                      "10", // Dummy statis sesuai kesepakatan
+                                                  nominalPajak: state.totalPajak
+                                                      .toInt()
+                                                      .toString(), // Data Real API
+                                                  totalBersih: state.totalBersih
+                                                      .toInt()
+                                                      .toString(), // Data Real API
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // CARD REKAP KENDARAAN
+                                          PbPermissionGate(
+                                            allowedRoles: const [
+                                              RoleLoginDigitalParkir.jukir,
+                                              RoleLoginDigitalParkir.bapenda,
+                                              RoleLoginDigitalParkir.wp,
+                                              RoleLoginDigitalParkir.pengawas,
+                                            ],
+                                            currentRole: state.role,
+                                            child: Skeletonizer(
+                                              enabled:
+                                                  state.status ==
+                                                  HomeStatus.loading,
+                                              child: CardRekapKendaraanWidget(
+                                                isShowPelanggaran:
+                                                    state.role ==
+                                                    RoleLoginDigitalParkir
+                                                        .pengawas,
+                                                motorCount: state.motorCount,
+                                                mobilCount: state.mobilCount,
+                                                laporanPelanggaran:
+                                                    state.laporanPelanggaran,
+                                              ),
+                                            ),
+                                          ),
+
+                                          // CARD TOTAL OP
+                                          PbPermissionGate(
+                                            allowedRoles: const [
+                                              RoleLoginDigitalParkir.bapenda,
+                                              RoleLoginDigitalParkir.wp,
+                                            ],
+                                            currentRole: state.role,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 16,
+                                              ),
+                                              child: Skeletonizer(
+                                                enabled:
+                                                    state.status ==
+                                                    HomeStatus.loading,
+                                                child: CardTotalOpWidget(
+                                                  totalObjekPajak:
+                                                      state.totalOp,
+                                                  digitalPercent:
+                                                      state.berbayar.persentase,
+                                                  jmlDigital:
+                                                      state.berbayar.digital,
+                                                  jmlEdc: state.detail.totalEdc,
+                                                  jmlQris: state
+                                                      .detail
+                                                      .totalRompiQris,
+                                                  jmlCctv: state
+                                                      .detail
+                                                      .totalCctvCounting,
+                                                  jmlTs: state.detail.totalTs,
+                                                  jmlProsesDigital:
+                                                      state.berbayar.nonDigital,
+                                                  jmlGratis:
+                                                      state.totalNonTarif,
+                                                  onTapDigital: () {},
+                                                  onTapProses: () {},
+                                                  onTapGratis: () {},
+                                                  lihatSemuaOnPressed: () async {
+                                                    if (!state.isOpUpToDate) {
+                                                      await PbShowDialog.show(
+                                                        showBtnKeluar: true,
+                                                        context,
+                                                        title: "Data Berubah",
+                                                        description:
+                                                            "Ada perubahan data objek pajak. Silakan login ulang terlebih dahulu.",
+                                                        buttonText: "Keluar",
+                                                        onConfirm: () async {
+                                                          showDialog(
+                                                            context: context,
+                                                            barrierDismissible:
+                                                                false,
+                                                            builder:
+                                                                (
+                                                                  BuildContext
+                                                                  dialogContext,
+                                                                ) {
+                                                                  return const Center(
+                                                                    child:
+                                                                        AppLoadingWidget(
+                                                                          size:
+                                                                              150,
+                                                                        ),
+                                                                  );
+                                                                },
+                                                          );
+                                                          await Future.delayed(
+                                                            const Duration(
+                                                              milliseconds: 800,
+                                                            ),
+                                                          );
+                                                          await locator<
+                                                                AppAuthCubit
+                                                              >()
+                                                              .forceLogout();
+                                                        },
+                                                      );
+
+                                                      return;
+                                                    }
+
+                                                    final result = await context
+                                                        .pushNamed(
+                                                          AppRoutes
+                                                              .searchObjekPajak,
+                                                          extra: {
+                                                            'role': state.role,
                                                           },
-                                                    );
-                                                    await Future.delayed(
-                                                      const Duration(
-                                                        milliseconds: 800,
-                                                      ),
-                                                    );
-                                                    await locator<
-                                                          AppAuthCubit
-                                                        >()
-                                                        .forceLogout();
+                                                        );
+
+                                                    if (!context.mounted)
+                                                      return;
+
+                                                    if (result != null) {
+                                                      await context
+                                                          .read<HomeCubit>()
+                                                          .changeObjekPajak(
+                                                            result
+                                                                as Map<
+                                                                  String,
+                                                                  dynamic
+                                                                >,
+                                                          );
+                                                    }
                                                   },
-                                                );
-
-                                                return;
-                                              }
-
-                                              final result = await context
-                                                  .pushNamed(
-                                                    AppRoutes.searchObjekPajak,
-                                                    extra: {'role': state.role},
-                                                  );
-
-                                              if (!context.mounted) return;
-
-                                              if (result != null) {
-                                                await context
-                                                    .read<HomeCubit>()
-                                                    .changeObjekPajak(
-                                                      result
-                                                          as Map<
-                                                            String,
-                                                            dynamic
-                                                          >,
-                                                    );
-                                              }
-                                            },
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
 
-                                    // CARD LAST ACTIVITY
-                                    PbPermissionGate(
-                                      allowedRoles: const [
-                                        RoleLoginDigitalParkir.jukir,
-                                        // RoleLoginDigitalParkir.wp,
-                                      ],
-                                      currentRole: state.role,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 16,
-                                        ),
-                                        child: Skeletonizer(
-                                          enabled:
-                                              state.status ==
-                                              HomeStatus.loading,
-                                          child: LastActivityWidget(
-                                            transactions:
-                                                state.recentTransactions,
+                                          // CARD LAST ACTIVITY
+                                          PbPermissionGate(
+                                            allowedRoles: const [
+                                              RoleLoginDigitalParkir.jukir,
+                                              // RoleLoginDigitalParkir.wp,
+                                            ],
+                                            currentRole: state.role,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 16,
+                                              ),
+                                              child: Skeletonizer(
+                                                enabled:
+                                                    state.status ==
+                                                    HomeStatus.loading,
+                                                child: LastActivityWidget(
+                                                  transactions:
+                                                      state.recentTransactions,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
 
-                                    // CARD JENIS PEMBAYARAN
-                                    PbPermissionGate(
-                                      allowedRoles: const [
-                                        RoleLoginDigitalParkir.bapenda,
-                                        RoleLoginDigitalParkir.wp,
-                                      ],
-                                      currentRole: state.role,
-                                      child: Skeletonizer(
-                                        enabled:
-                                            state.status == HomeStatus.loading,
-                                        child: CardRekapJenisPembayaranWidget(
-                                          data: state.sofParkirResults,
-                                        ),
+                                          // CARD JENIS PEMBAYARAN
+                                          PbPermissionGate(
+                                            allowedRoles: const [
+                                              RoleLoginDigitalParkir.bapenda,
+                                              RoleLoginDigitalParkir.wp,
+                                            ],
+                                            currentRole: state.role,
+                                            child: Skeletonizer(
+                                              enabled:
+                                                  state.status ==
+                                                  HomeStatus.loading,
+                                              child:
+                                                  CardRekapJenisPembayaranWidget(
+                                                    data:
+                                                        state.sofParkirResults,
+                                                  ),
+                                            ),
+                                          ),
+                                          // SizedBox(height: 16),
+                                          // CardRekapLaporan(),
+                                        ],
                                       ),
                                     ),
-                                    // SizedBox(height: 16),
-                                    // CardRekapLaporan(),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                  ),
                           ),
                         ),
                       ],

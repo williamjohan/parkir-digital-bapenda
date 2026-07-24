@@ -12,6 +12,8 @@ import 'package:parkir_digital_bapenda/features/dashboard_op/detail_rekap_jenis_
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/cubit/data_jukir_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/screens/data_jukir_screen.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
+import 'package:parkir_digital_bapenda/features/op_pengawas/presentation/cubit/op_pengawasan_cubit.dart';
+import 'package:parkir_digital_bapenda/features/op_pengawas/presentation/screens/op_pengawas_screen.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/pendapatan_digital_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/cubit/pengawasan_cubit.dart';
@@ -190,6 +192,17 @@ class AppRouter {
             return BlocProvider(
               create: (_) => locator<SearchOpCubit>(),
               child: SearchOpPage(role: role, opType: opType),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.opPengawas,
+          name: AppRoutes.opPengawas,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (context) =>
+                  locator<OpPengawasanCubit>()..getOpPengawasan(),
+              child: const OpPengawasScreen(),
             );
           },
         ),

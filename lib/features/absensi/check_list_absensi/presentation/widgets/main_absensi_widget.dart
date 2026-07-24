@@ -24,7 +24,7 @@ class MainAbsensiWidget extends StatelessWidget {
     if (!context.mounted) return;
 
     if (result == true) {
-      context.read<HomeCubit>().loadDashboardPengawas();
+      // context.read<HomeCubit>().loadDashboardPengawas();
     }
   }
 
