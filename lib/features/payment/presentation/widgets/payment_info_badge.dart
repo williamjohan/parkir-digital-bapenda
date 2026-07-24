@@ -3,10 +3,16 @@ import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
 
 class PaymentInfoBadge extends StatelessWidget {
+  final String kategoriKendaraan;
   final String label;
   final String value;
 
-  const PaymentInfoBadge({super.key, required this.label, required this.value});
+  const PaymentInfoBadge({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.kategoriKendaraan,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +26,10 @@ class PaymentInfoBadge extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.directions_car_rounded,
+          Icon(
+            kategoriKendaraan == 'Mobil'
+                ? Icons.directions_car_rounded
+                : Icons.two_wheeler_rounded,
             size: 20,
             color: AppColors.primary,
           ),
