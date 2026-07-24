@@ -12,7 +12,11 @@ import '../models/jenis_pelanggaran/jenis_pelanggaran_model.dart';
 import '../models/laporan_pengawasan/laporan_pengawasan_model.dart';
 
 abstract class PengawasanDatasource {
-  Future<List<LaporanPengawasanModel>> getLaporanPengawasan();
+  Future<List<LaporanPengawasanModel>> getLaporanPengawasan({
+    required String nomorObjek,
+    required int shift,
+    required int jenis,
+  });
 
   Future<void> addPengawasan(RequestLaporanPengawasanEntity request);
 
@@ -44,11 +48,22 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
   PengawasanDatasourceImpl(this._dio, this._imageService);
 
   @override
-  Future<List<LaporanPengawasanModel>> getLaporanPengawasan() async {
+  Future<List<LaporanPengawasanModel>> getLaporanPengawasan({
+    required String nomorObjek,
+    required int shift,
+    required int jenis,
+  }) async {
     try {
       AppLogger.info('Request Get Laporan Pengawasan');
 
-      final response = await _dio.get(ApiEndpoints.pengawasLaporanList);
+      final response = await _dio.get(
+        ApiEndpoints.pengawasLaporanList,
+        queryParameters: {
+          'nomorObjek': nomorObjek,
+          'shift': shift,
+          'jenis': jenis,
+        },
+      );
 
       AppLogger.info(
         'Response Get Laporan Pengawasan: ${response.data['data']?.length} laporan',

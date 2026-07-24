@@ -36,7 +36,6 @@ mixin _$PengawasanState {
   String? get locationError => throw _privateConstructorUsedError;
   bool get isFetchingLocation => throw _privateConstructorUsedError;
   bool get isCapturing => throw _privateConstructorUsedError;
-  String get keteranganText => throw _privateConstructorUsedError;
   List<JenisPelanggaranEntity> get jenisPelanggaran =>
       throw _privateConstructorUsedError;
   List<LaporanPengawasanEntity> get laporan =>
@@ -75,7 +74,6 @@ abstract class $PengawasanStateCopyWith<$Res> {
     String? locationError,
     bool isFetchingLocation,
     bool isCapturing,
-    String keteranganText,
     List<JenisPelanggaranEntity> jenisPelanggaran,
     List<LaporanPengawasanEntity> laporan,
     List<LaporanPengawasanEntity> laporanFake,
@@ -113,7 +111,6 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
     Object? locationError = freezed,
     Object? isFetchingLocation = null,
     Object? isCapturing = null,
-    Object? keteranganText = null,
     Object? jenisPelanggaran = null,
     Object? laporan = null,
     Object? laporanFake = null,
@@ -184,10 +181,6 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
                 ? _value.isCapturing
                 : isCapturing // ignore: cast_nullable_to_non_nullable
                       as bool,
-            keteranganText: null == keteranganText
-                ? _value.keteranganText
-                : keteranganText // ignore: cast_nullable_to_non_nullable
-                      as String,
             jenisPelanggaran: null == jenisPelanggaran
                 ? _value.jenisPelanggaran
                 : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
@@ -232,7 +225,6 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
     String? locationError,
     bool isFetchingLocation,
     bool isCapturing,
-    String keteranganText,
     List<JenisPelanggaranEntity> jenisPelanggaran,
     List<LaporanPengawasanEntity> laporan,
     List<LaporanPengawasanEntity> laporanFake,
@@ -269,7 +261,6 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
     Object? locationError = freezed,
     Object? isFetchingLocation = null,
     Object? isCapturing = null,
-    Object? keteranganText = null,
     Object? jenisPelanggaran = null,
     Object? laporan = null,
     Object? laporanFake = null,
@@ -340,10 +331,6 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
             ? _value.isCapturing
             : isCapturing // ignore: cast_nullable_to_non_nullable
                   as bool,
-        keteranganText: null == keteranganText
-            ? _value.keteranganText
-            : keteranganText // ignore: cast_nullable_to_non_nullable
-                  as String,
         jenisPelanggaran: null == jenisPelanggaran
             ? _value._jenisPelanggaran
             : jenisPelanggaran // ignore: cast_nullable_to_non_nullable
@@ -381,7 +368,6 @@ class _$PengawasanStateImpl extends _PengawasanState {
     this.locationError,
     this.isFetchingLocation = false,
     this.isCapturing = false,
-    this.keteranganText = '',
     final List<JenisPelanggaranEntity> jenisPelanggaran = const [],
     final List<LaporanPengawasanEntity> laporan =
         const <LaporanPengawasanEntity>[],
@@ -433,9 +419,6 @@ class _$PengawasanStateImpl extends _PengawasanState {
   @override
   @JsonKey()
   final bool isCapturing;
-  @override
-  @JsonKey()
-  final String keteranganText;
   final List<JenisPelanggaranEntity> _jenisPelanggaran;
   @override
   @JsonKey()
@@ -466,7 +449,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
 
   @override
   String toString() {
-    return 'PengawasanState(status: $status, deniedPermissionType: $deniedPermissionType, request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, isLoadingJenisPelanggaran: $isLoadingJenisPelanggaran, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, keteranganText: $keteranganText, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
+    return 'PengawasanState(status: $status, deniedPermissionType: $deniedPermissionType, request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, isLoadingJenisPelanggaran: $isLoadingJenisPelanggaran, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
   }
 
   @override
@@ -507,8 +490,6 @@ class _$PengawasanStateImpl extends _PengawasanState {
                 other.isFetchingLocation == isFetchingLocation) &&
             (identical(other.isCapturing, isCapturing) ||
                 other.isCapturing == isCapturing) &&
-            (identical(other.keteranganText, keteranganText) ||
-                other.keteranganText == keteranganText) &&
             const DeepCollectionEquality().equals(
               other._jenisPelanggaran,
               _jenisPelanggaran,
@@ -539,7 +520,6 @@ class _$PengawasanStateImpl extends _PengawasanState {
     locationError,
     isFetchingLocation,
     isCapturing,
-    keteranganText,
     const DeepCollectionEquality().hash(_jenisPelanggaran),
     const DeepCollectionEquality().hash(_laporan),
     const DeepCollectionEquality().hash(_laporanFake),
@@ -614,8 +594,6 @@ abstract class _PengawasanState extends PengawasanState {
   bool get isFetchingLocation;
   @override
   bool get isCapturing;
-  @override
-  String get keteranganText;
   @override
   List<JenisPelanggaranEntity> get jenisPelanggaran;
   @override

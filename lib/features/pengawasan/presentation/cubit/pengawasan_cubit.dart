@@ -224,15 +224,21 @@ class PengawasanCubit extends Cubit<PengawasanState> {
             4,
             (_) => LaporanPengawasanEntity(
               idEvent: 0,
-              op: "",
-              nip: "",
-              tglRoster: DateTime(2000, 1, 1),
-              jadwalMasuk: DateTime(2000, 1, 1),
-              jenisPel: 0,
-              ketPel: "",
-              insDate: DateTime(2000, 1, 1),
-              insBy: "",
+              nip: '',
+              opd: '',
+              kdCamat: '',
+              nmCamat: '',
+              kdOp: '',
+              nmOp: '',
+              jenis: 0,
+              shift: 0,
+              tglPengawasan: DateTime(2000, 1, 1),
               seq: 0,
+              jenisPel: 0,
+              ketPel: '',
+              insDate: DateTime(2000, 1, 1),
+              insBy: '',
+              fotoPelaporan: null,
             ),
           ),
         ),
@@ -251,7 +257,6 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       emit(state.copyWith(isLoadingLaporan: false, errorMessage: e.toString()));
     }
   }
-
   // ===========================================================================
   // 🛡️ PRIVATE PERMISSION GUARDS
   // ===========================================================================

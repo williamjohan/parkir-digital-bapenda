@@ -45,8 +45,10 @@ class ApiEndpoints {
   static const String summaryRealisasiDev =
       '/api/mobile/parking/dashboard-summary-nonjukir-realisasi-dev';
   static const String listNopDev = '/api/mobile/parking/nop-list-dev';
+  // static const String pengawasLaporanList =
+  //     '/api/mobile/parking/pengawas-pelaporan-list';
   static const String pengawasLaporanList =
-      '/api/mobile/parking/pengawas-pelaporan-list';
+      '/api/mobile/parking/pengawas-pelaporan-list-sp3';
   // static const String addPengawasanPelaporanDev =
   //     '/api/mobile/parking/pengawas-pelaporan';
   static const String addPengawasanPelaporanDev =
