@@ -108,18 +108,18 @@ enum ShiftPengawasan {
 }
 
 enum JenisPengawasan {
-  tju(code: 'TJU', label: 'TJU'),
-  objekPajak(code: 'OP', label: 'Objek Pajak');
+  bapenda(id: 1, label: 'Bapenda'),
+  dishub(id: 2, label: 'Dishub');
 
-  final String code;
+  final int id;
   final String label;
 
-  const JenisPengawasan({required this.code, required this.label});
+  const JenisPengawasan({required this.id, required this.label});
 
-  static JenisPengawasan fromCode(String code) {
+  static JenisPengawasan fromId(int id) {
     return JenisPengawasan.values.firstWhere(
-      (jenis) => jenis.code == code,
-      orElse: () => JenisPengawasan.objekPajak,
+      (jenis) => jenis.id == id,
+      orElse: () => JenisPengawasan.bapenda,
     );
   }
 }

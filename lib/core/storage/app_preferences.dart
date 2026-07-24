@@ -10,20 +10,18 @@ class AppPreferences {
   AppPreferences(this._prefs);
 
   // ---------------------------------------------------------------------------
-  // --- JENIS OBJEK PENGAWASAN (Disimpan sebagai String Code) ---
+  // --- JENIS OBJEK PENGAWASAN
   // ---------------------------------------------------------------------------
   Future<bool> saveJenisObjekPengawasan(JenisPengawasan jenis) async {
-    // Mengekstrak 'code' dari Enum untuk disimpan sebagai String
-    return await _prefs.setString(
-      PreferenceKeys.jenisObjekPengawasan,
-      jenis.code,
-    );
+    return await _prefs.setInt(PreferenceKeys.jenisObjekPengawasan, jenis.id);
   }
 
   JenisPengawasan? getJenisObjekPengawasan() {
-    final code = _prefs.getString(PreferenceKeys.jenisObjekPengawasan);
-    if (code == null) return null;
-    return JenisPengawasan.fromCode(code);
+    final id = _prefs.getInt(PreferenceKeys.jenisObjekPengawasan);
+
+    if (id == null) return null;
+
+    return JenisPengawasan.fromId(id);
   }
 
   Future<bool> removeJenisObjekPengawasan() async {

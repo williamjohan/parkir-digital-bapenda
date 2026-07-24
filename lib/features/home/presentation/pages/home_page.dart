@@ -222,10 +222,11 @@ class _HomePageState extends State<HomePage> {
                               namalokasi: state.namaLokasi,
                               namaObjekPajak: state.namaOp,
                               onPressed: () {
-                                context.pushNamed(
-                                  AppRoutes.dataJukirList,
-                                  extra: {'nop': state.nop},
-                                );
+                                context.pushNamed(AppRoutes.opPengawas);
+                                // context.pushNamed(
+                                //   AppRoutes.dataJukirList,
+                                //   extra: {'nop': state.nop},
+                                // );
                               },
                             ),
                           ),

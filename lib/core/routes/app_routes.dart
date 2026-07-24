@@ -29,4 +29,6 @@ class AppRoutes {
   static const String jadwalKehadiran = '/jadwalKehadiran';
 
   static const String absensi = '/absensi';
+
+  static const String opPengawas = '/op-pengawas';
 }
