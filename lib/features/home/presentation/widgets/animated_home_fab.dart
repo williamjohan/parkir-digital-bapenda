@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart';
 import '../../../../core/design_system/components/pb_permission_gate.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
@@ -32,6 +33,7 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
     with TickerProviderStateMixin {
   // Teks kembali ke versi awal karena hanya akan dilihat oleh Pengawas
   final List<String> _hintTexts = ['Buat Laporan', 'Check Qris nya'];
+  final List<String> _hintTextsPengawas = ['Buat Laporan', 'Buat Laporan'];
   int _currentIndex = 0;
 
   late AnimationController _slideController;
@@ -100,7 +102,11 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
       if (!mounted) break;
 
       setState(() {
-        _currentIndex = (_currentIndex + 1) % _hintTexts.length;
+        if (widget.currentRole == RoleLoginDigitalParkir.pengawas) {
+          _currentIndex = (_currentIndex + 1) % _hintTextsPengawas.length;
+        } else {
+          _currentIndex = (_currentIndex + 1) % _hintTexts.length;
+        }
       });
 
       await Future.delayed(const Duration(milliseconds: 500));
@@ -234,7 +240,9 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          _hintTexts[_currentIndex],
+                          widget.currentRole == RoleLoginDigitalParkir.pengawas
+                              ? _hintTextsPengawas[_currentIndex]
+                              : _hintTexts[_currentIndex],
                           style: AppTypography.heading1.copyWith(
                             fontSize: 16,
                             color: AppColors.primary,
