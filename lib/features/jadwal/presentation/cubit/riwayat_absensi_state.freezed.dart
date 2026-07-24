@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'jadwal_state.dart';
+part of 'riwayat_absensi_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -16,45 +16,46 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
-mixin _$JadwalState {
+mixin _$RiwayatAbsensiState {
   JadwalStatus get status => throw _privateConstructorUsedError;
-  List<JadwalEntity>? get jadwal => throw _privateConstructorUsedError;
-  List<JadwalEntity>? get jadwalFake => throw _privateConstructorUsedError;
+  List<RiwayatAbsensiEntity>? get jadwal => throw _privateConstructorUsedError;
+  List<RiwayatAbsensiEntity>? get jadwalFake =>
+      throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
 
-  /// Create a copy of JadwalState
+  /// Create a copy of RiwayatAbsensiState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $JadwalStateCopyWith<JadwalState> get copyWith =>
+  $RiwayatAbsensiStateCopyWith<RiwayatAbsensiState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $JadwalStateCopyWith<$Res> {
-  factory $JadwalStateCopyWith(
-    JadwalState value,
-    $Res Function(JadwalState) then,
-  ) = _$JadwalStateCopyWithImpl<$Res, JadwalState>;
+abstract class $RiwayatAbsensiStateCopyWith<$Res> {
+  factory $RiwayatAbsensiStateCopyWith(
+    RiwayatAbsensiState value,
+    $Res Function(RiwayatAbsensiState) then,
+  ) = _$RiwayatAbsensiStateCopyWithImpl<$Res, RiwayatAbsensiState>;
   @useResult
   $Res call({
     JadwalStatus status,
-    List<JadwalEntity>? jadwal,
-    List<JadwalEntity>? jadwalFake,
+    List<RiwayatAbsensiEntity>? jadwal,
+    List<RiwayatAbsensiEntity>? jadwalFake,
     String message,
   });
 }
 
 /// @nodoc
-class _$JadwalStateCopyWithImpl<$Res, $Val extends JadwalState>
-    implements $JadwalStateCopyWith<$Res> {
-  _$JadwalStateCopyWithImpl(this._value, this._then);
+class _$RiwayatAbsensiStateCopyWithImpl<$Res, $Val extends RiwayatAbsensiState>
+    implements $RiwayatAbsensiStateCopyWith<$Res> {
+  _$RiwayatAbsensiStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of JadwalState
+  /// Create a copy of RiwayatAbsensiState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -73,11 +74,11 @@ class _$JadwalStateCopyWithImpl<$Res, $Val extends JadwalState>
             jadwal: freezed == jadwal
                 ? _value.jadwal
                 : jadwal // ignore: cast_nullable_to_non_nullable
-                      as List<JadwalEntity>?,
+                      as List<RiwayatAbsensiEntity>?,
             jadwalFake: freezed == jadwalFake
                 ? _value.jadwalFake
                 : jadwalFake // ignore: cast_nullable_to_non_nullable
-                      as List<JadwalEntity>?,
+                      as List<RiwayatAbsensiEntity>?,
             message: null == message
                 ? _value.message
                 : message // ignore: cast_nullable_to_non_nullable
@@ -89,32 +90,32 @@ class _$JadwalStateCopyWithImpl<$Res, $Val extends JadwalState>
 }
 
 /// @nodoc
-abstract class _$$JadwalStateImplCopyWith<$Res>
-    implements $JadwalStateCopyWith<$Res> {
-  factory _$$JadwalStateImplCopyWith(
-    _$JadwalStateImpl value,
-    $Res Function(_$JadwalStateImpl) then,
-  ) = __$$JadwalStateImplCopyWithImpl<$Res>;
+abstract class _$$RiwayatAbsensiStateImplCopyWith<$Res>
+    implements $RiwayatAbsensiStateCopyWith<$Res> {
+  factory _$$RiwayatAbsensiStateImplCopyWith(
+    _$RiwayatAbsensiStateImpl value,
+    $Res Function(_$RiwayatAbsensiStateImpl) then,
+  ) = __$$RiwayatAbsensiStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({
     JadwalStatus status,
-    List<JadwalEntity>? jadwal,
-    List<JadwalEntity>? jadwalFake,
+    List<RiwayatAbsensiEntity>? jadwal,
+    List<RiwayatAbsensiEntity>? jadwalFake,
     String message,
   });
 }
 
 /// @nodoc
-class __$$JadwalStateImplCopyWithImpl<$Res>
-    extends _$JadwalStateCopyWithImpl<$Res, _$JadwalStateImpl>
-    implements _$$JadwalStateImplCopyWith<$Res> {
-  __$$JadwalStateImplCopyWithImpl(
-    _$JadwalStateImpl _value,
-    $Res Function(_$JadwalStateImpl) _then,
+class __$$RiwayatAbsensiStateImplCopyWithImpl<$Res>
+    extends _$RiwayatAbsensiStateCopyWithImpl<$Res, _$RiwayatAbsensiStateImpl>
+    implements _$$RiwayatAbsensiStateImplCopyWith<$Res> {
+  __$$RiwayatAbsensiStateImplCopyWithImpl(
+    _$RiwayatAbsensiStateImpl _value,
+    $Res Function(_$RiwayatAbsensiStateImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of JadwalState
+  /// Create a copy of RiwayatAbsensiState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -125,7 +126,7 @@ class __$$JadwalStateImplCopyWithImpl<$Res>
     Object? message = null,
   }) {
     return _then(
-      _$JadwalStateImpl(
+      _$RiwayatAbsensiStateImpl(
         status: null == status
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
@@ -133,11 +134,11 @@ class __$$JadwalStateImplCopyWithImpl<$Res>
         jadwal: freezed == jadwal
             ? _value._jadwal
             : jadwal // ignore: cast_nullable_to_non_nullable
-                  as List<JadwalEntity>?,
+                  as List<RiwayatAbsensiEntity>?,
         jadwalFake: freezed == jadwalFake
             ? _value._jadwalFake
             : jadwalFake // ignore: cast_nullable_to_non_nullable
-                  as List<JadwalEntity>?,
+                  as List<RiwayatAbsensiEntity>?,
         message: null == message
             ? _value.message
             : message // ignore: cast_nullable_to_non_nullable
@@ -149,11 +150,11 @@ class __$$JadwalStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$JadwalStateImpl implements _JadwalState {
-  const _$JadwalStateImpl({
+class _$RiwayatAbsensiStateImpl implements _RiwayatAbsensiState {
+  const _$RiwayatAbsensiStateImpl({
     this.status = JadwalStatus.initial,
-    final List<JadwalEntity>? jadwal,
-    final List<JadwalEntity>? jadwalFake,
+    final List<RiwayatAbsensiEntity>? jadwal,
+    final List<RiwayatAbsensiEntity>? jadwalFake,
     this.message = '',
   }) : _jadwal = jadwal,
        _jadwalFake = jadwalFake;
@@ -161,9 +162,9 @@ class _$JadwalStateImpl implements _JadwalState {
   @override
   @JsonKey()
   final JadwalStatus status;
-  final List<JadwalEntity>? _jadwal;
+  final List<RiwayatAbsensiEntity>? _jadwal;
   @override
-  List<JadwalEntity>? get jadwal {
+  List<RiwayatAbsensiEntity>? get jadwal {
     final value = _jadwal;
     if (value == null) return null;
     if (_jadwal is EqualUnmodifiableListView) return _jadwal;
@@ -171,9 +172,9 @@ class _$JadwalStateImpl implements _JadwalState {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<JadwalEntity>? _jadwalFake;
+  final List<RiwayatAbsensiEntity>? _jadwalFake;
   @override
-  List<JadwalEntity>? get jadwalFake {
+  List<RiwayatAbsensiEntity>? get jadwalFake {
     final value = _jadwalFake;
     if (value == null) return null;
     if (_jadwalFake is EqualUnmodifiableListView) return _jadwalFake;
@@ -187,14 +188,14 @@ class _$JadwalStateImpl implements _JadwalState {
 
   @override
   String toString() {
-    return 'JadwalState(status: $status, jadwal: $jadwal, jadwalFake: $jadwalFake, message: $message)';
+    return 'RiwayatAbsensiState(status: $status, jadwal: $jadwal, jadwalFake: $jadwalFake, message: $message)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$JadwalStateImpl &&
+            other is _$RiwayatAbsensiStateImpl &&
             (identical(other.status, status) || other.status == status) &&
             const DeepCollectionEquality().equals(other._jadwal, _jadwal) &&
             const DeepCollectionEquality().equals(
@@ -213,36 +214,39 @@ class _$JadwalStateImpl implements _JadwalState {
     message,
   );
 
-  /// Create a copy of JadwalState
+  /// Create a copy of RiwayatAbsensiState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$JadwalStateImplCopyWith<_$JadwalStateImpl> get copyWith =>
-      __$$JadwalStateImplCopyWithImpl<_$JadwalStateImpl>(this, _$identity);
+  _$$RiwayatAbsensiStateImplCopyWith<_$RiwayatAbsensiStateImpl> get copyWith =>
+      __$$RiwayatAbsensiStateImplCopyWithImpl<_$RiwayatAbsensiStateImpl>(
+        this,
+        _$identity,
+      );
 }
 
-abstract class _JadwalState implements JadwalState {
-  const factory _JadwalState({
+abstract class _RiwayatAbsensiState implements RiwayatAbsensiState {
+  const factory _RiwayatAbsensiState({
     final JadwalStatus status,
-    final List<JadwalEntity>? jadwal,
-    final List<JadwalEntity>? jadwalFake,
+    final List<RiwayatAbsensiEntity>? jadwal,
+    final List<RiwayatAbsensiEntity>? jadwalFake,
     final String message,
-  }) = _$JadwalStateImpl;
+  }) = _$RiwayatAbsensiStateImpl;
 
   @override
   JadwalStatus get status;
   @override
-  List<JadwalEntity>? get jadwal;
+  List<RiwayatAbsensiEntity>? get jadwal;
   @override
-  List<JadwalEntity>? get jadwalFake;
+  List<RiwayatAbsensiEntity>? get jadwalFake;
   @override
   String get message;
 
-  /// Create a copy of JadwalState
+  /// Create a copy of RiwayatAbsensiState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$JadwalStateImplCopyWith<_$JadwalStateImpl> get copyWith =>
+  _$$RiwayatAbsensiStateImplCopyWith<_$RiwayatAbsensiStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

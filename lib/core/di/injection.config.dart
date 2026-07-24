@@ -98,14 +98,16 @@ import '../../features/init/domain/repositories/i_device_check_repository.dart'
 import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
     as _i232;
 import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
-import '../../features/jadwal/data/datasources/jadwal_remote_datasource.dart'
-    as _i595;
-import '../../features/jadwal/data/repositories/jadwal_repository_impl.dart'
-    as _i1061;
-import '../../features/jadwal/domain/repositories/i_jadwal_repositories.dart'
-    as _i394;
-import '../../features/jadwal/domain/usecases/jadwal_usecase.dart' as _i853;
-import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart' as _i367;
+import '../../features/jadwal/data/datasources/riwayat_absensi_datasource.dart'
+    as _i778;
+import '../../features/jadwal/data/repositories/riwayat_absensi_repository_impl.dart'
+    as _i507;
+import '../../features/jadwal/domain/repositories/i_riwayat_absensi_repositories.dart'
+    as _i32;
+import '../../features/jadwal/domain/usecases/riwayat_absensi_usecase.dart'
+    as _i433;
+import '../../features/jadwal/presentation/cubit/riwayat_absensi_cubit.dart'
+    as _i729;
 import '../../features/objek_pajak/data/datasources/nop_remote_datasource.dart'
     as _i115;
 import '../../features/objek_pajak/data/repositories/op_repository_impl.dart'
@@ -308,9 +310,6 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i905.DashboardOpDatasource>(
     () => _i905.DashboardOpDatasourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i595.IJadwalRemoteDataSource>(
-    () => _i595.JadwalRemoteDataSourceImpl(gh<_i361.Dio>()),
-  );
   gh.lazySingleton<_i135.RealisasiRemoteDataSource>(
     () => _i135.RealisasiRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -345,9 +344,6 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i115.INopRemoteDataSource>(
     () => _i115.NopRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i394.IJadwalRepository>(
-    () => _i1061.JadwalRepositoryImpl(gh<_i595.IJadwalRemoteDataSource>()),
-  );
   gh.lazySingleton<_i606.IAbsensiRemoteDataSource>(
     () => _i606.AbsensiRemoteDataSourceImpl(
       gh<_i361.Dio>(),
@@ -368,6 +364,9 @@ Future<_i174.GetIt> init(
       gh<_i361.Dio>(),
       gh<_i37.IImageService>(),
     ),
+  );
+  gh.lazySingleton<_i778.IRiwayatAbsensiDataSource>(
+    () => _i778.RiwayatAbsensiDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i676.DetailRealisasiOpRemoteDataSource>(
     () => _i676.DetailRealisasiOpRemoteDataSourceImpl(gh<_i361.Dio>()),
@@ -457,9 +456,6 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i996.ProfileUseCase>(
     () => _i996.ProfileUseCase(gh<_i879.IProfileRepository>()),
   );
-  gh.lazySingleton<_i853.JadwalUseCase>(
-    () => _i853.JadwalUseCase(gh<_i394.IJadwalRepository>()),
-  );
   gh.lazySingleton<_i502.ITransactionHistoryRepository>(
     () => _i19.TransactionHistoryRepositoryImpl(
       gh<_i896.ITransactionHistoryRemoteDataSource>(),
@@ -468,6 +464,11 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i263.IAbsensiRepository>(
     () => _i482.AbsensiRepositoryImpl(
       remoteDataSource: gh<_i606.IAbsensiRemoteDataSource>(),
+    ),
+  );
+  gh.lazySingleton<_i32.IRiwayatAbsensiRepository>(
+    () => _i507.RiwayatAbsensiRepositoryImpl(
+      gh<_i778.IRiwayatAbsensiDataSource>(),
     ),
   );
   gh.factory<_i468.DetailRealisasiOpCubit>(
@@ -481,9 +482,6 @@ Future<_i174.GetIt> init(
   );
   gh.factory<_i425.GetRealisasiSeluruhOpUseCase>(
     () => _i425.GetRealisasiSeluruhOpUseCase(gh<_i534.RealisasiRepository>()),
-  );
-  gh.factory<_i367.JadwalCubit>(
-    () => _i367.JadwalCubit(gh<_i853.JadwalUseCase>()),
   );
   gh.lazySingleton<_i429.TaxSurveillanceUseCase>(
     () => _i429.TaxSurveillanceUseCase(gh<_i138.ITaxSurveillanceRepository>()),
@@ -546,6 +544,9 @@ Future<_i174.GetIt> init(
   gh.factory<_i1069.RealisasiCubit>(
     () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
   );
+  gh.lazySingleton<_i433.RiwayatAbsensiUsecase>(
+    () => _i433.RiwayatAbsensiUsecase(gh<_i32.IRiwayatAbsensiRepository>()),
+  );
   gh.lazySingleton<_i708.AbsensiUsecase>(
     () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
   );
@@ -584,6 +585,9 @@ Future<_i174.GetIt> init(
       gh<_i996.ProfileUseCase>(),
       gh<_i571.ICameraService>(),
     ),
+  );
+  gh.factory<_i729.RiwayatAbsensiCubit>(
+    () => _i729.RiwayatAbsensiCubit(gh<_i433.RiwayatAbsensiUsecase>()),
   );
   gh.factory<_i376.PendapatanDigitalCubit>(
     () => _i376.PendapatanDigitalCubit(gh<_i207.HomeUsecase>()),

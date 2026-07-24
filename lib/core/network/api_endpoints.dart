@@ -71,4 +71,6 @@ class ApiEndpoints {
   static const String opPengawasList = '/api/mobile/parking/op-pengawas-list';
   static const String jenisPelanggaran =
       '/api/mobile/parking/pengawas-master-jenis-pelanggaran';
+  static const String riwayatPengawasanSp3 =
+      '/api/mobile/parking/history-pengawasan-list-sp3';
 }

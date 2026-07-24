@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:parkir_digital_bapenda/features/jadwal/presentation/screens/jadwal_screen.dart';
-import '../../../../core/design_system/tokens/app_colors.dart'; // TODO: sesuaikan path, ambil AbsensiRecordDummy dari sini
+import 'package:parkir_digital_bapenda/features/jadwal/domain/entities/riwayat_abensi_entity.dart';
+import '../../../../core/design_system/tokens/app_colors.dart';
 
-class ObjekAbsensiCard extends StatelessWidget {
-  final AbsensiRecordDummy record;
-
-  const ObjekAbsensiCard({super.key, required this.record});
+class RiwayatAbsensiCard extends StatelessWidget {
+  final ObjekPengawasanEntity record;
+  const RiwayatAbsensiCard({super.key, required this.record});
 
   bool get _sudahCheckOut => record.jamCheckOut != null;
 
@@ -31,12 +30,35 @@ class ObjekAbsensiCard extends StatelessWidget {
           _buildHeader(),
           const SizedBox(height: 14),
           const Divider(color: AppColors.border, height: 1),
-          const SizedBox(height: 12),
-          _buildTimeRow(),
           const SizedBox(height: 14),
+
+          _buildSessionBlock(
+            label: 'Check In',
+            time: record.jamCheckIn,
+            icon: Icons.login_rounded,
+            iconColor: AppColors.info,
+            jumlahMotor: record.motorCheckIn,
+            jumlahMobil: record.mobilCheckIn,
+            instrumen: record.instrumenCheckIn,
+            belumAdaText: 'Data instrumen tidak tersedia',
+          ),
+
+          const SizedBox(height: 16),
           const Divider(color: AppColors.border, height: 1),
-          const SizedBox(height: 12),
-          _buildInstrumenSection(),
+          const SizedBox(height: 14),
+
+          _buildSessionBlock(
+            label: 'Check Out',
+            time: record.jamCheckOut ?? '--:--',
+            icon: Icons.logout_rounded,
+            iconColor: _sudahCheckOut ? AppColors.warning : AppColors.textHint,
+            jumlahMotor: record.motorCheckOut,
+            jumlahMobil: record.mobilCheckOut,
+            instrumen: record.instrumenCheckOut,
+            belumAdaText: _sudahCheckOut
+                ? 'Data instrumen tidak tersedia'
+                : 'Belum check out',
+          ),
         ],
       ),
     );
@@ -97,97 +119,105 @@ class ObjekAbsensiCard extends StatelessWidget {
         ),
       ],
     );
-    // 🔴 _buildStatusBadge() dihapus dari sini
   }
 
-  Widget _buildTimeRow() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: _buildTimeBlock(
-            label: 'Check In',
-            time: record.jamCheckIn,
-            icon: Icons.login_rounded,
-            iconColor: AppColors.info,
-            jumlahMotor: record.motorCheckIn,
-            jumlahMobil: record.mobilCheckIn,
-          ),
-        ),
-        Expanded(
-          child: _buildTimeBlock(
-            label: 'Check Out',
-            time: record.jamCheckOut ?? '--:--',
-            icon: Icons.logout_rounded,
-            iconColor: _sudahCheckOut ? AppColors.warning : AppColors.textHint,
-            jumlahMotor: record.motorCheckOut,
-            jumlahMobil: record.mobilCheckOut,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTimeBlock({
+  Widget _buildSessionBlock({
     required String label,
     required String time,
     required IconData icon,
     required Color iconColor,
     required int? jumlahMotor,
     required int? jumlahMobil,
+    required List<InstrumenTersediaEntity>? instrumen,
+    required String belumAdaText,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 15, color: iconColor),
-            const SizedBox(width: 6),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 10.5,
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: iconColor.withValues(alpha: 0.045),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
                 ),
-                Text(
-                  time,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                child: Icon(icon, size: 15, color: iconColor),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                  Text(
+                    time,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _buildVehicleChip(
+                  Icons.two_wheeler_rounded,
+                  jumlahMotor,
+                  'Motor',
                 ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 19),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: _buildVehicleChip(
-                Icons.two_wheeler_rounded,
-                jumlahMotor,
-                'Motor',
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildVehicleChip(
-                Icons.directions_car_rounded,
-                jumlahMobil,
-                'Mobil',
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildVehicleChip(
+                  Icons.directions_car_rounded,
+                  jumlahMobil,
+                  'Mobil',
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'ALAT SAAT ${label.toUpperCase()}',
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textSecondary,
+              letterSpacing: 0.6,
             ),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 8),
+          (instrumen == null || instrumen.isEmpty)
+              ? Text(
+                  belumAdaText,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textHint,
+                  ),
+                )
+              : _buildInstrumenChips(instrumen),
+        ],
+      ),
     );
   }
 
@@ -196,7 +226,7 @@ class ObjekAbsensiCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: AppColors.border, width: 1),
       ),
@@ -233,56 +263,7 @@ class ObjekAbsensiCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInstrumenSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildInstrumenSubSection(
-          label: 'ALAT SAAT CHECK IN',
-          instrumen: record.instrumenCheckIn,
-          belumAdaText: 'Data instrumen tidak tersedia',
-        ),
-        const SizedBox(height: 12),
-        _buildInstrumenSubSection(
-          label: 'ALAT SAAT CHECK OUT',
-          instrumen: record.instrumenCheckOut,
-          belumAdaText: _sudahCheckOut
-              ? 'Data instrumen tidak tersedia'
-              : 'Belum check out',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInstrumenSubSection({
-    required String label,
-    required List<InstrumenTersediaDummy>? instrumen,
-    required String belumAdaText,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textSecondary,
-            letterSpacing: 0.6,
-          ),
-        ),
-        const SizedBox(height: 8),
-        (instrumen == null || instrumen.isEmpty)
-            ? Text(
-                belumAdaText,
-                style: const TextStyle(fontSize: 11, color: AppColors.textHint),
-              )
-            : _buildInstrumenChips(instrumen),
-      ],
-    );
-  }
-
-  Widget _buildInstrumenChips(List<InstrumenTersediaDummy> instrumen) {
+  Widget _buildInstrumenChips(List<InstrumenTersediaEntity> instrumen) {
     return LayoutBuilder(
       builder: (context, constraints) {
         const spacing = 8.0;
@@ -314,7 +295,7 @@ class ObjekAbsensiCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: tersedia
             ? AppColors.success.withValues(alpha: 0.08)
-            : AppColors.background,
+            : AppColors.surface,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: tersedia
