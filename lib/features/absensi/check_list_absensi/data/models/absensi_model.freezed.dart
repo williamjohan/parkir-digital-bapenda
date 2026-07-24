@@ -29,6 +29,8 @@ mixin _$AbsensiRequestModel {
   String get fotoPath =>
       throw _privateConstructorUsedError; // Ini adalah properti, bukan prefix
   bool get isCheckIn => throw _privateConstructorUsedError;
+  String get nop => throw _privateConstructorUsedError; // 🆕
+  int get shift => throw _privateConstructorUsedError;
 
   /// Serializes this AbsensiRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -55,6 +57,8 @@ abstract class $AbsensiRequestModelCopyWith<$Res> {
     List<int> detailAlatIds,
     String fotoPath,
     bool isCheckIn,
+    String nop,
+    int shift,
   });
 }
 
@@ -80,6 +84,8 @@ class _$AbsensiRequestModelCopyWithImpl<$Res, $Val extends AbsensiRequestModel>
     Object? detailAlatIds = null,
     Object? fotoPath = null,
     Object? isCheckIn = null,
+    Object? nop = null,
+    Object? shift = null,
   }) {
     return _then(
       _value.copyWith(
@@ -111,6 +117,14 @@ class _$AbsensiRequestModelCopyWithImpl<$Res, $Val extends AbsensiRequestModel>
                 ? _value.isCheckIn
                 : isCheckIn // ignore: cast_nullable_to_non_nullable
                       as bool,
+            nop: null == nop
+                ? _value.nop
+                : nop // ignore: cast_nullable_to_non_nullable
+                      as String,
+            shift: null == shift
+                ? _value.shift
+                : shift // ignore: cast_nullable_to_non_nullable
+                      as int,
           )
           as $Val,
     );
@@ -134,6 +148,8 @@ abstract class _$$AbsensiRequestModelImplCopyWith<$Res>
     List<int> detailAlatIds,
     String fotoPath,
     bool isCheckIn,
+    String nop,
+    int shift,
   });
 }
 
@@ -158,6 +174,8 @@ class __$$AbsensiRequestModelImplCopyWithImpl<$Res>
     Object? detailAlatIds = null,
     Object? fotoPath = null,
     Object? isCheckIn = null,
+    Object? nop = null,
+    Object? shift = null,
   }) {
     return _then(
       _$AbsensiRequestModelImpl(
@@ -189,6 +207,14 @@ class __$$AbsensiRequestModelImplCopyWithImpl<$Res>
             ? _value.isCheckIn
             : isCheckIn // ignore: cast_nullable_to_non_nullable
                   as bool,
+        nop: null == nop
+            ? _value.nop
+            : nop // ignore: cast_nullable_to_non_nullable
+                  as String,
+        shift: null == shift
+            ? _value.shift
+            : shift // ignore: cast_nullable_to_non_nullable
+                  as int,
       ),
     );
   }
@@ -205,6 +231,8 @@ class _$AbsensiRequestModelImpl implements _AbsensiRequestModel {
     final List<int> detailAlatIds = const [],
     this.fotoPath = '',
     this.isCheckIn = true,
+    this.nop = '',
+    this.shift = 0,
   }) : _detailAlatIds = detailAlatIds;
 
   factory _$AbsensiRequestModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -238,10 +266,17 @@ class _$AbsensiRequestModelImpl implements _AbsensiRequestModel {
   @override
   @JsonKey()
   final bool isCheckIn;
+  @override
+  @JsonKey()
+  final String nop;
+  // 🆕
+  @override
+  @JsonKey()
+  final int shift;
 
   @override
   String toString() {
-    return 'AbsensiRequestModel(latitude: $latitude, longitude: $longitude, totalMotor: $totalMotor, totalMobil: $totalMobil, detailAlatIds: $detailAlatIds, fotoPath: $fotoPath, isCheckIn: $isCheckIn)';
+    return 'AbsensiRequestModel(latitude: $latitude, longitude: $longitude, totalMotor: $totalMotor, totalMobil: $totalMobil, detailAlatIds: $detailAlatIds, fotoPath: $fotoPath, isCheckIn: $isCheckIn, nop: $nop, shift: $shift)';
   }
 
   @override
@@ -264,7 +299,9 @@ class _$AbsensiRequestModelImpl implements _AbsensiRequestModel {
             (identical(other.fotoPath, fotoPath) ||
                 other.fotoPath == fotoPath) &&
             (identical(other.isCheckIn, isCheckIn) ||
-                other.isCheckIn == isCheckIn));
+                other.isCheckIn == isCheckIn) &&
+            (identical(other.nop, nop) || other.nop == nop) &&
+            (identical(other.shift, shift) || other.shift == shift));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -278,6 +315,8 @@ class _$AbsensiRequestModelImpl implements _AbsensiRequestModel {
     const DeepCollectionEquality().hash(_detailAlatIds),
     fotoPath,
     isCheckIn,
+    nop,
+    shift,
   );
 
   /// Create a copy of AbsensiRequestModel
@@ -306,6 +345,8 @@ abstract class _AbsensiRequestModel implements AbsensiRequestModel {
     final List<int> detailAlatIds,
     final String fotoPath,
     final bool isCheckIn,
+    final String nop,
+    final int shift,
   }) = _$AbsensiRequestModelImpl;
 
   factory _AbsensiRequestModel.fromJson(Map<String, dynamic> json) =
@@ -325,6 +366,10 @@ abstract class _AbsensiRequestModel implements AbsensiRequestModel {
   String get fotoPath; // Ini adalah properti, bukan prefix
   @override
   bool get isCheckIn;
+  @override
+  String get nop; // 🆕
+  @override
+  int get shift;
 
   /// Create a copy of AbsensiRequestModel
   /// with the given fields replaced by the non-null parameter values.

@@ -49,9 +49,9 @@ class ApiEndpoints {
       '/api/mobile/parking/pengawas-pelaporan-list';
   static const String addPengawasanPelaporanDev =
       '/api/mobile/parking/pengawas-pelaporan';
-  static const String pengawasCheckIn = '/api/mobile/parking/pengawas-check-in';
+  static const String pengawasCheckIn = '/api/mobile/parking/pengawas-check-in-sp3';
   static const String pengawasCheckOut =
-      '/api/mobile/parking/pengawas-check-out';
+      '/api/mobile/parking/pengawas-check-out-sp3';
   static const String pengawasMasterAlatDigital =
       '/api/mobile/parking/pengawas-master-alat-digital';
   static const String jadwalPengawasDev = '/api/mobile/parking/pengawas-jadwal';

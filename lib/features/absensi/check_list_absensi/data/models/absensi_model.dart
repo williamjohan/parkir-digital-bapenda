@@ -16,6 +16,8 @@ class AbsensiRequestModel with _$AbsensiRequestModel {
     @Default([]) List<int> detailAlatIds,
     @Default('') String fotoPath, // Ini adalah properti, bukan prefix
     @Default(true) bool isCheckIn,
+    @Default('') String nop, // 🆕
+    @Default(0) int shift,
   }) = _AbsensiRequestModel;
 
   factory AbsensiRequestModel.fromJson(Map<String, dynamic> json) =>
@@ -36,6 +38,8 @@ extension AbsensiEntityExt on AbsensiEntity {
       detailAlatIds: detailAlatIds,
       fotoPath: fotoPath,
       isCheckIn: isCheckIn,
+      nop: nop,
+      shift: shift,
     );
   }
 }
@@ -52,6 +56,8 @@ extension AbsensiRequestModelExt on AbsensiRequestModel {
     formData.fields.add(MapEntry('${prefix}JmlMotor', totalMotor.toString()));
     formData.fields.add(MapEntry('Latitude', latitude.toString()));
     formData.fields.add(MapEntry('Longitude', longitude.toString()));
+    formData.fields.add(MapEntry('Shift', shift.toString())); // 🆕
+    formData.fields.add(MapEntry('Nop', nop));
 
     // 2. Data List Alat
     for (final id in detailAlatIds) {
