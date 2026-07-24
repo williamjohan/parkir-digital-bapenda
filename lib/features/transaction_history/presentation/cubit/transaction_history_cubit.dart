@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/storage/app_preferences.dart';
 import 'package:parkir_digital_bapenda/core/storage/i_secure_storage_manager.dart';
 import 'package:parkir_digital_bapenda/core/utils/app_logger.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/domain/usecases/get_sof_usecase.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../domain/usecases/get_transaction_history_usecase.dart';
 import 'transaction_history_state.dart';
 
@@ -12,12 +14,17 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   final GetTransactionHistoryUseCase _useCase;
   final ISecureStorageManager _secureStorage;
   final GetSofBreakdownUseCase _sofUseCase;
+  final AppPreferences _appPreferences;
 
   static const int _defaultPageSize = 20;
   bool _isFetchingMore = false;
 
-  TransactionHistoryCubit(this._useCase, this._sofUseCase, this._secureStorage)
-    : super(TransactionHistoryInitial());
+  TransactionHistoryCubit(
+    this._useCase,
+    this._sofUseCase,
+    this._secureStorage,
+    this._appPreferences,
+  ) : super(TransactionHistoryInitial());
 
   int _jenisKendaraanFor(String kategori) {
     switch (kategori) {
@@ -58,10 +65,28 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
     emit(TransactionHistoryLoading());
     _isFetchingMore = false;
 
-    String finalNop = nop;
-    if (nop.trim().isEmpty) {
-      final profile = await _secureStorage.getJukirProfile() ?? {};
-      finalNop = profile['nop']?.toString() ?? '';
+    String finalNop = nop.trim();
+
+    if (finalNop.isEmpty) {
+      // Cek siapa yang sedang login
+      final roleId = await _secureStorage.getRoleId() ?? 0;
+      final userRole = RoleLoginDigitalParkir.fromInt(roleId);
+
+      if (userRole == RoleLoginDigitalParkir.jukir) {
+        final profile = await _secureStorage.getJukirProfile() ?? {};
+        finalNop = profile['nop']?.toString().trim() ?? '';
+      } else if (userRole == RoleLoginDigitalParkir.pengawas) {
+        finalNop = _appPreferences.getNomorObjekPengawasan()?.trim() ?? '';
+      }
+    }
+
+    if (finalNop.isEmpty) {
+      emit(
+        const TransactionHistoryError(
+          'Data NOP tidak ditemukan. Mohon pastikan Anda sudah memilih Objek Pengawasan.',
+        ),
+      );
+      return;
     }
 
     final result = await _useCase.execute(

@@ -1,6 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import '../../../../core/enums/app_enums.dart';
 import '../../domain/entities/op_pengawas_entity.dart';
 
 part 'op_pengawasan_state.freezed.dart';

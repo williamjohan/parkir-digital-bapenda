@@ -569,6 +569,14 @@ Future<_i174.GetIt> init(
     () =>
         _i513.PaymentCubit(gh<_i718.QrisUsecase>(), gh<_i808.PaymentUseCase>()),
   );
+  gh.factory<_i753.TransactionHistoryCubit>(
+    () => _i753.TransactionHistoryCubit(
+      gh<_i732.GetTransactionHistoryUseCase>(),
+      gh<_i259.GetSofBreakdownUseCase>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i632.AppPreferences>(),
+    ),
+  );
   gh.lazySingleton<_i207.HomeUsecase>(
     () => _i207.HomeUsecase(
       gh<_i274.IHomeRepository>(),
