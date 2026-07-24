@@ -64,15 +64,16 @@ class HomeHeaderWidget extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      "OPD : $nmOpd",
-                      style: AppTypography.heading4.copyWith(
-                        color: Colors.white,
-                        fontSize: 12,
+                    if (role == RoleLoginDigitalParkir.pengawas)
+                      Text(
+                        "OPD : $nmOpd",
+                        style: AppTypography.heading4.copyWith(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
                   ],
                 ),
               ),
