@@ -6,8 +6,8 @@ import '../../domain/entities/laporan_pengawasan/laporan_pengawasan_entity.dart'
 import '../../domain/entities/request_laporan_pengawasan_entity/request_laporan_pengawasan_entity.dart';
 import '../../domain/repositories/i_pengawasan_repository.dart';
 import '../datasources/pengawasan_datasource.dart';
-import '../mapper/laporan_pengawasan_mapper.dart';
 import '../models/jenis_pelanggaran/jenis_pelanggaran_model.dart';
+import '../models/laporan_pengawasan/laporan_pengawasan_model.dart';
 
 @LazySingleton(as: PengawasanRepository)
 class PengawasanRepositoryImpl implements PengawasanRepository {
@@ -55,7 +55,36 @@ class PengawasanRepositoryImpl implements PengawasanRepository {
 
   @override
   Future<List<LaporanPengawasanEntity>> getLaporanPengawasan() async {
-    final models = await _datasource.getLaporanPengawasan();
+    final nomorObjek = _appPreferences.getNomorObjekPengawasan();
+    final shift = _appPreferences.getShiftObjekPengawasan();
+    final jenis = _appPreferences.getJenisObjekPengawasan();
+
+    if (nomorObjek == null || nomorObjek.isEmpty) {
+      throw const ServerException(
+        statusCode: 400,
+        message: 'Nomor objek pengawasan belum dipilih.',
+      );
+    }
+
+    if (shift == null) {
+      throw const ServerException(
+        statusCode: 400,
+        message: 'Shift pengawasan belum dipilih.',
+      );
+    }
+
+    if (jenis == null) {
+      throw const ServerException(
+        statusCode: 400,
+        message: 'Jenis objek pengawasan belum dipilih.',
+      );
+    }
+
+    final models = await _datasource.getLaporanPengawasan(
+      nomorObjek: nomorObjek,
+      shift: shift.id,
+      jenis: jenis.id,
+    );
 
     return models.map((model) => model.toEntity()).toList();
   }
