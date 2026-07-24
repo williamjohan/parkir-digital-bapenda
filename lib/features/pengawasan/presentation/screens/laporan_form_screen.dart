@@ -190,7 +190,6 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
                   // 3. Seksi Keterangan
                   KeteranganSectionCard(
                     keteranganController: _keteranganController,
-                    onChanged: context.read<PengawasanCubit>().setKeterangan,
                   ),
                   const SizedBox(height: 24),
                 ],
@@ -199,12 +198,17 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(8.0),
               // Gunakan ValueListenableBuilder untuk mendengarkan ketikan pada controller
-              child: PbPrimaryButton(
-                text: "Kirim Laporan",
-                isDisabled: !state.canSubmit,
-                onPressed: (state.isLoading || state.isCapturing)
-                    ? null
-                    : _submitLaporan,
+              child: ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _keteranganController,
+                builder: (context, value, child) {
+                  return PbPrimaryButton(
+                    text: "Kirim Laporan",
+                    isDisabled: !state.canSubmit || value.text.trim().isEmpty,
+                    onPressed: (state.isLoading || state.isCapturing)
+                        ? null
+                        : _submitLaporan,
+                  );
+                },
               ),
             ),
           ),

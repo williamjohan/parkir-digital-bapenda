@@ -51,10 +51,6 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     emit(state.copyWith(request: state.request.copyWith(jenisPel: jenisPel)));
   }
 
-  void setKeterangan(String value) {
-    emit(state.copyWith(keteranganText: value));
-  }
-
   // --- LOGIC LOKASI ---
   Future<void> fetchLocation() async {
     emit(
