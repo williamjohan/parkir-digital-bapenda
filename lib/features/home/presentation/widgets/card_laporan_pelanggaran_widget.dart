@@ -19,9 +19,7 @@ class CardLaporanPelanggaranWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(
-          20,
-        ), // Disesuaikan dengan border radius seragam
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.red.shade100),
       ),
       child: InkWell(

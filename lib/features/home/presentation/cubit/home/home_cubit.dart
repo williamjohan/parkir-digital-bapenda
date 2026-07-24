@@ -320,10 +320,10 @@ class HomeCubit extends Cubit<HomeState> {
 
     final profile = await _secureStorage.getJukirProfile();
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
-
     final namaUserShort = namaUser.shortName;
-    if (userRole == RoleLoginDigitalParkir.jukir ||
-        userRole == RoleLoginDigitalParkir.pengawas) {
+
+    //  1. BEHAVIOR KHUSUS JUKIR (NOP Statis Menempel dari Secured Storage)
+    if (userRole == RoleLoginDigitalParkir.jukir) {
       emit(
         state.copyWith(
           namaJukir: namaUserShort,
@@ -334,12 +334,21 @@ class HomeCubit extends Cubit<HomeState> {
       );
       return;
     }
+
+    // 🚀 2. BEHAVIOR KHUSUS PENGAWAS (Hanya ambil nama)
+    if (userRole == RoleLoginDigitalParkir.pengawas) {
+      emit(state.copyWith(namaJukir: namaUserShort));
+      return;
+    }
+
+    //  3. BEHAVIOR NON-JUKIR (WP, Bapenda, dll)
     final nopList = await _databaseHelper.getNopList();
 
     if (nopList.isEmpty) {
       emit(state.copyWith(namaJukir: namaUser));
       return;
     }
+
     final firstNop = nopList.first;
 
     emit(

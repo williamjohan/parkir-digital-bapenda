@@ -5,17 +5,21 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
+import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
+import '../cubit/home/home_state.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isFree;
   final RoleLoginDigitalParkir role;
   final String? namaUPTB;
+  final String nop;
+  final HomeStatus status;
   final Future<bool> Function()? onCheckOpBeforeRouting;
 
   const HomeDrawer({
@@ -23,6 +27,8 @@ class HomeDrawer extends StatelessWidget {
     required this.isFree,
     required this.role,
     this.namaUPTB,
+    required this.nop,
+    required this.status,
     this.onCheckOpBeforeRouting,
   });
 
@@ -101,9 +107,20 @@ class HomeDrawer extends StatelessWidget {
                         role == RoleLoginDigitalParkir.pengawas) {
                       if (!context.mounted) return;
 
+                      if (role == RoleLoginDigitalParkir.pengawas &&
+                          status == HomeStatus.needsSelection) {
+                        PbStatusSnackbar.show(
+                          context,
+                          isError: true,
+                          message:
+                              "Mohon pilih Objek Pengawasan terlebih dahulu.",
+                        );
+                        return;
+                      }
+
                       context.pushNamed(
                         AppRoutes.history,
-                        extra: {'isFree': false},
+                        extra: {'isFree': false, 'nop': nop},
                       );
                     } else {
                       if (onCheckOpBeforeRouting != null) {

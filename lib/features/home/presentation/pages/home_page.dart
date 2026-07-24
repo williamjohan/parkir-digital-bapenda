@@ -117,6 +117,8 @@ class _HomePageState extends State<HomePage> {
               drawer: Skeletonizer(
                 enabled: state.status == HomeStatus.loading,
                 child: HomeDrawer(
+                  nop: state.nop,
+                  status: state.status,
                   isFree: state.isFree,
                   role: state.role,
                   namaUPTB: state.namaJukirFormatted?.shortName,
