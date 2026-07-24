@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/enums/app_enums.dart';
+import '../../../../core/storage/app_preferences.dart';
 import '../../domain/entities/op_pengawas_entity.dart';
 import '../../domain/usecases/op_pengawasan_usecase.dart';
 import 'op_pengawasan_state.dart';
@@ -8,8 +9,9 @@ import 'op_pengawasan_state.dart';
 @injectable
 class OpPengawasanCubit extends Cubit<OpPengawasanState> {
   final GetOpPengawasanUseCase _getOpPengawasanUseCase;
+  final AppPreferences _appPreferences;
 
-  OpPengawasanCubit(this._getOpPengawasanUseCase)
+  OpPengawasanCubit(this._getOpPengawasanUseCase, this._appPreferences)
     : super(const OpPengawasanState());
 
   Future<void> getOpPengawasan() async {
@@ -46,6 +48,17 @@ class OpPengawasanCubit extends Cubit<OpPengawasanState> {
         ),
       );
     }
+  }
+
+  Future<void> changeShift(ShiftPengawasan shift, OpPengawasEntity item) async {
+    await _appPreferences.saveShiftObjekPengawasan(shift);
+    await _appPreferences.saveJenisObjekPengawasan(item.jenisPengawasan);
+    await _appPreferences.saveNomorObjekPengawasan(item.nop);
+  }
+
+  Future<void> saveSelectedOp(OpPengawasEntity item) async {
+    await _appPreferences.saveJenisObjekPengawasan(item.jenisPengawasan);
+    await _appPreferences.saveNomorObjekPengawasan(item.nop);
   }
 
   static final List<OpPengawasEntity> _dummySkeleton = List.generate(

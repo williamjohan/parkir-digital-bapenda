@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import '../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
 import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -10,6 +11,7 @@ import '../cubit/op_pengawasan_cubit.dart';
 import '../cubit/op_pengawasan_state.dart';
 import '../widgets/card_op_pengawas.dart';
 import '../widgets/filter_op_pengawas.dart';
+import '../widgets/shift_pengawasan_bottom_sheet.dart';
 
 class OpPengawasScreen extends StatefulWidget {
   const OpPengawasScreen({super.key});
@@ -155,8 +157,23 @@ class _OpPengawasScreenState extends State<OpPengawasScreen> {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
 
-                                      // TODO
-                                      // context.pushNamed(...)
+                                      PbBasicBottomSheet.show(
+                                        context: context,
+                                        title: 'Pilih Shift Pengawasan',
+                                        subTitle:
+                                            'Pilih shift sebelum memulai pengawasan.',
+                                        child: ShiftPengawasanBottomSheet(
+                                          onChanged: (shift) {
+                                            context
+                                                .read<OpPengawasanCubit>()
+                                                .changeShift(shift, item);
+                                          },
+                                          onSelected: () {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      );
                                     },
                             );
                           },

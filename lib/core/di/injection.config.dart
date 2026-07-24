@@ -486,7 +486,10 @@ Future<_i174.GetIt> init(
     () => _i429.TaxSurveillanceUseCase(gh<_i138.ITaxSurveillanceRepository>()),
   );
   gh.factory<_i173.OpPengawasanCubit>(
-    () => _i173.OpPengawasanCubit(gh<_i786.GetOpPengawasanUseCase>()),
+    () => _i173.OpPengawasanCubit(
+      gh<_i786.GetOpPengawasanUseCase>(),
+      gh<_i632.AppPreferences>(),
+    ),
   );
   gh.factory<_i588.DetailTaxSurveillanceCubit>(
     () => _i588.DetailTaxSurveillanceCubit(gh<_i429.TaxSurveillanceUseCase>()),
