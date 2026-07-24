@@ -162,30 +162,31 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                   }
                 },
               ),
-              SpeedDialChild(
-                child: const Icon(Icons.receipt_long_outlined),
-                label: 'Buat Transaksi',
-                labelStyle: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+              if (widget.currentRole != RoleLoginDigitalParkir.pengawas)
+                SpeedDialChild(
+                  child: const Icon(Icons.receipt_long_outlined),
+                  label: 'Buat Transaksi',
+                  labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                  labelBackgroundColor: Colors.white,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 3,
+                  onTap: () async {
+                    final result = await context.pushNamed(
+                      AppRoutes.transaction,
+                      extra: {
+                        'isFree': widget.isFree,
+                        'isDemoMode': widget.isDemoMode,
+                      },
+                    );
+                    if (result == true) {
+                      widget.onReload();
+                    }
+                  },
                 ),
-                labelBackgroundColor: Colors.white,
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                elevation: 3,
-                onTap: () async {
-                  final result = await context.pushNamed(
-                    AppRoutes.transaction,
-                    extra: {
-                      'isFree': widget.isFree,
-                      'isDemoMode': widget.isDemoMode,
-                    },
-                  );
-                  if (result == true) {
-                    widget.onReload();
-                  }
-                },
-              ),
             ],
           )
         : FloatingActionButton(

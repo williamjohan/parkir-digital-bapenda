@@ -106,12 +106,13 @@ class HomeState with _$HomeState {
         checkOutJmlMotor: 0,
         latitude: '',
         longitude: '',
-        detailAlatCheckIn: [], // ⬅️ ganti dari detailAlat
+        detailAlatCheckIn: [],
         detailAlatCheckOut: [],
       ),
     )
     CheckInOutEntity checkInOutData,
     @Default(true) bool isOpUpToDate,
     RekapWilayahEntity? rekapWilayah,
+    @Default('') String? nmOpd,
   }) = _HomeState;
 }

@@ -29,6 +29,7 @@ mixin _$AuthResponseModel {
   List<NopModel> get nopList => throw _privateConstructorUsedError;
   OpPengawasAuthModel? get opPengawas => throw _privateConstructorUsedError;
   String get lastUpdateOp => throw _privateConstructorUsedError;
+  String get nmOpd => throw _privateConstructorUsedError;
 
   /// Serializes this AuthResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -56,6 +57,7 @@ abstract class $AuthResponseModelCopyWith<$Res> {
     List<NopModel> nopList,
     OpPengawasAuthModel? opPengawas,
     String lastUpdateOp,
+    String nmOpd,
   });
 
   $OpPengawasAuthModelCopyWith<$Res>? get opPengawas;
@@ -84,6 +86,7 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
     Object? nopList = null,
     Object? opPengawas = freezed,
     Object? lastUpdateOp = null,
+    Object? nmOpd = null,
   }) {
     return _then(
       _value.copyWith(
@@ -118,6 +121,10 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
             lastUpdateOp: null == lastUpdateOp
                 ? _value.lastUpdateOp
                 : lastUpdateOp // ignore: cast_nullable_to_non_nullable
+                      as String,
+            nmOpd: null == nmOpd
+                ? _value.nmOpd
+                : nmOpd // ignore: cast_nullable_to_non_nullable
                       as String,
           )
           as $Val,
@@ -157,6 +164,7 @@ abstract class _$$AuthResponseModelImplCopyWith<$Res>
     List<NopModel> nopList,
     OpPengawasAuthModel? opPengawas,
     String lastUpdateOp,
+    String nmOpd,
   });
 
   @override
@@ -185,6 +193,7 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
     Object? nopList = null,
     Object? opPengawas = freezed,
     Object? lastUpdateOp = null,
+    Object? nmOpd = null,
   }) {
     return _then(
       _$AuthResponseModelImpl(
@@ -220,6 +229,10 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
             ? _value.lastUpdateOp
             : lastUpdateOp // ignore: cast_nullable_to_non_nullable
                   as String,
+        nmOpd: null == nmOpd
+            ? _value.nmOpd
+            : nmOpd // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -237,6 +250,7 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
     final List<NopModel> nopList = const [],
     this.opPengawas,
     this.lastUpdateOp = '',
+    this.nmOpd = '',
   }) : _nopList = nopList;
 
   factory _$AuthResponseModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -271,10 +285,13 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
   @override
   @JsonKey()
   final String lastUpdateOp;
+  @override
+  @JsonKey()
+  final String nmOpd;
 
   @override
   String toString() {
-    return 'AuthResponseModel(accessToken: $accessToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList, opPengawas: $opPengawas, lastUpdateOp: $lastUpdateOp)';
+    return 'AuthResponseModel(accessToken: $accessToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList, opPengawas: $opPengawas, lastUpdateOp: $lastUpdateOp, nmOpd: $nmOpd)';
   }
 
   @override
@@ -295,7 +312,8 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
             (identical(other.opPengawas, opPengawas) ||
                 other.opPengawas == opPengawas) &&
             (identical(other.lastUpdateOp, lastUpdateOp) ||
-                other.lastUpdateOp == lastUpdateOp));
+                other.lastUpdateOp == lastUpdateOp) &&
+            (identical(other.nmOpd, nmOpd) || other.nmOpd == nmOpd));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -310,6 +328,7 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
     const DeepCollectionEquality().hash(_nopList),
     opPengawas,
     lastUpdateOp,
+    nmOpd,
   );
 
   /// Create a copy of AuthResponseModel
@@ -339,6 +358,7 @@ abstract class _AuthResponseModel implements AuthResponseModel {
     final List<NopModel> nopList,
     final OpPengawasAuthModel? opPengawas,
     final String lastUpdateOp,
+    final String nmOpd,
   }) = _$AuthResponseModelImpl;
 
   factory _AuthResponseModel.fromJson(Map<String, dynamic> json) =
@@ -360,6 +380,8 @@ abstract class _AuthResponseModel implements AuthResponseModel {
   OpPengawasAuthModel? get opPengawas;
   @override
   String get lastUpdateOp;
+  @override
+  String get nmOpd;
 
   /// Create a copy of AuthResponseModel
   /// with the given fields replaced by the non-null parameter values.

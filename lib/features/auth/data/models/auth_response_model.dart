@@ -14,6 +14,7 @@ class AuthResponseModel with _$AuthResponseModel {
     @Default([]) List<NopModel> nopList,
     OpPengawasAuthModel? opPengawas,
     @Default('') String lastUpdateOp,
+    @Default('') String nmOpd,
   }) = _AuthResponseModel;
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>

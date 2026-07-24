@@ -179,6 +179,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     required String alamat,
     required int roleId,
     int? pungutTarif,
+    String? nmOpd,
     String? pungutTarifDescription,
     String? namaObjekPajak,
     String? idDevice,
@@ -191,6 +192,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     final profileData = {
       'idUser': idUserStorage,
       'username': username,
+      'nmOpd': nmOpd,
       'roleId': roleId,
       'namaUser': namaUserStorage,
       'nop': nopStorage,

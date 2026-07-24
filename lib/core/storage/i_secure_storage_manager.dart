@@ -32,6 +32,7 @@ abstract class ISecureStorageManager {
     required String nopStorage,
     required String alamat,
     required int roleId,
+    String? nmOpd,
     String? pungutTarifDescription,
     int? pungutTarif,
     String? namaObjekPajak,

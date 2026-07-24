@@ -4,6 +4,7 @@ class UserEntity extends Equatable {
   final String idUser;
   final String namaUser;
   final String username;
+  final String nmOpd;
   final int roleId;
   final String nop;
   final int pungutTarif;
@@ -23,6 +24,7 @@ class UserEntity extends Equatable {
     required this.username,
     required this.roleId,
     required this.nop,
+    required this.nmOpd,
     required this.pungutTarif,
     required this.pungutTarifDescription,
     required this.namaObjekPajak,
@@ -42,6 +44,7 @@ class UserEntity extends Equatable {
     username,
     roleId,
     nop,
+    nmOpd,
     pungutTarif,
     pungutTarifDescription,
     namaObjekPajak,

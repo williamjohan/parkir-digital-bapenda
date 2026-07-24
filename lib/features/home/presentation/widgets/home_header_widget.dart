@@ -8,6 +8,7 @@ class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
   final String? nop;
   final String? namaObjekPajak;
+  final String? nmOpd;
   final String? namalokasi;
   final RoleLoginDigitalParkir role;
   final HomeStatus status;
@@ -20,6 +21,7 @@ class HomeHeaderWidget extends StatelessWidget {
     required this.status,
     required this.namaJukir,
     this.nop,
+    this.nmOpd,
     this.namaObjekPajak,
     this.namalokasi,
     required this.role,
@@ -58,6 +60,15 @@ class HomeHeaderWidget extends StatelessWidget {
                       style: AppTypography.heading1.copyWith(
                         color: Colors.white,
                         fontSize: 15,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      "OPD : $nmOpd",
+                      style: AppTypography.heading4.copyWith(
+                        color: Colors.white,
+                        fontSize: 12,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

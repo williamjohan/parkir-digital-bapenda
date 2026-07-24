@@ -26,6 +26,9 @@ class UserModel {
   @JsonKey(name: 'roleId', fromJson: _toInt)
   final int roleId;
 
+  @JsonKey(name: 'nmOpd', fromJson: _toString)
+  final String nmOpd;
+
   @JsonKey(name: 'nop', fromJson: _toString)
   final String nop;
 
@@ -65,6 +68,7 @@ class UserModel {
     required this.username,
     required this.roleId,
     required this.nop,
+    required this.nmOpd,
     this.namaObjekPajak = '',
     this.alamat = '',
     this.pungutTarif = 0,
@@ -91,6 +95,7 @@ extension UserModelExt on UserModel {
       username: username,
       roleId: roleId,
       nop: nop,
+      nmOpd: nmOpd,
       pungutTarif: pungutTarif,
       pungutTarifDescription: pungutTarifDescription,
       namaObjekPajak: namaObjekPajak,
