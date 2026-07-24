@@ -544,16 +544,6 @@ Future<_i174.GetIt> init(
   gh.factory<_i1069.RealisasiCubit>(
     () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
   );
-  gh.lazySingleton<_i433.RiwayatAbsensiUsecase>(
-    () => _i433.RiwayatAbsensiUsecase(gh<_i32.IRiwayatAbsensiRepository>()),
-  );
-  gh.factory<_i753.TransactionHistoryCubit>(
-    () => _i753.TransactionHistoryCubit(
-      gh<_i732.GetTransactionHistoryUseCase>(),
-      gh<_i259.GetSofBreakdownUseCase>(),
-      gh<_i1015.ISecureStorageManager>(),
-    ),
-  );
   gh.lazySingleton<_i708.AbsensiUsecase>(
     () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
   );
