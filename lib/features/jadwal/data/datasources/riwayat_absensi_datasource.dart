@@ -1,29 +1,41 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/jadwal/data/model/riwayat_absensi_model.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_error_handler.dart';
 import '../../../../core/utils/app_logger.dart';
-import '../model/jadwal_model.dart';
 
-abstract class IJadwalRemoteDataSource {
-  Future<List<JadwalModel>> getJadwalInfo();
+abstract class IRiwayatAbsensiDataSource {
+  Future<List<RiwayatAbsensiModel>> getRiwayatAbsensiInfo({
+    required DateTime tglAwal,
+    required DateTime tglAkhir,
+  });
 }
 
-@LazySingleton(as: IJadwalRemoteDataSource)
-class JadwalRemoteDataSourceImpl implements IJadwalRemoteDataSource {
+@LazySingleton(as: IRiwayatAbsensiDataSource)
+class RiwayatAbsensiDataSourceImpl implements IRiwayatAbsensiDataSource {
   final Dio _dio;
 
-  JadwalRemoteDataSourceImpl(this._dio);
+  RiwayatAbsensiDataSourceImpl(this._dio);
 
   @override
-  Future<List<JadwalModel>> getJadwalInfo() async {
+  Future<List<RiwayatAbsensiModel>> getRiwayatAbsensiInfo({
+    required DateTime tglAwal,
+    required DateTime tglAkhir,
+  }) async {
     try {
       AppLogger.info(
-        ">>> [Jadwal DS] Memulai request ke: ${ApiEndpoints.jadwalPengawasDev}",
+        ">>> [Jadwal DS] Memulai request ke: ${ApiEndpoints.riwayatPengawasanSp3}",
       );
 
-      final response = await _dio.get(ApiEndpoints.jadwalPengawasDev);
+      final response = await _dio.get(
+        ApiEndpoints.riwayatPengawasanSp3,
+        queryParameters: {
+          'tglAwal': _formatDate(tglAwal),
+          'tglAkhir': _formatDate(tglAkhir),
+        },
+      );
       final responseData = response.data;
 
       AppLogger.info(">>> [Jadwal DS] Raw Response: $responseData");
@@ -33,19 +45,20 @@ class JadwalRemoteDataSourceImpl implements IJadwalRemoteDataSource {
 
         try {
           AppLogger.info(
-            ">>> [Jadwal DS] Mencoba parsing JSON ke JadwalModel...",
+            ">>> [Jadwal DS] Mencoba parsing JSON ke RiwayatAbsensiModel...",
           );
-          final List<JadwalModel> listModel = beData
+          final listModel = beData
               .map(
-                (dynamic item) =>
-                    JadwalModel.fromJson(item as Map<String, dynamic>),
+                (dynamic item) => RiwayatAbsensiModel.fromJson(
+                  item as Map<String, dynamic>,
+                ),
               )
               .toList();
           AppLogger.info(">>> [Jadwal DS] Parsing BERHASIL!");
           return listModel;
         } catch (parseError, stackTrace) {
           AppLogger.error(
-            ">>> [Jadwal DS] FATAL ERROR: Gagal mapping JSON ke JadwalModel!",
+            ">>> [Jadwal DS] FATAL ERROR: Gagal mapping JSON ke RiwayatAbsensiModel!",
             parseError,
             stackTrace,
           );
@@ -80,5 +93,12 @@ class JadwalRemoteDataSourceImpl implements IJadwalRemoteDataSource {
         message: 'Terjadi kesalahan internal saat memproses jadwal.',
       );
     }
+  }
+
+  String _formatDate(DateTime date) {
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
   }
 }
