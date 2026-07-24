@@ -5,6 +5,7 @@ import 'package:parkir_digital_bapenda/core/design_system/components/pb_status_s
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/main_absensi_widget.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_kecamatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
@@ -252,30 +253,25 @@ class _HomePageState extends State<HomePage> {
                                 state.role == RoleLoginDigitalParkir.pengawas &&
                                     state.status == HomeStatus.needsSelection
                                 // TAMPILAN BODY KOSONG JIKA BELUM PILIH OP
-                                ? Center(
+                                ? const Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      16,
+                                      20,
+                                      16,
+                                      16,
+                                    ), // BARU
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
                                       children: [
-                                        Icon(
-                                          Icons.assignment_late_rounded,
-                                          size: 64,
-                                          color: Colors.grey.shade300,
+                                        KecamatanStatCard(
+                                          namaKecamatan: "Candi",
+                                          totalObjekPajak: 128,
+                                          totalTju: 342,
                                         ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          "Data Dashboard Belum Tersedia",
-                                          style: AppTypography.heading6
-                                              .copyWith(
-                                                color: Colors.grey.shade600,
-                                              ),
-                                        ),
-                                        Text(
-                                          "Silakan pilih objek di atas.",
-                                          style: AppTypography.bodySmall
-                                              .copyWith(
-                                                color: Colors.grey.shade500,
-                                              ),
+                                        SizedBox(height: 12),
+                                        KecamatanStatCard(
+                                          namaKecamatan: "Buduran",
+                                          totalObjekPajak: 400,
+                                          totalTju: 300,
                                         ),
                                       ],
                                     ),
