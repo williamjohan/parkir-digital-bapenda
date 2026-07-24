@@ -312,7 +312,7 @@ class HomeHeaderWidget extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           // Menampilkan label enum yang disuntikkan
-          "Shift : ${shift?.label ?? '-'}  |  Jenis : ${jenis?.label ?? '-'}",
+          "Shift : ${shift?.id ?? '-'} (${shift?.timeRange}) |  Jenis : ${jenis?.label ?? '-'}",
           style: AppTypography.bodySemiBold.copyWith(
             fontSize: 12,
             color: Colors.yellowAccent,
