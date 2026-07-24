@@ -22,7 +22,7 @@ abstract class ISummaryRemoteDataSource {
   Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas({
     required String nomorObjek,
     required int shift,
-    required String jenis,
+    required int jenis,
   });
 
   Future<OpLastUpdateModel> getOpLastUpdate();
@@ -147,12 +147,16 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas({
     required String nomorObjek,
     required int shift,
-    required String jenis,
+    required int jenis,
   }) async {
     try {
       final response = await _dio.get(
         ApiEndpoints.pengawasDashboardRosterSummaryDev,
-        queryParameters: {'nop': nomorObjek, 'shift': shift, 'jenis': jenis},
+        queryParameters: {
+          'nomorObjek': nomorObjek,
+          'shift': shift,
+          'jenis': jenis,
+        },
       ); // Sesuaikan endpoint
 
       final result = DashboardSummaryPengawasModel.fromJson(response.data);

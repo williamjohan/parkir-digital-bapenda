@@ -19,7 +19,7 @@ abstract class IHomeRepository {
   getDashboardSummaryPengawas({
     required String nomorObjek,
     required int shift,
-    required String jenis,
+    required int jenis,
   });
 
   Future<Either<Failure, bool>> getOpLastUpdate();

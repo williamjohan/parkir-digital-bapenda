@@ -77,7 +77,7 @@ class HomeRepositoryImpl implements IHomeRepository {
   getDashboardSummaryPengawas({
     required String nomorObjek,
     required int shift,
-    required String jenis,
+    required int jenis,
   }) async {
     try {
       final model = await _summaryRemoteDS.getDashboardSummaryPengawas(

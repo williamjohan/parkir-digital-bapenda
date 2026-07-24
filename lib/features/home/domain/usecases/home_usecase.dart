@@ -39,7 +39,7 @@ class HomeUsecase {
   getDashboardSummaryPengawas({
     required String nomorObjek,
     required int shift,
-    required String jenis,
+    required int jenis,
   }) {
     return _repository.getDashboardSummaryPengawas(
       nomorObjek: nomorObjek,

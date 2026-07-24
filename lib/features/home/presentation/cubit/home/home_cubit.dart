@@ -78,7 +78,7 @@ class HomeCubit extends Cubit<HomeState> {
       await loadDashboardPengawas(
         nomorObjek: activeNop,
         shift: activeShift.id,
-        jenis: activeJenis.label,
+        jenis: activeJenis.id,
       );
     } else {
       await _loadDashboardNonJukir();
@@ -149,7 +149,7 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> loadDashboardPengawas({
     required String nomorObjek,
     required int shift,
-    required String jenis,
+    required int jenis,
   }) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
