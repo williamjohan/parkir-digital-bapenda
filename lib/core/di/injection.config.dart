@@ -546,13 +546,6 @@ Future<_i174.GetIt> init(
   gh.factory<_i1069.RealisasiCubit>(
     () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
   );
-  gh.factory<_i753.TransactionHistoryCubit>(
-    () => _i753.TransactionHistoryCubit(
-      gh<_i732.GetTransactionHistoryUseCase>(),
-      gh<_i259.GetSofBreakdownUseCase>(),
-      gh<_i1015.ISecureStorageManager>(),
-    ),
-  );
   gh.lazySingleton<_i708.AbsensiUsecase>(
     () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
   );
@@ -567,6 +560,14 @@ Future<_i174.GetIt> init(
   gh.factory<_i513.PaymentCubit>(
     () =>
         _i513.PaymentCubit(gh<_i718.QrisUsecase>(), gh<_i808.PaymentUseCase>()),
+  );
+  gh.factory<_i753.TransactionHistoryCubit>(
+    () => _i753.TransactionHistoryCubit(
+      gh<_i732.GetTransactionHistoryUseCase>(),
+      gh<_i259.GetSofBreakdownUseCase>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i632.AppPreferences>(),
+    ),
   );
   gh.lazySingleton<_i207.HomeUsecase>(
     () => _i207.HomeUsecase(

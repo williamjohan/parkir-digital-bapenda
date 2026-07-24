@@ -16,7 +16,7 @@ import '../../../printer/presentation/cubit/printer_state.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
-import '../widgets/history_recap_widget.dart'; // 🚀 IMPORT WIDGET ASLI
+import '../widgets/history_recap_widget.dart';
 
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
