@@ -338,7 +338,14 @@ class HomeCubit extends Cubit<HomeState> {
     //  2. BEHAVIOR KHUSUS PENGAWAS (Hanya ambil nama)
     if (userRole == RoleLoginDigitalParkir.pengawas) {
       final activeNamaLokasi = _homeUsecase.getNamaObjekPengawasan();
-      emit(state.copyWith(namaJukir: namaUserShort, namaOp: activeNamaLokasi));
+      final activeNop = _homeUsecase.getNomorObjekPengawasan();
+      emit(
+        state.copyWith(
+          namaJukir: namaUserShort,
+          nop: activeNop ?? '',
+          namaOp: activeNamaLokasi ?? '',
+        ),
+      );
       return;
     }
 

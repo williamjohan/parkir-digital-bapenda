@@ -4,14 +4,9 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/enums/app_enums.dart';
 
 class ShiftPengawasanBottomSheet extends StatelessWidget {
-  final ValueChanged<ShiftPengawasan> onChanged;
-  final VoidCallback? onSelected;
+  final Future<void> Function(ShiftPengawasan shift) onSelected;
 
-  const ShiftPengawasanBottomSheet({
-    super.key,
-    required this.onChanged,
-    this.onSelected,
-  });
+  const ShiftPengawasanBottomSheet({super.key, required this.onSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +18,8 @@ class ShiftPengawasanBottomSheet extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: _ShiftItem(
               shift: shift,
-              onTap: () {
-                onChanged(shift);
-                onSelected?.call();
+              onTap: () async {
+                await onSelected(shift);
               },
             ),
           ),
