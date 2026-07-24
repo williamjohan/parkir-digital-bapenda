@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/features/transaction/presentation/widgets/tarif_empty_widget.dart';
 import '../../../../../core/design_system/components/pb_primary_button.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
