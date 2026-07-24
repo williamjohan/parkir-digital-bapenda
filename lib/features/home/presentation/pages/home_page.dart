@@ -638,6 +638,7 @@ class _HomePageState extends State<HomePage> {
                   currentRole: state.role,
                   isFree: false,
                   isDemoMode: state.role == RoleLoginDigitalParkir.bapenda,
+                  isEnableBuatLaporan: state.checkInOutData.checkIn.isNotEmpty,
                   onReload:
                       _loadData, // Lempar referensi fungsinya, jangan pakai tanda kurung ()
                 ),
