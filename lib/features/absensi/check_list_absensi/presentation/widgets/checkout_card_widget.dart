@@ -276,16 +276,9 @@ class CheckOutCardWidget extends StatelessWidget {
   }
 
   Widget _buildInstrumentBadges() {
-    if (detailAlat.isEmpty) {
-      return Text(
-        "Data instrumen tidak tersedia",
-        style: AppTypography.caption.copyWith(color: Colors.grey.shade400),
-      );
-    }
-
     return LayoutBuilder(
       builder: (context, constraints) {
-        const spacing = 6.0;
+        const spacing = 8.0;
         const columns = 3;
         final itemWidth =
             (constraints.maxWidth - spacing * (columns - 1)) / columns;
@@ -297,15 +290,52 @@ class CheckOutCardWidget extends StatelessWidget {
               .map(
                 (alat) => SizedBox(
                   width: itemWidth,
-                  child: InstrumentBadgeWidget(
-                    label: alat.namaAlat,
-                    isActive: alat.isBawa,
-                  ),
+                  child: _buildInstrumentChip(alat.namaAlat, alat.isBawa),
                 ),
               )
               .toList(),
         );
       },
+    );
+  }
+
+  Widget _buildInstrumentChip(String label, bool tersedia) {
+    final color = tersedia ? AppColors.success : AppColors.textHint;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: tersedia
+            ? AppColors.success.withValues(alpha: 0.08)
+            : AppColors.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: tersedia
+              ? AppColors.success.withValues(alpha: 0.3)
+              : AppColors.border,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            tersedia ? Icons.check_circle_rounded : Icons.cancel_rounded,
+            size: 15,
+            color: color,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

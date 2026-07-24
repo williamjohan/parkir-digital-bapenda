@@ -130,7 +130,8 @@ _$DetailAlatModelImpl _$$DetailAlatModelImplFromJson(
 ) => _$DetailAlatModelImpl(
   alatId: (json['alatId'] as num?)?.toInt() ?? 0,
   nama: json['nama'] as String? ?? '',
-  isBawa: json['isBawa'] as bool? ?? true,
+  jenis: (json['jenis'] as num?)?.toInt() ?? 0,
+  isBawa: json['isChecked'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$$DetailAlatModelImplToJson(
@@ -138,5 +139,6 @@ Map<String, dynamic> _$$DetailAlatModelImplToJson(
 ) => <String, dynamic>{
   'alatId': instance.alatId,
   'nama': instance.nama,
-  'isBawa': instance.isBawa,
+  'jenis': instance.jenis,
+  'isChecked': instance.isBawa,
 };

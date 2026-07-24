@@ -229,7 +229,10 @@ class HomeCubit extends Cubit<HomeState> {
                   .totalNominalBersihUntukWajibPajak
                   .toDouble(),
               laporanPelanggaran: summary.data.laporanPelanggaran,
-              checkInOutData: summary.data.checkInOut,
+              checkInOutData: _filterDetailAlatByJenis(
+                summary.data.checkInOut,
+                jenis,
+              ),
             ),
           );
         }
@@ -438,5 +441,33 @@ class HomeCubit extends Cubit<HomeState> {
       // Freezed langsung paham kita ingin mengosongkan field ini
       emit(state.copyWith(recoveredSession: null));
     }
+  }
+
+  CheckInOutEntity _filterDetailAlatByJenis(CheckInOutEntity data, int jenis) {
+    return CheckInOutEntity(
+      idEvent: data.idEvent,
+      op: data.op,
+      nip: data.nip,
+      tglRoster: data.tglRoster,
+      jadwalMasuk: data.jadwalMasuk,
+      jadwalOut: data.jadwalOut,
+      status: data.status,
+      checkIn: data.checkIn,
+      checkInString: data.checkInString,
+      checkInJmlMobil: data.checkInJmlMobil,
+      checkInJmlMotor: data.checkInJmlMotor,
+      checkOut: data.checkOut,
+      checkOutString: data.checkOutString,
+      checkOutJmlMobil: data.checkOutJmlMobil,
+      checkOutJmlMotor: data.checkOutJmlMotor,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      detailAlatCheckIn: data.detailAlatCheckIn
+          .where((a) => a.jenis == jenis)
+          .toList(),
+      detailAlatCheckOut: data.detailAlatCheckOut
+          .where((a) => a.jenis == jenis)
+          .toList(),
+    );
   }
 }

@@ -80,7 +80,8 @@ class DetailAlatModel with _$DetailAlatModel {
   const factory DetailAlatModel({
     @Default(0) int alatId,
     @Default('') String nama,
-    @Default(true) bool isBawa,
+    @Default(0) int jenis,
+    @JsonKey(name: 'isChecked') @Default(true) bool isBawa,
   }) = _DetailAlatModel;
 
   factory DetailAlatModel.fromJson(Map<String, dynamic> json) =>
@@ -155,6 +156,6 @@ extension CheckInOutModelExt on CheckInOutModel {
 
 extension DetailAlatModelExt on DetailAlatModel {
   DetailAlatEntity toEntity() {
-    return DetailAlatEntity(id: alatId, namaAlat: nama, isBawa: isBawa);
+    return DetailAlatEntity(id: alatId, namaAlat: nama, isBawa: isBawa,  jenis: jenis,);
   }
 }

@@ -1407,6 +1407,8 @@ DetailAlatModel _$DetailAlatModelFromJson(Map<String, dynamic> json) {
 mixin _$DetailAlatModel {
   int get alatId => throw _privateConstructorUsedError;
   String get nama => throw _privateConstructorUsedError;
+  int get jenis => throw _privateConstructorUsedError;
+  @JsonKey(name: 'isChecked')
   bool get isBawa => throw _privateConstructorUsedError;
 
   /// Serializes this DetailAlatModel to a JSON map.
@@ -1426,7 +1428,12 @@ abstract class $DetailAlatModelCopyWith<$Res> {
     $Res Function(DetailAlatModel) then,
   ) = _$DetailAlatModelCopyWithImpl<$Res, DetailAlatModel>;
   @useResult
-  $Res call({int alatId, String nama, bool isBawa});
+  $Res call({
+    int alatId,
+    String nama,
+    int jenis,
+    @JsonKey(name: 'isChecked') bool isBawa,
+  });
 }
 
 /// @nodoc
@@ -1446,6 +1453,7 @@ class _$DetailAlatModelCopyWithImpl<$Res, $Val extends DetailAlatModel>
   $Res call({
     Object? alatId = null,
     Object? nama = null,
+    Object? jenis = null,
     Object? isBawa = null,
   }) {
     return _then(
@@ -1458,6 +1466,10 @@ class _$DetailAlatModelCopyWithImpl<$Res, $Val extends DetailAlatModel>
                 ? _value.nama
                 : nama // ignore: cast_nullable_to_non_nullable
                       as String,
+            jenis: null == jenis
+                ? _value.jenis
+                : jenis // ignore: cast_nullable_to_non_nullable
+                      as int,
             isBawa: null == isBawa
                 ? _value.isBawa
                 : isBawa // ignore: cast_nullable_to_non_nullable
@@ -1477,7 +1489,12 @@ abstract class _$$DetailAlatModelImplCopyWith<$Res>
   ) = __$$DetailAlatModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int alatId, String nama, bool isBawa});
+  $Res call({
+    int alatId,
+    String nama,
+    int jenis,
+    @JsonKey(name: 'isChecked') bool isBawa,
+  });
 }
 
 /// @nodoc
@@ -1496,6 +1513,7 @@ class __$$DetailAlatModelImplCopyWithImpl<$Res>
   $Res call({
     Object? alatId = null,
     Object? nama = null,
+    Object? jenis = null,
     Object? isBawa = null,
   }) {
     return _then(
@@ -1508,6 +1526,10 @@ class __$$DetailAlatModelImplCopyWithImpl<$Res>
             ? _value.nama
             : nama // ignore: cast_nullable_to_non_nullable
                   as String,
+        jenis: null == jenis
+            ? _value.jenis
+            : jenis // ignore: cast_nullable_to_non_nullable
+                  as int,
         isBawa: null == isBawa
             ? _value.isBawa
             : isBawa // ignore: cast_nullable_to_non_nullable
@@ -1523,7 +1545,8 @@ class _$DetailAlatModelImpl implements _DetailAlatModel {
   const _$DetailAlatModelImpl({
     this.alatId = 0,
     this.nama = '',
-    this.isBawa = true,
+    this.jenis = 0,
+    @JsonKey(name: 'isChecked') this.isBawa = true,
   });
 
   factory _$DetailAlatModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -1537,11 +1560,14 @@ class _$DetailAlatModelImpl implements _DetailAlatModel {
   final String nama;
   @override
   @JsonKey()
+  final int jenis;
+  @override
+  @JsonKey(name: 'isChecked')
   final bool isBawa;
 
   @override
   String toString() {
-    return 'DetailAlatModel(alatId: $alatId, nama: $nama, isBawa: $isBawa)';
+    return 'DetailAlatModel(alatId: $alatId, nama: $nama, jenis: $jenis, isBawa: $isBawa)';
   }
 
   @override
@@ -1551,12 +1577,13 @@ class _$DetailAlatModelImpl implements _DetailAlatModel {
             other is _$DetailAlatModelImpl &&
             (identical(other.alatId, alatId) || other.alatId == alatId) &&
             (identical(other.nama, nama) || other.nama == nama) &&
+            (identical(other.jenis, jenis) || other.jenis == jenis) &&
             (identical(other.isBawa, isBawa) || other.isBawa == isBawa));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, alatId, nama, isBawa);
+  int get hashCode => Object.hash(runtimeType, alatId, nama, jenis, isBawa);
 
   /// Create a copy of DetailAlatModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1579,7 +1606,8 @@ abstract class _DetailAlatModel implements DetailAlatModel {
   const factory _DetailAlatModel({
     final int alatId,
     final String nama,
-    final bool isBawa,
+    final int jenis,
+    @JsonKey(name: 'isChecked') final bool isBawa,
   }) = _$DetailAlatModelImpl;
 
   factory _DetailAlatModel.fromJson(Map<String, dynamic> json) =
@@ -1590,6 +1618,9 @@ abstract class _DetailAlatModel implements DetailAlatModel {
   @override
   String get nama;
   @override
+  int get jenis;
+  @override
+  @JsonKey(name: 'isChecked')
   bool get isBawa;
 
   /// Create a copy of DetailAlatModel
