@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/components/pb_permission_gate.dart';
+import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/enums/app_enums.dart';
@@ -12,6 +13,7 @@ class AnimatedHomeFab extends StatefulWidget {
   final bool isFree;
   final bool isDemoMode;
   final VoidCallback onReload;
+  final bool? isEnableBuatLaporan;
 
   const AnimatedHomeFab({
     super.key,
@@ -19,6 +21,7 @@ class AnimatedHomeFab extends StatefulWidget {
     required this.isFree,
     required this.isDemoMode,
     required this.onReload,
+    this.isEnableBuatLaporan,
   });
 
   @override
@@ -140,9 +143,20 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                 foregroundColor: Colors.white,
                 elevation: 3,
                 onTap: () async {
+                  if (widget.isEnableBuatLaporan != true) {
+                    PbStatusSnackbar.show(
+                      context,
+                      message:
+                          'Silahkan check-in terlebih dahulu sebelum membuat laporan',
+                      isError: true,
+                    );
+                    return;
+                  }
+
                   final result = await context.pushNamed<bool>(
                     AppRoutes.addLaporanPelanggaran,
                   );
+
                   if (result == true) {
                     widget.onReload();
                   }
