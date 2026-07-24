@@ -98,6 +98,7 @@ class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
           PaymentInfoBadge(
             label: 'Jenis Kendaraan',
             value: widget.kategoriKendaraan,
+            kategoriKendaraan: widget.kategoriKendaraan,
           ),
           const SizedBox(height: 20),
 

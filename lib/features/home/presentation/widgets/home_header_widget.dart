@@ -64,15 +64,16 @@ class HomeHeaderWidget extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      "OPD : $nmOpd",
-                      style: AppTypography.heading4.copyWith(
-                        color: Colors.white,
-                        fontSize: 12,
+                    if (role == RoleLoginDigitalParkir.pengawas)
+                      Text(
+                        "OPD : $nmOpd",
+                        style: AppTypography.heading4.copyWith(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
                   ],
                 ),
               ),
@@ -311,7 +312,7 @@ class HomeHeaderWidget extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           // Menampilkan label enum yang disuntikkan
-          "Shift : ${shift?.label ?? '-'}  |  Jenis : ${jenis?.label ?? '-'}",
+          "Shift : ${shift?.id ?? '-'} (${shift?.timeRange}) |  Jenis : ${jenis?.label ?? '-'}",
           style: AppTypography.bodySemiBold.copyWith(
             fontSize: 12,
             color: Colors.yellowAccent,
