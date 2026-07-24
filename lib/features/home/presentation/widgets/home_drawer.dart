@@ -232,7 +232,7 @@ class HomeDrawer extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                     title: const Text(
-                      'Jadwal & Kehadiran',
+                      'Riwayat Absensi',
                       style: AppTypography.bodyRegular,
                     ),
                     onTap: () {

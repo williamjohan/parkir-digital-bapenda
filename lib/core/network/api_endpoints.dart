@@ -47,6 +47,8 @@ class ApiEndpoints {
   static const String listNopDev = '/api/mobile/parking/nop-list-dev';
   static const String pengawasLaporanList =
       '/api/mobile/parking/pengawas-pelaporan-list';
+  // static const String addPengawasanPelaporanDev =
+  //     '/api/mobile/parking/pengawas-pelaporan';
   static const String addPengawasanPelaporanDev =
       '/api/mobile/parking/pengawas-pelaporan';
   static const String pengawasCheckIn =
@@ -69,6 +71,8 @@ class ApiEndpoints {
   static const String opPengawasList = '/api/mobile/parking/op-pengawas-list';
   static const String jenisPelanggaran =
       '/api/mobile/parking/pengawas-master-jenis-pelanggaran';
+  static const String riwayatPengawasanSp3 =
+      '/api/mobile/parking/history-pengawasan-list-sp3';
   static const String homeScreenPengawas =
       '/api/mobile/parking/home-screen-pengawas-sp3';
 }

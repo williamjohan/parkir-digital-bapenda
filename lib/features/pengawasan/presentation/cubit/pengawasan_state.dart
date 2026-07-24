@@ -44,8 +44,6 @@ class PengawasanState with _$PengawasanState {
     @Default(false) bool isFetchingLocation,
     @Default(false) bool isCapturing,
 
-    @Default('') String keteranganText,
-
     @Default([]) List<JenisPelanggaranEntity> jenisPelanggaran,
     @Default(<LaporanPengawasanEntity>[]) List<LaporanPengawasanEntity> laporan,
     @Default(<LaporanPengawasanEntity>[])
@@ -59,6 +57,5 @@ class PengawasanState with _$PengawasanState {
       latitude != null &&
       longitude != null &&
       request.jenisPel != 0 &&
-      keteranganText.trim().isNotEmpty &&
       !isFetchingLocation;
 }

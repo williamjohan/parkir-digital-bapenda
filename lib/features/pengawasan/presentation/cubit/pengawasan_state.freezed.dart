@@ -80,8 +80,6 @@ abstract class $PengawasanStateCopyWith<$Res> {
     List<LaporanPengawasanEntity> laporan,
     List<LaporanPengawasanEntity> laporanFake,
   });
-
-  $RequestLaporanPengawasanEntityCopyWith<$Res> get request;
 }
 
 /// @nodoc
@@ -206,18 +204,6 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
           as $Val,
     );
   }
-
-  /// Create a copy of PengawasanState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $RequestLaporanPengawasanEntityCopyWith<$Res> get request {
-    return $RequestLaporanPengawasanEntityCopyWith<$Res>(_value.request, (
-      value,
-    ) {
-      return _then(_value.copyWith(request: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -251,9 +237,6 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
     List<LaporanPengawasanEntity> laporan,
     List<LaporanPengawasanEntity> laporanFake,
   });
-
-  @override
-  $RequestLaporanPengawasanEntityCopyWith<$Res> get request;
 }
 
 /// @nodoc
@@ -592,7 +575,6 @@ abstract class _PengawasanState extends PengawasanState {
     final String? locationError,
     final bool isFetchingLocation,
     final bool isCapturing,
-    final String keteranganText,
     final List<JenisPelanggaranEntity> jenisPelanggaran,
     final List<LaporanPengawasanEntity> laporan,
     final List<LaporanPengawasanEntity> laporanFake,

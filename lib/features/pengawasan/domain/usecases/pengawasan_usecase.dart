@@ -10,8 +10,8 @@ class AddPengawasanUsecase {
 
   AddPengawasanUsecase(this._repository);
 
-  Future<void> call(RequestLaporanPengawasanEntity request) {
-    return _repository.addPengawasan(request);
+  Future<void> call(RequestLaporanPengawasanEntity request) async {
+    await _repository.addPengawasan(request);
   }
 }
 

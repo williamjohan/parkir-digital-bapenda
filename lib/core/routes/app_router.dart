@@ -25,8 +25,8 @@ import '../../features/absensi/check_list_absensi/presentation/screens/absensi_c
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
-import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart';
-import '../../features/jadwal/presentation/screens/jadwal_screen.dart';
+import '../../features/jadwal/presentation/cubit/riwayat_absensi_cubit.dart';
+import '../../features/jadwal/presentation/screens/riwayat_absensi_screen.dart';
 import '../../features/realisasi/presentation/cubit/realisasi_cubit.dart';
 import '../../features/realisasi/presentation/screens/realisasi_screen.dart';
 import '../../features/transaction/presentation/page/transaction_page.dart';
@@ -321,7 +321,7 @@ class AppRouter {
           name: AppRoutes.jadwalKehadiran,
           builder: (context, state) {
             return BlocProvider(
-              create: (_) => locator<JadwalCubit>(),
+              create: (_) => locator<RiwayatAbsensiCubit>(),
               child: const JadwalScreen(),
             );
           },
