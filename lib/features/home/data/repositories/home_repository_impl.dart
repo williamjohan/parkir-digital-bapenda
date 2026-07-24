@@ -126,4 +126,7 @@ class HomeRepositoryImpl implements IHomeRepository {
   @override
   JenisPengawasan? getJenisObjekPengawasan() =>
       _appPreferences.getJenisObjekPengawasan();
+
+  @override
+  String? getNamaObjekPengawasan() => _appPreferences.getNamaObjekPengawasan();
 }

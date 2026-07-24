@@ -27,4 +27,5 @@ abstract class IHomeRepository {
   String? getNomorObjekPengawasan();
   ShiftPengawasan? getShiftObjekPengawasan();
   JenisPengawasan? getJenisObjekPengawasan();
+  String? getNamaObjekPengawasan();
 }

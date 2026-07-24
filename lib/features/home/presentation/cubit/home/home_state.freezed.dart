@@ -31,9 +31,9 @@ mixin _$HomeState {
       throw _privateConstructorUsedError;
   bool get isFree => throw _privateConstructorUsedError;
   String get nop => throw _privateConstructorUsedError;
-  String get namaLokasi => throw _privateConstructorUsedError;
+  String? get namaLokasi => throw _privateConstructorUsedError;
   String get namaJukir => throw _privateConstructorUsedError;
-  String get namaOp => throw _privateConstructorUsedError;
+  String? get namaOp => throw _privateConstructorUsedError;
   String? get namaJukirFormatted => throw _privateConstructorUsedError;
   String get profilePicturePath => throw _privateConstructorUsedError;
   int get totalOp => throw _privateConstructorUsedError;
@@ -83,9 +83,9 @@ abstract class $HomeStateCopyWith<$Res> {
     List<HistoryItemModel> recentTransactions,
     bool isFree,
     String nop,
-    String namaLokasi,
+    String? namaLokasi,
     String namaJukir,
-    String namaOp,
+    String? namaOp,
     String? namaJukirFormatted,
     String profilePicturePath,
     int totalOp,
@@ -142,9 +142,9 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? recentTransactions = null,
     Object? isFree = null,
     Object? nop = null,
-    Object? namaLokasi = null,
+    Object? namaLokasi = freezed,
     Object? namaJukir = null,
-    Object? namaOp = null,
+    Object? namaOp = freezed,
     Object? namaJukirFormatted = freezed,
     Object? profilePicturePath = null,
     Object? totalOp = null,
@@ -217,18 +217,18 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.nop
                 : nop // ignore: cast_nullable_to_non_nullable
                       as String,
-            namaLokasi: null == namaLokasi
+            namaLokasi: freezed == namaLokasi
                 ? _value.namaLokasi
                 : namaLokasi // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             namaJukir: null == namaJukir
                 ? _value.namaJukir
                 : namaJukir // ignore: cast_nullable_to_non_nullable
                       as String,
-            namaOp: null == namaOp
+            namaOp: freezed == namaOp
                 ? _value.namaOp
                 : namaOp // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             namaJukirFormatted: freezed == namaJukirFormatted
                 ? _value.namaJukirFormatted
                 : namaJukirFormatted // ignore: cast_nullable_to_non_nullable
@@ -381,9 +381,9 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     List<HistoryItemModel> recentTransactions,
     bool isFree,
     String nop,
-    String namaLokasi,
+    String? namaLokasi,
     String namaJukir,
-    String namaOp,
+    String? namaOp,
     String? namaJukirFormatted,
     String profilePicturePath,
     int totalOp,
@@ -443,9 +443,9 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? recentTransactions = null,
     Object? isFree = null,
     Object? nop = null,
-    Object? namaLokasi = null,
+    Object? namaLokasi = freezed,
     Object? namaJukir = null,
-    Object? namaOp = null,
+    Object? namaOp = freezed,
     Object? namaJukirFormatted = freezed,
     Object? profilePicturePath = null,
     Object? totalOp = null,
@@ -518,18 +518,18 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.nop
             : nop // ignore: cast_nullable_to_non_nullable
                   as String,
-        namaLokasi: null == namaLokasi
+        namaLokasi: freezed == namaLokasi
             ? _value.namaLokasi
             : namaLokasi // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         namaJukir: null == namaJukir
             ? _value.namaJukir
             : namaJukir // ignore: cast_nullable_to_non_nullable
                   as String,
-        namaOp: null == namaOp
+        namaOp: freezed == namaOp
             ? _value.namaOp
             : namaOp // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         namaJukirFormatted: freezed == namaJukirFormatted
             ? _value.namaJukirFormatted
             : namaJukirFormatted // ignore: cast_nullable_to_non_nullable
@@ -752,13 +752,13 @@ class _$HomeStateImpl implements _HomeState {
   final String nop;
   @override
   @JsonKey()
-  final String namaLokasi;
+  final String? namaLokasi;
   @override
   @JsonKey()
   final String namaJukir;
   @override
   @JsonKey()
-  final String namaOp;
+  final String? namaOp;
   @override
   @JsonKey()
   final String? namaJukirFormatted;
@@ -979,9 +979,9 @@ abstract class _HomeState implements HomeState {
     final List<HistoryItemModel> recentTransactions,
     final bool isFree,
     final String nop,
-    final String namaLokasi,
+    final String? namaLokasi,
     final String namaJukir,
-    final String namaOp,
+    final String? namaOp,
     final String? namaJukirFormatted,
     final String profilePicturePath,
     final int totalOp,
@@ -1030,11 +1030,11 @@ abstract class _HomeState implements HomeState {
   @override
   String get nop;
   @override
-  String get namaLokasi;
+  String? get namaLokasi;
   @override
   String get namaJukir;
   @override
-  String get namaOp;
+  String? get namaOp;
   @override
   String? get namaJukirFormatted;
   @override

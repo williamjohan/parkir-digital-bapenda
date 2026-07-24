@@ -287,7 +287,7 @@ class HomeHeaderWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Lokasi : ${namaObjekPajak ?? '-'}",
+          "Objek Pengawasan : ${namaObjekPajak ?? '-'}",
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: AppTypography.bodySemiBold.copyWith(

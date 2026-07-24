@@ -97,4 +97,5 @@ class HomeUsecase {
       _repository.getShiftObjekPengawasan();
   JenisPengawasan? getJenisObjekPengawasan() =>
       _repository.getJenisObjekPengawasan();
+  String? getNamaObjekPengawasan() => _repository.getNamaObjekPengawasan();
 }
