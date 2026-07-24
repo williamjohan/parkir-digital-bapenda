@@ -5,10 +5,12 @@ import 'package:parkir_digital_bapenda/core/design_system/components/pb_status_s
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/presentation/widgets/main_absensi_widget.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/attention.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_kecamatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_op_widget.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/card_total_pendapatan.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/home_drawer.dart';
+import 'package:parkir_digital_bapenda/features/home/presentation/widgets/jadwal_shift_card.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/widgets/last_activity_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/constants/app_asset_constant.dart';
@@ -253,28 +255,108 @@ class _HomePageState extends State<HomePage> {
                                 state.role == RoleLoginDigitalParkir.pengawas &&
                                     state.status == HomeStatus.needsSelection
                                 // TAMPILAN BODY KOSONG JIKA BELUM PILIH OP
-                                ? const Padding(
-                                    padding: EdgeInsets.fromLTRB(
+                                ? Padding(
+                                    padding: const EdgeInsets.fromLTRB(
                                       16,
                                       20,
                                       16,
                                       16,
-                                    ), // BARU
-                                    child: Column(
-                                      children: [
-                                        KecamatanStatCard(
-                                          namaKecamatan: "Candi",
-                                          totalObjekPajak: 128,
-                                          totalTju: 342,
-                                        ),
-                                        SizedBox(height: 12),
-                                        KecamatanStatCard(
-                                          namaKecamatan: "Buduran",
-                                          totalObjekPajak: 400,
-                                          totalTju: 300,
-                                        ),
-                                      ],
                                     ),
+                                    child: state.rekapWilayah == null
+                                        ? Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.assignment_late_rounded,
+                                                  size: 64,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                const SizedBox(height: 16),
+                                                Text(
+                                                  "Data Dashboard Belum Tersedia",
+                                                  style: AppTypography.heading6
+                                                      .copyWith(
+                                                        color: Colors
+                                                            .grey
+                                                            .shade600,
+                                                      ),
+                                                ),
+                                                Text(
+                                                  "Silakan pilih objek di atas.",
+                                                  style: AppTypography.bodySmall
+                                                      .copyWith(
+                                                        color: Colors
+                                                            .grey
+                                                            .shade500,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        // BARU — loop dari data rekap real
+                                        : SingleChildScrollView(
+                                            // BARU — ganti dari Column biasa, biar semua konten scroll bareng
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 4,
+                                            ), // opsional, biar item pertama/terakhir gak nempel mentok
+                                            child: Column(
+                                              children: [
+                                                const AttentionNoticeCard(),
+                                                const SizedBox(height: 16),
+                                                const JadwalShiftCard(),
+                                                const SizedBox(height: 16),
+                                                // BARU — ganti dari Expanded+ListView.separated jadi Column biasa,
+                                                // karena sekarang parent-nya scrollable, gak perlu scrollable
+                                                // bersarang lagi
+                                                if (state
+                                                    .rekapWilayah!
+                                                    .detailList
+                                                    .isEmpty)
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 32,
+                                                        ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Belum ada data kecamatan",
+                                                        style: AppTypography
+                                                            .bodySmall
+                                                            .copyWith(
+                                                              color: Colors
+                                                                  .grey
+                                                                  .shade500,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                else
+                                                  for (final detail
+                                                      in state
+                                                          .rekapWilayah!
+                                                          .detailList) ...[
+                                                    KecamatanStatCard(
+                                                      namaKecamatan:
+                                                          detail.nmCamat,
+                                                      totalObjekPajak:
+                                                          detail.jmlObjekPajak,
+                                                      totalTju: detail.jmlTju,
+                                                    ),
+                                                    if (detail !=
+                                                        state
+                                                            .rekapWilayah!
+                                                            .detailList
+                                                            .last)
+                                                      const SizedBox(
+                                                        height: 12,
+                                                      ),
+                                                  ],
+                                                const SizedBox(height: 16),
+                                              ],
+                                            ),
+                                          ),
                                   )
                                 // TAMPILAN NORMAL (DASHBOARD) JIKA SUDAH PILIH / ROLE LAIN
                                 : RefreshIndicator(

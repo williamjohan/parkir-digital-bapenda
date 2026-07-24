@@ -14,6 +14,8 @@ class KecamatanStatCard extends StatelessWidget {
     required this.totalTju,
   });
 
+  int get _total => totalObjekPajak + totalTju;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,8 +42,9 @@ class KecamatanStatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
+          _buildTotalHero(), // BARU — pindah ke atas, jadi headline
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 22),
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -55,7 +58,11 @@ class KecamatanStatCard extends StatelessWidget {
                   ),
                   const _VerticalStatDivider(),
                   Expanded(
-                    child: _StatBlock(value: totalTju, label: 'TJU', labelColor: AppColors.success,),
+                    child: _StatBlock(
+                      value: totalTju,
+                      label: 'TJU',
+                      labelColor: AppColors.success,
+                    ),
                   ),
                 ],
               ),
@@ -90,6 +97,39 @@ class KecamatanStatCard extends StatelessWidget {
       ),
     );
   }
+
+  // BARU — total sebagai headline, angka besar + gradient tipis di background
+  Widget _buildTotalHero() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
+        children: [
+          Text(
+            'TOTAL KESELURUHAN',
+            style: AppTypography.caption.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.0,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '$_total',
+            style: const TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primary,
+              height: 1.0,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Divider(),
+        ],
+      ),
+    );
+  }
 }
 
 class _StatBlock extends StatelessWidget {
@@ -108,23 +148,34 @@ class _StatBlock extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+          decoration: BoxDecoration(
+            color: labelColor.withValues(
+              alpha: 0.10,
+            ), // BARU — badge pill di belakang label
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: AppTypography.caption.copyWith(
+              color: labelColor,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.2,
+              fontSize: 11,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
         Text(
           '$value',
           style: const TextStyle(
-            fontSize: 30,
+            fontSize:
+                22, // BARU — dikecilin dari 30, biar gak menyaingi total di atas
             fontWeight: FontWeight.w800,
             color: AppColors.textPrimary,
             height: 1.1,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: AppTypography.caption.copyWith(
-            color: labelColor,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.2,
           ),
         ),
       ],
