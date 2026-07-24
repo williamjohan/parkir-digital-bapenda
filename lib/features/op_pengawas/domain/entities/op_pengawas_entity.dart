@@ -2,14 +2,14 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/enums/app_enums.dart';
 
 class OpPengawasEntity extends Equatable {
-  final String uptb;
+  final String kecamatan;
   final String namaOp;
   final JenisPengawasan jenisPengawasan;
   final String nop;
   final String alamat;
 
   const OpPengawasEntity({
-    required this.uptb,
+    required this.kecamatan,
     required this.namaOp,
     required this.jenisPengawasan,
     required this.nop,
@@ -17,5 +17,5 @@ class OpPengawasEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [uptb, namaOp, jenisPengawasan, nop, alamat];
+  List<Object?> get props => [kecamatan, namaOp, jenisPengawasan, nop, alamat];
 }

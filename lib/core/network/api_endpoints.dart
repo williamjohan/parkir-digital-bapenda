@@ -64,4 +64,6 @@ class ApiEndpoints {
 
   static const String opLastUpdate = '/api/mobile/parking/get-op-last-update';
   static const String taxSurveillanceDetail = '';
+
+  static const String opPengawasList = '/api/mobile/parking/op-pengawas-list';
 }

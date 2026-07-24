@@ -113,6 +113,16 @@ import '../../features/objek_pajak/data/repositories/op_repository_impl.dart'
 import '../../features/objek_pajak/domain/repositories/i_nop_repository.dart'
     as _i972;
 import '../../features/objek_pajak/domain/usecases/nop_usecase.dart' as _i521;
+import '../../features/op_pengawas/data/datasources/op_pengawasan_datasource.dart'
+    as _i978;
+import '../../features/op_pengawas/data/repositories/op_pengawasan_repository_impl.dart'
+    as _i199;
+import '../../features/op_pengawas/domain/repositories/i_op_pengawasan_repository.dart'
+    as _i463;
+import '../../features/op_pengawas/domain/usecases/op_pengawasan_usecase.dart'
+    as _i786;
+import '../../features/op_pengawas/presentation/cubit/op_pengawasan_cubit.dart'
+    as _i173;
 import '../../features/payment/data/datasources/qris_signalr_datasource.dart'
     as _i57;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
@@ -203,6 +213,7 @@ import '../services/permission/i_permission_service.dart' as _i164;
 import '../services/permission/permission_service_impl.dart' as _i1018;
 import '../services/printer/bluetooth_printer_service_impl.dart' as _i291;
 import '../services/printer/i_printer_service.dart' as _i1003;
+import '../storage/app_preferences.dart' as _i632;
 import '../storage/database_helper_2.dart' as _i654;
 import '../storage/i_secure_storage_manager.dart' as _i1015;
 import '../storage/secure_storage_manager.dart' as _i1042;
@@ -237,6 +248,9 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i232.CheckDeviceReadinessUseCase>(
     () => _i232.CheckDeviceReadinessUseCase(gh<_i515.IDeviceCheckRepository>()),
+  );
+  gh.lazySingleton<_i632.AppPreferences>(
+    () => _i632.AppPreferences(gh<_i460.SharedPreferences>()),
   );
   gh.lazySingleton<_i37.IImageService>(() => _i81.ImageServiceImpl());
   gh.lazySingleton<_i1003.IPrinterService>(
@@ -333,6 +347,9 @@ Future<_i174.GetIt> init(
       gh<_i37.IImageService>(),
     ),
   );
+  gh.lazySingleton<_i978.OpPengawasanDatasource>(
+    () => _i978.OpPengawasanDatasourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(
     () => _i847.ProfileRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -373,6 +390,9 @@ Future<_i174.GetIt> init(
       gh<_i654.DatabaseHelper2>(),
     ),
   );
+  gh.lazySingleton<_i463.IOpPengawasanRepository>(
+    () => _i199.OpPengawasanRepositoryImpl(gh<_i978.OpPengawasanDatasource>()),
+  );
   gh.lazySingleton<_i416.DetailRealisasiOpRepository>(
     () => _i886.DetailRealisasiOpRepositoryImpl(
       gh<_i676.DetailRealisasiOpRemoteDataSource>(),
@@ -402,6 +422,9 @@ Future<_i174.GetIt> init(
     () => _i709.GetDetailRealisasiOpUseCase(
       gh<_i416.DetailRealisasiOpRepository>(),
     ),
+  );
+  gh.lazySingleton<_i786.GetOpPengawasanUseCase>(
+    () => _i786.GetOpPengawasanUseCase(gh<_i463.IOpPengawasanRepository>()),
   );
   gh.lazySingleton<_i254.GetDataJukirUseCase>(
     () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),
@@ -460,6 +483,9 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i429.TaxSurveillanceUseCase>(
     () => _i429.TaxSurveillanceUseCase(gh<_i138.ITaxSurveillanceRepository>()),
+  );
+  gh.factory<_i173.OpPengawasanCubit>(
+    () => _i173.OpPengawasanCubit(gh<_i786.GetOpPengawasanUseCase>()),
   );
   gh.factory<_i588.DetailTaxSurveillanceCubit>(
     () => _i588.DetailTaxSurveillanceCubit(gh<_i429.TaxSurveillanceUseCase>()),

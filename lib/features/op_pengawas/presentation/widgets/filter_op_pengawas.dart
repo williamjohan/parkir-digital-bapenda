@@ -13,7 +13,7 @@ class OpPengawasFilterWidget extends StatelessWidget {
     required this.onChanged,
   });
 
-  static const filters = ['Semua', 'TJU', 'Persil'];
+  static const filters = ['Semua', 'Dishub', 'Bapenda'];
 
   @override
   Widget build(BuildContext context) {
