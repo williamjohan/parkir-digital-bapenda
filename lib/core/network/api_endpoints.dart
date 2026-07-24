@@ -52,7 +52,7 @@ class ApiEndpoints {
   // static const String addPengawasanPelaporanDev =
   //     '/api/mobile/parking/pengawas-pelaporan';
   static const String addPengawasanPelaporanDev =
-      '/api/mobile/parking/pengawas-pelaporan';
+      '/api/mobile/parking/pengawas-pelaporan-sp3';
   static const String pengawasCheckIn =
       '/api/mobile/parking/pengawas-check-in-sp3';
   static const String pengawasCheckOut =
