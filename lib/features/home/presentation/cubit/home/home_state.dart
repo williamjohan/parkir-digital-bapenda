@@ -24,9 +24,9 @@ class HomeState with _$HomeState {
     @Default([]) List<HistoryItemModel> recentTransactions,
     @Default(false) bool isFree,
     @Default("") String nop,
-    @Default("") String namaLokasi,
+    @Default("") String? namaLokasi,
     @Default("") String namaJukir,
-    @Default("") String namaOp,
+    @Default("") String? namaOp,
     @Default("") String? namaJukirFormatted,
     @Default("") String profilePicturePath,
 

@@ -26,6 +26,7 @@ mixin _$PengawasanState {
   bool get isLoading => throw _privateConstructorUsedError;
   bool get isLoadingLaporan => throw _privateConstructorUsedError;
   bool get isSuccess => throw _privateConstructorUsedError;
+  bool get isLoadingJenisPelanggaran => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
   File? get rawPhoto => throw _privateConstructorUsedError;
   DateTime? get photoTakenAt => throw _privateConstructorUsedError;
@@ -64,6 +65,7 @@ abstract class $PengawasanStateCopyWith<$Res> {
     bool isLoading,
     bool isLoadingLaporan,
     bool isSuccess,
+    bool isLoadingJenisPelanggaran,
     String? errorMessage,
     File? rawPhoto,
     DateTime? photoTakenAt,
@@ -103,6 +105,7 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
     Object? isLoading = null,
     Object? isLoadingLaporan = null,
     Object? isSuccess = null,
+    Object? isLoadingJenisPelanggaran = null,
     Object? errorMessage = freezed,
     Object? rawPhoto = freezed,
     Object? photoTakenAt = freezed,
@@ -142,6 +145,10 @@ class _$PengawasanStateCopyWithImpl<$Res, $Val extends PengawasanState>
             isSuccess: null == isSuccess
                 ? _value.isSuccess
                 : isSuccess // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isLoadingJenisPelanggaran: null == isLoadingJenisPelanggaran
+                ? _value.isLoadingJenisPelanggaran
+                : isLoadingJenisPelanggaran // ignore: cast_nullable_to_non_nullable
                       as bool,
             errorMessage: freezed == errorMessage
                 ? _value.errorMessage
@@ -229,6 +236,7 @@ abstract class _$$PengawasanStateImplCopyWith<$Res>
     bool isLoading,
     bool isLoadingLaporan,
     bool isSuccess,
+    bool isLoadingJenisPelanggaran,
     String? errorMessage,
     File? rawPhoto,
     DateTime? photoTakenAt,
@@ -268,6 +276,7 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
     Object? isLoading = null,
     Object? isLoadingLaporan = null,
     Object? isSuccess = null,
+    Object? isLoadingJenisPelanggaran = null,
     Object? errorMessage = freezed,
     Object? rawPhoto = freezed,
     Object? photoTakenAt = freezed,
@@ -307,6 +316,10 @@ class __$$PengawasanStateImplCopyWithImpl<$Res>
         isSuccess: null == isSuccess
             ? _value.isSuccess
             : isSuccess // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isLoadingJenisPelanggaran: null == isLoadingJenisPelanggaran
+            ? _value.isLoadingJenisPelanggaran
+            : isLoadingJenisPelanggaran // ignore: cast_nullable_to_non_nullable
                   as bool,
         errorMessage: freezed == errorMessage
             ? _value.errorMessage
@@ -375,6 +388,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
     this.isLoading = false,
     this.isLoadingLaporan = false,
     this.isSuccess = false,
+    this.isLoadingJenisPelanggaran = false,
     this.errorMessage,
     this.rawPhoto,
     this.photoTakenAt,
@@ -413,6 +427,9 @@ class _$PengawasanStateImpl extends _PengawasanState {
   @override
   @JsonKey()
   final bool isSuccess;
+  @override
+  @JsonKey()
+  final bool isLoadingJenisPelanggaran;
   @override
   final String? errorMessage;
   @override
@@ -466,7 +483,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
 
   @override
   String toString() {
-    return 'PengawasanState(status: $status, deniedPermissionType: $deniedPermissionType, request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, keteranganText: $keteranganText, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
+    return 'PengawasanState(status: $status, deniedPermissionType: $deniedPermissionType, request: $request, isLoading: $isLoading, isLoadingLaporan: $isLoadingLaporan, isSuccess: $isSuccess, isLoadingJenisPelanggaran: $isLoadingJenisPelanggaran, errorMessage: $errorMessage, rawPhoto: $rawPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, keteranganText: $keteranganText, jenisPelanggaran: $jenisPelanggaran, laporan: $laporan, laporanFake: $laporanFake)';
   }
 
   @override
@@ -484,6 +501,11 @@ class _$PengawasanStateImpl extends _PengawasanState {
                 other.isLoadingLaporan == isLoadingLaporan) &&
             (identical(other.isSuccess, isSuccess) ||
                 other.isSuccess == isSuccess) &&
+            (identical(
+                  other.isLoadingJenisPelanggaran,
+                  isLoadingJenisPelanggaran,
+                ) ||
+                other.isLoadingJenisPelanggaran == isLoadingJenisPelanggaran) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
             (identical(other.rawPhoto, rawPhoto) ||
@@ -524,6 +546,7 @@ class _$PengawasanStateImpl extends _PengawasanState {
     isLoading,
     isLoadingLaporan,
     isSuccess,
+    isLoadingJenisPelanggaran,
     errorMessage,
     rawPhoto,
     photoTakenAt,
@@ -559,6 +582,7 @@ abstract class _PengawasanState extends PengawasanState {
     final bool isLoading,
     final bool isLoadingLaporan,
     final bool isSuccess,
+    final bool isLoadingJenisPelanggaran,
     final String? errorMessage,
     final File? rawPhoto,
     final DateTime? photoTakenAt,
@@ -588,6 +612,8 @@ abstract class _PengawasanState extends PengawasanState {
   bool get isLoadingLaporan;
   @override
   bool get isSuccess;
+  @override
+  bool get isLoadingJenisPelanggaran;
   @override
   String? get errorMessage;
   @override

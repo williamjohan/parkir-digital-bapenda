@@ -88,7 +88,7 @@ class HomeCubit extends Cubit<HomeState> {
       await loadDashboardPengawas(
         nomorObjek: activeNop,
         shift: activeShift.id,
-        jenis: activeJenis.label.toString(),
+        jenis: activeJenis.id,
       );
     } else {
       await _loadDashboardNonJukir();
@@ -159,7 +159,7 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> loadDashboardPengawas({
     required String nomorObjek,
     required int shift,
-    required String jenis,
+    required int jenis,
   }) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
@@ -330,10 +330,10 @@ class HomeCubit extends Cubit<HomeState> {
 
     final profile = await _secureStorage.getJukirProfile();
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
-
     final namaUserShort = namaUser.shortName;
-    if (userRole == RoleLoginDigitalParkir.jukir ||
-        userRole == RoleLoginDigitalParkir.pengawas) {
+
+    //  1. BEHAVIOR KHUSUS JUKIR (NOP Statis Menempel dari Secured Storage)
+    if (userRole == RoleLoginDigitalParkir.jukir) {
       emit(
         state.copyWith(
           namaJukir: namaUserShort,
@@ -344,12 +344,22 @@ class HomeCubit extends Cubit<HomeState> {
       );
       return;
     }
+
+    //  2. BEHAVIOR KHUSUS PENGAWAS (Hanya ambil nama)
+    if (userRole == RoleLoginDigitalParkir.pengawas) {
+      final activeNamaLokasi = _homeUsecase.getNamaObjekPengawasan();
+      emit(state.copyWith(namaJukir: namaUserShort, namaOp: activeNamaLokasi));
+      return;
+    }
+
+    //  3. BEHAVIOR NON-JUKIR (WP, Bapenda, dll)
     final nopList = await _databaseHelper.getNopList();
 
     if (nopList.isEmpty) {
       emit(state.copyWith(namaJukir: namaUser));
       return;
     }
+
     final firstNop = nopList.first;
 
     emit(

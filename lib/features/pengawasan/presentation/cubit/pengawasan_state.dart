@@ -32,6 +32,7 @@ class PengawasanState with _$PengawasanState {
     @Default(false) bool isLoading,
     @Default(false) bool isLoadingLaporan,
     @Default(false) bool isSuccess,
+    @Default(false) bool isLoadingJenisPelanggaran,
     String? errorMessage,
 
     File? rawPhoto,

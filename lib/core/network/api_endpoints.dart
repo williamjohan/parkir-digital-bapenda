@@ -58,7 +58,7 @@ class ApiEndpoints {
   static const String pengawasPelaporanListDev =
       '/api/mobile/parking/pengawas-pelaporan-list';
   static const String pengawasDashboardRosterSummaryDev =
-      '/api/mobile/parking/pengawas-roster-summary';
+      '/api/mobile/parking/pengawas-roster-summary-sp3';
   static const String laporanPendapatanSof =
       '/api/mobile/parking/laporan-pendapatan-sof-dev';
 
@@ -66,4 +66,6 @@ class ApiEndpoints {
   static const String taxSurveillanceDetail = '';
 
   static const String opPengawasList = '/api/mobile/parking/op-pengawas-list';
+  static const String jenisPelanggaran =
+      '/api/mobile/parking/pengawas-master-jenis-pelanggaran';
 }

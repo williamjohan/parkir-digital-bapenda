@@ -76,7 +76,7 @@ class OpPengawasCard extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                "Kec.${item.kecamatan}",
+                                "KEC.${item.kecamatan}",
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w600,

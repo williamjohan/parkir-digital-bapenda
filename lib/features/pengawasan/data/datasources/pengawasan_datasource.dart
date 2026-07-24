@@ -7,12 +7,15 @@ import '../../../../../core/network/api_endpoints.dart';
 import '../../../../../core/network/dio_error_handler.dart';
 import '../../../../core/services/image/i_image_service.dart';
 import '../../domain/entities/request_laporan_pengawasan_entity/request_laporan_pengawasan_entity.dart';
+import '../models/jenis_pelanggaran/jenis_pelanggaran_model.dart';
 import '../models/laporan_pengawasan/laporan_pengawasan_model.dart';
 
 abstract class PengawasanDatasource {
   Future<List<LaporanPengawasanModel>> getLaporanPengawasan();
 
   Future<void> addPengawasan(RequestLaporanPengawasanEntity request);
+
+  Future<List<JenisPelanggaranModel>> getJenisPelanggaran();
 }
 
 @LazySingleton(as: PengawasanDatasource)
@@ -161,6 +164,44 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
       if (compressedPath != null) {
         _imageService.deleteImage(compressedPath).ignore();
       }
+    }
+  }
+
+  @override
+  Future<List<JenisPelanggaranModel>> getJenisPelanggaran() async {
+    try {
+      AppLogger.info('Request Get Jenis Pelanggaran');
+
+      final response = await _dio.get(ApiEndpoints.jenisPelanggaran);
+
+      AppLogger.info(
+        'Response Get Jenis Pelanggaran : ${response.data['data']?.length} data',
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(
+          statusCode: response.statusCode ?? 500,
+          message:
+              response.data?['message'] ??
+              'Gagal mengambil data Jenis Pelanggaran.',
+        );
+      }
+
+      final List<dynamic> data = response.data['data'];
+
+      return data
+          .map((e) => JenisPelanggaranModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      AppLogger.error('>>> [DIO ERROR] ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error Get Jenis Pelanggaran', e, stackTrace);
+
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal.',
+      );
     }
   }
 }

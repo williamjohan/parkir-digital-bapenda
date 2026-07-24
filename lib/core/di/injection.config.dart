@@ -411,6 +411,12 @@ Future<_i174.GetIt> init(
       gh<_i1015.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i165.PengawasanRepository>(
+    () => _i365.PengawasanRepositoryImpl(
+      gh<_i926.PengawasanDatasource>(),
+      gh<_i632.AppPreferences>(),
+    ),
+  );
   gh.lazySingleton<_i334.DashboardOpRepository>(
     () => _i606.DashboardOpRepositoryImpl(gh<_i905.DashboardOpDatasource>()),
   );
@@ -429,9 +435,6 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i254.GetDataJukirUseCase>(
     () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),
-  );
-  gh.lazySingleton<_i165.PengawasanRepository>(
-    () => _i365.PengawasanRepositoryImpl(gh<_i926.PengawasanDatasource>()),
   );
   gh.factory<_i1020.CheckUpdateCubit>(
     () => _i1020.CheckUpdateCubit(gh<_i506.CheckUpdateUseCase>()),
@@ -486,7 +489,10 @@ Future<_i174.GetIt> init(
     () => _i429.TaxSurveillanceUseCase(gh<_i138.ITaxSurveillanceRepository>()),
   );
   gh.factory<_i173.OpPengawasanCubit>(
-    () => _i173.OpPengawasanCubit(gh<_i786.GetOpPengawasanUseCase>()),
+    () => _i173.OpPengawasanCubit(
+      gh<_i786.GetOpPengawasanUseCase>(),
+      gh<_i632.AppPreferences>(),
+    ),
   );
   gh.factory<_i588.DetailTaxSurveillanceCubit>(
     () => _i588.DetailTaxSurveillanceCubit(gh<_i429.TaxSurveillanceUseCase>()),
@@ -518,8 +524,21 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i437.GetLaporanPengawasanUsecase>(
     () => _i437.GetLaporanPengawasanUsecase(gh<_i165.PengawasanRepository>()),
   );
+  gh.lazySingleton<_i437.GetJenisPelanggaranUsecase>(
+    () => _i437.GetJenisPelanggaranUsecase(gh<_i165.PengawasanRepository>()),
+  );
   gh.factory<_i789.DashboardOpCubit>(
     () => _i789.DashboardOpCubit(gh<_i644.GetSummaryDashboardOpUsecase>()),
+  );
+  gh.factory<_i527.PengawasanCubit>(
+    () => _i527.PengawasanCubit(
+      gh<_i437.AddPengawasanUsecase>(),
+      gh<_i437.GetLaporanPengawasanUsecase>(),
+      gh<_i437.GetJenisPelanggaranUsecase>(),
+      gh<_i164.IPermissionService>(),
+      gh<_i988.IAppLocationService>(),
+      gh<_i571.ICameraService>(),
+    ),
   );
   gh.lazySingleton<_i718.QrisUsecase>(
     () => _i718.QrisUsecase(gh<_i215.IQrisRepository>()),
@@ -553,15 +572,6 @@ Future<_i174.GetIt> init(
     () => _i207.HomeUsecase(
       gh<_i274.IHomeRepository>(),
       gh<_i502.ITransactionHistoryRepository>(),
-    ),
-  );
-  gh.factory<_i527.PengawasanCubit>(
-    () => _i527.PengawasanCubit(
-      gh<_i437.AddPengawasanUsecase>(),
-      gh<_i437.GetLaporanPengawasanUsecase>(),
-      gh<_i164.IPermissionService>(),
-      gh<_i988.IAppLocationService>(),
-      gh<_i571.ICameraService>(),
     ),
   );
   gh.factory<_i273.HomeCubit>(
