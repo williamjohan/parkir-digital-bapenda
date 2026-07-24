@@ -150,18 +150,21 @@ class AppRouter {
           path: AppRoutes.absensi,
           name: AppRoutes.absensi,
           builder: (context, state) {
-            // 🚀 1. Siapkan variabel penampung
             ShiftFormType type = ShiftFormType.checkIn;
             File? recoveredFile;
+            JenisPengawasan? jenis;
+            String? nop; // 🆕
+            ShiftPengawasan? shift; // 🆕
 
             if (state.extra is ShiftFormType) {
-              // Skenario Normal: User klik menu check-in/out dari drawer atau dashboard
               type = state.extra as ShiftFormType;
             } else if (state.extra is Map<String, dynamic>) {
-              // Skenario LMK Recovery: Satpam Dashboard melempar Map berisi type & file
               final args = state.extra as Map<String, dynamic>;
               type = args['type'] as ShiftFormType? ?? ShiftFormType.checkIn;
               recoveredFile = args['file'] as File?;
+              jenis = args['jenis'] as JenisPengawasan?;
+              nop = args['nop'] as String?; // 🆕
+              shift = args['shift'] as ShiftPengawasan?; // 🆕
             }
 
             return BlocProvider(
@@ -169,6 +172,9 @@ class AppRouter {
               child: AbsensiCheckListScreen(
                 type: type,
                 recoveredPhoto: recoveredFile,
+                jenis: jenis,
+                nop: nop, // 🆕
+                shift: shift, // 🆕
               ),
             );
           },

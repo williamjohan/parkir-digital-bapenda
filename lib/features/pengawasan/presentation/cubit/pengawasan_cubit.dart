@@ -6,7 +6,7 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/services/camera/i_camera_service.dart';
 import '../../../../core/services/location/i_app_location_service.dart';
 import '../../../../core/services/permission/i_permission_service.dart';
-import '../../domain/constants/jenis_pelanggaran_dummy.dart';
+import '../../domain/entities/jenis_pelanggaran/jenis_pelanggaran_entity.dart';
 import '../../domain/usecases/pengawasan_usecase.dart';
 import 'pengawasan_state.dart';
 
@@ -14,6 +14,7 @@ import 'pengawasan_state.dart';
 class PengawasanCubit extends Cubit<PengawasanState> {
   final AddPengawasanUsecase _addPengawasanUsecase;
   final GetLaporanPengawasanUsecase _getLaporanPengawasanUsecase;
+  final GetJenisPelanggaranUsecase _getJenisPelanggaranUsecase;
   final IPermissionService _permissionService;
   final IAppLocationService _locationService;
   final ICameraService _cameraService;
@@ -21,6 +22,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
   PengawasanCubit(
     this._addPengawasanUsecase,
     this._getLaporanPengawasanUsecase,
+    this._getJenisPelanggaranUsecase,
     this._permissionService,
     this._locationService,
     this._cameraService,
@@ -28,7 +30,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
 
   Future<void> initPage({File? recoveredPhoto}) async {
     // 1. Muat master data jenis pelanggaran
-    emit(state.copyWith(jenisPelanggaran: dummyJenisPelanggaran));
+    await getJenisPelanggaran();
 
     // 2. Jika halaman dibuka hasil lemparan LMK(Low Memory Killer) dari Home bawa foto selamat:
     if (recoveredPhoto != null) {
@@ -171,6 +173,45 @@ class PengawasanCubit extends Cubit<PengawasanState> {
         state.copyWith(
           isLoading: false,
           isSuccess: false,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> getJenisPelanggaran() async {
+    emit(
+      state.copyWith(
+        isLoadingJenisPelanggaran: true,
+        errorMessage: null,
+        jenisPelanggaran: List.generate(
+          5,
+          (_) => const JenisPelanggaranEntity(
+            id: 0,
+            namaPelanggaran: 'Jenis Pelanggaran',
+            jenisPelanggaran: JenisPengawasan.bapenda,
+          ),
+        ),
+      ),
+    );
+
+    try {
+      final result = await _getJenisPelanggaranUsecase();
+
+      if (isClosed) return;
+
+      emit(
+        state.copyWith(
+          isLoadingJenisPelanggaran: false,
+          jenisPelanggaran: result,
+        ),
+      );
+    } catch (e) {
+      if (isClosed) return;
+
+      emit(
+        state.copyWith(
+          isLoadingJenisPelanggaran: false,
           errorMessage: e.toString(),
         ),
       );

@@ -20,6 +20,8 @@ _$AbsensiRequestModelImpl _$$AbsensiRequestModelImplFromJson(
       const [],
   fotoPath: json['fotoPath'] as String? ?? '',
   isCheckIn: json['isCheckIn'] as bool? ?? true,
+  nop: json['nop'] as String? ?? '',
+  shift: (json['shift'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$$AbsensiRequestModelImplToJson(
@@ -32,4 +34,6 @@ Map<String, dynamic> _$$AbsensiRequestModelImplToJson(
   'detailAlatIds': instance.detailAlatIds,
   'fotoPath': instance.fotoPath,
   'isCheckIn': instance.isCheckIn,
+  'nop': instance.nop,
+  'shift': instance.shift,
 };

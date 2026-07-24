@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/data/models/alat_digital_model.dart';
 import '../../../../../core/errors/exception.dart';
 import '../../../../../core/network/api_endpoints.dart';
 import '../../../../../core/network/dio_error_handler.dart';
@@ -11,6 +12,7 @@ import '../models/absensi_model.dart';
 
 abstract class IAbsensiRemoteDataSource {
   Future<void> postAbsensi(AbsensiRequestModel request);
+  Future<List<AlatDigitalModel>> getAlatDigital();
 }
 
 @LazySingleton(as: IAbsensiRemoteDataSource)
@@ -46,6 +48,7 @@ class AbsensiRemoteDataSourceImpl implements IAbsensiRemoteDataSource {
       final formData = await request.toFormData(
         compressedFotoPath: compressedPath,
       );
+
 
       // 2. Tentukan Endpoint (Check In vs Check Out)
       final endpoint = request.isCheckIn
@@ -84,6 +87,37 @@ class AbsensiRemoteDataSourceImpl implements IAbsensiRemoteDataSource {
       if (compressedPath != null) {
         _imageService.deleteImage(compressedPath).ignore();
       }
+    }
+  }
+
+  @override
+  Future<List<AlatDigitalModel>> getAlatDigital() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.pengawasMasterAlatDigital);
+
+      if (response.data['isSuccess'] == true) {
+        final List<dynamic> rawList = response.data['data'] ?? [];
+        return rawList
+            .map(
+              (json) => AlatDigitalModel.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
+      } else {
+        throw ServerException(
+          statusCode: response.data['statusCode'] ?? response.statusCode ?? 500,
+          message:
+              response.data['message'] ?? 'Gagal mengambil data alat digital',
+        );
+      }
+    } on DioException catch (e) {
+      AppLogger.error('>>> [DIO ERROR] AlatDigital: ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error AlatDigital', e, stackTrace);
+      throw ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal: ${e.toString()}',
+      );
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:parkir_digital_bapenda/features/absensi/check_list_absensi/domain/entities/alat_digital_entity.dart';
 
 import '../../../../../core/enums/app_enums.dart';
 
@@ -23,6 +24,9 @@ class AbsensiState with _$AbsensiState {
     @Default(AbsensiStatus.initial) AbsensiStatus status,
     @Default('') String errorMessage,
     AppPermissionType? deniedPermissionType,
+    JenisPengawasan? jenis,
+    String? nop, // 🆕
+    ShiftPengawasan? shift,
     // --- STATE UNTUK UI FORM ---
     File? rawPhoto, // Foto asli sebelum di-watermark
     File? watermarkedPhoto, // Foto hasil watermark, siap dikirim
@@ -37,11 +41,13 @@ class AbsensiState with _$AbsensiState {
     // --- INPUT FORM ---
     @Default('') String motorText,
     @Default('') String mobilText,
-    @Default(false) bool edc,
-    @Default(false) bool qris,
-    @Default(false) bool tsPark,
+    @Default([]) List<AlatDigitalEntity> allInstruments,
+    @Default([]) List<int> selectedInstrumentIds,
+    @Default(false) bool isLoadingInstruments,
   }) = _AbsensiState;
 
+  List<AlatDigitalEntity> get filteredInstruments =>
+      allInstruments.where((i) => i.jenis == jenis?.id).toList();
   bool get isLoading => status == AbsensiStatus.loading;
 
   int get totalMotor => int.tryParse(motorText) ?? 0;

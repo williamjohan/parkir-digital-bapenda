@@ -25,7 +25,20 @@ class AbsensiCubit extends Cubit<AbsensiState> {
     this._cameraService,
   ) : super(const AbsensiState());
 
-  Future<void> initPage({File? recoveredPhoto}) async {
+  Future<void> initPage({
+    File? recoveredPhoto,
+    JenisPengawasan? jenis,
+    String? nop, // 🆕
+    ShiftPengawasan? shift, // 🆕
+  }) async {
+    emit(
+      state.copyWith(
+        jenis: jenis,
+        nop: nop, // 🆕
+        shift: shift, // 🆕
+      ),
+    );
+
     if (recoveredPhoto != null) {
       emit(
         state.copyWith(
@@ -35,7 +48,8 @@ class AbsensiCubit extends Cubit<AbsensiState> {
         ),
       );
     }
-    await fetchLocation();
+
+    await Future.wait([fetchLocation(), _loadInstruments()]);
   }
 
   // --- LOGIC LOKASI ---
@@ -130,9 +144,15 @@ class AbsensiCubit extends Cubit<AbsensiState> {
     emit(state.copyWith(mobilText: value));
   }
 
-  void toggleEdc(bool value) => emit(state.copyWith(edc: value));
-  void toggleQris(bool value) => emit(state.copyWith(qris: value));
-  void toggleTsPark(bool value) => emit(state.copyWith(tsPark: value));
+  void toggleInstrument(int id) {
+    final current = List<int>.from(state.selectedInstrumentIds);
+    if (current.contains(id)) {
+      current.remove(id);
+    } else {
+      current.add(id);
+    }
+    emit(state.copyWith(selectedInstrumentIds: current));
+  }
 
   // --- SUBMIT ---
   Future<void> submitAbsensi({required bool isCheckIn}) async {
@@ -158,20 +178,16 @@ class AbsensiCubit extends Cubit<AbsensiState> {
 
     emit(state.copyWith(status: AbsensiStatus.loading, errorMessage: ''));
 
-    final detailAlatIds = [
-      if (state.edc) kInstrumentIds['EDC']!,
-      if (state.qris) kInstrumentIds['QRIS']!,
-      if (state.tsPark) kInstrumentIds['TSpark']!,
-    ];
-
     final entity = AbsensiEntity(
       latitude: state.latitude!,
       longitude: state.longitude!,
       totalMotor: state.totalMotor,
       totalMobil: state.totalMobil,
-      detailAlatIds: detailAlatIds,
+      detailAlatIds: state.selectedInstrumentIds,
       fotoPath: state.watermarkedPhoto!.path,
       isCheckIn: isCheckIn,
+      nop: state.nop ?? '', // 🆕
+      shift: state.shift?.id ?? 0,
     );
 
     final result = await _usecase.postAbsensi(entity);
@@ -278,5 +294,29 @@ class AbsensiCubit extends Cubit<AbsensiState> {
 
   Future<void> openLocationSettings() async {
     await _permissionService.openLocationSettings();
+  }
+
+  Future<void> _loadInstruments() async {
+    emit(state.copyWith(isLoadingInstruments: true));
+
+    final result = await _usecase.getAlatDigital();
+
+    result.fold(
+      (failure) {
+        if (!isClosed) {
+          emit(state.copyWith(isLoadingInstruments: false, allInstruments: []));
+        }
+      },
+      (instruments) {
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              isLoadingInstruments: false,
+              allInstruments: instruments,
+            ),
+          );
+        }
+      },
+    );
   }
 }

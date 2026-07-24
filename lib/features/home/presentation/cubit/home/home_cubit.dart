@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/di/injection.dart';
+import 'package:parkir_digital_bapenda/core/storage/app_preferences.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
 import 'package:parkir_digital_bapenda/features/transaction/domain/usecases/qris_usecase.dart';
@@ -33,6 +36,13 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> initialize() async {
     emit(state.copyWith(status: HomeStatus.loading));
+    if (kDebugMode) {
+      final debugPrefs = locator<AppPreferences>();
+      // Tanpa guard — sengaja selalu overwrite biar gampang gonta-ganti value pas testing
+      await debugPrefs.saveNomorObjekPengawasan('357813000190704537');
+      await debugPrefs.saveShiftObjekPengawasan(ShiftPengawasan.shift2);
+      await debugPrefs.saveJenisObjekPengawasan(JenisPengawasan.dishub);
+    }
 
     final recoveredSession = await _cameraService.recoverLostAndroidPhoto();
     if (recoveredSession != null && !isClosed) {

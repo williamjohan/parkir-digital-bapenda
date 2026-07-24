@@ -159,14 +159,6 @@ class CheckOutCardWidget extends StatelessWidget {
     );
   }
 
-  bool _isAlatBawa(String keyword) {
-    return detailAlat.any(
-      (alat) =>
-          alat.namaAlat.toLowerCase().contains(keyword.toLowerCase()) &&
-          alat.isBawa,
-    );
-  }
-
   Widget _buildCheckedOutContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,30 +191,7 @@ class CheckOutCardWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: InstrumentBadgeWidget(
-                label: "EDC",
-                isActive: _isAlatBawa("edc"),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: InstrumentBadgeWidget(
-                label: "QRIS",
-                isActive: _isAlatBawa("qris") || _isAlatBawa("rompi"),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: InstrumentBadgeWidget(
-                label: "TSpark",
-                isActive: _isAlatBawa("ts"),
-              ),
-            ),
-          ],
-        ),
+        _buildInstrumentBadges(),
       ],
     );
   }
@@ -304,5 +273,39 @@ class CheckOutCardWidget extends StatelessWidget {
     } catch (e) {
       return dtString;
     }
+  }
+
+  Widget _buildInstrumentBadges() {
+    if (detailAlat.isEmpty) {
+      return Text(
+        "Data instrumen tidak tersedia",
+        style: AppTypography.caption.copyWith(color: Colors.grey.shade400),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 6.0;
+        const columns = 3;
+        final itemWidth =
+            (constraints.maxWidth - spacing * (columns - 1)) / columns;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: detailAlat
+              .map(
+                (alat) => SizedBox(
+                  width: itemWidth,
+                  child: InstrumentBadgeWidget(
+                    label: alat.namaAlat,
+                    isActive: alat.isBawa,
+                  ),
+                ),
+              )
+              .toList(),
+        );
+      },
+    );
   }
 }

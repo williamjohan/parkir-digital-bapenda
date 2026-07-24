@@ -15,9 +15,14 @@ class AbsensiRecordDummy {
   final String nop;
   final String jamCheckIn;
   final String? jamCheckOut;
-  final bool edcTersedia;
-  final bool qrisTersedia;
-  final bool tsParkTersedia;
+  final int motorCheckIn;
+  final int mobilCheckIn;
+  final int? motorCheckOut;
+  final int? mobilCheckOut;
+  final List<InstrumenTersediaDummy>
+  instrumenCheckIn; // 🆕 ganti dari `instrumen`
+  final List<InstrumenTersediaDummy>?
+  instrumenCheckOut; // 🆕 null = belum checkout
 
   const AbsensiRecordDummy({
     required this.tanggal,
@@ -25,10 +30,20 @@ class AbsensiRecordDummy {
     required this.nop,
     required this.jamCheckIn,
     this.jamCheckOut,
-    required this.edcTersedia,
-    required this.qrisTersedia,
-    required this.tsParkTersedia,
+    required this.motorCheckIn,
+    required this.mobilCheckIn,
+    this.motorCheckOut,
+    this.mobilCheckOut,
+    required this.instrumenCheckIn, // 🆕
+    this.instrumenCheckOut, // 🆕
   });
+}
+
+class InstrumenTersediaDummy {
+  final String nama;
+  final bool tersedia;
+
+  const InstrumenTersediaDummy({required this.nama, required this.tersedia});
 }
 
 const List<String> _kDummyNopNames = [
@@ -39,16 +54,25 @@ const List<String> _kDummyNopNames = [
   'Apartemen Puncak Permai',
 ];
 
-String _generateDummyNop(int seed) {
-  final kec = (100 + seed % 50).toString().padLeft(3, '0');
-  final kel = (700 + (seed * 3) % 90).toString().padLeft(3, '0');
-  final blok = (10 + seed % 20).toString().padLeft(3, '0');
-  final urut = (1000 + seed % 899).toString().padLeft(4, '0');
-  final gab = (seed % 9).toString();
-  return '35.78.$kec.$kel.$blok-$urut.$gab';
+// 🆕 pool nama alat — sengaja lebih dari 3, biar kelihatan Wrap-nya
+// beneran dinamis (kadang 2 alat, kadang 5 alat)
+const List<String> _kDummyInstrumentPool = [
+  'EDC',
+  'QRIS',
+  'TSpark',
+  'E-Retribusi',
+  'Kartu Langganan',
+];
+
+List<InstrumenTersediaDummy> _generateDummyInstrumen(int seed) {
+  final count = 2 + seed % (_kDummyInstrumentPool.length - 1); // 2..5
+  return List.generate(count, (i) {
+    final nama =
+        _kDummyInstrumentPool[(seed + i) % _kDummyInstrumentPool.length];
+    return InstrumenTersediaDummy(nama: nama, tersedia: (seed + i) % 2 == 0);
+  });
 }
 
-// Deterministic per-tanggal biar konsisten tiap render
 List<AbsensiRecordDummy> _generateDummyRecordsForDate(DateTime tanggal) {
   final now = DateTime.now();
   final isToday =
@@ -72,11 +96,27 @@ List<AbsensiRecordDummy> _generateDummyRecordsForDate(DateTime tanggal) {
       jamCheckOut: sudahCheckOut
           ? '${(jamMasukJam + 8).toString().padLeft(2, '0')}:30'
           : null,
-      edcTersedia: seed % 2 == 0,
-      qrisTersedia: seed % 3 != 0,
-      tsParkTersedia: seed % 4 == 0,
+      motorCheckIn: 10 + seed % 15,
+      mobilCheckIn: 3 + seed % 8,
+      motorCheckOut: sudahCheckOut ? 12 + seed % 20 : null,
+      mobilCheckOut: sudahCheckOut ? 4 + seed % 10 : null,
+      instrumenCheckIn: _generateDummyInstrumen(seed), // 🆕 seed asli
+      instrumenCheckOut: sudahCheckOut
+          ? _generateDummyInstrumen(
+              seed + 7,
+            ) // 🆕 seed beda → hasil beda dari checkin
+          : null, // 🆕 belum checkout → null
     );
   });
+}
+
+String _generateDummyNop(int seed) {
+  final kec = (100 + seed % 50).toString().padLeft(3, '0');
+  final kel = (700 + (seed * 3) % 90).toString().padLeft(3, '0');
+  final blok = (10 + seed % 20).toString().padLeft(3, '0');
+  final urut = (1000 + seed % 899).toString().padLeft(4, '0');
+  final gab = (seed % 9).toString();
+  return '35.78.$kec.$kel.$blok-$urut.$gab';
 }
 
 List<AbsensiRecordDummy> _generateDummyRecords(DateTimeRange range) {
@@ -221,9 +261,22 @@ class _JadwalScreenState extends State<JadwalScreen> {
           nop: '00.00.000.000.000-0000.0',
           jamCheckIn: '00:00',
           jamCheckOut: '00:00',
-          edcTersedia: true,
-          qrisTersedia: true,
-          tsParkTersedia: true,
+          motorCheckIn: 0,
+          mobilCheckIn: 0,
+          motorCheckOut: 0,
+          mobilCheckOut: 0,
+          instrumenCheckIn: const [
+            // 🆕
+            InstrumenTersediaDummy(nama: 'EDC', tersedia: true),
+            InstrumenTersediaDummy(nama: 'QRIS', tersedia: true),
+            InstrumenTersediaDummy(nama: 'TSpark', tersedia: true),
+          ],
+          instrumenCheckOut: const [
+            // 🆕
+            InstrumenTersediaDummy(nama: 'EDC', tersedia: true),
+            InstrumenTersediaDummy(nama: 'QRIS', tersedia: true),
+            InstrumenTersediaDummy(nama: 'TSpark', tersedia: true),
+          ],
         ),
       ),
     );

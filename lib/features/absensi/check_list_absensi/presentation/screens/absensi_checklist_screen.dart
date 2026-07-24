@@ -20,11 +20,17 @@ import '../widgets/instrument_toggle_widget.dart';
 class AbsensiCheckListScreen extends StatefulWidget {
   final ShiftFormType type;
   final File? recoveredPhoto;
+  final JenisPengawasan? jenis;
+  final String? nop;
+  final ShiftPengawasan? shift;
 
   const AbsensiCheckListScreen({
     super.key,
     required this.type,
     this.recoveredPhoto,
+    this.jenis,
+    this.nop,
+    this.shift,
   });
 
   @override
@@ -50,6 +56,9 @@ class _AbsensiCheckListScreenState extends State<AbsensiCheckListScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AbsensiCubit>().initPage(
         recoveredPhoto: widget.recoveredPhoto,
+        jenis: widget.jenis,
+        nop: widget.nop, // 🆕
+        shift: widget.shift,
       );
     });
   }
@@ -221,30 +230,29 @@ class _AbsensiCheckListScreenState extends State<AbsensiCheckListScreen> {
                 FormSectionCard(
                   title: "Status Instrumen",
                   icon: Icons.devices_rounded,
-                  child: Column(
-                    children: [
-                      InstrumentToggleWidget(
-                        label: "EDC",
-                        icon: Icons.credit_card_rounded,
-                        isActive: state.edc,
-                        onChanged: context.read<AbsensiCubit>().toggleEdc,
-                      ),
-                      const SizedBox(height: 8),
-                      InstrumentToggleWidget(
-                        label: "QRIS",
-                        icon: Icons.qr_code_2_rounded,
-                        isActive: state.qris,
-                        onChanged: context.read<AbsensiCubit>().toggleQris,
-                      ),
-                      const SizedBox(height: 8),
-                      InstrumentToggleWidget(
-                        label: "TSpark",
-                        icon: Icons.touch_app_rounded,
-                        isActive: state.tsPark,
-                        onChanged: context.read<AbsensiCubit>().toggleTsPark,
-                      ),
-                    ],
-                  ),
+                  child: state.isLoadingInstruments
+                      ? const Center(child: CircularProgressIndicator())
+                      : state.filteredInstruments.isEmpty
+                      ? const Text("Tidak ada data instrumen")
+                      : Column(
+                          children: [
+                            for (final instrumen
+                                in state.filteredInstruments) ...[
+                              InstrumentToggleWidget(
+                                label: instrumen.nama,
+                                icon: _iconForInstrumen(instrumen.nama),
+                                isActive: state.selectedInstrumentIds.contains(
+                                  instrumen.id,
+                                ),
+                                onChanged: (_) => context
+                                    .read<AbsensiCubit>()
+                                    .toggleInstrument(instrumen.id),
+                              ),
+                              if (instrumen != state.filteredInstruments.last)
+                                const SizedBox(height: 8),
+                            ],
+                          ],
+                        ),
                 ),
                 const SizedBox(height: 24),
               ],
@@ -306,4 +314,12 @@ class _AbsensiCheckListScreenState extends State<AbsensiCheckListScreen> {
       },
     );
   }
+}
+
+IconData _iconForInstrumen(String nama) {
+  final upper = nama.toUpperCase();
+  if (upper.contains('EDC')) return Icons.credit_card_rounded;
+  if (upper.contains('QRIS')) return Icons.qr_code_2_rounded;
+  if (upper.contains('TS')) return Icons.touch_app_rounded;
+  return Icons.devices_other_rounded; // fallback
 }

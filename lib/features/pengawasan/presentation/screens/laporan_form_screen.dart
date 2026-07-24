@@ -8,6 +8,7 @@ import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/keterangan_section_card.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/utils/watermark_utils.dart';
@@ -154,43 +155,46 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
               backgroundColor: AppColors.surface,
               elevation: 0,
             ),
-            body: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                // 1. Seksi Foto Bukti
-                PhotoSectionCard(
-                  photoKey: _photoKey,
-                  photo: state.rawPhoto,
-                  photoTakenAt: state.photoTakenAt,
-                  isFetchingLocation: state.isFetchingLocation,
-                  locationError: state.locationError,
-                  placeName: state.placeName,
-                  latitude: state.latitude,
-                  longitude: state.longitude,
-                  onPickPhoto: () =>
-                      context.read<PengawasanCubit>().pickAndSetPhoto(),
-                  onRemovePhoto: () =>
-                      context.read<PengawasanCubit>().removePhoto(),
-                ),
-                const SizedBox(height: 16),
+            body: Skeletonizer(
+              enabled: state.isLoadingJenisPelanggaran,
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // 1. Seksi Foto Bukti
+                  PhotoSectionCard(
+                    photoKey: _photoKey,
+                    photo: state.rawPhoto,
+                    photoTakenAt: state.photoTakenAt,
+                    isFetchingLocation: state.isFetchingLocation,
+                    locationError: state.locationError,
+                    placeName: state.placeName,
+                    latitude: state.latitude,
+                    longitude: state.longitude,
+                    onPickPhoto: () =>
+                        context.read<PengawasanCubit>().pickAndSetPhoto(),
+                    onRemovePhoto: () =>
+                        context.read<PengawasanCubit>().removePhoto(),
+                  ),
+                  const SizedBox(height: 16),
 
-                // 2. Seksi Jenis Pelanggaran (Sekarang bersih menggunakan widget baru!)
-                JenisPelanggaranSection(
-                  jenisPelanggaranList: state.jenisPelanggaran,
-                  selectedJenisPelId: state.request.jenisPel,
-                  onJenisPelanggaranSelected: (id) {
-                    context.read<PengawasanCubit>().setJenisPelanggaran(id);
-                  },
-                ),
-                const SizedBox(height: 16),
+                  // 2. Seksi Jenis Pelanggaran (Sekarang bersih menggunakan widget baru!)
+                  JenisPelanggaranSection(
+                    jenisPelanggaranList: state.jenisPelanggaran,
+                    selectedJenisPelId: state.request.jenisPel,
+                    onJenisPelanggaranSelected: (id) {
+                      context.read<PengawasanCubit>().setJenisPelanggaran(id);
+                    },
+                  ),
+                  const SizedBox(height: 16),
 
-                // 3. Seksi Keterangan
-                KeteranganSectionCard(
-                  keteranganController: _keteranganController,
-                  onChanged: context.read<PengawasanCubit>().setKeterangan,
-                ),
-                const SizedBox(height: 24),
-              ],
+                  // 3. Seksi Keterangan
+                  KeteranganSectionCard(
+                    keteranganController: _keteranganController,
+                    onChanged: context.read<PengawasanCubit>().setKeterangan,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(8.0),
