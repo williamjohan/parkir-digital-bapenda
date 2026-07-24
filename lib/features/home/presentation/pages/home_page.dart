@@ -224,6 +224,7 @@ class _HomePageState extends State<HomePage> {
                               role: state.role,
                               namaJukir: state.namaJukir,
                               nop: state.nop,
+                              nmOpd: state.nmOpd,
                               namalokasi: state.namaLokasi,
                               namaObjekPajak: state.namaOp,
                               status: state.status,

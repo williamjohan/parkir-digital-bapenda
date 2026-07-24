@@ -12,6 +12,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   username: _toString(json['username']),
   roleId: _toInt(json['roleId']),
   nop: _toString(json['nop']),
+  nmOpd: _toString(json['nmOpd']),
   namaObjekPajak: json['namaObjekPajak'] == null
       ? ''
       : _toString(json['namaObjekPajak']),
@@ -33,6 +34,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'username': instance.username,
   'namaUser': instance.namaUser,
   'roleId': instance.roleId,
+  'nmOpd': instance.nmOpd,
   'nop': instance.nop,
   'namaObjekPajak': instance.namaObjekPajak,
   'alamat': instance.alamat,

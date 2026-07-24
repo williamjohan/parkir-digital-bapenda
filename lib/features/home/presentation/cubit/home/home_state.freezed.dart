@@ -58,6 +58,7 @@ mixin _$HomeState {
   CheckInOutEntity get checkInOutData => throw _privateConstructorUsedError;
   bool get isOpUpToDate => throw _privateConstructorUsedError;
   RekapWilayahEntity? get rekapWilayah => throw _privateConstructorUsedError;
+  String? get nmOpd => throw _privateConstructorUsedError;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -109,6 +110,7 @@ abstract class $HomeStateCopyWith<$Res> {
     CheckInOutEntity checkInOutData,
     bool isOpUpToDate,
     RekapWilayahEntity? rekapWilayah,
+    String? nmOpd,
   });
 
   $OpCategoryEntityCopyWith<$Res> get digital;
@@ -169,6 +171,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? checkInOutData = null,
     Object? isOpUpToDate = null,
     Object? rekapWilayah = freezed,
+    Object? nmOpd = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -320,6 +323,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.rekapWilayah
                 : rekapWilayah // ignore: cast_nullable_to_non_nullable
                       as RekapWilayahEntity?,
+            nmOpd: freezed == nmOpd
+                ? _value.nmOpd
+                : nmOpd // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -413,6 +420,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     CheckInOutEntity checkInOutData,
     bool isOpUpToDate,
     RekapWilayahEntity? rekapWilayah,
+    String? nmOpd,
   });
 
   @override
@@ -476,6 +484,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? checkInOutData = null,
     Object? isOpUpToDate = null,
     Object? rekapWilayah = freezed,
+    Object? nmOpd = freezed,
   }) {
     return _then(
       _$HomeStateImpl(
@@ -627,6 +636,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.rekapWilayah
             : rekapWilayah // ignore: cast_nullable_to_non_nullable
                   as RekapWilayahEntity?,
+        nmOpd: freezed == nmOpd
+            ? _value.nmOpd
+            : nmOpd // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -721,6 +734,7 @@ class _$HomeStateImpl implements _HomeState {
     ),
     this.isOpUpToDate = true,
     this.rekapWilayah,
+    this.nmOpd = '',
   }) : _recentTransactions = recentTransactions,
        _sofParkirResults = sofParkirResults;
 
@@ -844,10 +858,13 @@ class _$HomeStateImpl implements _HomeState {
   final bool isOpUpToDate;
   @override
   final RekapWilayahEntity? rekapWilayah;
+  @override
+  @JsonKey()
+  final String? nmOpd;
 
   @override
   String toString() {
-    return 'HomeState(status: $status, recoveredSession: $recoveredSession, selectedVehicleForCapture: $selectedVehicleForCapture, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, shiftPengawasan: $shiftPengawasan, jenisPengawasan: $jenisPengawasan, checkInOutData: $checkInOutData, isOpUpToDate: $isOpUpToDate, rekapWilayah: $rekapWilayah)';
+    return 'HomeState(status: $status, recoveredSession: $recoveredSession, selectedVehicleForCapture: $selectedVehicleForCapture, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, shiftPengawasan: $shiftPengawasan, jenisPengawasan: $jenisPengawasan, checkInOutData: $checkInOutData, isOpUpToDate: $isOpUpToDate, rekapWilayah: $rekapWilayah, nmOpd: $nmOpd)';
   }
 
   @override
@@ -930,7 +947,8 @@ class _$HomeStateImpl implements _HomeState {
             (identical(other.isOpUpToDate, isOpUpToDate) ||
                 other.isOpUpToDate == isOpUpToDate) &&
             (identical(other.rekapWilayah, rekapWilayah) ||
-                other.rekapWilayah == rekapWilayah));
+                other.rekapWilayah == rekapWilayah) &&
+            (identical(other.nmOpd, nmOpd) || other.nmOpd == nmOpd));
   }
 
   @override
@@ -973,6 +991,7 @@ class _$HomeStateImpl implements _HomeState {
     checkInOutData,
     isOpUpToDate,
     rekapWilayah,
+    nmOpd,
   ]);
 
   /// Create a copy of HomeState
@@ -1023,6 +1042,7 @@ abstract class _HomeState implements HomeState {
     final CheckInOutEntity checkInOutData,
     final bool isOpUpToDate,
     final RekapWilayahEntity? rekapWilayah,
+    final String? nmOpd,
   }) = _$HomeStateImpl;
 
   @override
@@ -1099,6 +1119,8 @@ abstract class _HomeState implements HomeState {
   bool get isOpUpToDate;
   @override
   RekapWilayahEntity? get rekapWilayah;
+  @override
+  String? get nmOpd;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.

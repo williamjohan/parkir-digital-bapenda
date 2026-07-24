@@ -355,11 +355,13 @@ class HomeCubit extends Cubit<HomeState> {
     if (userRole == RoleLoginDigitalParkir.pengawas) {
       final activeNamaLokasi = _homeUsecase.getNamaObjekPengawasan();
       final activeNop = _homeUsecase.getNomorObjekPengawasan();
+      final nmOpd = profile?['nmOpd']?.toString() ?? '-';
       emit(
         state.copyWith(
           namaJukir: namaUserShort,
           nop: activeNop ?? '',
           namaOp: activeNamaLokasi ?? '',
+          nmOpd: nmOpd,
         ),
       );
       return;
