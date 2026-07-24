@@ -4,6 +4,7 @@ import '../../../../../core/services/camera/recovered_camera_session.dart';
 import '../../../../transaction_history/data/models/history_item_model.dart';
 import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
+import '../../../domain/entities/rekap_wilayah_entity.dart';
 
 part 'home_state.freezed.dart';
 
@@ -111,5 +112,6 @@ class HomeState with _$HomeState {
     )
     CheckInOutEntity checkInOutData,
     @Default(true) bool isOpUpToDate,
+    RekapWilayahEntity? rekapWilayah,
   }) = _HomeState;
 }

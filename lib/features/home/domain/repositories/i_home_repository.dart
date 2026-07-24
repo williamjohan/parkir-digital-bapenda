@@ -4,6 +4,7 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/errors/failure.dart';
 import '../entities/dashboard_summary_non_jukir_entity.dart';
 import '../entities/dashboard_summary_pengawas.entity.dart';
+import '../entities/rekap_wilayah_entity.dart';
 
 abstract class IHomeRepository {
   Future<Either<Failure, DashboardSummaryJukirEntity>>
@@ -28,4 +29,6 @@ abstract class IHomeRepository {
   ShiftPengawasan? getShiftObjekPengawasan();
   JenisPengawasan? getJenisObjekPengawasan();
   String? getNamaObjekPengawasan();
+
+  Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan();
 }

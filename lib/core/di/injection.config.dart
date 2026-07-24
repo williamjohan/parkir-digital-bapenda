@@ -383,13 +383,6 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i280.IUpdateRepository>(
     () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
   );
-  gh.lazySingleton<_i589.IAuthRepository>(
-    () => _i153.AuthRepositoryImpl(
-      gh<_i107.IAuthRemoteDataSource>(),
-      gh<_i1015.ISecureStorageManager>(),
-      gh<_i654.DatabaseHelper2>(),
-    ),
-  );
   gh.lazySingleton<_i463.IOpPengawasanRepository>(
     () => _i199.OpPengawasanRepositoryImpl(gh<_i978.OpPengawasanDatasource>()),
   );
@@ -438,17 +431,13 @@ Future<_i174.GetIt> init(
   gh.factory<_i1020.CheckUpdateCubit>(
     () => _i1020.CheckUpdateCubit(gh<_i506.CheckUpdateUseCase>()),
   );
-  gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
-    () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),
-  );
-  gh.lazySingleton<_i127.CheckDeviceUuidUseCase>(
-    () => _i127.CheckDeviceUuidUseCase(gh<_i589.IAuthRepository>()),
-  );
-  gh.lazySingleton<_i188.LoginUseCase>(
-    () => _i188.LoginUseCase(gh<_i589.IAuthRepository>()),
-  );
-  gh.lazySingleton<_i48.LogoutUseCase>(
-    () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
+  gh.lazySingleton<_i589.IAuthRepository>(
+    () => _i153.AuthRepositoryImpl(
+      gh<_i107.IAuthRemoteDataSource>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i654.DatabaseHelper2>(),
+      gh<_i632.AppPreferences>(),
+    ),
   );
   gh.lazySingleton<_i835.GetDataJukirUseCase>(
     () => _i835.GetDataJukirUseCase(gh<_i565.DataJukirRepository>()),
@@ -550,17 +539,21 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i708.AbsensiUsecase>(
     () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
   );
-  gh.lazySingleton<_i808.AppAuthCubit>(
-    () => _i808.AppAuthCubit(
-      gh<_i52.CheckAuthStatusUseCase>(),
-      gh<_i48.LogoutUseCase>(),
-      gh<_i996.ProfileUseCase>(),
-      gh<_i127.CheckDeviceUuidUseCase>(),
-    ),
-  );
   gh.factory<_i513.PaymentCubit>(
     () =>
         _i513.PaymentCubit(gh<_i718.QrisUsecase>(), gh<_i808.PaymentUseCase>()),
+  );
+  gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
+    () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i127.CheckDeviceUuidUseCase>(
+    () => _i127.CheckDeviceUuidUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i188.LoginUseCase>(
+    () => _i188.LoginUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i48.LogoutUseCase>(
+    () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
   );
   gh.factory<_i753.TransactionHistoryCubit>(
     () => _i753.TransactionHistoryCubit(
@@ -595,9 +588,6 @@ Future<_i174.GetIt> init(
   gh.factory<_i616.TransactionCubit>(
     () => _i616.TransactionCubit(gh<_i718.QrisUsecase>()),
   );
-  gh.factory<_i264.LoginCubit>(
-    () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
-  );
   gh.factory<_i875.AbsensiCubit>(
     () => _i875.AbsensiCubit(
       gh<_i708.AbsensiUsecase>(),
@@ -605,6 +595,17 @@ Future<_i174.GetIt> init(
       gh<_i988.IAppLocationService>(),
       gh<_i571.ICameraService>(),
     ),
+  );
+  gh.lazySingleton<_i808.AppAuthCubit>(
+    () => _i808.AppAuthCubit(
+      gh<_i52.CheckAuthStatusUseCase>(),
+      gh<_i48.LogoutUseCase>(),
+      gh<_i996.ProfileUseCase>(),
+      gh<_i127.CheckDeviceUuidUseCase>(),
+    ),
+  );
+  gh.factory<_i264.LoginCubit>(
+    () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
   );
   return getIt;
 }

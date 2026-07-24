@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
+import 'package:parkir_digital_bapenda/core/storage/app_preferences.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/storage/database_helper_2.dart';
@@ -16,11 +17,13 @@ class AuthRepositoryImpl implements IAuthRepository {
   final IAuthRemoteDataSource _remoteDataSource;
   final ISecureStorageManager _secureStorage;
   final DatabaseHelper2 _databaseHelper;
+  final AppPreferences _appPreferences;
 
   AuthRepositoryImpl(
     this._remoteDataSource,
     this._secureStorage,
     this._databaseHelper,
+    this._appPreferences,
   );
 
   @override
@@ -89,6 +92,7 @@ class AuthRepositoryImpl implements IAuthRepository {
       await _secureStorage.clearAllTokens();
       await _secureStorage.clearDeviceUUID();
       await _databaseHelper.clearNopList();
+      await _appPreferences.clearAllPreferences();
 
       return const Right(unit);
     } catch (e) {

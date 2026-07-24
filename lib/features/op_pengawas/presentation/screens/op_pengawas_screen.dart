@@ -163,7 +163,6 @@ class _OpPengawasScreenState extends State<OpPengawasScreen> {
                                         subTitle:
                                             'Pilih shift sebelum memulai pengawasan.',
                                         child: ShiftPengawasanBottomSheet(
-                                          // 🚀 CALLBACK TUNGGAL YANG ASINKRON
                                           onSelected: (shiftYangDipilih) async {
                                             // 1. SIMPAN DAN TUNGGU SAMPAI SELESAI 100%
                                             await context

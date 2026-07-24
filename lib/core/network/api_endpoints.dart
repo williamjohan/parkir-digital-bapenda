@@ -47,9 +47,12 @@ class ApiEndpoints {
   static const String listNopDev = '/api/mobile/parking/nop-list-dev';
   static const String pengawasLaporanList =
       '/api/mobile/parking/pengawas-pelaporan-list';
+  // static const String addPengawasanPelaporanDev =
+  //     '/api/mobile/parking/pengawas-pelaporan';
   static const String addPengawasanPelaporanDev =
       '/api/mobile/parking/pengawas-pelaporan';
-  static const String pengawasCheckIn = '/api/mobile/parking/pengawas-check-in-sp3';
+  static const String pengawasCheckIn =
+      '/api/mobile/parking/pengawas-check-in-sp3';
   static const String pengawasCheckOut =
       '/api/mobile/parking/pengawas-check-out-sp3';
   static const String pengawasMasterAlatDigital =
@@ -70,4 +73,6 @@ class ApiEndpoints {
       '/api/mobile/parking/pengawas-master-jenis-pelanggaran';
   static const String riwayatPengawasanSp3 =
       '/api/mobile/parking/history-pengawasan-list-sp3';
+  static const String homeScreenPengawas =
+      '/api/mobile/parking/home-screen-pengawas-sp3';
 }

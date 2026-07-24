@@ -1,8 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:parkir_digital_bapenda/core/di/injection.dart';
-import 'package:parkir_digital_bapenda/core/storage/app_preferences.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
 import 'package:parkir_digital_bapenda/features/transaction/domain/usecases/qris_usecase.dart';
@@ -63,8 +60,24 @@ class HomeCubit extends Cubit<HomeState> {
           activeNop.isEmpty ||
           activeShift == null ||
           activeJenis == null) {
-        emit(state.copyWith(status: HomeStatus.needsSelection));
-        return; //
+        final rekapResult = await _homeUsecase.getRekapWilayahKecamatan();
+
+        rekapResult.fold(
+          (failure) {
+            // Jika API rekap gagal, tetap tampilkan layar Zero State (tanpa card)
+            emit(state.copyWith(status: HomeStatus.needsSelection));
+          },
+          (rekapData) {
+            // Jika berhasil, kirim status needsSelection BERSAMAAN dengan data rekap
+            emit(
+              state.copyWith(
+                status: HomeStatus.needsSelection,
+                rekapWilayah: rekapData,
+              ),
+            );
+          },
+        );
+        return;
       }
 
       // 3. JIKA DATA LENGKAP: Simpan ke State agar UI merender Header Dashboard

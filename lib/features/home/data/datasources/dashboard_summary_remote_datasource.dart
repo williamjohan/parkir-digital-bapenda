@@ -8,6 +8,7 @@ import '../../../../core/utils/app_logger.dart';
 import '../models/dashboard_summary_jukir/dashboard_summary_jukir_model.dart';
 import '../models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
 import '../models/dashboard_summary_pengawas/dashboard_summary_pengawas_model.dart';
+import '../models/dashboard_summary_pengawas/rekap_wilayah_model.dart';
 import '../models/op_last_update/op_last_update_model.dart';
 
 abstract class ISummaryRemoteDataSource {
@@ -26,6 +27,7 @@ abstract class ISummaryRemoteDataSource {
   });
 
   Future<OpLastUpdateModel> getOpLastUpdate();
+  Future<RekapWilayahResponseModel> getRekapWilayah();
 }
 
 @LazySingleton(as: ISummaryRemoteDataSource)
@@ -214,6 +216,37 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
       throw ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<RekapWilayahResponseModel> getRekapWilayah() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.homeScreenPengawas);
+
+      final result = RekapWilayahResponseModel.fromJson(response.data);
+
+      if (result.isSuccess == true) {
+        return result;
+      } else {
+        throw ServerException(
+          statusCode: (result.statusCode != null && result.statusCode != 0)
+              ? result.statusCode!
+              : 500,
+          message: result.message?.isNotEmpty == true
+              ? result.message!
+              : 'Gagal mengambil data rekap Objek Pengawasan wilayah',
+        );
+      }
+    } on DioException catch (e) {
+      AppLogger.error('>>> [DIO ERROR] getRekapWilayah: ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error Get Rekap Wilayah', e, stackTrace);
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal saat memuat rekap wilayah.',
       );
     }
   }
