@@ -1,207 +1,262 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/tokens/app_colors.dart';
-import '../../domain/entities/jadwal_entity.dart';
+import 'package:parkir_digital_bapenda/features/jadwal/presentation/screens/jadwal_screen.dart';
+import '../../../../core/design_system/tokens/app_colors.dart'; // TODO: sesuaikan path, ambil AbsensiRecordDummy dari sini
 
-class JadwalCardItem extends StatelessWidget {
-  final JadwalEntity jadwal;
+class ObjekAbsensiCard extends StatelessWidget {
+  final AbsensiRecordDummy record;
 
-  const JadwalCardItem({super.key, required this.jadwal});
+  const ObjekAbsensiCard({super.key, required this.record});
+
+  bool get _sudahCheckOut => record.jamCheckOut != null;
 
   @override
   Widget build(BuildContext context) {
-    // 🚀 LOGIKA WARNA & TANGGAL (Sesuai Entity Baru)
-    final Color indicatorColor = jadwal.isLibur
-        ? AppColors.error
-        : AppColors.primary;
-
-    // Safety check agar tidak crash jika hariNama kosong/kurang dari 3 huruf
-    final String hariPendek = jadwal.hariNama.length >= 3
-        ? jadwal.hariNama.substring(0, 3).toUpperCase()
-        : jadwal.hariNama.toUpperCase();
-
-    // Format angka hari (contoh: '7' menjadi '07')
-    final String tanggal = jadwal.hari.toString().padLeft(2, '0');
-
     return Container(
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ==========================================
-            //  SEGMEN KIRI: Indikator Tanggal & Warna
-            // ==========================================
-            Container(
-              width: 70,
-              decoration: BoxDecoration(
-                color: indicatorColor.withValues(alpha: 0.1),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    hariPendek, // Menggunakan properti dari Entity
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: indicatorColor,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    tanggal, // Menggunakan properti dari Entity
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: indicatorColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // ==========================================
-            // 🚀 SEGMEN KANAN: Detail Jadwal & Kehadiran
-            // ==========================================
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: jadwal.isLibur
-                    ? _buildHolidayState()
-                    : _buildWorkingState(),
-              ),
-            ),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 14),
+          const Divider(color: AppColors.border, height: 1),
+          const SizedBox(height: 12),
+          _buildTimeRow(),
+          const SizedBox(height: 14),
+          const Divider(color: AppColors.border, height: 1),
+          const SizedBox(height: 12),
+          _buildInstrumenSection(),
+        ],
       ),
     );
   }
 
-  // UI State jika Hari Kerja
-  Widget _buildWorkingState() {
-    return Column(
+  Widget _buildHeader() {
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Baris Jadwal Shift
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildTimeBlock(
-              label: 'Jam Masuk',
-              time: jadwal.jamMasuk.isNotEmpty ? jadwal.jamMasuk : '--:--',
-              icon: Icons.login,
-              iconColor: AppColors.info,
-            ),
-            _buildTimeBlock(
-              label: 'Jam Pulang',
-              time: jadwal.jamPulang.isNotEmpty ? jadwal.jamPulang : '--:--',
-              icon: Icons.logout,
-              iconColor: AppColors.warning,
-            ),
-          ],
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.storefront_rounded,
+            size: 21,
+            color: AppColors.primary,
+          ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.0),
-          child: Divider(color: AppColors.border, height: 1),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                record.namaNop,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                  height: 1.25,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'NOP: ${record.nop}',
+                  style: const TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textSecondary,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        // Baris Aktual Absensi
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildTimeBlock(
-              label: 'Check In',
-              time: jadwal.jamCheckIn.isNotEmpty ? jadwal.jamCheckIn : '--:--',
-              isActual: true,
+        const SizedBox(width: 8),
+        _buildStatusBadge(),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge() {
+    final color = _sudahCheckOut ? AppColors.success : AppColors.warning;
+    final label = _sudahCheckOut ? 'Selesai' : 'Bertugas';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            _sudahCheckOut
+                ? Icons.check_circle_rounded
+                : Icons.access_time_filled_rounded,
+            size: 12,
+            color: color,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              color: color,
             ),
-            _buildTimeBlock(
-              label: 'Check Out',
-              time: jadwal.jamCheckOut.isNotEmpty
-                  ? jadwal.jamCheckOut
-                  : '--:--',
-              isActual: true,
-            ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildTimeBlock(
+            label: 'Check In',
+            time: record.jamCheckIn,
+            icon: Icons.login_rounded,
+            iconColor: AppColors.info,
+          ),
+        ),
+        Expanded(
+          child: _buildTimeBlock(
+            label: 'Check Out',
+            time: record.jamCheckOut ?? '--:--',
+            icon: Icons.logout_rounded,
+            iconColor: _sudahCheckOut ? AppColors.warning : AppColors.textHint,
+          ),
         ),
       ],
     );
   }
 
-  // UI State jika Hari Libur
-  Widget _buildHolidayState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.event_busy, color: AppColors.error, size: 28),
-          SizedBox(height: 8),
-          Text(
-            'HARI LIBUR',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.error,
-              letterSpacing: 1.2,
-            ),
-          ),
-          // Note: keteranganLibur dihapus karena tidak ada di JadwalEntity Anda.
-        ],
-      ),
-    );
-  }
-
-  // Micro-component untuk blok waktu
   Widget _buildTimeBlock({
     required String label,
     required String time,
-    IconData? icon,
-    Color? iconColor,
-    bool isActual = false,
+    required IconData icon,
+    required Color iconColor,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Row(
+        Icon(icon, size: 15, color: iconColor),
+        const SizedBox(width: 6),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (icon != null) ...[
-              Icon(icon, size: 14, color: iconColor),
-              const SizedBox(width: 4),
-            ],
             Text(
               label,
               style: const TextStyle(
-                fontSize: 11,
+                fontSize: 10.5,
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
+            Text(
+              time,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 2),
-        Text(
-          time,
+      ],
+    );
+  }
+
+  Widget _buildInstrumenSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'KETERSEDIAAN ALAT',
           style: TextStyle(
-            fontSize: isActual ? 14 : 13,
-            fontWeight: isActual ? FontWeight.bold : FontWeight.w600,
-            color: (isActual && time != '--:--')
-                ? AppColors.textPrimary
-                : AppColors.textHint,
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textSecondary,
+            letterSpacing: 0.6,
           ),
         ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            _buildInstrumenChip('EDC', record.edcTersedia),
+            const SizedBox(width: 8),
+            _buildInstrumenChip('QRIS', record.qrisTersedia),
+            const SizedBox(width: 8),
+            _buildInstrumenChip('TSpark', record.tsParkTersedia),
+          ],
+        ),
       ],
+    );
+  }
+
+  Widget _buildInstrumenChip(String label, bool tersedia) {
+    final color = tersedia ? AppColors.success : AppColors.textHint;
+
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: tersedia
+              ? AppColors.success.withValues(alpha: 0.08)
+              : AppColors.background,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: tersedia
+                ? AppColors.success.withValues(alpha: 0.3)
+                : AppColors.border,
+            width: 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              tersedia ? Icons.check_circle_rounded : Icons.cancel_rounded,
+              size: 15,
+              color: color,
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
