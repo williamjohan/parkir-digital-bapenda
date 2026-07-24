@@ -20,8 +20,9 @@ class MainAbsensiWidget extends StatelessWidget {
     final result = await context.pushNamed<bool>(
       AppRoutes.absensi,
       extra: {
-        'type': type, 'jenis': homeState.jenisPengawasan,
-        'nop': homeState.nop, 
+        'type': type,
+        'jenis': homeState.jenisPengawasan,
+        'nop': homeState.nop,
         'shift': homeState.shiftPengawasan,
       },
     );
@@ -29,7 +30,15 @@ class MainAbsensiWidget extends StatelessWidget {
     if (!context.mounted) return;
 
     if (result == true) {
-      // context.read<HomeCubit>().loadDashboardPengawas();
+      final cubit = context.read<HomeCubit>();
+      final currentState = cubit
+          .state; // BARU — baca ulang, bukan pakai homeState yang udah basi
+
+      cubit.loadDashboardPengawas(
+        nomorObjek: currentState.nop,
+        shift: currentState.shiftPengawasan!.id, 
+        jenis: currentState.jenisPengawasan!.id, 
+      );
     }
   }
 
