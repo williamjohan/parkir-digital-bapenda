@@ -6,7 +6,7 @@ import '../cubit/home/home_state.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   final String namaJukir;
-  final String nop;
+  final String? nop;
   final String? namaObjekPajak;
   final String? namalokasi;
   final RoleLoginDigitalParkir role;
@@ -19,7 +19,7 @@ class HomeHeaderWidget extends StatelessWidget {
     super.key,
     required this.status,
     required this.namaJukir,
-    required this.nop,
+    this.nop,
     this.namaObjekPajak,
     this.namalokasi,
     required this.role,

@@ -163,14 +163,25 @@ class _OpPengawasScreenState extends State<OpPengawasScreen> {
                                         subTitle:
                                             'Pilih shift sebelum memulai pengawasan.',
                                         child: ShiftPengawasanBottomSheet(
-                                          onChanged: (shift) {
-                                            context
+                                          // 🚀 CALLBACK TUNGGAL YANG ASINKRON
+                                          onSelected: (shiftYangDipilih) async {
+                                            // 1. SIMPAN DAN TUNGGU SAMPAI SELESAI 100%
+                                            await context
                                                 .read<OpPengawasanCubit>()
-                                                .changeShift(shift, item);
-                                          },
-                                          onSelected: () {
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
+                                                .changeShift(
+                                                  shiftYangDipilih,
+                                                  item,
+                                                );
+
+                                            // 2. TUTUP LAYAR DENGAN AMAN
+                                            if (context.mounted) {
+                                              Navigator.pop(
+                                                context,
+                                              ); // Menutup Bottom Sheet
+                                              Navigator.pop(
+                                                context,
+                                              ); // Menutup Layar Pencarian
+                                            }
                                           },
                                         ),
                                       );

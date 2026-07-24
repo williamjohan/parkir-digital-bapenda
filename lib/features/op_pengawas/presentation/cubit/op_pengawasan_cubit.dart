@@ -57,12 +57,6 @@ class OpPengawasanCubit extends Cubit<OpPengawasanState> {
     await _appPreferences.saveNamaObjekPengawasan(item.namaOp);
   }
 
-  Future<void> saveSelectedOp(OpPengawasEntity item) async {
-    await _appPreferences.saveJenisObjekPengawasan(item.jenisPengawasan);
-    await _appPreferences.saveNomorObjekPengawasan(item.nop);
-    await _appPreferences.saveNamaObjekPengawasan(item.namaOp);
-  }
-
   static final List<OpPengawasEntity> _dummySkeleton = List.generate(
     8,
     (_) => const OpPengawasEntity(
