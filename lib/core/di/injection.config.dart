@@ -329,6 +329,13 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i535.ISummaryRemoteDataSource>(
     () => _i535.SummaryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(
+      gh<_i535.ISummaryRemoteDataSource>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i632.AppPreferences>(),
+    ),
+  );
   gh.lazySingleton<_i1051.IUpdateRemoteDataSource>(
     () => _i1051.UpdateRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
@@ -367,12 +374,6 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i565.DataJukirRepository>(
     () => _i844.DataJukirRepositoryImpl(gh<_i920.DataJukirDatasource>()),
-  );
-  gh.lazySingleton<_i274.IHomeRepository>(
-    () => _i76.HomeRepositoryImpl(
-      gh<_i535.ISummaryRemoteDataSource>(),
-      gh<_i1015.ISecureStorageManager>(),
-    ),
   );
   gh.lazySingleton<_i972.INopRepository>(
     () => _i633.NopRepositoryImpl(gh<_i115.INopRemoteDataSource>()),
