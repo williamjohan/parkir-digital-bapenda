@@ -166,36 +166,66 @@ class ObjekAbsensiCard extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 19),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildVehicleChip(Icons.two_wheeler_rounded, jumlahMotor),
-            const SizedBox(width: 6),
-            _buildVehicleChip(Icons.directions_car_rounded, jumlahMobil),
+            Expanded(
+              child: _buildVehicleChip(
+                Icons.two_wheeler_rounded,
+                jumlahMotor,
+                'Motor',
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildVehicleChip(
+                Icons.directions_car_rounded,
+                jumlahMobil,
+                'Mobil',
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildVehicleChip(IconData icon, int? count) {
+  Widget _buildVehicleChip(IconData icon, int? count, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       decoration: BoxDecoration(
         color: AppColors.background,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 11, color: AppColors.textSecondary),
-          const SizedBox(width: 3),
+          Row(
+            children: [
+              Icon(icon, size: 16, color: AppColors.textSecondary),
+              const SizedBox(width: 5),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
           Text(
             count?.toString() ?? '-',
             style: const TextStyle(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w700,
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
+              height: 1,
             ),
           ),
         ],

@@ -36,13 +36,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> initialize() async {
     emit(state.copyWith(status: HomeStatus.loading));
-    if (kDebugMode) {
-      final debugPrefs = locator<AppPreferences>();
-      // Tanpa guard — sengaja selalu overwrite biar gampang gonta-ganti value pas testing
-      await debugPrefs.saveNomorObjekPengawasan('357813000190704537');
-      await debugPrefs.saveShiftObjekPengawasan(ShiftPengawasan.shift2);
-      await debugPrefs.saveJenisObjekPengawasan(JenisPengawasan.dishub);
-    }
 
     final recoveredSession = await _cameraService.recoverLostAndroidPhoto();
     if (recoveredSession != null && !isClosed) {
