@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import '../../../../home/domain/entities/dashboard_summary_pengawas.entity.dart';
-import 'instrument_badge_widget.dart';
 
 class CheckInCardWidget extends StatelessWidget {
   final bool isCheckedIn;

@@ -75,17 +75,31 @@ class CheckInOutModel with _$CheckInOutModel {
       _$CheckInOutModelFromJson(json);
 }
 
-@freezed
-class DetailAlatModel with _$DetailAlatModel {
-  const factory DetailAlatModel({
-    @Default(0) int alatId,
-    @Default('') String nama,
-    @Default(0) int jenis,
-    @JsonKey(name: 'isChecked') @Default(true) bool isBawa,
-  }) = _DetailAlatModel;
+@JsonSerializable()
+class DetailAlatModel {
+  @JsonKey(name: 'alatId', defaultValue: 0)
+  final int alatId;
+
+  @JsonKey(name: 'nama', defaultValue: '')
+  final String nama;
+
+  @JsonKey(name: 'jenis', defaultValue: 0)
+  final int jenis;
+
+  @JsonKey(name: 'isChecked', defaultValue: true)
+  final bool isBawa;
+
+  const DetailAlatModel({
+    this.alatId = 0,
+    this.nama = '',
+    this.jenis = 0,
+    this.isBawa = true,
+  });
 
   factory DetailAlatModel.fromJson(Map<String, dynamic> json) =>
       _$DetailAlatModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DetailAlatModelToJson(this);
 }
 
 // Extension khusus List untuk mapping mudah
@@ -156,6 +170,11 @@ extension CheckInOutModelExt on CheckInOutModel {
 
 extension DetailAlatModelExt on DetailAlatModel {
   DetailAlatEntity toEntity() {
-    return DetailAlatEntity(id: alatId, namaAlat: nama, isBawa: isBawa,  jenis: jenis,);
+    return DetailAlatEntity(
+      id: alatId,
+      namaAlat: nama,
+      isBawa: isBawa,
+      jenis: jenis,
+    );
   }
 }

@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
           final isPengawas = state.role == RoleLoginDigitalParkir.pengawas;
           final isBapendaPengawas =
               state.jenisPengawasan == JenisPengawasan.bapenda;
-          final shouldShowRekapKendaraan =
+          final shouldShowRekapPengawasan =
               !isPengawas || (isPengawas && isBapendaPengawas);
 
           return SafeArea(
@@ -394,42 +394,45 @@ class _HomePageState extends State<HomePage> {
                                           ),
 
                                           // CARD TOTAL PENDAPATAN
-                                          PbPermissionGate(
-                                            allowedRoles: const [
-                                              RoleLoginDigitalParkir.jukir,
-                                              RoleLoginDigitalParkir.wp,
-                                              RoleLoginDigitalParkir.bapenda,
-                                              RoleLoginDigitalParkir.pengawas,
-                                            ],
-                                            currentRole: state.role,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsetsGeometry.only(
-                                                    bottom: 16,
+                                          if (shouldShowRekapPengawasan)
+                                            PbPermissionGate(
+                                              allowedRoles: const [
+                                                RoleLoginDigitalParkir.jukir,
+                                                RoleLoginDigitalParkir.wp,
+                                                RoleLoginDigitalParkir.bapenda,
+                                                RoleLoginDigitalParkir.pengawas,
+                                              ],
+                                              currentRole: state.role,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsetsGeometry.only(
+                                                      bottom: 16,
+                                                    ),
+                                                child: Skeletonizer(
+                                                  enabled:
+                                                      state.status ==
+                                                      HomeStatus.loading,
+                                                  child: CardTotalPendapatan(
+                                                    totalKotor: state
+                                                        .totalPendapatan
+                                                        .toString(),
+                                                    persentasePajak:
+                                                        "10", // Dummy statis sesuai kesepakatan
+                                                    nominalPajak: state
+                                                        .totalPajak
+                                                        .toInt()
+                                                        .toString(), // Data Real API
+                                                    totalBersih: state
+                                                        .totalBersih
+                                                        .toInt()
+                                                        .toString(), // Data Real API
                                                   ),
-                                              child: Skeletonizer(
-                                                enabled:
-                                                    state.status ==
-                                                    HomeStatus.loading,
-                                                child: CardTotalPendapatan(
-                                                  totalKotor: state
-                                                      .totalPendapatan
-                                                      .toString(),
-                                                  persentasePajak:
-                                                      "10", // Dummy statis sesuai kesepakatan
-                                                  nominalPajak: state.totalPajak
-                                                      .toInt()
-                                                      .toString(), // Data Real API
-                                                  totalBersih: state.totalBersih
-                                                      .toInt()
-                                                      .toString(), // Data Real API
                                                 ),
                                               ),
                                             ),
-                                          ),
 
                                           // CARD REKAP KENDARAAN
-                                          if (shouldShowRekapKendaraan)
+                                          if (shouldShowRekapPengawasan)
                                             PbPermissionGate(
                                               allowedRoles: const [
                                                 RoleLoginDigitalParkir.jukir,

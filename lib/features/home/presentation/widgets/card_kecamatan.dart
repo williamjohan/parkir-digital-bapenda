@@ -80,7 +80,11 @@ class KecamatanStatCard extends StatelessWidget {
       color: AppColors.primary.withValues(alpha: 0.08),
       child: Row(
         children: [
-          Icon(Icons.location_on_rounded, size: 17, color: AppColors.primary),
+          const Icon(
+            Icons.location_on_rounded,
+            size: 17,
+            color: AppColors.primary,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

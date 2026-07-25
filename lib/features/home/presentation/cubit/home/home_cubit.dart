@@ -49,6 +49,7 @@ class HomeCubit extends Cubit<HomeState> {
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboarJukir();
       await _profileUseCase.getProfilePicturePath();
+      await _qrisUsecase.syncQris();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
       final activeNop = _homeUsecase.getNomorObjekPengawasan();
       final activeShift = _homeUsecase.getShiftObjekPengawasan();
@@ -99,10 +100,9 @@ class HomeCubit extends Cubit<HomeState> {
     } else {
       await _loadDashboardNonJukir();
       await checkOpLastUpdate();
+      await _qrisUsecase.syncQris();
       return;
     }
-
-    await _qrisUsecase.syncQris();
   }
 
   Future<void> loadDashboarJukir() async {

@@ -84,59 +84,66 @@ class HomeDrawer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
                 //Riwayat Transaksi atau Objek Pajak
-                ListTile(
-                  leading: Icon(
-                    role == RoleLoginDigitalParkir.jukir
-                        ? Icons.receipt_long
-                        : Icons.store,
-                    color: AppColors.textPrimary,
-                  ),
+                PbPermissionGate(
+                  allowedRoles: const [
+                    RoleLoginDigitalParkir.jukir,
+                    RoleLoginDigitalParkir.bapenda,
+                    RoleLoginDigitalParkir.wp,
+                  ],
+                  currentRole: role,
+                  child: ListTile(
+                    leading: Icon(
+                      role == RoleLoginDigitalParkir.jukir
+                          ? Icons.receipt_long
+                          : Icons.store,
+                      color: AppColors.textPrimary,
+                    ),
 
-                  title: Text(
-                    (role == RoleLoginDigitalParkir.jukir ||
-                            role == RoleLoginDigitalParkir.pengawas)
-                        ? 'Riwayat Transaksi'
-                        : 'Objek Pajak',
-                    style: AppTypography.bodyRegular,
-                  ),
+                    title: Text(
+                      (role == RoleLoginDigitalParkir.jukir)
+                          ? 'Riwayat Transaksi'
+                          : 'Objek Pajak',
+                      style: AppTypography.bodyRegular,
+                    ),
 
-                  onTap: () async {
-                    Navigator.pop(context);
+                    onTap: () async {
+                      Navigator.pop(context);
 
-                    if (role == RoleLoginDigitalParkir.jukir ||
-                        role == RoleLoginDigitalParkir.pengawas) {
-                      if (!context.mounted) return;
-
-                      if (role == RoleLoginDigitalParkir.pengawas &&
-                          status == HomeStatus.needsSelection) {
-                        PbStatusSnackbar.show(
-                          context,
-                          isError: true,
-                          message:
-                              "Mohon pilih Objek Pengawasan terlebih dahulu.",
-                        );
-                        return;
-                      }
-
-                      context.pushNamed(
-                        AppRoutes.history,
-                        extra: {'isFree': false, 'nop': nop},
-                      );
-                    } else {
-                      if (onCheckOpBeforeRouting != null) {
-                        final canNavigate = await onCheckOpBeforeRouting!();
-
+                      if (role == RoleLoginDigitalParkir.jukir ||
+                          role == RoleLoginDigitalParkir.pengawas) {
                         if (!context.mounted) return;
 
-                        if (!canNavigate) return;
-                      }
+                        if (role == RoleLoginDigitalParkir.pengawas &&
+                            status == HomeStatus.needsSelection) {
+                          PbStatusSnackbar.show(
+                            context,
+                            isError: true,
+                            message:
+                                "Mohon pilih Objek Pengawasan terlebih dahulu.",
+                          );
+                          return;
+                        }
 
-                      context.pushNamed(
-                        AppRoutes.searchObjekPajak,
-                        extra: {'role': role},
-                      );
-                    }
-                  },
+                        context.pushNamed(
+                          AppRoutes.history,
+                          extra: {'isFree': false, 'nop': nop},
+                        );
+                      } else {
+                        if (onCheckOpBeforeRouting != null) {
+                          final canNavigate = await onCheckOpBeforeRouting!();
+
+                          if (!context.mounted) return;
+
+                          if (!canNavigate) return;
+                        }
+
+                        context.pushNamed(
+                          AppRoutes.searchObjekPajak,
+                          extra: {'role': role},
+                        );
+                      }
+                    },
+                  ),
                 ),
 
                 //Pendapatan Digital
