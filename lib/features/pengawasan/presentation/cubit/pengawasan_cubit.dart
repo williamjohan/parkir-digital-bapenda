@@ -137,36 +137,62 @@ class PengawasanCubit extends Cubit<PengawasanState> {
 
   // Fungsi submit sekarang hanya butuh ketPel, sisanya membaca langsung dari state.request
   Future<void> submit(String ketPel) async {
-    // Gabungkan keterangan terbaru ke dalam request final
     final finalRequest = state.request.copyWith(ketPel: ketPel.trim());
 
-    // Validasi bisnis logic di Cubit
     if (finalRequest.buktiFoto == null) {
-      emit(state.copyWith(errorMessage: 'Foto bukti wajib diambil.'));
+      emit(
+        state.copyWith(
+          status: PengawasanStatus.failure, // 🆕
+          errorMessage: 'Foto bukti wajib diambil.',
+        ),
+      );
       return;
     }
 
     if (finalRequest.jenisPel == 0) {
-      emit(state.copyWith(errorMessage: 'Jenis pelanggaran wajib dipilih.'));
+      emit(
+        state.copyWith(
+          status: PengawasanStatus.failure, // 🆕
+          errorMessage: 'Jenis pelanggaran wajib dipilih.',
+        ),
+      );
       return;
     }
 
     if (finalRequest.ketPel.isEmpty) {
-      emit(state.copyWith(errorMessage: 'Keterangan wajib diisi.'));
+      emit(
+        state.copyWith(
+          status: PengawasanStatus.failure, // 🆕
+          errorMessage: 'Keterangan wajib diisi.',
+        ),
+      );
       return;
     }
 
-    emit(state.copyWith(isLoading: true, isSuccess: false, errorMessage: null));
+    emit(
+      state.copyWith(
+        status: PengawasanStatus.loading, // 🆕 sekalian, biar konsisten
+        isLoading: true,
+        isSuccess: false,
+        errorMessage: null,
+      ),
+    );
 
     try {
-      // Kirim objek request yang sudah lengkap
       await _addPengawasanUsecase(finalRequest);
       if (isClosed) return;
-      emit(state.copyWith(isLoading: false, isSuccess: true));
+      emit(
+        state.copyWith(
+          status: PengawasanStatus.success, // 🆕
+          isLoading: false,
+          isSuccess: true,
+        ),
+      );
     } catch (e) {
       if (isClosed) return;
       emit(
         state.copyWith(
+          status: PengawasanStatus.failure, // 🆕 — ini yang paling kritis
           isLoading: false,
           isSuccess: false,
           errorMessage: e.toString(),
