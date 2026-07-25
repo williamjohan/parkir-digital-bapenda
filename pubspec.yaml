@@ -5,7 +5,7 @@ publish_to: "none"
 # --- VERSIONING SYSTEM ---
 # Versi web bapenda (existing sideload): 1.6.0+18
 # Versi rilis perdana Play Store:
-version: 1.6.1+19
+version: 1.6.2+22
 
 environment:
   sdk: ^3.9.2
