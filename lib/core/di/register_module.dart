@@ -14,6 +14,7 @@ import '../network/env_config.dart';
 import '../network/resilent_dns_resolver.dart';
 import '../services/audio/audio_notification_service_impl.dart';
 import '../services/audio/i_audio_notification_service.dart';
+import '../services/deeplink_service.dart';
 import '../utils/app_logger.dart';
 
 @module
@@ -225,4 +226,7 @@ abstract class RegisterModule {
   @preResolve
   @lazySingleton
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
+
+  @lazySingleton
+  DeeplinkService get deeplinkService => DeeplinkService()..init();
 }

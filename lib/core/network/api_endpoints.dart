@@ -77,4 +77,9 @@ class ApiEndpoints {
       '/api/mobile/parking/history-pengawasan-list-sp3';
   static const String homeScreenPengawas =
       '/api/mobile/parking/home-screen-pengawas-sp3';
+
+  // Auth Kantorku SSO //
+  static const String kantorkuUrl = '/api/Kominfo/authorize-login-kantorku';
+
+  static const String loginWithKantorkuSession = '/api/Kominfo/mobile-login';
 }

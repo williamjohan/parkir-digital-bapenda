@@ -21,3 +21,11 @@ class LoginFailure extends LoginState {
   @override
   List<Object?> get props => [message];
 }
+
+class LoginSsoUrlReady extends LoginState {
+  final String url;
+  const LoginSsoUrlReady(this.url);
+
+  @override
+  List<Object> get props => [url];
+}

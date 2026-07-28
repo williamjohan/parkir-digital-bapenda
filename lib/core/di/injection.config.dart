@@ -36,7 +36,13 @@ import '../../features/auth/domain/usecases/check_auth_status_usecase.dart'
     as _i52;
 import '../../features/auth/domain/usecases/check_device_uuid_usecase.dart'
     as _i127;
+import '../../features/auth/domain/usecases/get_kantorku_sso_url_usecase.dart'
+    as _i845;
+import '../../features/auth/domain/usecases/get_sso_token_stream_usecase.dart'
+    as _i30;
 import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/auth/domain/usecases/login_with_sso_usecase.dart'
+    as _i497;
 import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
@@ -207,6 +213,7 @@ import '../network/network_cubit.dart' as _i11;
 import '../services/audio/i_audio_notification_service.dart' as _i827;
 import '../services/camera/camera_service.dart' as _i0;
 import '../services/camera/i_camera_service.dart' as _i571;
+import '../services/deeplink_service.dart' as _i960;
 import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
 import '../services/location/app_location_services_impl.dart' as _i35;
@@ -238,6 +245,7 @@ Future<_i174.GetIt> init(
     () => registerModule.prefs,
     preResolve: true,
   );
+  gh.lazySingleton<_i960.DeeplinkService>(() => registerModule.deeplinkService);
   gh.lazySingleton<_i654.DatabaseHelper2>(() => _i654.DatabaseHelper2());
   gh.lazySingleton<_i57.QrisSignalRDatasource>(
     () => _i57.QrisSignalRDatasource(),
@@ -431,16 +439,17 @@ Future<_i174.GetIt> init(
   gh.factory<_i1020.CheckUpdateCubit>(
     () => _i1020.CheckUpdateCubit(gh<_i506.CheckUpdateUseCase>()),
   );
+  gh.lazySingleton<_i835.GetDataJukirUseCase>(
+    () => _i835.GetDataJukirUseCase(gh<_i565.DataJukirRepository>()),
+  );
   gh.lazySingleton<_i589.IAuthRepository>(
     () => _i153.AuthRepositoryImpl(
       gh<_i107.IAuthRemoteDataSource>(),
       gh<_i1015.ISecureStorageManager>(),
       gh<_i654.DatabaseHelper2>(),
       gh<_i632.AppPreferences>(),
+      gh<_i960.DeeplinkService>(),
     ),
-  );
-  gh.lazySingleton<_i835.GetDataJukirUseCase>(
-    () => _i835.GetDataJukirUseCase(gh<_i565.DataJukirRepository>()),
   );
   gh.lazySingleton<_i996.ProfileUseCase>(
     () => _i996.ProfileUseCase(gh<_i879.IProfileRepository>()),
@@ -468,6 +477,15 @@ Future<_i174.GetIt> init(
       gh<_i502.IQrisRemoteDataSource>(),
       gh<_i1015.ISecureStorageManager>(),
     ),
+  );
+  gh.lazySingleton<_i845.GetKantorkuSsoUrlUseCase>(
+    () => _i845.GetKantorkuSsoUrlUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i30.GetSsoTokenStreamUseCase>(
+    () => _i30.GetSsoTokenStreamUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i497.LoginWithSsoUseCase>(
+    () => _i497.LoginWithSsoUseCase(gh<_i589.IAuthRepository>()),
   );
   gh.factory<_i425.GetRealisasiSeluruhOpUseCase>(
     () => _i425.GetRealisasiSeluruhOpUseCase(gh<_i534.RealisasiRepository>()),
@@ -605,7 +623,13 @@ Future<_i174.GetIt> init(
     ),
   );
   gh.factory<_i264.LoginCubit>(
-    () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
+    () => _i264.LoginCubit(
+      gh<_i188.LoginUseCase>(),
+      gh<_i808.AppAuthCubit>(),
+      gh<_i845.GetKantorkuSsoUrlUseCase>(),
+      gh<_i30.GetSsoTokenStreamUseCase>(),
+      gh<_i497.LoginWithSsoUseCase>(),
+    ),
   );
   return getIt;
 }

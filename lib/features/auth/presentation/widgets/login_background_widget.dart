@@ -5,6 +5,7 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 class LoginBackgroundWidget extends StatelessWidget {
   final VoidCallback onLoginPressed;
   final VoidCallback onRegisterPressed;
+  final VoidCallback onLoginKantorkuPressed;
   final bool isHidden;
 
   const LoginBackgroundWidget({
@@ -12,6 +13,7 @@ class LoginBackgroundWidget extends StatelessWidget {
     required this.onLoginPressed,
     required this.onRegisterPressed,
     required this.isHidden,
+    required this.onLoginKantorkuPressed,
   });
 
   @override
@@ -129,6 +131,32 @@ class LoginBackgroundWidget extends StatelessWidget {
                               ),
 
                               const SizedBox(height: 15),
+
+                              SizedBox(
+                                width: double.infinity,
+                                height: 55,
+                                child: ElevatedButton(
+                                  onPressed: isHidden
+                                      ? null
+                                      : onLoginKantorkuPressed,
+
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryLight,
+                                    foregroundColor: AppColors.background,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 5,
+                                  ),
+                                  child: const Text(
+                                    "Masuk dengan Kantorku",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),

@@ -12,4 +12,11 @@ abstract class IAuthRepository {
   /// Mengecek apakah sesi Jukir masih aktif di HP ini
   Future<bool> checkAuthStatus();
   Future<bool> checkDeviceUuid();
+
+  /// Login dengan Kantorku
+  Future<Either<Failure, String>> getKantorkuSsoUrl();
+  Stream<String> get ssoTokenStream;
+
+  /// Login dengan SessionId dari kantorku
+  Future<Either<Failure, void>> loginWithKantorkuSession(String sessionId);
 }

@@ -12,6 +12,8 @@ import '../models/auth_response_model.dart';
 abstract class IAuthRemoteDataSource {
   Future<AuthResponseModel> login(String username, String password);
   Future<bool> checkDeviceUuid();
+  Future<String> getKantorkuSsoUrl();
+  Future<AuthResponseModel> loginWithKantorkuSession(String sessionId);
 }
 
 @LazySingleton(as: IAuthRemoteDataSource)
@@ -99,5 +101,79 @@ class AuthRemoteDataSourceImpl implements IAuthRemoteDataSource {
     );
 
     return response.data['data']['isUuidPerangkat'] == true;
+  }
+
+  @override
+  Future<String> getKantorkuSsoUrl() async {
+    try {
+      // 1. Hit endpoint authorize-login-kominfo
+      final response = await _dio.get(ApiEndpoints.kantorkuUrl);
+
+      if (response.data['success'] == true) {
+        final data = response.data['data'];
+
+        final baseUrl = data['url'];
+        final clientId = data['clientId'];
+        final redirectUri = data['redirectUri'];
+        final responseType = data['responseType'];
+
+        // 2. Concat (Rangkai) URL berdasarkan parameter respons
+        final ssoUrl =
+            '$baseUrl?client_id=$clientId&redirect_uri=$redirectUri&response_type=$responseType&scope=';
+
+        return ssoUrl;
+      } else {
+        throw ServerException(
+          statusCode: 500,
+          message: response.data['message'] ?? 'Gagal memuat URL SSO',
+        );
+      }
+    } on DioException catch (e) {
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error di getKantorkuSsoUrl', e, stackTrace);
+      throw ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<AuthResponseModel> loginWithKantorkuSession(String sessionId) async {
+    try {
+      AppLogger.debug("Menukarkan Session ID ke Backend: $sessionId");
+
+      // Menembak endpoint baru menggunakan query parameter session
+      final response = await _dio.get(
+        ApiEndpoints.loginWithKantorkuSession,
+        queryParameters: {'session': sessionId},
+      );
+
+      final responseData = response.data;
+
+      // Asumsi: Struktur balasan dari BE sama persis dengan login() reguler
+      if (responseData['isSuccess'] == true || responseData['status'] == true) {
+        final beData = responseData['data'] ?? responseData;
+        return AuthResponseModel.fromJson(beData);
+      } else {
+        throw AuthException(
+          message:
+              responseData['message'] ?? 'Gagal memvalidasi sesi SSO Kantorku.',
+        );
+      }
+    } on DioException catch (e) {
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Internal Error di loginWithKantorkuSession',
+        e,
+        stackTrace,
+      );
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal saat penukaran sesi.',
+      );
+    }
   }
 }
