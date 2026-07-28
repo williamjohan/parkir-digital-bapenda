@@ -138,7 +138,10 @@ class _LoginFormSheetWidgetState extends State<LoginFormSheetWidget> {
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () => widget.onLogin(_rememberMe),
+                  onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    widget.onLogin(_rememberMe);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,

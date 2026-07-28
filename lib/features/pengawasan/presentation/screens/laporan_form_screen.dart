@@ -45,6 +45,7 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
   }
 
   Future<void> _submitLaporan() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final cubit = context.read<PengawasanCubit>();
     final state = cubit.state;
 
@@ -155,44 +156,51 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
               backgroundColor: AppColors.surface,
               elevation: 0,
             ),
-            body: Skeletonizer(
-              enabled: state.isLoadingJenisPelanggaran,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  // 1. Seksi Foto Bukti
-                  PhotoSectionCard(
-                    photoKey: _photoKey,
-                    photo: state.rawPhoto,
-                    photoTakenAt: state.photoTakenAt,
-                    isFetchingLocation: state.isFetchingLocation,
-                    locationError: state.locationError,
-                    placeName: state.placeName,
-                    latitude: state.latitude,
-                    longitude: state.longitude,
-                    onPickPhoto: () =>
-                        context.read<PengawasanCubit>().pickAndSetPhoto(),
-                    onRemovePhoto: () =>
-                        context.read<PengawasanCubit>().removePhoto(),
-                  ),
-                  const SizedBox(height: 16),
+            body: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              child: Skeletonizer(
+                enabled: state.isLoadingJenisPelanggaran,
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    // 1. Seksi Foto Bukti
+                    PhotoSectionCard(
+                      photoKey: _photoKey,
+                      photo: state.rawPhoto,
+                      photoTakenAt: state.photoTakenAt,
+                      isFetchingLocation: state.isFetchingLocation,
+                      locationError: state.locationError,
+                      placeName: state.placeName,
+                      latitude: state.latitude,
+                      longitude: state.longitude,
+                      onPickPhoto: () =>
+                          context.read<PengawasanCubit>().pickAndSetPhoto(),
+                      onRemovePhoto: () =>
+                          context.read<PengawasanCubit>().removePhoto(),
+                    ),
+                    const SizedBox(height: 16),
 
-                  // 2. Seksi Jenis Pelanggaran (Sekarang bersih menggunakan widget baru!)
-                  JenisPelanggaranSection(
-                    jenisPelanggaranList: state.jenisPelanggaran,
-                    selectedJenisPelId: state.request.jenisPel,
-                    onJenisPelanggaranSelected: (id) {
-                      context.read<PengawasanCubit>().setJenisPelanggaran(id);
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                    // 2. Seksi Jenis Pelanggaran (Sekarang bersih menggunakan widget baru!)
+                    JenisPelanggaranSection(
+                      jenisPelanggaranList: state.jenisPelanggaran,
+                      selectedJenisPelId: state.request.jenisPel,
+                      onJenisPelanggaranSelected: (id) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        context.read<PengawasanCubit>().setJenisPelanggaran(id);
+                      },
+                    ),
+                    const SizedBox(height: 16),
 
-                  // 3. Seksi Keterangan
-                  KeteranganSectionCard(
-                    keteranganController: _keteranganController,
-                  ),
-                  const SizedBox(height: 24),
-                ],
+                    // 3. Seksi Keterangan
+                    KeteranganSectionCard(
+                      keteranganController: _keteranganController,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
             bottomNavigationBar: Padding(

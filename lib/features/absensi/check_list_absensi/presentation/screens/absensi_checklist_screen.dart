@@ -73,6 +73,7 @@ class _AbsensiCheckListScreenState extends State<AbsensiCheckListScreen> {
   Future<void> _submitAbsensi() async {
     final cubit = context.read<AbsensiCubit>();
     final state = cubit.state;
+    FocusManager.instance.primaryFocus?.unfocus();
 
     // Pre-validation di sisi UI
     if (state.rawPhoto == null) {
@@ -186,76 +187,85 @@ class _AbsensiCheckListScreenState extends State<AbsensiCheckListScreen> {
               foregroundColor: Colors.black,
               iconTheme: const IconThemeData(color: AppColors.primary),
             ),
-            body: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                AbsenHeaderWidget(
-                  title: _title,
-                  icon: _headerIcon,
-                  accentColor: _accentColor,
-                ),
-                const SizedBox(height: 16),
-                AbsenPhotoWidget(
-                  state: state,
-                  photoKey: _photoKey,
-                  onTap: () {
-                    context.read<AbsensiCubit>().takePhoto(
-                      isCheckIn: _isCheckIn,
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                FormSectionCard(
-                  title: "Data Kendaraan",
-                  icon: Icons.directions_car_rounded,
-                  child: Column(
-                    children: [
-                      AbsenNumberField(
-                        controller: _motorController,
-                        label: "Jumlah Motor di Lapangan",
-                        icon: Icons.two_wheeler_rounded,
-                        onChanged: context.read<AbsensiCubit>().setMotorText,
-                      ),
-                      const SizedBox(height: 12),
-                      AbsenNumberField(
-                        controller: _mobilController,
-                        label: "Jumlah Mobil di Lapangan",
-                        icon: Icons.directions_car_rounded,
-                        onChanged: context.read<AbsensiCubit>().setMobilText,
-                      ),
-                    ],
+            body: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  AbsenHeaderWidget(
+                    title: _title,
+                    icon: _headerIcon,
+                    accentColor: _accentColor,
                   ),
-                ),
-                const SizedBox(height: 16),
-                FormSectionCard(
-                  title: "Status Instrumen",
-                  icon: Icons.devices_rounded,
-                  child: state.isLoadingInstruments
-                      ? const Center(child: CircularProgressIndicator())
-                      : state.filteredInstruments.isEmpty
-                      ? const Text("Tidak ada data instrumen")
-                      : Column(
-                          children: [
-                            for (final instrumen
-                                in state.filteredInstruments) ...[
-                              InstrumentToggleWidget(
-                                label: instrumen.nama,
-                                icon: _iconForInstrumen(instrumen.nama),
-                                isActive: state.selectedInstrumentIds.contains(
-                                  instrumen.id,
-                                ),
-                                onChanged: (_) => context
-                                    .read<AbsensiCubit>()
-                                    .toggleInstrument(instrumen.id),
-                              ),
-                              if (instrumen != state.filteredInstruments.last)
-                                const SizedBox(height: 8),
-                            ],
-                          ],
+                  const SizedBox(height: 16),
+                  AbsenPhotoWidget(
+                    state: state,
+                    photoKey: _photoKey,
+                    onTap: () {
+                      context.read<AbsensiCubit>().takePhoto(
+                        isCheckIn: _isCheckIn,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  FormSectionCard(
+                    title: "Data Kendaraan",
+                    icon: Icons.directions_car_rounded,
+                    child: Column(
+                      children: [
+                        AbsenNumberField(
+                          controller: _motorController,
+                          label: "Jumlah Motor di Lapangan",
+                          icon: Icons.two_wheeler_rounded,
+                          onChanged: context.read<AbsensiCubit>().setMotorText,
                         ),
-                ),
-                const SizedBox(height: 24),
-              ],
+                        const SizedBox(height: 12),
+                        AbsenNumberField(
+                          controller: _mobilController,
+                          label: "Jumlah Mobil di Lapangan",
+                          icon: Icons.directions_car_rounded,
+                          onChanged: context.read<AbsensiCubit>().setMobilText,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  FormSectionCard(
+                    title: "Status Instrumen",
+                    icon: Icons.devices_rounded,
+                    child: state.isLoadingInstruments
+                        ? const Center(child: CircularProgressIndicator())
+                        : state.filteredInstruments.isEmpty
+                        ? const Text("Tidak ada data instrumen")
+                        : Column(
+                            children: [
+                              for (final instrumen
+                                  in state.filteredInstruments) ...[
+                                InstrumentToggleWidget(
+                                  label: instrumen.nama,
+                                  icon: _iconForInstrumen(instrumen.nama),
+                                  isActive: state.selectedInstrumentIds
+                                      .contains(instrumen.id),
+                                  onChanged: (_) {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    context
+                                        .read<AbsensiCubit>()
+                                        .toggleInstrument(instrumen.id);
+                                  },
+                                ),
+                                if (instrumen != state.filteredInstruments.last)
+                                  const SizedBox(height: 8),
+                              ],
+                            ],
+                          ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
             bottomNavigationBar: Container(
               color: Colors.white,
