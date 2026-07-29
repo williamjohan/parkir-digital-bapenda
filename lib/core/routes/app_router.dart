@@ -163,8 +163,8 @@ class AppRouter {
               type = args['type'] as ShiftFormType? ?? ShiftFormType.checkIn;
               recoveredFile = args['file'] as File?;
               jenis = args['jenis'] as JenisPengawasan?;
-              nop = args['nop'] as String?; // 🆕
-              shift = args['shift'] as ShiftPengawasan?; // 🆕
+              nop = args['nop'] as String?;
+              shift = args['shift'] as ShiftPengawasan?;
             }
 
             return BlocProvider(

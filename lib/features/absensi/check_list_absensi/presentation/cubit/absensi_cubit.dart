@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
@@ -31,6 +32,16 @@ class AbsensiCubit extends Cubit<AbsensiState> {
     String? nop, // 🆕
     ShiftPengawasan? shift, // 🆕
   }) async {
+    // 1. Tanamkan Custom Keys di awal inisialisasi
+    FirebaseCrashlytics.instance.setCustomKey(
+      'audit_nop',
+      nop ?? 'NULL_OR_EMPTY',
+    );
+    FirebaseCrashlytics.instance.setCustomKey('audit_shift', shift?.id ?? -1);
+    FirebaseCrashlytics.instance.log(
+      'AbsensiCubit: initPage dipanggil dengan NOP: "$nop"',
+    );
+
     emit(
       state.copyWith(
         jenis: jenis,
@@ -105,7 +116,12 @@ class AbsensiCubit extends Cubit<AbsensiState> {
           ? CameraModuleIntent.absensiCheckIn
           : CameraModuleIntent.absensiCheckOut;
 
-      final file = await _cameraService.takePhoto(intent: intentTag);
+      final file = await _cameraService.takePhoto(
+        intent: intentTag,
+        nop: state.nop,
+        jenis: state.jenis,
+        shift: state.shift,
+      );
       if (file == null) return;
 
       emit(state.copyWith(rawPhoto: file, photoTakenAt: DateTime.now()));
@@ -155,6 +171,7 @@ class AbsensiCubit extends Cubit<AbsensiState> {
   }
 
   // --- SUBMIT ---
+  // --- SUBMIT ---
   Future<void> submitAbsensi({required bool isCheckIn}) async {
     if (state.watermarkedPhoto == null) {
       emit(
@@ -178,6 +195,11 @@ class AbsensiCubit extends Cubit<AbsensiState> {
 
     emit(state.copyWith(status: AbsensiStatus.loading, errorMessage: ''));
 
+    // 🚀 [AUDIT CRASHLYTICS] 2. Tinggalkan jejak log sebelum menembak API
+    FirebaseCrashlytics.instance.log(
+      'AbsensiCubit: Memulai eksekusi submitAbsensi. isCheckIn: $isCheckIn, NOP dari state: "${state.nop}", Shift ID: ${state.shift?.id}',
+    );
+
     final entity = AbsensiEntity(
       latitude: state.latitude!,
       longitude: state.longitude!,
@@ -195,6 +217,11 @@ class AbsensiCubit extends Cubit<AbsensiState> {
     result.fold(
       (failure) {
         if (!isClosed) {
+          // 🚀 [AUDIT CRASHLYTICS] 3. (Opsional) Log jika API gagal tapi tidak crash
+          FirebaseCrashlytics.instance.log(
+            'AbsensiCubit: Gagal submit API - ${failure.message}',
+          );
+
           emit(
             state.copyWith(
               status: AbsensiStatus.failure,

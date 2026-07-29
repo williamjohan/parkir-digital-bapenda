@@ -53,6 +53,7 @@ class _AbsensiCheckListScreenState extends State<AbsensiCheckListScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint('>>> [AUDIT NOP] NOP dari Router: "${widget.nop}"');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AbsensiCubit>().initPage(
         recoveredPhoto: widget.recoveredPhoto,

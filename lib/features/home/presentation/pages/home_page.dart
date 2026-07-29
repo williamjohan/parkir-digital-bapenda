@@ -74,14 +74,26 @@ class _HomePageState extends State<HomePage> {
         case CameraModuleIntent.absensiCheckIn:
           context.push(
             AppRoutes.absensi,
-            extra: {'type': ShiftFormType.checkIn, 'file': session.file},
+            extra: {
+              'type': ShiftFormType.checkIn,
+              'file': session.file,
+              'nop': session.nop,
+              'jenis': session.jenis,
+              'shift': session.shift,
+            },
           );
           break;
 
         case CameraModuleIntent.absensiCheckOut:
           context.push(
             AppRoutes.absensi,
-            extra: {'type': ShiftFormType.checkOut, 'file': session.file},
+            extra: {
+              'type': ShiftFormType.checkOut,
+              'file': session.file,
+              'nop': session.nop,
+              'jenis': session.jenis,
+              'shift': session.shift,
+            },
           );
           break;
 
