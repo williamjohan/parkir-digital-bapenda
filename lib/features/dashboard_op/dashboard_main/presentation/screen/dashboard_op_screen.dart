@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_income_summary.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_informasi_operasional.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/card_tax_surveilance.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/dashboard_main/presentation/widgets/header_dashboard_op_widget.dart';
+import 'package:parkir_digital_bapenda/features/dashboard_op/detail_tax_surveillance_op/presentation/screen/detail_tax_surveillance_screen.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../../core/design_system/tokens/app_typography.dart';
@@ -38,7 +41,9 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
         elevation: 0,
         foregroundColor: Colors.black,
         iconTheme: const IconThemeData(color: AppColors.primary),
@@ -52,7 +57,6 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                 enabled: state.loading,
                 child: HeaderDashboardOp(
                   item: widget.item,
-                  isDigital: state.data?.isDigital ?? false,
                   onPressedLihatDaftarJukir: () {
                     context.pushNamed(
                       AppRoutes.dataJukir,
@@ -70,6 +74,20 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                       children: [
                         Skeletonizer(
                           enabled: state.loading,
+                          child: CardInformasiOperasional(
+                            jamOperasional:
+                                state.data?.jadwalOperasional ??
+                                "--:-- - --:--",
+                            tarifMotor: state.data?.tarifMotor ?? 0,
+                            tarifMobil: state.data?.tarifMobil ?? 0,
+                            hasCctv: state.data?.hasCctv ?? false,
+                            hasEdc: state.data?.hasEdc ?? false,
+                            hasQrisRompi: state.data?.hasQrisRompi ?? false,
+                            hasTs: state.data?.hasTs ?? false,
+                          ),
+                        ),
+                        Skeletonizer(
+                          enabled: state.loading,
                           child: DashboardIncomeSummary(
                             totalPendapatan:
                                 state.data?.pendapatanHariIniKotor ?? 0,
@@ -79,6 +97,7 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                                 0,
                           ),
                         ),
+
                         Skeletonizer(
                           enabled: state.loading,
                           child: CardRiwayatPendapatanOp(
@@ -98,6 +117,43 @@ class _DashboardOpScreenState extends State<DashboardOpScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
+                        // if (state.showTSCard) ...[
+                          Skeletonizer(
+                            enabled: state.loading,
+                            child: CardTaxSurveillance(
+                              month: state.data?.taxSurveillance?.bulan ?? "-",
+                              totalNominal:
+                                  state
+                                      .data
+                                      ?.taxSurveillance
+                                      ?.totalRealisasiBulan ??
+                                  "0",
+                              nominalMotor:
+                                  state
+                                      .data
+                                      ?.taxSurveillance
+                                      ?.totalRealisasiMotor ??
+                                  "0",
+                              nominalMobil:
+                                  state
+                                      .data
+                                      ?.taxSurveillance
+                                      ?.totalRealisasiMobil ??
+                                  "0",
+                              onLihatSemua: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => DetailTaxSurveillanceScreen(
+                                      nop: widget.item['nop'],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        //],
                         Skeletonizer(
                           enabled: state.loading,
                           child: CardRealisasiOp(

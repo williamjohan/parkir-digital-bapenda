@@ -16,6 +16,7 @@ class AuthMapper {
             "nmCamat": e.nmCamat,
             "kdLurah": e.kdLurah,
             "nmLurah": e.nmLurah,
+            "statusDigitalisasi": e.statusDigitalisasi,
           },
         )
         .toList();

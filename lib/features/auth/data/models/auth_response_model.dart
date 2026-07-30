@@ -13,6 +13,8 @@ class AuthResponseModel with _$AuthResponseModel {
     @Default(0) int pungutTarif,
     @Default([]) List<NopModel> nopList,
     OpPengawasAuthModel? opPengawas,
+    @Default('') String lastUpdateOp,
+    @Default('') String nmOpd,
   }) = _AuthResponseModel;
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -32,6 +34,7 @@ class NopModel with _$NopModel {
     @Default('') String nmCamat,
     @Default('') String kdLurah,
     @Default('') String nmLurah,
+    @Default('') String statusDigitalisasi,
   }) = _NopModel;
 
   factory NopModel.fromJson(Map<String, dynamic> json) =>

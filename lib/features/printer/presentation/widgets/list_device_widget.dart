@@ -1,106 +1,197 @@
-import 'package:app_settings/app_settings.dart' as external_settings;
-import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/tokens/app_colors.dart';
+import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
+import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
+import 'device_empty_view.dart';
+import 'device_item_card.dart';
+import 'printer_header.dart';
 
 class ListDeviceWidget extends StatelessWidget {
-  final List<BluetoothDevice> devices;
-  final BluetoothDevice? connectedDevice;
+  final List<BtcDevice> devices;
+  final List<BtcDevice> discoveredDevices;
+  final BtcDevice? connectedDevice;
+  final String? savedMacAddress;
   final bool isLoading;
-  final Function(BluetoothDevice) onConnect;
+  final bool isScanning;
+  final Function(BtcDevice) onConnect;
 
   const ListDeviceWidget({
     super.key,
     required this.devices,
+    this.discoveredDevices = const [],
     required this.connectedDevice,
+    this.savedMacAddress,
     required this.isLoading,
+    this.isScanning = false,
     required this.onConnect,
   });
 
+  static const int _collapseThreshold = 4;
+
   @override
   Widget build(BuildContext context) {
-    return devices.isEmpty
-        ? SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: _buildEmptyState(context),
-            ),
-          )
-        : ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: devices.length,
-            itemBuilder: (context, index) {
-              final device = devices[index];
-              final isThisConnected =
-                  connectedDevice?.address == device.address;
+    // 🚀 1. FILTER SEGMEN 1: HANYA printer resmi yang tersimpan di database aplikasi
+    final appTrustedDevices = devices.where((d) {
+      return d.address == savedMacAddress;
+    }).toList();
 
-              return ListTile(
-                leading: Icon(
-                  Icons.bluetooth,
-                  color: isThisConnected ? AppColors.success : Colors.grey,
+    // 🚀 2. FILTER SEGMEN 2: Bluetooth OS lain (TWS, dll) + Hasil scan realtime baru
+    final otherAvailableDevices = [
+      ...devices.where((d) => d.address != savedMacAddress),
+      ...discoveredDevices,
+    ];
+
+    // 3. Tangani Empty State Total
+    if (appTrustedDevices.isEmpty &&
+        otherAvailableDevices.isEmpty &&
+        !isScanning) {
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: const DeviceEmptyState(),
+        ),
+      );
+    }
+
+    final hasManyPaired = appTrustedDevices.length > _collapseThreshold;
+    final isConnectedInPaired =
+        connectedDevice != null &&
+        appTrustedDevices.any((d) => d.address == connectedDevice!.address);
+
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(bottom: 32),
+      children: [
+        // =====================================================================
+        // SEGMEN 1: PERANGKAT TERSIMPAN (APP TRUSTED ONLY)
+        // =====================================================================
+        if (appTrustedDevices.isNotEmpty)
+          if (hasManyPaired)
+            Theme(
+              data: Theme.of(
+                context,
+              ).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                initiallyExpanded: isConnectedInPaired,
+                tilePadding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                childrenPadding: EdgeInsets.zero,
+                title: GovernmentSectionHeader(
+                  title: 'Printer Tersimpan',
+                  count: appTrustedDevices.length, // 🚀 GUNAKAN APP TRUSTED
+                  icon: Icons.bookmark_added_rounded,
+                  color: const Color(0xFF1E3A8A), // Slate Blue
                 ),
-                title: Text(
-                  device.name ?? 'Unknown Device',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(device.address ?? ''),
-                trailing: isThisConnected
-                    ? const Icon(Icons.check_circle, color: AppColors.success)
-                    : ElevatedButton(
-                        onPressed: isLoading ? null : () => onConnect(device),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text('Konek'),
+                children: appTrustedDevices
+                    .map(
+                      (device) => DeviceItemCard(
+                        device: device,
+                        isConnected: connectedDevice?.address == device.address,
+                        isLoading: isLoading,
+                        onConnect: () => onConnect(device),
                       ),
-              );
-            },
-          );
-  }
+                    )
+                    .toList(),
+              ),
+            )
+          else ...[
+            GovernmentSectionHeader(
+              title: 'Printer Tersimpan',
+              count: appTrustedDevices.length, // 🚀 GUNAKAN APP TRUSTED
+              icon: Icons.bookmark_added_rounded,
+              color: const Color(0xFF1E3A8A),
+            ),
+            ...appTrustedDevices.map(
+              (device) => DeviceItemCard(
+                device: device,
+                isConnected: connectedDevice?.address == device.address,
+                isLoading: isLoading,
+                onConnect: () => onConnect(device),
+              ),
+            ),
+          ],
 
-  Widget _buildEmptyState(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.bluetooth_searching,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Printer Tidak Ditemukan',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Pastikan printer dalam keadaan menyala dan sudah di-pairing di menu Bluetooth HP Anda.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, height: 1.5),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () async {
-              await external_settings.AppSettings.openAppSettings(
-                type: external_settings.AppSettingsType.bluetooth,
-              );
-            },
-            icon: const Icon(Icons.settings_bluetooth),
-            label: const Text("Buka Pengaturan Bluetooth"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        const SizedBox(height: 16),
+
+        // =====================================================================
+        // GOVERNMENT DIVIDER
+        // =====================================================================
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE2E8F0),
+            border: Border.symmetric(
+              horizontal: BorderSide(color: Colors.grey.shade300, width: 1),
             ),
           ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.info_outline_rounded,
+                size: 20,
+                color: Colors.blueGrey.shade800,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Pastikan printer thermal menyala (ON) saat memindai perangkat baru.',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blueGrey.shade800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // =====================================================================
+        // SEGMEN 2: PERANGKAT LAIN DI SEKITAR (OTHER BLUETOOTH & DISCOVERED)
+        // =====================================================================
+        if (isScanning || otherAvailableDevices.isNotEmpty) ...[
+          GovernmentSectionHeader(
+            title: 'Perangkat Lain & Discovery',
+            count: otherAvailableDevices.length,
+            icon: isScanning
+                ? Icons.bluetooth_searching_rounded
+                : Icons.bluetooth_rounded,
+            color: AppColors.primary,
+          ),
+
+          if (otherAvailableDevices.isEmpty && isScanning)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              child: Center(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2.5),
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'Mencari perangkat di sekitar...',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ...otherAvailableDevices.map(
+              // 🚀 GUNAKAN OTHER AVAILABLE
+              (device) => DeviceItemCard(
+                device: device,
+                isConnected: connectedDevice?.address == device.address,
+                isLoading: isLoading,
+                onConnect: () => onConnect(device),
+              ),
+            ),
         ],
-      ),
+      ],
     );
   }
 }

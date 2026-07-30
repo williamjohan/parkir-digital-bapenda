@@ -1,26 +1,30 @@
-import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
 import '../../../features/transaction_history/data/models/history_item_model.dart';
 
 abstract class IPrinterService {
-  /// Mengambil daftar printer yang sudah di-pair (bawaan Android)
-  Future<List<BluetoothDevice>> getPairedDevices();
+  /// Perangkat yang sudah paired (bawaan OS)
+  Future<List<BtcDevice>> getPairedDevices();
 
-  /// Membuka koneksi paksa (bypass RFCOMM) ke printer
-  Future<bool> connect(BluetoothDevice device);
+  /// Mulai/berhenti cari perangkat BARU di sekitar (belum tentu paired)
+  Future<void> startDiscovery();
+  Future<void> stopDiscovery();
+  Stream<BtcDevice> get discoveryResults;
 
-  /// Memutus koneksi printer
+  Future<bool> connect(BtcDevice device);
   Future<void> disconnect();
 
-  /// Mengecek apakah printer sedang terhubung
-  Future<bool> get isConnected;
+  /// Diambil dari koneksi aktif yang kita pegang sendiri — bukan tebakan lagi.
+  bool get isConnected;
+  BtcDevice? get connectedDevice;
 
-  /// 🚀 TAMBAHKAN INI: Mengecek apakah Bluetooth HP aktif
+  /// Notifikasi real-time tiap kali status koneksi berubah,
+  /// termasuk kalau printer disconnect sendiri (mati/keluar jangkauan).
+  Stream<BtcDevice?> get connectionChanges;
+
   Future<bool> get isBluetoothOn;
+  Stream<bool> get bluetoothStateChanges;
 
-  /// Mencetak karcis menggunakan data transaksi
-  Future<bool> printReceipt(
-    HistoryItemModel transaction,
-    // String deviceId,
-    // Map<String, dynamic> profile,
-  );
+  Future<bool> printReceipt(HistoryItemModel transaction);
+
+  void dispose();
 }

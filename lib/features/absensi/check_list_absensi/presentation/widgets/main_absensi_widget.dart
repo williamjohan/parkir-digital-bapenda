@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
+import '../../../../../core/enums/app_enums.dart';
 import '../../../../home/domain/entities/dashboard_summary_pengawas.entity.dart';
 import '../../../../home/presentation/cubit/home/home_cubit.dart';
-import '../screens/absensi_checklist_screen.dart';
 import '../../../../../core/routes/app_routes.dart';
 import 'checkin_card_widget.dart';
 import 'checkout_card_widget.dart';
@@ -16,15 +16,28 @@ class MainAbsensiWidget extends StatelessWidget {
   const MainAbsensiWidget({super.key, required this.absensiData});
 
   Future<void> _openForm(BuildContext context, ShiftFormType type) async {
+    final homeState = context.read<HomeCubit>().state;
     final result = await context.pushNamed<bool>(
       AppRoutes.absensi,
-      extra: type,
+      extra: {
+        'type': type,
+        'jenis': homeState.jenisPengawasan,
+        'nop': homeState.nop,
+        'shift': homeState.shiftPengawasan,
+      },
     );
 
     if (!context.mounted) return;
 
     if (result == true) {
-      context.read<HomeCubit>().loadDashboardPengawas();
+      final cubit = context.read<HomeCubit>();
+      final currentState = cubit.state;
+
+      cubit.loadDashboardPengawas(
+        nomorObjek: currentState.nop,
+        shift: currentState.shiftPengawasan!.id,
+        jenis: currentState.jenisPengawasan!.id,
+      );
     }
   }
 
@@ -32,43 +45,12 @@ class MainAbsensiWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isCheckedIn = absensiData.checkInString.isNotEmpty;
     final bool isCheckedOut = absensiData.checkOutString.isNotEmpty;
-    final bool hasJadwal = absensiData.hasJadwal; //
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildShiftStatus(isCheckedIn: isCheckedIn, isCheckedOut: isCheckedOut),
         const SizedBox(height: 12),
-
-        if (!hasJadwal) ...[
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.event_busy_rounded,
-                  size: 18,
-                  color: Colors.grey.shade500,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    "Belum ada jadwal roster hari ini",
-                    style: AppTypography.bodySmall.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-        ],
 
         // CARD CHECK IN
         CheckInCardWidget(
@@ -77,9 +59,7 @@ class MainAbsensiWidget extends StatelessWidget {
           totalMotor: absensiData.checkInJmlMotor,
           totalMobil: absensiData.checkInJmlMobil,
           detailAlat: absensiData.detailAlatCheckIn,
-          onTapCheckIn: hasJadwal
-              ? () => _openForm(context, ShiftFormType.checkIn)
-              : null,
+          onTapCheckIn: () => _openForm(context, ShiftFormType.checkIn),
         ),
 
         const SizedBox(height: 10),
@@ -92,7 +72,7 @@ class MainAbsensiWidget extends StatelessWidget {
           totalMotor: absensiData.checkOutJmlMotor,
           totalMobil: absensiData.checkOutJmlMobil,
           detailAlat: absensiData.detailAlatCheckOut,
-          onTapCheckOut: hasJadwal
+          onTapCheckOut: isCheckedIn
               ? () => _openForm(context, ShiftFormType.checkOut)
               : null,
         ),

@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$DashboardOpState {
   bool get loading => throw _privateConstructorUsedError;
+  bool get showTSCard => throw _privateConstructorUsedError;
   DashboardOpEntity? get data => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
 
@@ -35,7 +36,12 @@ abstract class $DashboardOpStateCopyWith<$Res> {
     $Res Function(DashboardOpState) then,
   ) = _$DashboardOpStateCopyWithImpl<$Res, DashboardOpState>;
   @useResult
-  $Res call({bool loading, DashboardOpEntity? data, String? errorMessage});
+  $Res call({
+    bool loading,
+    bool showTSCard,
+    DashboardOpEntity? data,
+    String? errorMessage,
+  });
 
   $DashboardOpEntityCopyWith<$Res>? get data;
 }
@@ -56,6 +62,7 @@ class _$DashboardOpStateCopyWithImpl<$Res, $Val extends DashboardOpState>
   @override
   $Res call({
     Object? loading = null,
+    Object? showTSCard = null,
     Object? data = freezed,
     Object? errorMessage = freezed,
   }) {
@@ -64,6 +71,10 @@ class _$DashboardOpStateCopyWithImpl<$Res, $Val extends DashboardOpState>
             loading: null == loading
                 ? _value.loading
                 : loading // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showTSCard: null == showTSCard
+                ? _value.showTSCard
+                : showTSCard // ignore: cast_nullable_to_non_nullable
                       as bool,
             data: freezed == data
                 ? _value.data
@@ -102,7 +113,12 @@ abstract class _$$DashboardOpStateImplCopyWith<$Res>
   ) = __$$DashboardOpStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool loading, DashboardOpEntity? data, String? errorMessage});
+  $Res call({
+    bool loading,
+    bool showTSCard,
+    DashboardOpEntity? data,
+    String? errorMessage,
+  });
 
   @override
   $DashboardOpEntityCopyWith<$Res>? get data;
@@ -123,6 +139,7 @@ class __$$DashboardOpStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = null,
+    Object? showTSCard = null,
     Object? data = freezed,
     Object? errorMessage = freezed,
   }) {
@@ -131,6 +148,10 @@ class __$$DashboardOpStateImplCopyWithImpl<$Res>
         loading: null == loading
             ? _value.loading
             : loading // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showTSCard: null == showTSCard
+            ? _value.showTSCard
+            : showTSCard // ignore: cast_nullable_to_non_nullable
                   as bool,
         data: freezed == data
             ? _value.data
@@ -150,6 +171,7 @@ class __$$DashboardOpStateImplCopyWithImpl<$Res>
 class _$DashboardOpStateImpl implements _DashboardOpState {
   const _$DashboardOpStateImpl({
     this.loading = false,
+    this.showTSCard = false,
     this.data,
     this.errorMessage,
   });
@@ -158,13 +180,16 @@ class _$DashboardOpStateImpl implements _DashboardOpState {
   @JsonKey()
   final bool loading;
   @override
+  @JsonKey()
+  final bool showTSCard;
+  @override
   final DashboardOpEntity? data;
   @override
   final String? errorMessage;
 
   @override
   String toString() {
-    return 'DashboardOpState(loading: $loading, data: $data, errorMessage: $errorMessage)';
+    return 'DashboardOpState(loading: $loading, showTSCard: $showTSCard, data: $data, errorMessage: $errorMessage)';
   }
 
   @override
@@ -173,13 +198,16 @@ class _$DashboardOpStateImpl implements _DashboardOpState {
         (other.runtimeType == runtimeType &&
             other is _$DashboardOpStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.showTSCard, showTSCard) ||
+                other.showTSCard == showTSCard) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loading, data, errorMessage);
+  int get hashCode =>
+      Object.hash(runtimeType, loading, showTSCard, data, errorMessage);
 
   /// Create a copy of DashboardOpState
   /// with the given fields replaced by the non-null parameter values.
@@ -196,12 +224,15 @@ class _$DashboardOpStateImpl implements _DashboardOpState {
 abstract class _DashboardOpState implements DashboardOpState {
   const factory _DashboardOpState({
     final bool loading,
+    final bool showTSCard,
     final DashboardOpEntity? data,
     final String? errorMessage,
   }) = _$DashboardOpStateImpl;
 
   @override
   bool get loading;
+  @override
+  bool get showTSCard;
   @override
   DashboardOpEntity? get data;
   @override

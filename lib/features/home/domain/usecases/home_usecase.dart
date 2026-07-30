@@ -1,12 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/home/domain/entities/dashboard_summary_jukir_entity.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 import '../../../transaction_history/domain/repositories/i_transaction_history_repository.dart';
 import '../entities/dashboard_summary_non_jukir_entity.dart';
 import '../entities/dashboard_summary_pengawas.entity.dart';
+import '../entities/rekap_wilayah_entity.dart';
 import '../repositories/i_home_repository.dart';
 
 @lazySingleton
@@ -35,8 +37,16 @@ class HomeUsecase {
   }
 
   Future<Either<Failure, DashboardSummaryPengawasEntity>>
-  getDashboardSummaryPengawas() {
-    return _repository.getDashboardSummaryPengawas();
+  getDashboardSummaryPengawas({
+    required String nomorObjek,
+    required int shift,
+    required int jenis,
+  }) {
+    return _repository.getDashboardSummaryPengawas(
+      nomorObjek: nomorObjek,
+      shift: shift,
+      jenis: jenis,
+    );
   }
 
   Future<Either<Failure, List<HistoryItemModel>>> getRecentTransactions({
@@ -77,5 +87,20 @@ class HomeUsecase {
       AppLogger.error('🚨 [Fatal Error] GetRecentTransactionsUseCase: $e');
       return Left(ServerFailure(e.toString()));
     }
+  }
+
+  Future<Either<Failure, bool>> getOpLastUpdate() {
+    return _repository.getOpLastUpdate();
+  }
+
+  String? getNomorObjekPengawasan() => _repository.getNomorObjekPengawasan();
+  ShiftPengawasan? getShiftObjekPengawasan() =>
+      _repository.getShiftObjekPengawasan();
+  JenisPengawasan? getJenisObjekPengawasan() =>
+      _repository.getJenisObjekPengawasan();
+  String? getNamaObjekPengawasan() => _repository.getNamaObjekPengawasan();
+
+  Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan() async {
+    return await _repository.getRekapWilayahKecamatan();
   }
 }

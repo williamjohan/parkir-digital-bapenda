@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,21 +11,22 @@ import 'package:parkir_digital_bapenda/features/dashboard_op/detail_rekap_jenis_
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/cubit/data_jukir_cubit.dart';
 import 'package:parkir_digital_bapenda/features/dashboard_op/data_jukir/presentation/screens/data_jukir_screen.dart';
 import 'package:parkir_digital_bapenda/features/home/presentation/pages/search_op_page.dart';
+import 'package:parkir_digital_bapenda/features/op_pengawas/presentation/cubit/op_pengawasan_cubit.dart';
+import 'package:parkir_digital_bapenda/features/op_pengawas/presentation/screens/op_pengawas_screen.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/cubit/pendapatan_digital_cubit.dart';
 import 'package:parkir_digital_bapenda/features/pendapatan_digital/presentation/pendapatan_digital_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/cubit/pengawasan_cubit.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/detail_laporan_pengawasan.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/laporan_form_screen.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/screens/pengawasan_screen.dart';
+import 'package:parkir_digital_bapenda/features/update/presentation/pages/update_playstore_page.dart';
 import '../../features/absensi/check_list_absensi/presentation/cubit/absensi_cubit.dart';
 import '../../features/absensi/check_list_absensi/presentation/screens/absensi_checklist_screen.dart';
-import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart';
-import '../../features/daftar_nop/presentation/screens/daftar_nop_screen.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart';
 import '../../features/dashboard_op/detail_realisasi_op/presentation/screen/detail_realisasi_op_screen.dart';
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart';
-import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart';
-import '../../features/jadwal/presentation/screens/jadwal_screen.dart';
+import '../../features/jadwal/presentation/cubit/riwayat_absensi_cubit.dart';
+import '../../features/jadwal/presentation/screens/riwayat_absensi_screen.dart';
 import '../../features/realisasi/presentation/cubit/realisasi_cubit.dart';
 import '../../features/realisasi/presentation/screens/realisasi_screen.dart';
 import '../../features/transaction/presentation/page/transaction_page.dart';
@@ -47,7 +49,6 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/update/presentation/pages/update_page.dart';
 import '../di/injection.dart';
 import '../enums/app_enums.dart';
-import '../services/location/i_app_location_service.dart';
 import 'app_routes.dart';
 import 'go_router_refresh_stream.dart';
 
@@ -102,14 +103,6 @@ class AppRouter {
           name: AppRoutes.login,
           builder: (context, state) => const LoginScreen(),
         ),
-        GoRoute(
-          path: AppRoutes.daftarNop,
-          name: AppRoutes.daftarNop,
-          builder: (context, state) => BlocProvider(
-            create: (_) => locator<DaftarNopCubit>(),
-            child: const DaftarNopScreen(),
-          ),
-        ),
         // pengawas
         GoRoute(
           path: AppRoutes.detailLaporanPelanggaran,
@@ -135,24 +128,21 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.addLaporanPelanggaran,
           name: AppRoutes.addLaporanPelanggaran,
-          builder: (context, state) => BlocProvider(
-            create: (_) => locator<PengawasanCubit>(),
-            child: LaporanFormScreen(
-              locationService:
-                  locator<IAppLocationService>(), // 🔥 tambahin ini
-            ),
-          ),
+          builder: (context, state) {
+            // Tangkap objek File dari parameter extra (jika datang dari LMK Recovery)
+            final recoveredFile = state.extra as File?;
+
+            return BlocProvider(
+              create: (_) => locator<PengawasanCubit>(),
+              child: LaporanFormScreen(recoveredPhoto: recoveredFile),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.home,
           name: AppRoutes.home,
-          builder: (context, state) => MultiBlocProvider(
-            providers: [
-              BlocProvider<HomeCubit>(create: (_) => locator<HomeCubit>()),
-              BlocProvider<PrinterCubit>(
-                create: (_) => locator<PrinterCubit>(),
-              ),
-            ],
+          builder: (context, state) => BlocProvider<HomeCubit>(
+            create: (_) => locator<HomeCubit>(),
             child: const HomePage(),
           ),
         ),
@@ -160,13 +150,31 @@ class AppRouter {
           path: AppRoutes.absensi,
           name: AppRoutes.absensi,
           builder: (context, state) {
-            final type = state.extra as ShiftFormType? ?? ShiftFormType.checkIn;
+            ShiftFormType type = ShiftFormType.checkIn;
+            File? recoveredFile;
+            JenisPengawasan? jenis;
+            String? nop; // 🆕
+            ShiftPengawasan? shift; // 🆕
+
+            if (state.extra is ShiftFormType) {
+              type = state.extra as ShiftFormType;
+            } else if (state.extra is Map<String, dynamic>) {
+              final args = state.extra as Map<String, dynamic>;
+              type = args['type'] as ShiftFormType? ?? ShiftFormType.checkIn;
+              recoveredFile = args['file'] as File?;
+              jenis = args['jenis'] as JenisPengawasan?;
+              nop = args['nop'] as String?;
+              shift = args['shift'] as ShiftPengawasan?;
+            }
 
             return BlocProvider(
               create: (_) => locator<AbsensiCubit>(),
-              child: ShiftFormScreen(
+              child: AbsensiCheckListScreen(
                 type: type,
-                locationService: locator<IAppLocationService>(),
+                recoveredPhoto: recoveredFile,
+                jenis: jenis,
+                nop: nop, // 🆕
+                shift: shift, // 🆕
               ),
             );
           },
@@ -189,6 +197,17 @@ class AppRouter {
             return BlocProvider(
               create: (_) => locator<SearchOpCubit>(),
               child: SearchOpPage(role: role, opType: opType),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.opPengawas,
+          name: AppRoutes.opPengawas,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (context) =>
+                  locator<OpPengawasanCubit>()..getOpPengawasan(),
+              child: const OpPengawasScreen(),
             );
           },
         ),
@@ -302,7 +321,7 @@ class AppRouter {
           name: AppRoutes.jadwalKehadiran,
           builder: (context, state) {
             return BlocProvider(
-              create: (_) => locator<JadwalCubit>(),
+              create: (_) => locator<RiwayatAbsensiCubit>(),
               child: const JadwalScreen(),
             );
           },
@@ -325,15 +344,8 @@ class AppRouter {
             final nop = extra?['nop'] as String?;
             final idDevice = extra?['idDevice'] as String?;
 
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider<TransactionHistoryCubit>(
-                  create: (_) => locator<TransactionHistoryCubit>(),
-                ),
-                BlocProvider<PrinterCubit>(
-                  create: (_) => locator<PrinterCubit>(),
-                ),
-              ],
+            return BlocProvider<TransactionHistoryCubit>(
+              create: (_) => locator<TransactionHistoryCubit>(),
               child: TransactionHistoryPage(
                 initialDate: initialDate,
                 isFree: isFree,
@@ -371,6 +383,11 @@ class AppRouter {
           path: AppRoutes.update,
           name: AppRoutes.update,
           builder: (context, state) => const UpdatePage(),
+        ),
+        GoRoute(
+          path: AppRoutes.updatePlaystore,
+          name: AppRoutes.updatePlaystore,
+          builder: (context, state) => const UpdatePlaystorePage(),
         ),
       ],
     );

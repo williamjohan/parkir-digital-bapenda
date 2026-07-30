@@ -61,6 +61,7 @@ class ProfileRepositoryImpl implements IProfileRepository {
 
       await _secureStorage.saveJukirProfile(
         idUserStorage: userModel.idUser,
+        nmOpd: userModel.nmOpd,
         namaUserStorage: userModel.namaUser,
         username: userModel.username,
         roleId: userModel.roleId,

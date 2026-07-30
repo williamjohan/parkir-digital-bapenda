@@ -18,7 +18,14 @@ class DashboardOpCubit extends Cubit<DashboardOpState> {
 
       if (isClosed) return;
 
-      emit(state.copyWith(loading: false, data: result));
+      result.fold(
+        (failure) {
+          emit(state.copyWith(loading: false, errorMessage: failure.message));
+        },
+        (dashboard) {
+          emit(state.copyWith(loading: false, data: dashboard, showTSCard: _usecase.getTSInfo(dashboard)));
+        },
+      );
 
       debugPrint('isDigital = ${state.data?.isDigital}');
     } catch (e) {

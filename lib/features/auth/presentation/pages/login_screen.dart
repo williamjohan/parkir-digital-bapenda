@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/di/injection.dart';
@@ -100,13 +101,27 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
     final isSmallDevice = screenHeight < 700;
 
     return BlocListener<LoginCubit, LoginState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is LoginSuccess) {
           context.read<AppAuthCubit>().checkStatus();
         } else if (state is LoginFailure) {
           PbStatusSnackbar.show(context, message: state.message, isError: true);
+        } else if (state is LoginSsoUrlReady) {
+          final Uri uri = Uri.parse(state.url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            if (context.mounted) {
+              PbStatusSnackbar.show(
+                context,
+                message: 'Gagal membuka peramban eksternal.',
+                isError: true,
+              );
+            }
+          }
         }
       },
+
       child: BlocBuilder<LoginCubit, LoginState>(
         builder: (context, state) {
           return LoadingOverlay(
@@ -132,6 +147,9 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                         isHidden: _isFormVisible,
                         onLoginPressed: () => _toggleForm(true),
                         onRegisterPressed: () {},
+                        onLoginKantorkuPressed: () {
+                          context.read<LoginCubit>().initiateKantorkuSSO();
+                        },
                       ),
                     ),
                     if (_isFormVisible)

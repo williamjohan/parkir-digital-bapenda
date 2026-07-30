@@ -4,6 +4,7 @@ import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
 import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
 import 'package:parkir_digital_bapenda/features/transaction/domain/usecases/qris_usecase.dart';
 import '../../../../../core/enums/app_enums.dart';
+import '../../../../../core/services/camera/i_camera_service.dart';
 import '../../../../../core/storage/database_helper_2.dart';
 import '../../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
@@ -19,6 +20,7 @@ class HomeCubit extends Cubit<HomeState> {
   final QrisUsecase _qrisUsecase;
   final ProfileUseCase _profileUseCase;
   final DatabaseHelper2 _databaseHelper;
+  final ICameraService _cameraService;
 
   HomeCubit(
     this._homeUsecase,
@@ -26,10 +28,19 @@ class HomeCubit extends Cubit<HomeState> {
     this._qrisUsecase,
     this._databaseHelper,
     this._profileUseCase,
+    this._cameraService,
   ) : super(const HomeState());
 
   Future<void> initialize() async {
     emit(state.copyWith(status: HomeStatus.loading));
+
+    final recoveredSession = await _cameraService.recoverLostAndroidPhoto();
+    if (recoveredSession != null && !isClosed) {
+      AppLogger.debug(
+        '>>> [HOME SATPAM] Menemukan sesi tertinggal untuk: ${recoveredSession.intent}',
+      );
+      emit(state.copyWith(recoveredSession: recoveredSession));
+    }
 
     await _loadProfileInfo();
 
@@ -38,14 +49,60 @@ class HomeCubit extends Cubit<HomeState> {
     if (state.role == RoleLoginDigitalParkir.jukir) {
       await loadDashboarJukir();
       await _profileUseCase.getProfilePicturePath();
+      await _qrisUsecase.syncQris();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
-      await loadDashboardPengawas();
+      final activeNop = _homeUsecase.getNomorObjekPengawasan();
+      final activeShift = _homeUsecase.getShiftObjekPengawasan();
+      final activeJenis = _homeUsecase.getJenisObjekPengawasan();
+
+      //  2. GUARD CLAUSE (Zero State Logic)
+      // Jika salah satu data belum lengkap, hentikan eksekusi API.
+      if (activeNop == null ||
+          activeNop.isEmpty ||
+          activeShift == null ||
+          activeJenis == null) {
+        final rekapResult = await _homeUsecase.getRekapWilayahKecamatan();
+
+        rekapResult.fold(
+          (failure) {
+            // Jika API rekap gagal, tetap tampilkan layar Zero State (tanpa card)
+            emit(state.copyWith(status: HomeStatus.needsSelection));
+          },
+          (rekapData) {
+            // Jika berhasil, kirim status needsSelection BERSAMAAN dengan data rekap
+            emit(
+              state.copyWith(
+                status: HomeStatus.needsSelection,
+                rekapWilayah: rekapData,
+              ),
+            );
+          },
+        );
+        return;
+      }
+
+      // 3. JIKA DATA LENGKAP: Simpan ke State agar UI merender Header Dashboard
+      emit(
+        state.copyWith(
+          nop: activeNop,
+          shiftPengawasan: activeShift,
+          jenisPengawasan: activeJenis,
+        ),
+      );
+
+      // 4. TEMBAK API
+      // Kirim parameter tersebut ke fungsi loadDashboardPengawas
+      await loadDashboardPengawas(
+        nomorObjek: activeNop,
+        shift: activeShift.id,
+        jenis: activeJenis.id,
+      );
     } else {
       await _loadDashboardNonJukir();
+      await checkOpLastUpdate();
+      await _qrisUsecase.syncQris();
       return;
     }
-
-    await _qrisUsecase.syncQris();
   }
 
   Future<void> loadDashboarJukir() async {
@@ -105,10 +162,18 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> loadDashboardPengawas() async {
+  Future<void> loadDashboardPengawas({
+    required String nomorObjek,
+    required int shift,
+    required int jenis,
+  }) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
-    final result = await _homeUsecase.getDashboardSummaryPengawas();
+    final result = await _homeUsecase.getDashboardSummaryPengawas(
+      nomorObjek: nomorObjek,
+      shift: shift,
+      jenis: jenis,
+    );
 
     result.fold(
       (failure) {
@@ -164,7 +229,10 @@ class HomeCubit extends Cubit<HomeState> {
                   .totalNominalBersihUntukWajibPajak
                   .toDouble(),
               laporanPelanggaran: summary.data.laporanPelanggaran,
-              checkInOutData: summary.data.checkInOut,
+              checkInOutData: _filterDetailAlatByJenis(
+                summary.data.checkInOut,
+                jenis,
+              ),
             ),
           );
         }
@@ -271,10 +339,10 @@ class HomeCubit extends Cubit<HomeState> {
 
     final profile = await _secureStorage.getJukirProfile();
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
-
     final namaUserShort = namaUser.shortName;
-    if (userRole == RoleLoginDigitalParkir.jukir ||
-        userRole == RoleLoginDigitalParkir.pengawas) {
+
+    //  1. BEHAVIOR KHUSUS JUKIR (NOP Statis Menempel dari Secured Storage)
+    if (userRole == RoleLoginDigitalParkir.jukir) {
       emit(
         state.copyWith(
           namaJukir: namaUserShort,
@@ -285,12 +353,31 @@ class HomeCubit extends Cubit<HomeState> {
       );
       return;
     }
+
+    //  2. BEHAVIOR KHUSUS PENGAWAS (Hanya ambil nama)
+    if (userRole == RoleLoginDigitalParkir.pengawas) {
+      final activeNamaLokasi = _homeUsecase.getNamaObjekPengawasan();
+      final activeNop = _homeUsecase.getNomorObjekPengawasan();
+      final nmOpd = profile?['nmOpd']?.toString() ?? '-';
+      emit(
+        state.copyWith(
+          namaJukir: namaUserShort,
+          nop: activeNop ?? '',
+          namaOp: activeNamaLokasi ?? '',
+          nmOpd: nmOpd,
+        ),
+      );
+      return;
+    }
+
+    //  3. BEHAVIOR NON-JUKIR (WP, Bapenda, dll)
     final nopList = await _databaseHelper.getNopList();
 
     if (nopList.isEmpty) {
       emit(state.copyWith(namaJukir: namaUser));
       return;
     }
+
     final firstNop = nopList.first;
 
     emit(
@@ -334,5 +421,53 @@ class HomeCubit extends Cubit<HomeState> {
     AppLogger.debug("isi namaJukirFormatted : $formattedName");
 
     emit(state.copyWith(namaJukirFormatted: formattedName));
+  }
+
+  Future<void> checkOpLastUpdate() async {
+    final result = await _homeUsecase.getOpLastUpdate();
+
+    result.fold(
+      (failure) {
+        AppLogger.error('Gagal mengecek update OP: ${failure.message}');
+      },
+      (isSame) {
+        emit(state.copyWith(isOpUpToDate: isSame));
+      },
+    );
+  }
+
+  void clearRecoveredSession() {
+    if (!isClosed) {
+      // Freezed langsung paham kita ingin mengosongkan field ini
+      emit(state.copyWith(recoveredSession: null));
+    }
+  }
+
+  CheckInOutEntity _filterDetailAlatByJenis(CheckInOutEntity data, int jenis) {
+    return CheckInOutEntity(
+      idEvent: data.idEvent,
+      op: data.op,
+      nip: data.nip,
+      tglRoster: data.tglRoster,
+      jadwalMasuk: data.jadwalMasuk,
+      jadwalOut: data.jadwalOut,
+      status: data.status,
+      checkIn: data.checkIn,
+      checkInString: data.checkInString,
+      checkInJmlMobil: data.checkInJmlMobil,
+      checkInJmlMotor: data.checkInJmlMotor,
+      checkOut: data.checkOut,
+      checkOutString: data.checkOutString,
+      checkOutJmlMobil: data.checkOutJmlMobil,
+      checkOutJmlMotor: data.checkOutJmlMotor,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      detailAlatCheckIn: data.detailAlatCheckIn
+          .where((a) => a.jenis == jenis)
+          .toList(),
+      detailAlatCheckOut: data.detailAlatCheckOut
+          .where((a) => a.jenis == jenis)
+          .toList(),
+    );
   }
 }

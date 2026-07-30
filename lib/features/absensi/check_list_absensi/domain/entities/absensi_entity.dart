@@ -8,6 +8,9 @@ class AbsensiEntity extends Equatable {
   final List<int> detailAlatIds;
   final String fotoPath;
   final bool isCheckIn;
+  final String nop;
+  final int shift;
+
 
   const AbsensiEntity({
     required this.latitude,
@@ -17,6 +20,8 @@ class AbsensiEntity extends Equatable {
     required this.detailAlatIds,
     required this.fotoPath,
     required this.isCheckIn,
+    required this.nop,
+    required this.shift,
   });
 
   @override
@@ -28,5 +33,7 @@ class AbsensiEntity extends Equatable {
     detailAlatIds,
     fotoPath,
     isCheckIn,
+    nop,
+    shift,
   ];
 }

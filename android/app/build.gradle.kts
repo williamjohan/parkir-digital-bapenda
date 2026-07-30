@@ -1,7 +1,19 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+// 🚀 1. MEMBACA FILE KEY.PROPERTIES DARI FOLDER ANDROID/
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -17,7 +29,6 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
-        
     }
 
     defaultConfig {
@@ -27,11 +38,13 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+
     flavorDimensions += "env"
 
     productFlavors {
-        create("prod") {
+        create("jukir") {
             dimension = "env"
+            applicationIdSuffix = ".jukir"
             resValue("string", "app_name", "TS Park Jukir")
         }
         create("demo") {
@@ -39,11 +52,27 @@ android {
             applicationIdSuffix = ".demo"
             resValue("string", "app_name", "TS Park Bapenda")
         }
+        create("playstore") {
+            dimension = "env"
+            resValue("string", "app_name", "TS Park Bapenda")
+        }
+    }
+
+    // 🚀 2. DAFTARKAN CONFIG SIGNING RESMI PLAYSTORE
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String?
+            keyPassword = keystoreProperties["keyPassword"] as String?
+            // Membaca file .jks yang ditaruh di dalam folder android/app/
+            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+            storePassword = keystoreProperties["storePassword"] as String?
+        }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            // 🚀 3. GANTI DARI "debug" MENJADI getByName("release")
+            signingConfig = signingConfigs.getByName("release")
 
             isMinifyEnabled = true
             isShrinkResources = true

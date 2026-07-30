@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
+import '../entities/payment_success_entity.dart'; // 🚀 IMPORT ENTITY BARU
 import '../repositories/i_payment_repository.dart';
 
 @injectable
@@ -13,7 +14,7 @@ class PaymentUseCase {
     return _repository.connectToPaymentStream(kodeQris);
   }
 
-  Stream<String> get statusStream {
+  Stream<Either<Failure, PaymentSuccessEntity>> get statusStream {
     return _repository.getPaymentStatusStream();
   }
 

@@ -1,28 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_permission_gate.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
 import 'package:parkir_digital_bapenda/core/routes/app_routes.dart';
+import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/design_system/components/pb_show_dialog.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
-import '../../../printer/presentation/cubit/printer_cubit.dart';
+import '../cubit/home/home_state.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isFree;
   final RoleLoginDigitalParkir role;
   final String? namaUPTB;
+  final String nop;
+  final HomeStatus status;
+  final Future<bool> Function()? onCheckOpBeforeRouting;
 
   const HomeDrawer({
     super.key,
     required this.isFree,
     required this.role,
     this.namaUPTB,
+    required this.nop,
+    required this.status,
+    this.onCheckOpBeforeRouting,
   });
 
   @override
@@ -76,39 +83,70 @@ class HomeDrawer extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
-                ListTile(
-                  leading: Icon(
-                    role == RoleLoginDigitalParkir.jukir
-                        ? Icons.receipt_long
-                        : Icons.store,
-                    color: AppColors.textPrimary,
+                //Riwayat Transaksi atau Objek Pajak
+                PbPermissionGate(
+                  allowedRoles: const [
+                    RoleLoginDigitalParkir.jukir,
+                    RoleLoginDigitalParkir.bapenda,
+                    RoleLoginDigitalParkir.wp,
+                  ],
+                  currentRole: role,
+                  child: ListTile(
+                    leading: Icon(
+                      role == RoleLoginDigitalParkir.jukir
+                          ? Icons.receipt_long
+                          : Icons.store,
+                      color: AppColors.textPrimary,
+                    ),
+
+                    title: Text(
+                      (role == RoleLoginDigitalParkir.jukir)
+                          ? 'Riwayat Transaksi'
+                          : 'Objek Pajak',
+                      style: AppTypography.bodyRegular,
+                    ),
+
+                    onTap: () async {
+                      Navigator.pop(context);
+
+                      if (role == RoleLoginDigitalParkir.jukir ||
+                          role == RoleLoginDigitalParkir.pengawas) {
+                        if (!context.mounted) return;
+
+                        if (role == RoleLoginDigitalParkir.pengawas &&
+                            status == HomeStatus.needsSelection) {
+                          PbStatusSnackbar.show(
+                            context,
+                            isError: true,
+                            message:
+                                "Mohon pilih Objek Pengawasan terlebih dahulu.",
+                          );
+                          return;
+                        }
+
+                        context.pushNamed(
+                          AppRoutes.history,
+                          extra: {'isFree': false, 'nop': nop},
+                        );
+                      } else {
+                        if (onCheckOpBeforeRouting != null) {
+                          final canNavigate = await onCheckOpBeforeRouting!();
+
+                          if (!context.mounted) return;
+
+                          if (!canNavigate) return;
+                        }
+
+                        context.pushNamed(
+                          AppRoutes.searchObjekPajak,
+                          extra: {'role': role},
+                        );
+                      }
+                    },
                   ),
-
-                  title: Text(
-                    (role == RoleLoginDigitalParkir.jukir ||
-                            role == RoleLoginDigitalParkir.pengawas)
-                        ? 'Riwayat Transaksi'
-                        : 'Objek Pajak',
-                    style: AppTypography.bodyRegular,
-                  ),
-
-                  onTap: () async {
-                    Navigator.pop(context);
-
-                    if (role == RoleLoginDigitalParkir.jukir ||
-                        role == RoleLoginDigitalParkir.pengawas) {
-                      context.pushNamed(
-                        AppRoutes.history,
-                        extra: {'isFree': false},
-                      );
-                    } else {
-                      context.pushNamed(
-                        AppRoutes.searchObjekPajak,
-                        extra: {'role': role},
-                      );
-                    }
-                  },
                 ),
+
+                //Pendapatan Digital
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.bapenda],
                   currentRole: role,
@@ -122,7 +160,7 @@ class HomeDrawer extends StatelessWidget {
                       style: AppTypography.bodyRegular,
                     ),
                     onTap: () {
-                      Navigator.pop(context); // Tutup drawer
+                      Navigator.pop(context);
                       context.push(
                         AppRoutes.pendapatanDigital,
                         extra: namaUPTB,
@@ -131,6 +169,7 @@ class HomeDrawer extends StatelessWidget {
                   ),
                 ),
 
+                //Realisasi
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.bapenda],
                   currentRole: role,
@@ -154,6 +193,7 @@ class HomeDrawer extends StatelessWidget {
                   ),
                 ),
 
+                //PROFILE
                 PbPermissionGate(
                   allowedRoles: const [
                     RoleLoginDigitalParkir.bapenda,
@@ -176,83 +216,40 @@ class HomeDrawer extends StatelessWidget {
                     },
                   ),
                 ),
-                // if (FeatureFlags.enablePrinterFeature)
-                // ListTile(
-                //   leading: const Icon(Icons.print),
-                //   title: const Text('Pengaturan Printer'),
-                //   onTap: () async {
-                //     // 1. Tutup Drawer terlebih dahulu agar rapi
-                //     Navigator.pop(context);
 
-                //     // 2. Panggil fungsi cek permission yang baru saja kita pisah
-                //     final isPermissionGranted = await context
-                //         .read<PrinterCubit>()
-                //         .checkAndRequestPermissions(context);
-
-                //     // 3. Jika diizinkan, baru lakukan navigasi ke PrinterPage atau jalankan fungsi scan
-                //     if (isPermissionGranted) {
-                //       // Jalankan scan otomatis begitu masuk halaman (jika diinginkan)
-                //       if (context.mounted) {
-                //         context.read<PrinterCubit>().scanDevices(context);
-
-                //         // Pindah ke halaman printer Anda, misal:
-                //         Navigator.pushNamed(context, '/printer-page');
-                //       }
-                //     }
-                //   },
-                // ),
+                //PENGATURAN PRINTER
                 ListTile(
                   leading: const Icon(Icons.print),
-                  title: const Text('Pengaturan Printer'),
+                  title: const Text(
+                    'Pengaturan Printer',
+                    style: AppTypography.bodyRegular,
+                  ),
                   onTap: () async {
-                    // 1. Tangkap Cubit dan Context Halaman Utama (Safe Context) SEBELUM Drawer ditutup
-                    final printerCubit = context.read<PrinterCubit>();
-                    final safeContext = Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).context;
-
-                    // 2. Tutup Drawer
-                    Navigator.pop(context);
-
-                    // 3. Panggil fungsi cek permission menggunakan safeContext yang masih hidup
-                    final isPermissionGranted = await printerCubit
-                        .checkAndRequestPermissions(safeContext);
-
-                    // 4. Jika diizinkan, jalankan navigasi ke halaman pengaturan printer
-                    if (isPermissionGranted) {
-                      if (safeContext.mounted) {
-                        // 🚀 PERBAIKAN: Gunakan safeContext untuk navigasi!
-                        // (scanDevices dihapus dari sini karena di PrinterSettingsPage sudah otomatis dipanggil saat initState)
-                        safeContext.pushNamed(AppRoutes.printerSetting);
-                      }
-                    }
+                    context.pushNamed(AppRoutes.printerSetting);
                   },
                 ),
 
+                //Jadwal & Kehadiran
                 PbPermissionGate(
                   allowedRoles: const [RoleLoginDigitalParkir.pengawas],
-                  currentRole:
-                      role, // Menggunakan variabel 'role' yang disuplai dari State Cubit Anda
+                  currentRole: role,
                   child: ListTile(
                     leading: const Icon(
-                      Icons
-                          .calendar_month_outlined, // Icon kalender yang bersih untuk representasi jadwal
+                      Icons.calendar_month_outlined,
                       color: AppColors.textPrimary,
                     ),
                     title: const Text(
-                      'Jadwal & Kehadiran',
+                      'Riwayat Absensi',
                       style: AppTypography.bodyRegular,
                     ),
                     onTap: () {
-                      // 1. Tutup drawer terlebih dahulu agar tidak menghalangi transisi layar
                       Navigator.pop(context);
-
-                      // 2. Navigasi ke layar Jadwal menggunakan pushNamed dari GoRouter
                       context.pushNamed(AppRoutes.jadwalKehadiran);
                     },
                   ),
                 ),
+
+                //Cek Pembaruan
                 ListTile(
                   leading: const Icon(
                     Icons.system_update_alt_rounded,
@@ -263,10 +260,12 @@ class HomeDrawer extends StatelessWidget {
                     style: AppTypography.bodyRegular,
                   ),
                   onTap: () {
-                    Navigator.pop(context); // Tutup drawer
-                    context.pushNamed(
-                      AppRoutes.update,
-                    ); // Arahkan ke rute update
+                    Navigator.pop(context);
+                    if (appFlavor == 'playstore') {
+                      context.pushNamed(AppRoutes.updatePlaystore);
+                    } else {
+                      context.pushNamed(AppRoutes.update);
+                    }
                   },
                 ),
               ],

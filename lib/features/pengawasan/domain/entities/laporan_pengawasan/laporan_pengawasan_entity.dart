@@ -1,20 +1,59 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 
-part 'laporan_pengawasan_entity.freezed.dart';
+class LaporanPengawasanEntity extends Equatable {
+  final int idEvent;
+  final String nip;
+  final String opd;
+  final String kdCamat;
+  final String nmCamat;
+  final String kdOp;
+  final String nmOp;
+  final int jenis;
+  final int shift;
+  final DateTime tglPengawasan;
+  final int seq;
+  final int jenisPel;
+  final String ketPel;
+  final DateTime insDate;
+  final String insBy;
+  final String? fotoPelaporan;
 
-@freezed
-class LaporanPengawasanEntity with _$LaporanPengawasanEntity {
-  const factory LaporanPengawasanEntity({
-    required int idEvent,
-    required String op,
-    required String nip,
-    required DateTime tglRoster,
-    required DateTime jadwalMasuk,
-    required int jenisPel,
-    required String ketPel,
-    required DateTime insDate,
-    required String insBy,
-    required int seq,
-    final String? fotoPelaporan,
-  }) = _LaporanPengawasanEntity;
+  const LaporanPengawasanEntity({
+    required this.idEvent,
+    required this.nip,
+    required this.opd,
+    required this.kdCamat,
+    required this.nmCamat,
+    required this.kdOp,
+    required this.nmOp,
+    required this.jenis,
+    required this.shift,
+    required this.tglPengawasan,
+    required this.seq,
+    required this.jenisPel,
+    required this.ketPel,
+    required this.insDate,
+    required this.insBy,
+    this.fotoPelaporan,
+  });
+
+  @override
+  List<Object?> get props => [
+    idEvent,
+    nip,
+    opd,
+    kdCamat,
+    nmCamat,
+    kdOp,
+    nmOp,
+    jenis,
+    shift,
+    tglPengawasan,
+    seq,
+    jenisPel,
+    ketPel,
+    insDate,
+    insBy,
+    fotoPelaporan,
+  ];
 }

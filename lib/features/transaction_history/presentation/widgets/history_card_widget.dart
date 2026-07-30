@@ -118,7 +118,9 @@ class HistoryCardWidget extends StatelessWidget {
                   color: item.sofColor,
                   label: item.sofLabel,
                 ),
-                _PrintButton(onTap: onPrint),
+
+                //Tidak jadi dipakai
+                // _PrintButton(onTap: onPrint),
               ],
             ),
           ],
@@ -165,41 +167,41 @@ class _PaymentMethodPill extends StatelessWidget {
   }
 }
 
-class _PrintButton extends StatelessWidget {
-  final VoidCallback? onTap;
+// class _PrintButton extends StatelessWidget {
+//   final VoidCallback? onTap;
 
-  const _PrintButton({this.onTap});
+//   const _PrintButton({this.onTap});
 
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.print_rounded, size: 15, color: Colors.black87),
-              SizedBox(width: 6),
-              Text(
-                'Cetak',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Material(
+//       color: Colors.transparent,
+//       child: InkWell(
+//         onTap: onTap,
+//         borderRadius: BorderRadius.circular(20),
+//         child: Container(
+//           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(20),
+//             border: Border.all(color: Colors.grey.shade300),
+//           ),
+//           child: const Row(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Icon(Icons.print_rounded, size: 15, color: Colors.black87),
+//               SizedBox(width: 6),
+//               Text(
+//                 'Cetak',
+//                 style: TextStyle(
+//                   fontSize: 12,
+//                   fontWeight: FontWeight.w600,
+//                   color: Colors.black87,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

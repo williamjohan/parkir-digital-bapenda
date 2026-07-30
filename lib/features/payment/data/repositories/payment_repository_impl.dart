@@ -1,14 +1,17 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/storage/i_secure_storage_manager.dart';
 import '../../../../core/errors/failure.dart';
+import '../../domain/entities/payment_success_entity.dart';
 import '../../domain/repositories/i_payment_repository.dart';
 import '../datasources/qris_signalr_datasource.dart';
 
 @LazySingleton(as: IPaymentRepository)
 class PaymentRepositoryImpl implements IPaymentRepository {
   final QrisSignalRDatasource _signalRDatasource;
+  final ISecureStorageManager _iSecureStorageManager;
 
-  PaymentRepositoryImpl(this._signalRDatasource);
+  PaymentRepositoryImpl(this._signalRDatasource, this._iSecureStorageManager);
 
   @override
   Future<Either<Failure, Unit>> connectToPaymentStream(String kodeQris) async {
@@ -16,16 +19,10 @@ class PaymentRepositoryImpl implements IPaymentRepository {
       await _signalRDatasource.connectAndJoin(kodeQris);
       return const Right(unit);
     } catch (e) {
-      // Tangkap kegagalan koneksi awal (misal server down)
       return Left(
         ServerFailure('Gagal terhubung ke server pembayaran: ${e.toString()}'),
       );
     }
-  }
-
-  @override
-  Stream<String> getPaymentStatusStream() {
-    return _signalRDatasource.qrisStatusStream;
   }
 
   @override
@@ -35,6 +32,54 @@ class PaymentRepositoryImpl implements IPaymentRepository {
       return const Right(unit);
     } catch (e) {
       return const Left(ServerFailure('Gagal memutus koneksi dengan aman.'));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, PaymentSuccessEntity>>
+  getPaymentStatusStream() async* {
+    await for (final event in _signalRDatasource.qrisStatusStream) {
+      if (event.status == "LUNAS") {
+        try {
+          final payload = event.payload ?? {};
+          final profileOP = await _iSecureStorageManager.getJukirProfile();
+          final namaOpValue = profileOP?['namaObjekPajak']?.toString() ?? '-';
+          final alamatOpValue = profileOP?['alamat']?.toString() ?? '-';
+
+          final entity = PaymentSuccessEntity(
+            orderId: payload['orderId']?.toString() ?? '-',
+            namaOp: namaOpValue,
+            alamatOp: alamatOpValue,
+            tanggalTransaksi:
+                payload['tanggalTransaksi']?.toString() ??
+                DateTime.now().toIso8601String(),
+            jenisTarif: payload['jenisTarif']?.toString() ?? '-',
+            credit: (double.tryParse(payload['amount']?.toString() ?? '0') ?? 0)
+                .toInt(),
+            encUrl: payload['neCurl']?.toString() ?? '',
+          );
+
+          yield Right(entity);
+        } catch (e) {
+          // FALLBACK TERAKHIR: Jika terjadi error parsing ekstrem (misal format JSON berubah),
+          // TETAP pancarkan Right(Entity) dengan data kosong, agar flow LUNAS tidak putus!
+          yield Right(
+            PaymentSuccessEntity(
+              orderId: '-',
+              namaOp: '-',
+              alamatOp: '-',
+              tanggalTransaksi: DateTime.now().toIso8601String(),
+              jenisTarif: '-',
+              credit: 0,
+              encUrl: '',
+            ),
+          );
+        }
+      } else if (event.status == "TIMEOUT") {
+        yield const Left(ServerFailure('TIMEOUT'));
+      } else if (event.status == "ERROR") {
+        yield const Left(ServerFailure('ERROR'));
+      }
     }
   }
 }

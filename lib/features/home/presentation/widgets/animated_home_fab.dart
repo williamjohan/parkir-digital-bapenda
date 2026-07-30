@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/components/pb_permission_gate.dart';
+import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/enums/app_enums.dart';
@@ -12,6 +13,7 @@ class AnimatedHomeFab extends StatefulWidget {
   final bool isFree;
   final bool isDemoMode;
   final VoidCallback onReload;
+  final bool? isEnableBuatLaporan;
 
   const AnimatedHomeFab({
     super.key,
@@ -19,6 +21,7 @@ class AnimatedHomeFab extends StatefulWidget {
     required this.isFree,
     required this.isDemoMode,
     required this.onReload,
+    this.isEnableBuatLaporan,
   });
 
   @override
@@ -29,6 +32,7 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
     with TickerProviderStateMixin {
   // Teks kembali ke versi awal karena hanya akan dilihat oleh Pengawas
   final List<String> _hintTexts = ['Buat Laporan', 'Check Qris nya'];
+  final List<String> _hintTextsPengawas = ['Buat Laporan', 'Buat Laporan'];
   int _currentIndex = 0;
 
   late AnimationController _slideController;
@@ -97,7 +101,11 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
       if (!mounted) break;
 
       setState(() {
-        _currentIndex = (_currentIndex + 1) % _hintTexts.length;
+        if (widget.currentRole == RoleLoginDigitalParkir.pengawas) {
+          _currentIndex = (_currentIndex + 1) % _hintTextsPengawas.length;
+        } else {
+          _currentIndex = (_currentIndex + 1) % _hintTexts.length;
+        }
       });
 
       await Future.delayed(const Duration(milliseconds: 500));
@@ -140,38 +148,50 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                 foregroundColor: Colors.white,
                 elevation: 3,
                 onTap: () async {
+                  if (widget.isEnableBuatLaporan != true) {
+                    PbStatusSnackbar.show(
+                      context,
+                      message:
+                          'Silahkan check-in terlebih dahulu sebelum membuat laporan',
+                      isError: true,
+                    );
+                    return;
+                  }
+
                   final result = await context.pushNamed<bool>(
                     AppRoutes.addLaporanPelanggaran,
                   );
+
                   if (result == true) {
                     widget.onReload();
                   }
                 },
               ),
-              SpeedDialChild(
-                child: const Icon(Icons.receipt_long_outlined),
-                label: 'Buat Transaksi',
-                labelStyle: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+              if (widget.currentRole != RoleLoginDigitalParkir.pengawas)
+                SpeedDialChild(
+                  child: const Icon(Icons.receipt_long_outlined),
+                  label: 'Buat Transaksi',
+                  labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                  labelBackgroundColor: Colors.white,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 3,
+                  onTap: () async {
+                    final result = await context.pushNamed(
+                      AppRoutes.transaction,
+                      extra: {
+                        'isFree': widget.isFree,
+                        'isDemoMode': widget.isDemoMode,
+                      },
+                    );
+                    if (result == true) {
+                      widget.onReload();
+                    }
+                  },
                 ),
-                labelBackgroundColor: Colors.white,
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                elevation: 3,
-                onTap: () async {
-                  final result = await context.pushNamed(
-                    AppRoutes.transaction,
-                    extra: {
-                      'isFree': widget.isFree,
-                      'isDemoMode': widget.isDemoMode,
-                    },
-                  );
-                  if (result == true) {
-                    widget.onReload();
-                  }
-                },
-              ),
             ],
           )
         : FloatingActionButton(
@@ -219,7 +239,9 @@ class _AnimatedHomeFabState extends State<AnimatedHomeFab>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          _hintTexts[_currentIndex],
+                          widget.currentRole == RoleLoginDigitalParkir.pengawas
+                              ? _hintTextsPengawas[_currentIndex]
+                              : _hintTexts[_currentIndex],
                           style: AppTypography.heading1.copyWith(
                             fontSize: 16,
                             color: AppColors.primary,

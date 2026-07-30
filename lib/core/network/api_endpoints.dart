@@ -38,23 +38,48 @@ class ApiEndpoints {
       '/api/mobile/parking/get-qris-last-update';
 
   static const String summaryOpDev = '/api/mobile/parking/get-summary-op-dev';
+  static const String summaryRealiasiOpDev =
+      '/api/mobile/parking/get-summary-op-realisasi-dev';
   static const String summaryRangeDev =
       '/api/mobile/parking/dashboard-summary-nonjukir-range-dev';
-  static const String summayRealisasiOpDev =
+  static const String summaryRealisasiDev =
       '/api/mobile/parking/dashboard-summary-nonjukir-realisasi-dev';
   static const String listNopDev = '/api/mobile/parking/nop-list-dev';
+  // static const String pengawasLaporanList =
+  //     '/api/mobile/parking/pengawas-pelaporan-list';
   static const String pengawasLaporanList =
-      '/api/mobile/parking/pengawas-pelaporan-list';
+      '/api/mobile/parking/pengawas-pelaporan-list-sp3';
+  // static const String addPengawasanPelaporanDev =
+  //     '/api/mobile/parking/pengawas-pelaporan';
   static const String addPengawasanPelaporanDev =
-      '/api/mobile/parking/pengawas-pelaporan';
-  static const String pengawasCheckIn = '/api/mobile/parking/pengawas-check-in';
+      '/api/mobile/parking/pengawas-pelaporan-sp3';
+  static const String pengawasCheckIn =
+      '/api/mobile/parking/pengawas-check-in-sp3';
   static const String pengawasCheckOut =
-      '/api/mobile/parking/pengawas-check-out';
+      '/api/mobile/parking/pengawas-check-out-sp3';
   static const String pengawasMasterAlatDigital =
       '/api/mobile/parking/pengawas-master-alat-digital';
   static const String jadwalPengawasDev = '/api/mobile/parking/pengawas-jadwal';
   static const String pengawasPelaporanListDev =
       '/api/mobile/parking/pengawas-pelaporan-list';
   static const String pengawasDashboardRosterSummaryDev =
-      '/api/mobile/parking/pengawas-roster-summary';
+      '/api/mobile/parking/pengawas-roster-summary-sp3';
+  static const String laporanPendapatanSof =
+      '/api/mobile/parking/laporan-pendapatan-sof-dev';
+
+  static const String opLastUpdate = '/api/mobile/parking/get-op-last-update';
+  static const String taxSurveillanceDetail = '';
+
+  static const String opPengawasList = '/api/mobile/parking/op-pengawas-list';
+  static const String jenisPelanggaran =
+      '/api/mobile/parking/pengawas-master-jenis-pelanggaran';
+  static const String riwayatPengawasanSp3 =
+      '/api/mobile/parking/history-pengawasan-list-sp3';
+  static const String homeScreenPengawas =
+      '/api/mobile/parking/home-screen-pengawas-sp3';
+
+  // Auth Kantorku SSO //
+  static const String kantorkuUrl = '/api/Kominfo/authorize-login-kantorku';
+
+  static const String loginWithKantorkuSession = '/api/Kominfo/mobile-login';
 }

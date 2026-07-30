@@ -1,17 +1,22 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/range_filter_widget.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/presentation/widgets/sof_breakdown_panel_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import '../../../../core/design_system/components/pb_permission_dialog.dart';
 import '../../../../core/design_system/components/pb_status_snackbar.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../shared/loading/loading_overlay.dart';
+import '../../../printer/presentation/cubit/printer_state.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../cubit/transaction_history_state.dart';
 import '../widgets/history_card_widget.dart';
-import '../widgets/history_recap_widget.dart'; // 🚀 IMPORT WIDGET ASLI
+import '../widgets/history_recap_widget.dart';
 
 class TransactionHistoryPage extends StatefulWidget {
   final DateTime? initialDate;
@@ -33,8 +38,10 @@ class TransactionHistoryPage extends StatefulWidget {
   State<TransactionHistoryPage> createState() => _TransactionHistoryPageState();
 }
 
-class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
+class _TransactionHistoryPageState extends State<TransactionHistoryPage>
+    with SingleTickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
+  late final AnimationController _sofPanelController;
 
   bool _isScrolledPastRecap = false;
   bool _showOverlayRecap = false;
@@ -95,6 +102,11 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       59,
       59,
     );
+    _sofPanelController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+      value: 0,
+    );
 
     context.read<TransactionHistoryCubit>().fetchHistory(
       _startDate,
@@ -124,69 +136,236 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   }
 
   @override
+  void dispose() {
+    _sofPanelController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _openSofPanel(TransactionHistoryState state) {
+    final isFirstOpen =
+        _sofPanelController.value < 0.5 &&
+        state is TransactionHistoryLoaded &&
+        state.sofDetailList.isEmpty;
+    _sofPanelController.animateTo(1, curve: Curves.easeOut);
+    if (isFirstOpen) {
+      context.read<TransactionHistoryCubit>().fetchSofBreakdown();
+    }
+  }
+
+  void _closeSofPanel() =>
+      _sofPanelController.animateTo(0, curve: Curves.easeOut);
+
+  void _toggleSofPanel(TransactionHistoryState state) {
+    _sofPanelController.value > 0.5 ? _closeSofPanel() : _openSofPanel(state);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TransactionHistoryCubit, TransactionHistoryState>(
-      listener: (context, state) {
-        if (state is TransactionHistoryError) {
-          PbStatusSnackbar.show(context, message: state.message, isError: true);
-        }
-      },
-      builder: (context, state) {
-        final bool isLoading = state is TransactionHistoryLoading;
-        return LoadingOverlay(
-          isLoading: isLoading,
-          child: SafeArea(
-            bottom: true,
-            top: false,
-            child: Scaffold(
-              backgroundColor: Colors.grey.shade50,
-              appBar: AppBar(
-                title: Text(
-                  'Riwayat Pendapatan',
-                  style: AppTypography.heading5.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
+    return MultiBlocListener(
+      listeners: [
+        // Listener Pertama: Untuk menangkap error dari Riwayat Transaksi
+        BlocListener<TransactionHistoryCubit, TransactionHistoryState>(
+          listener: (context, state) {
+            if (state is TransactionHistoryError) {
+              PbStatusSnackbar.show(
+                context,
+                message: state.message,
+                isError: true,
+              );
+            }
+          },
+        ),
+
+        // Listener Kedua: Untuk menangkap error dari Printer
+        BlocListener<PrinterCubit, PrinterState>(
+          listener: (context, state) {
+            // 🚀 GUNAKAN MAYBEWHEN DARI FREEZED (Lebih bersih & type-safe)
+            state.maybeWhen(
+              error: (message, _) {
+                PbStatusSnackbar.show(context, message: message, isError: true);
+              },
+              permissionRequiresAction: (_) {
+                PbPermissionDialog.show(
+                  context, // Positional context
+                  type: AppPermissionType.bluetooth,
+                  status: AppPermissionStatus.permanentlyDenied,
+                  onActionPressed: () {
+                    context.read<PrinterCubit>().checkAndRequestPermissions();
+                  },
+                );
+              },
+              // Jika user mau cetak karcis
+              // tapi Bluetooth HP mereka dalam posisi mati (OFF)
+              bluetoothOffRequiresAction: (_) {
+                PbPermissionDialog.show(
+                  context, // Positional context
+                  type: AppPermissionType.bluetooth,
+                  status: AppPermissionStatus
+                      .permanentlyDenied, // Memicu teks "Buka Pengaturan"
+                  onActionPressed: () async {
+                    await AppSettings.openAppSettings(
+                      type: AppSettingsType.bluetooth,
+                    );
+                  },
+                );
+              },
+              orElse: () {},
+            );
+          },
+        ),
+      ],
+      child: BlocBuilder<TransactionHistoryCubit, TransactionHistoryState>(
+        builder: (context, state) {
+          final bool isLoading = state is TransactionHistoryLoading;
+          return LoadingOverlay(
+            isLoading: isLoading,
+            child: SafeArea(
+              bottom: true,
+              top: false,
+              child: Scaffold(
+                backgroundColor: Colors.grey.shade50,
+                appBar: AppBar(
+                  title: Text(
+                    'Riwayat Pendapatan',
+                    style: AppTypography.heading5.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+                  centerTitle: true,
+                  backgroundColor: AppColors.surface,
+                  elevation: 0,
+                  foregroundColor: Colors.black,
+                  iconTheme: const IconThemeData(color: AppColors.primary),
                 ),
-                centerTitle: true,
-                backgroundColor: AppColors.surface,
-                elevation: 0,
-                foregroundColor: Colors.black,
-                iconTheme: const IconThemeData(color: AppColors.primary),
-              ),
-              body: Column(
-                children: [
-                  RangeFilterWidget(
-                    onApply:
-                        ({
-                          required String startDate,
-                          required String endDate,
-                          required String startTime,
-                          required String endTime,
-                        }) {
-                          final start = DateTime.parse("$startDate $startTime");
-                          final end = DateTime.parse("$endDate $endTime");
-                          setState(() {
-                            _startDate = start;
-                            _endDate = end;
-                          });
-                          context.read<TransactionHistoryCubit>().fetchHistory(
-                            start,
-                            end,
-                            widget.nop ?? '',
-                            widget.idDevice ?? '',
+                body: Column(
+                  children: [
+                    RangeFilterWidget(
+                      onApply:
+                          ({
+                            required String startDate,
+                            required String endDate,
+                            required String startTime,
+                            required String endTime,
+                          }) {
+                            final start = DateTime.parse(
+                              "$startDate $startTime",
+                            );
+                            final end = DateTime.parse("$endDate $endTime");
+                            setState(() {
+                              _startDate = start;
+                              _endDate = end;
+                            });
+                            context
+                                .read<TransactionHistoryCubit>()
+                                .fetchHistory(
+                                  start,
+                                  end,
+                                  widget.nop ?? '',
+                                  widget.idDevice ?? '',
+                                );
+                          },
+                    ),
+                    if (state is TransactionHistoryLoaded)
+                      _buildFilterSection(state),
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final double availableWidth = constraints.maxWidth;
+
+                          return ClipRect(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onHorizontalDragUpdate: (details) {
+                                if (state is! TransactionHistoryLoaded) return;
+                                final delta =
+                                    details.primaryDelta! / availableWidth;
+                                _sofPanelController.value =
+                                    (_sofPanelController.value + delta).clamp(
+                                      0.0,
+                                      1.0,
+                                    );
+                              },
+                              onHorizontalDragEnd: (details) {
+                                if (state is! TransactionHistoryLoaded) return;
+                                final velocity = details.primaryVelocity ?? 0;
+                                const flingThreshold = 300.0;
+                                if (velocity > flingThreshold) {
+                                  _openSofPanel(state);
+                                } else if (velocity < -flingThreshold) {
+                                  _closeSofPanel();
+                                } else if (_sofPanelController.value > 0.5) {
+                                  _openSofPanel(state);
+                                } else {
+                                  _closeSofPanel();
+                                }
+                              },
+                              child: Stack(
+                                children: [
+                                  if (state is TransactionHistoryLoaded)
+                                    AnimatedBuilder(
+                                      animation: _sofPanelController,
+                                      builder: (context, child) => Positioned(
+                                        top: 0,
+                                        bottom: 0,
+                                        left:
+                                            (_sofPanelController.value - 1) *
+                                            availableWidth,
+                                        width: availableWidth,
+                                        child: child!,
+                                      ),
+                                      child: SofBreakdownPanelWidget(
+                                        sofList: state.sofDetailList,
+                                        isLoading: state.isSofPanelLoading,
+                                        selectedKategori:
+                                            state.selectedKategori,
+                                      ),
+                                    ),
+                                  AnimatedBuilder(
+                                    animation: _sofPanelController,
+                                    builder: (context, child) => Positioned(
+                                      top: 0,
+                                      bottom: 0,
+                                      left:
+                                          _sofPanelController.value *
+                                          availableWidth,
+                                      width: availableWidth,
+                                      child: child!,
+                                    ),
+                                    child: _buildScrollContent(state),
+                                  ),
+                                ],
+                              ),
+                            ),
                           );
                         },
-                  ),
-                  if (state is TransactionHistoryLoaded && widget.nop != null)
-                    _buildFilterSection(state),
-                  Expanded(child: _buildScrollContent(state)),
-                ],
+                      ),
+                    ),
+                  ],
+                ),
+                floatingActionButton: state is TransactionHistoryLoaded
+                    ? AnimatedBuilder(
+                        animation: _sofPanelController,
+                        builder: (context, _) {
+                          final isOpen = _sofPanelController.value > 0.5;
+                          return FloatingActionButton(
+                            heroTag: 'sof_panel_fab',
+                            onPressed: () => _toggleSofPanel(state),
+                            backgroundColor: AppColors.primary,
+                            child: Icon(
+                              isOpen ? Icons.close : Icons.payments_rounded,
+                              color: Colors.white,
+                            ),
+                          );
+                        },
+                      )
+                    : null,
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -311,44 +490,22 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                                 showDialog(
                                   context: context,
                                   barrierDismissible: false,
-                                  builder: (_) {
+                                  builder: (dialogContext) {
                                     return Dialog(
                                       insetPadding: const EdgeInsets.all(24),
                                       child: PbPreviewTicketWidget(
                                         item: data[index],
                                         isPrinterReady: true,
                                         okPressed: () {
-                                          Navigator.pop(context);
+                                          Navigator.pop(dialogContext);
                                         },
                                         printPressed: () async {
-                                          showDialog(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (_) {
-                                              return Dialog(
-                                                insetPadding:
-                                                    const EdgeInsets.all(24),
-                                                child: PbPreviewTicketWidget(
-                                                  item: data[index],
-                                                  isPrinterReady: true,
-                                                  okPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  printPressed: () async {
-                                                    // Navigator.pop(context);
+                                          // Navigator.pop(context);
 
-                                                    // proses print di sini
-                                                    await context
-                                                        .read<PrinterCubit>()
-                                                        .printReceipt(
-                                                          context,
-                                                          data[index],
-                                                        );
-                                                  },
-                                                ),
-                                              );
-                                            },
-                                          );
+                                          // proses print di sini
+                                          return await context
+                                              .read<PrinterCubit>()
+                                              .printReceipt(data[index]);
                                         },
                                       ),
                                     );

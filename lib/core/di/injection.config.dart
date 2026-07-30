@@ -12,7 +12,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:image_picker/image_picker.dart' as _i183;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import '../../features/absensi/check_list_absensi/data/datasources/absensi_remote_datasource.dart'
     as _i606;
@@ -34,27 +36,23 @@ import '../../features/auth/domain/usecases/check_auth_status_usecase.dart'
     as _i52;
 import '../../features/auth/domain/usecases/check_device_uuid_usecase.dart'
     as _i127;
+import '../../features/auth/domain/usecases/get_kantorku_sso_url_usecase.dart'
+    as _i845;
+import '../../features/auth/domain/usecases/get_sso_token_stream_usecase.dart'
+    as _i30;
 import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/auth/domain/usecases/login_with_sso_usecase.dart'
+    as _i497;
 import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
-import '../../features/daftar_nop/data/datasources/daftar_nop_datasource.dart'
-    as _i17;
-import '../../features/daftar_nop/data/repositories/daftar_nop_repository_impl.dart'
-    as _i66;
-import '../../features/daftar_nop/domain/repositories/daftar_nop_repository.dart'
-    as _i849;
-import '../../features/daftar_nop/domain/usecases/daftar_nop_datasource.dart'
-    as _i819;
-import '../../features/daftar_nop/presentation/cubit/daftar_nop_cubit.dart'
-    as _i915;
 import '../../features/dashboard_op/dashboard_main/data/datasources/dashboard_op_datasource.dart'
     as _i905;
 import '../../features/dashboard_op/dashboard_main/data/repositories/dashboard_op_repository_impl.dart'
     as _i606;
-import '../../features/dashboard_op/dashboard_main/domain/repositories/dashboard_op_repository.dart'
-    as _i23;
+import '../../features/dashboard_op/dashboard_main/domain/repositories/i_dashboard_op_repository.dart'
+    as _i334;
 import '../../features/dashboard_op/dashboard_main/domain/usecases/dashboard_op_usecase.dart'
     as _i644;
 import '../../features/dashboard_op/dashboard_main/presentation/cubit/dashboard_op_cubit.dart'
@@ -79,6 +77,16 @@ import '../../features/dashboard_op/detail_realisasi_op/domain/usecases/get_deta
     as _i709;
 import '../../features/dashboard_op/detail_realisasi_op/presentation/cubit/detail_realisasi_op_cubit.dart'
     as _i468;
+import '../../features/dashboard_op/detail_tax_surveillance_op/data/datasources/detail_tax_surveillance_op_datasources.dart'
+    as _i460;
+import '../../features/dashboard_op/detail_tax_surveillance_op/data/repositories/detail_tax_surveillance_op_repository_impl.dart'
+    as _i934;
+import '../../features/dashboard_op/detail_tax_surveillance_op/domain/repositories/i_detail_tax_surveillance_op_repository.dart'
+    as _i138;
+import '../../features/dashboard_op/detail_tax_surveillance_op/domain/usecases/detail_tax_surveillance_op_repository_usecase.dart'
+    as _i429;
+import '../../features/dashboard_op/detail_tax_surveillance_op/presentation/cubit/detail_tax_surveillance_cubit.dart'
+    as _i588;
 import '../../features/home/data/datasources/dashboard_summary_remote_datasource.dart'
     as _i535;
 import '../../features/home/data/repositories/home_repository_impl.dart'
@@ -96,16 +104,33 @@ import '../../features/init/domain/repositories/i_device_check_repository.dart'
 import '../../features/init/domain/usecases/check_device_readiness_usecase.dart'
     as _i232;
 import '../../features/init/presentation/cubit/init_cubit.dart' as _i674;
-import '../../features/jadwal/data/datasources/jadwal_remote_datasource.dart'
-    as _i595;
-import '../../features/jadwal/data/repositories/jadwal_repository_impl.dart'
-    as _i1061;
-import '../../features/jadwal/domain/repositories/i_jadwal_repositories.dart'
-    as _i394;
-import '../../features/jadwal/domain/usecases/jadwal_usecase.dart' as _i853;
-import '../../features/jadwal/presentation/cubit/jadwal_cubit.dart' as _i367;
-import '../../features/payment/data/datasources/payment_remote_datasource.dart'
-    as _i247;
+import '../../features/jadwal/data/datasources/riwayat_absensi_datasource.dart'
+    as _i778;
+import '../../features/jadwal/data/repositories/riwayat_absensi_repository_impl.dart'
+    as _i507;
+import '../../features/jadwal/domain/repositories/i_riwayat_absensi_repositories.dart'
+    as _i32;
+import '../../features/jadwal/domain/usecases/riwayat_absensi_usecase.dart'
+    as _i433;
+import '../../features/jadwal/presentation/cubit/riwayat_absensi_cubit.dart'
+    as _i729;
+import '../../features/objek_pajak/data/datasources/nop_remote_datasource.dart'
+    as _i115;
+import '../../features/objek_pajak/data/repositories/op_repository_impl.dart'
+    as _i633;
+import '../../features/objek_pajak/domain/repositories/i_nop_repository.dart'
+    as _i972;
+import '../../features/objek_pajak/domain/usecases/nop_usecase.dart' as _i521;
+import '../../features/op_pengawas/data/datasources/op_pengawasan_datasource.dart'
+    as _i978;
+import '../../features/op_pengawas/data/repositories/op_pengawasan_repository_impl.dart'
+    as _i199;
+import '../../features/op_pengawas/domain/repositories/i_op_pengawasan_repository.dart'
+    as _i463;
+import '../../features/op_pengawas/domain/usecases/op_pengawasan_usecase.dart'
+    as _i786;
+import '../../features/op_pengawas/presentation/cubit/op_pengawasan_cubit.dart'
+    as _i173;
 import '../../features/payment/data/datasources/qris_signalr_datasource.dart'
     as _i57;
 import '../../features/payment/data/repositories/payment_repository_impl.dart'
@@ -166,6 +191,8 @@ import '../../features/transaction_history/data/repositories/transaction_history
     as _i19;
 import '../../features/transaction_history/domain/repositories/i_transaction_history_repository.dart'
     as _i502;
+import '../../features/transaction_history/domain/usecases/get_sof_usecase.dart'
+    as _i259;
 import '../../features/transaction_history/domain/usecases/get_transaction_history_usecase.dart'
     as _i732;
 import '../../features/transaction_history/presentation/cubit/transaction_history_cubit.dart'
@@ -183,26 +210,42 @@ import '../../features/update/presentation/cubit/check_update_cubit.dart'
 import '../network/connectivity_check_interceptor.dart' as _i344;
 import '../network/dio_auth_interceptor.dart' as _i817;
 import '../network/network_cubit.dart' as _i11;
+import '../services/audio/i_audio_notification_service.dart' as _i827;
+import '../services/camera/camera_service.dart' as _i0;
+import '../services/camera/i_camera_service.dart' as _i571;
+import '../services/deeplink_service.dart' as _i960;
 import '../services/image/i_image_service.dart' as _i37;
 import '../services/image/image_service_impl.dart' as _i81;
 import '../services/location/app_location_services_impl.dart' as _i35;
 import '../services/location/i_app_location_service.dart' as _i988;
+import '../services/permission/i_permission_service.dart' as _i164;
+import '../services/permission/permission_service_impl.dart' as _i1018;
 import '../services/printer/bluetooth_printer_service_impl.dart' as _i291;
 import '../services/printer/i_printer_service.dart' as _i1003;
+import '../storage/app_preferences.dart' as _i632;
 import '../storage/database_helper_2.dart' as _i654;
 import '../storage/i_secure_storage_manager.dart' as _i1015;
 import '../storage/secure_storage_manager.dart' as _i1042;
 import 'register_module.dart' as _i291;
 
 // initializes the registration of main-scope dependencies inside of GetIt
-_i174.GetIt init(
+Future<_i174.GetIt> init(
   _i174.GetIt getIt, {
   String? environment,
   _i526.EnvironmentFilter? environmentFilter,
-}) {
+}) async {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModule = _$RegisterModule();
   gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
+  gh.lazySingleton<_i827.IAudioNotificationService>(
+    () => registerModule.audioNotificationService,
+  );
+  gh.lazySingleton<_i183.ImagePicker>(() => registerModule.imagePicker);
+  await gh.lazySingletonAsync<_i460.SharedPreferences>(
+    () => registerModule.prefs,
+    preResolve: true,
+  );
+  gh.lazySingleton<_i960.DeeplinkService>(() => registerModule.deeplinkService);
   gh.lazySingleton<_i654.DatabaseHelper2>(() => _i654.DatabaseHelper2());
   gh.lazySingleton<_i57.QrisSignalRDatasource>(
     () => _i57.QrisSignalRDatasource(),
@@ -216,6 +259,9 @@ _i174.GetIt init(
   gh.lazySingleton<_i232.CheckDeviceReadinessUseCase>(
     () => _i232.CheckDeviceReadinessUseCase(gh<_i515.IDeviceCheckRepository>()),
   );
+  gh.lazySingleton<_i632.AppPreferences>(
+    () => _i632.AppPreferences(gh<_i460.SharedPreferences>()),
+  );
   gh.lazySingleton<_i37.IImageService>(() => _i81.ImageServiceImpl());
   gh.lazySingleton<_i1003.IPrinterService>(
     () => _i291.BluetoothPrinterServiceImpl(),
@@ -223,23 +269,20 @@ _i174.GetIt init(
   gh.lazySingleton<_i1015.ISecureStorageManager>(
     () => _i1042.SecureStorageManagerImpl(),
   );
-  gh.lazySingleton<_i1004.IPaymentRepository>(
-    () => _i265.PaymentRepositoryImpl(gh<_i57.QrisSignalRDatasource>()),
+  gh.lazySingleton<_i164.IPermissionService>(
+    () => _i1018.PermissionServiceImpl(),
   );
-  gh.factory<_i808.PaymentUseCase>(
-    () => _i808.PaymentUseCase(gh<_i1004.IPaymentRepository>()),
+  gh.lazySingleton<_i571.ICameraService>(
+    () => _i0.CameraService(
+      gh<_i183.ImagePicker>(),
+      gh<_i460.SharedPreferences>(),
+    ),
   );
   gh.lazySingleton<_i344.ConnectivityCheckInterceptor>(
     () => _i344.ConnectivityCheckInterceptor(gh<_i895.Connectivity>()),
   );
   gh.lazySingleton<_i11.NetworkCubit>(
     () => _i11.NetworkCubit(gh<_i895.Connectivity>()),
-  );
-  gh.factory<_i377.PrinterCubit>(
-    () => _i377.PrinterCubit(
-      gh<_i1003.IPrinterService>(),
-      gh<_i1015.ISecureStorageManager>(),
-    ),
   );
   gh.lazySingleton<_i817.DioAuthInterceptor>(
     () => _i817.DioAuthInterceptor(gh<_i1015.ISecureStorageManager>()),
@@ -250,17 +293,30 @@ _i174.GetIt init(
       secureStorageManager: gh<_i1015.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i1004.IPaymentRepository>(
+    () => _i265.PaymentRepositoryImpl(
+      gh<_i57.QrisSignalRDatasource>(),
+      gh<_i1015.ISecureStorageManager>(),
+    ),
+  );
+  gh.factory<_i377.PrinterCubit>(
+    () => _i377.PrinterCubit(
+      gh<_i1003.IPrinterService>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i164.IPermissionService>(),
+    ),
+  );
   gh.lazySingleton<_i988.IAppLocationService>(
     () => _i35.AppLocationServiceImpl(gh<_i1015.ISecureStorageManager>()),
+  );
+  gh.factory<_i808.PaymentUseCase>(
+    () => _i808.PaymentUseCase(gh<_i1004.IPaymentRepository>()),
   );
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.provideDio(gh<_i817.DioAuthInterceptor>()),
   );
   gh.lazySingleton<_i905.DashboardOpDatasource>(
     () => _i905.DashboardOpDatasourceImpl(gh<_i361.Dio>()),
-  );
-  gh.lazySingleton<_i595.IJadwalRemoteDataSource>(
-    () => _i595.JadwalRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i135.RealisasiRemoteDataSource>(
     () => _i135.RealisasiRemoteDataSourceImpl(gh<_i361.Dio>()),
@@ -274,17 +330,18 @@ _i174.GetIt init(
   gh.lazySingleton<_i896.ITransactionHistoryRemoteDataSource>(
     () => _i896.TransactionHistoryRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i17.DaftarNopDatasource>(
-    () => _i17.DaftarNopDatasourceImpl(gh<_i361.Dio>()),
-  );
-  gh.lazySingleton<_i849.DaftarNopRepository>(
-    () => _i66.DaftarNopRepositoryImpl(gh<_i17.DaftarNopDatasource>()),
-  );
   gh.lazySingleton<_i502.IQrisRemoteDataSource>(
     () => _i502.QrisRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i535.ISummaryRemoteDataSource>(
     () => _i535.SummaryRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i274.IHomeRepository>(
+    () => _i76.HomeRepositoryImpl(
+      gh<_i535.ISummaryRemoteDataSource>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i632.AppPreferences>(),
+    ),
   );
   gh.lazySingleton<_i1051.IUpdateRemoteDataSource>(
     () => _i1051.UpdateRemoteDataSourceImpl(gh<_i361.Dio>()),
@@ -292,14 +349,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i920.DataJukirDatasource>(
     () => _i920.DataJukirDatasourceImpl(gh<_i361.Dio>()),
   );
-  gh.lazySingleton<_i394.IJadwalRepository>(
-    () => _i1061.JadwalRepositoryImpl(gh<_i595.IJadwalRemoteDataSource>()),
-  );
-  gh.lazySingleton<_i247.IPaymentRemoteDataSource>(
-    () => _i247.PaymentRemoteDataSourceImpl(gh<_i361.Dio>()),
-  );
-  gh.lazySingleton<_i819.GetDaftarNopUsecase>(
-    () => _i819.GetDaftarNopUsecase(gh<_i849.DaftarNopRepository>()),
+  gh.lazySingleton<_i115.INopRemoteDataSource>(
+    () => _i115.NopRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i606.IAbsensiRemoteDataSource>(
     () => _i606.AbsensiRemoteDataSourceImpl(
@@ -307,8 +358,14 @@ _i174.GetIt init(
       gh<_i37.IImageService>(),
     ),
   );
+  gh.lazySingleton<_i978.OpPengawasanDatasource>(
+    () => _i978.OpPengawasanDatasourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i847.IProfileRemoteDataSource>(
     () => _i847.ProfileRemoteDataSourceImpl(gh<_i361.Dio>()),
+  );
+  gh.lazySingleton<_i460.ITaxSurveillanceRemoteDataSource>(
+    () => _i460.TaxSurveillanceRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i926.PengawasanDatasource>(
     () => _i926.PengawasanDatasourceImpl(
@@ -316,11 +373,17 @@ _i174.GetIt init(
       gh<_i37.IImageService>(),
     ),
   );
+  gh.lazySingleton<_i778.IRiwayatAbsensiDataSource>(
+    () => _i778.RiwayatAbsensiDataSourceImpl(gh<_i361.Dio>()),
+  );
   gh.lazySingleton<_i676.DetailRealisasiOpRemoteDataSource>(
     () => _i676.DetailRealisasiOpRemoteDataSourceImpl(gh<_i361.Dio>()),
   );
   gh.lazySingleton<_i565.DataJukirRepository>(
     () => _i844.DataJukirRepositoryImpl(gh<_i920.DataJukirDatasource>()),
+  );
+  gh.lazySingleton<_i972.INopRepository>(
+    () => _i633.NopRepositoryImpl(gh<_i115.INopRemoteDataSource>()),
   );
   gh.lazySingleton<_i534.RealisasiRepository>(
     () => _i407.RealisasiRepositoryImpl(gh<_i135.RealisasiRemoteDataSource>()),
@@ -328,20 +391,13 @@ _i174.GetIt init(
   gh.lazySingleton<_i280.IUpdateRepository>(
     () => _i121.UpdateRepositoryImpl(gh<_i1051.IUpdateRemoteDataSource>()),
   );
-  gh.lazySingleton<_i589.IAuthRepository>(
-    () => _i153.AuthRepositoryImpl(
-      gh<_i107.IAuthRemoteDataSource>(),
-      gh<_i1015.ISecureStorageManager>(),
-      gh<_i654.DatabaseHelper2>(),
-    ),
+  gh.lazySingleton<_i463.IOpPengawasanRepository>(
+    () => _i199.OpPengawasanRepositoryImpl(gh<_i978.OpPengawasanDatasource>()),
   );
   gh.lazySingleton<_i416.DetailRealisasiOpRepository>(
     () => _i886.DetailRealisasiOpRepositoryImpl(
       gh<_i676.DetailRealisasiOpRemoteDataSource>(),
     ),
-  );
-  gh.lazySingleton<_i274.IHomeRepository>(
-    () => _i76.HomeRepositoryImpl(gh<_i535.ISummaryRemoteDataSource>()),
   );
   gh.factory<_i506.CheckUpdateUseCase>(
     () => _i506.CheckUpdateUseCase(gh<_i280.IUpdateRepository>()),
@@ -355,22 +411,155 @@ _i174.GetIt init(
       gh<_i1015.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i165.PengawasanRepository>(
+    () => _i365.PengawasanRepositoryImpl(
+      gh<_i926.PengawasanDatasource>(),
+      gh<_i632.AppPreferences>(),
+    ),
+  );
+  gh.lazySingleton<_i334.DashboardOpRepository>(
+    () => _i606.DashboardOpRepositoryImpl(gh<_i905.DashboardOpDatasource>()),
+  );
+  gh.lazySingleton<_i138.ITaxSurveillanceRepository>(
+    () => _i934.TaxSurveillanceRepositoryImpl(
+      gh<_i460.ITaxSurveillanceRemoteDataSource>(),
+    ),
+  );
   gh.lazySingleton<_i709.GetDetailRealisasiOpUseCase>(
     () => _i709.GetDetailRealisasiOpUseCase(
       gh<_i416.DetailRealisasiOpRepository>(),
     ),
   );
-  gh.lazySingleton<_i23.DashboardOpRepository>(
-    () => _i606.DashboardOpRepositoryImpl(gh<_i905.DashboardOpDatasource>()),
+  gh.lazySingleton<_i786.GetOpPengawasanUseCase>(
+    () => _i786.GetOpPengawasanUseCase(gh<_i463.IOpPengawasanRepository>()),
   );
   gh.lazySingleton<_i254.GetDataJukirUseCase>(
     () => _i254.GetDataJukirUseCase(gh<_i717.DataJukirRepository>()),
   );
-  gh.lazySingleton<_i165.PengawasanRepository>(
-    () => _i365.PengawasanRepositoryImpl(gh<_i926.PengawasanDatasource>()),
-  );
   gh.factory<_i1020.CheckUpdateCubit>(
     () => _i1020.CheckUpdateCubit(gh<_i506.CheckUpdateUseCase>()),
+  );
+  gh.lazySingleton<_i835.GetDataJukirUseCase>(
+    () => _i835.GetDataJukirUseCase(gh<_i565.DataJukirRepository>()),
+  );
+  gh.lazySingleton<_i589.IAuthRepository>(
+    () => _i153.AuthRepositoryImpl(
+      gh<_i107.IAuthRemoteDataSource>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i654.DatabaseHelper2>(),
+      gh<_i632.AppPreferences>(),
+      gh<_i960.DeeplinkService>(),
+    ),
+  );
+  gh.lazySingleton<_i996.ProfileUseCase>(
+    () => _i996.ProfileUseCase(gh<_i879.IProfileRepository>()),
+  );
+  gh.lazySingleton<_i502.ITransactionHistoryRepository>(
+    () => _i19.TransactionHistoryRepositoryImpl(
+      gh<_i896.ITransactionHistoryRemoteDataSource>(),
+    ),
+  );
+  gh.lazySingleton<_i263.IAbsensiRepository>(
+    () => _i482.AbsensiRepositoryImpl(
+      remoteDataSource: gh<_i606.IAbsensiRemoteDataSource>(),
+    ),
+  );
+  gh.lazySingleton<_i32.IRiwayatAbsensiRepository>(
+    () => _i507.RiwayatAbsensiRepositoryImpl(
+      gh<_i778.IRiwayatAbsensiDataSource>(),
+    ),
+  );
+  gh.factory<_i468.DetailRealisasiOpCubit>(
+    () => _i468.DetailRealisasiOpCubit(gh<_i709.GetDetailRealisasiOpUseCase>()),
+  );
+  gh.lazySingleton<_i215.IQrisRepository>(
+    () => _i718.QrisRepositoryImpl(
+      gh<_i502.IQrisRemoteDataSource>(),
+      gh<_i1015.ISecureStorageManager>(),
+    ),
+  );
+  gh.lazySingleton<_i845.GetKantorkuSsoUrlUseCase>(
+    () => _i845.GetKantorkuSsoUrlUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i30.GetSsoTokenStreamUseCase>(
+    () => _i30.GetSsoTokenStreamUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i497.LoginWithSsoUseCase>(
+    () => _i497.LoginWithSsoUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.factory<_i425.GetRealisasiSeluruhOpUseCase>(
+    () => _i425.GetRealisasiSeluruhOpUseCase(gh<_i534.RealisasiRepository>()),
+  );
+  gh.lazySingleton<_i429.TaxSurveillanceUseCase>(
+    () => _i429.TaxSurveillanceUseCase(gh<_i138.ITaxSurveillanceRepository>()),
+  );
+  gh.factory<_i173.OpPengawasanCubit>(
+    () => _i173.OpPengawasanCubit(
+      gh<_i786.GetOpPengawasanUseCase>(),
+      gh<_i632.AppPreferences>(),
+    ),
+  );
+  gh.factory<_i588.DetailTaxSurveillanceCubit>(
+    () => _i588.DetailTaxSurveillanceCubit(gh<_i429.TaxSurveillanceUseCase>()),
+  );
+  gh.lazySingleton<_i521.NopUsecase>(
+    () => _i521.NopUsecase(gh<_i972.INopRepository>()),
+  );
+  gh.factory<_i36.ProfileCubit>(
+    () => _i36.ProfileCubit(gh<_i996.ProfileUseCase>()),
+  );
+  gh.factory<_i402.DataJukirCubit>(
+    () => _i402.DataJukirCubit(gh<_i254.GetDataJukirUseCase>()),
+  );
+  gh.lazySingleton<_i644.GetSummaryDashboardOpUsecase>(
+    () => _i644.GetSummaryDashboardOpUsecase(gh<_i334.DashboardOpRepository>()),
+  );
+  gh.lazySingleton<_i259.GetSofBreakdownUseCase>(
+    () =>
+        _i259.GetSofBreakdownUseCase(gh<_i502.ITransactionHistoryRepository>()),
+  );
+  gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
+    () => _i732.GetTransactionHistoryUseCase(
+      gh<_i502.ITransactionHistoryRepository>(),
+    ),
+  );
+  gh.lazySingleton<_i437.AddPengawasanUsecase>(
+    () => _i437.AddPengawasanUsecase(gh<_i165.PengawasanRepository>()),
+  );
+  gh.lazySingleton<_i437.GetLaporanPengawasanUsecase>(
+    () => _i437.GetLaporanPengawasanUsecase(gh<_i165.PengawasanRepository>()),
+  );
+  gh.lazySingleton<_i437.GetJenisPelanggaranUsecase>(
+    () => _i437.GetJenisPelanggaranUsecase(gh<_i165.PengawasanRepository>()),
+  );
+  gh.factory<_i789.DashboardOpCubit>(
+    () => _i789.DashboardOpCubit(gh<_i644.GetSummaryDashboardOpUsecase>()),
+  );
+  gh.factory<_i527.PengawasanCubit>(
+    () => _i527.PengawasanCubit(
+      gh<_i437.AddPengawasanUsecase>(),
+      gh<_i437.GetLaporanPengawasanUsecase>(),
+      gh<_i437.GetJenisPelanggaranUsecase>(),
+      gh<_i164.IPermissionService>(),
+      gh<_i988.IAppLocationService>(),
+      gh<_i571.ICameraService>(),
+    ),
+  );
+  gh.lazySingleton<_i718.QrisUsecase>(
+    () => _i718.QrisUsecase(gh<_i215.IQrisRepository>()),
+  );
+  gh.factory<_i1069.RealisasiCubit>(
+    () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
+  );
+  gh.lazySingleton<_i433.RiwayatAbsensiUsecase>(
+    () => _i433.RiwayatAbsensiUsecase(gh<_i32.IRiwayatAbsensiRepository>()),
+  );
+  gh.lazySingleton<_i708.AbsensiUsecase>(
+    () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
+  );
+  gh.factory<_i513.PaymentCubit>(
+    () =>
+        _i513.PaymentCubit(gh<_i718.QrisUsecase>(), gh<_i808.PaymentUseCase>()),
   );
   gh.lazySingleton<_i52.CheckAuthStatusUseCase>(
     () => _i52.CheckAuthStatusUseCase(gh<_i589.IAuthRepository>()),
@@ -384,83 +573,46 @@ _i174.GetIt init(
   gh.lazySingleton<_i48.LogoutUseCase>(
     () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
   );
-  gh.lazySingleton<_i835.GetDataJukirUseCase>(
-    () => _i835.GetDataJukirUseCase(gh<_i565.DataJukirRepository>()),
-  );
-  gh.lazySingleton<_i996.ProfileUseCase>(
-    () => _i996.ProfileUseCase(gh<_i879.IProfileRepository>()),
-  );
-  gh.lazySingleton<_i853.JadwalUseCase>(
-    () => _i853.JadwalUseCase(gh<_i394.IJadwalRepository>()),
-  );
-  gh.lazySingleton<_i502.ITransactionHistoryRepository>(
-    () => _i19.TransactionHistoryRepositoryImpl(
-      gh<_i896.ITransactionHistoryRemoteDataSource>(),
-    ),
-  );
-  gh.lazySingleton<_i263.IAbsensiRepository>(
-    () => _i482.AbsensiRepositoryImpl(
-      remoteDataSource: gh<_i606.IAbsensiRemoteDataSource>(),
-    ),
-  );
-  gh.factory<_i468.DetailRealisasiOpCubit>(
-    () => _i468.DetailRealisasiOpCubit(gh<_i709.GetDetailRealisasiOpUseCase>()),
-  );
-  gh.lazySingleton<_i215.IQrisRepository>(
-    () => _i718.QrisRepositoryImpl(
-      gh<_i502.IQrisRemoteDataSource>(),
+  gh.factory<_i753.TransactionHistoryCubit>(
+    () => _i753.TransactionHistoryCubit(
+      gh<_i732.GetTransactionHistoryUseCase>(),
+      gh<_i259.GetSofBreakdownUseCase>(),
       gh<_i1015.ISecureStorageManager>(),
+      gh<_i632.AppPreferences>(),
     ),
   );
-  gh.factory<_i425.GetRealisasiSeluruhOpUseCase>(
-    () => _i425.GetRealisasiSeluruhOpUseCase(gh<_i534.RealisasiRepository>()),
-  );
-  gh.factory<_i367.JadwalCubit>(
-    () => _i367.JadwalCubit(gh<_i853.JadwalUseCase>()),
-  );
-  gh.factory<_i915.DaftarNopCubit>(
-    () => _i915.DaftarNopCubit(
-      gh<_i819.GetDaftarNopUsecase>(),
-      gh<_i654.DatabaseHelper2>(),
-    ),
-  );
-  gh.lazySingleton<_i644.GetSummaryDashboardOpUsecase>(
-    () => _i644.GetSummaryDashboardOpUsecase(gh<_i23.DashboardOpRepository>()),
-  );
-  gh.factory<_i36.ProfileCubit>(
-    () => _i36.ProfileCubit(gh<_i996.ProfileUseCase>()),
-  );
-  gh.factory<_i402.DataJukirCubit>(
-    () => _i402.DataJukirCubit(gh<_i254.GetDataJukirUseCase>()),
-  );
-  gh.lazySingleton<_i732.GetTransactionHistoryUseCase>(
-    () => _i732.GetTransactionHistoryUseCase(
+  gh.lazySingleton<_i207.HomeUsecase>(
+    () => _i207.HomeUsecase(
+      gh<_i274.IHomeRepository>(),
       gh<_i502.ITransactionHistoryRepository>(),
     ),
   );
-  gh.lazySingleton<_i437.AddPengawasanUsecase>(
-    () => _i437.AddPengawasanUsecase(gh<_i165.PengawasanRepository>()),
-  );
-  gh.lazySingleton<_i437.GetLaporanPengawasanUsecase>(
-    () => _i437.GetLaporanPengawasanUsecase(gh<_i165.PengawasanRepository>()),
-  );
-  gh.factory<_i527.PengawasanCubit>(
-    () => _i527.PengawasanCubit(
-      gh<_i437.AddPengawasanUsecase>(),
-      gh<_i437.GetLaporanPengawasanUsecase>(),
+  gh.factory<_i273.HomeCubit>(
+    () => _i273.HomeCubit(
+      gh<_i207.HomeUsecase>(),
+      gh<_i1015.ISecureStorageManager>(),
+      gh<_i718.QrisUsecase>(),
+      gh<_i654.DatabaseHelper2>(),
+      gh<_i996.ProfileUseCase>(),
+      gh<_i571.ICameraService>(),
     ),
   );
-  gh.factory<_i789.DashboardOpCubit>(
-    () => _i789.DashboardOpCubit(gh<_i644.GetSummaryDashboardOpUsecase>()),
+  gh.factory<_i729.RiwayatAbsensiCubit>(
+    () => _i729.RiwayatAbsensiCubit(gh<_i433.RiwayatAbsensiUsecase>()),
   );
-  gh.lazySingleton<_i718.QrisUsecase>(
-    () => _i718.QrisUsecase(gh<_i215.IQrisRepository>()),
+  gh.factory<_i376.PendapatanDigitalCubit>(
+    () => _i376.PendapatanDigitalCubit(gh<_i207.HomeUsecase>()),
   );
-  gh.factory<_i1069.RealisasiCubit>(
-    () => _i1069.RealisasiCubit(gh<_i425.GetRealisasiSeluruhOpUseCase>()),
+  gh.factory<_i616.TransactionCubit>(
+    () => _i616.TransactionCubit(gh<_i718.QrisUsecase>()),
   );
-  gh.lazySingleton<_i708.AbsensiUsecase>(
-    () => _i708.AbsensiUsecase(gh<_i263.IAbsensiRepository>()),
+  gh.factory<_i875.AbsensiCubit>(
+    () => _i875.AbsensiCubit(
+      gh<_i708.AbsensiUsecase>(),
+      gh<_i164.IPermissionService>(),
+      gh<_i988.IAppLocationService>(),
+      gh<_i571.ICameraService>(),
+    ),
   );
   gh.lazySingleton<_i808.AppAuthCubit>(
     () => _i808.AppAuthCubit(
@@ -470,41 +622,13 @@ _i174.GetIt init(
       gh<_i127.CheckDeviceUuidUseCase>(),
     ),
   );
-  gh.factory<_i513.PaymentCubit>(
-    () =>
-        _i513.PaymentCubit(gh<_i718.QrisUsecase>(), gh<_i808.PaymentUseCase>()),
-  );
-  gh.factory<_i875.AbsensiCubit>(
-    () => _i875.AbsensiCubit(gh<_i708.AbsensiUsecase>()),
-  );
-  gh.factory<_i753.TransactionHistoryCubit>(
-    () => _i753.TransactionHistoryCubit(
-      gh<_i732.GetTransactionHistoryUseCase>(),
-      gh<_i1015.ISecureStorageManager>(),
-    ),
-  );
-  gh.lazySingleton<_i207.HomeUsecase>(
-    () => _i207.HomeUsecase(
-      gh<_i274.IHomeRepository>(),
-      gh<_i502.ITransactionHistoryRepository>(),
-    ),
-  );
-  gh.factory<_i376.PendapatanDigitalCubit>(
-    () => _i376.PendapatanDigitalCubit(gh<_i207.HomeUsecase>()),
-  );
-  gh.factory<_i616.TransactionCubit>(
-    () => _i616.TransactionCubit(gh<_i718.QrisUsecase>()),
-  );
   gh.factory<_i264.LoginCubit>(
-    () => _i264.LoginCubit(gh<_i188.LoginUseCase>(), gh<_i808.AppAuthCubit>()),
-  );
-  gh.factory<_i273.HomeCubit>(
-    () => _i273.HomeCubit(
-      gh<_i207.HomeUsecase>(),
-      gh<_i1015.ISecureStorageManager>(),
-      gh<_i718.QrisUsecase>(),
-      gh<_i654.DatabaseHelper2>(),
-      gh<_i996.ProfileUseCase>(),
+    () => _i264.LoginCubit(
+      gh<_i188.LoginUseCase>(),
+      gh<_i808.AppAuthCubit>(),
+      gh<_i845.GetKantorkuSsoUrlUseCase>(),
+      gh<_i30.GetSsoTokenStreamUseCase>(),
+      gh<_i497.LoginWithSsoUseCase>(),
     ),
   );
   return getIt;

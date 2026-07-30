@@ -1,8 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/enums/app_enums.dart';
+import 'package:parkir_digital_bapenda/core/storage/app_preferences.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/errors/failure.dart';
+import '../../../../core/services/deeplink_service.dart';
 import '../../../../core/storage/database_helper_2.dart';
 import '../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../core/utils/app_logger.dart';
@@ -16,41 +18,22 @@ class AuthRepositoryImpl implements IAuthRepository {
   final IAuthRemoteDataSource _remoteDataSource;
   final ISecureStorageManager _secureStorage;
   final DatabaseHelper2 _databaseHelper;
+  final AppPreferences _appPreferences;
+  final DeeplinkService _deeplinkService;
 
   AuthRepositoryImpl(
     this._remoteDataSource,
     this._secureStorage,
     this._databaseHelper,
+    this._appPreferences,
+    this._deeplinkService,
   );
 
   @override
   Future<Either<Failure, Unit>> login(String username, String password) async {
     try {
-      await _secureStorage.clearAllTokens();
-      await _databaseHelper.clearNopList();
-
       final response = await _remoteDataSource.login(username, password);
-
-      if (response.accessToken.isNotEmpty) {
-        //  1. HANYA SIMPAN ACCESS TOKEN
-        await _secureStorage.saveAccessToken(response.accessToken);
-
-        //  2. SIMPAN ROLE
-        await _secureStorage.saveRoleId(response.roleLoginId);
-
-        //  3. VALIDASI & SIMPAN UUID (Mekanisme Single Device)
-        if (response.roleLoginId < 3 && response.uuidStatic.isNotEmpty) {
-          await _secureStorage.saveDeviceUUID(response.uuidStatic);
-        }
-
-        //  4. SIMPAN NOP SECARA PARALEL
-        if (response.nopList.isNotEmpty) {
-          _simpanNopSecaraParalel(response.nopList);
-        }
-
-        return const Right(unit);
-      }
-      return const Left(AuthFailure('Token tidak ditemukan dari server.'));
+      return await _processAndSaveSession(response);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {
@@ -84,6 +67,7 @@ class AuthRepositoryImpl implements IAuthRepository {
       await _secureStorage.clearAllTokens();
       await _secureStorage.clearDeviceUUID();
       await _databaseHelper.clearNopList();
+      await _appPreferences.clearAllPreferences();
 
       return const Right(unit);
     } catch (e) {
@@ -109,5 +93,75 @@ class AuthRepositoryImpl implements IAuthRepository {
     } catch (_) {
       return false;
     }
+  }
+
+  @override
+  Future<Either<Failure, String>> getKantorkuSsoUrl() async {
+    try {
+      final url = await _remoteDataSource.getKantorkuSsoUrl();
+      return Right(url);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Stream<String> get ssoTokenStream => _deeplinkService.ssoTokenStream;
+
+  @override
+  Future<Either<Failure, Unit>> loginWithKantorkuSession(
+    String sessionId,
+  ) async {
+    try {
+      final response = await _remoteDataSource.loginWithKantorkuSession(
+        sessionId,
+      );
+
+      return await _processAndSaveSession(response);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return const Left(
+        AuthFailure('Terjadi kesalahan saat memvalidasi sesi SSO.'),
+      );
+    }
+  }
+
+  Future<Either<Failure, Unit>> _processAndSaveSession(
+    AuthResponseModel response,
+  ) async {
+    if (response.accessToken.isNotEmpty) {
+      await _secureStorage.clearAllTokens();
+      await _databaseHelper.clearNopList();
+
+      // 1. HANYA SIMPAN ACCESS TOKEN
+      await _secureStorage.saveAccessToken(response.accessToken);
+
+      // 2. SIMPAN ROLE
+      await _secureStorage.saveRoleId(response.roleLoginId);
+
+      // 3. VALIDASI & SIMPAN UUID (Mekanisme Single Device)
+      if (response.roleLoginId < 3 && response.uuidStatic.isNotEmpty) {
+        await _secureStorage.saveDeviceUUID(response.uuidStatic);
+      }
+
+      // 4. SIMPAN NOP SECARA PARALEL
+      if (response.nopList.isNotEmpty) {
+        _simpanNopSecaraParalel(response.nopList);
+      }
+
+      // 5. SIMPAN OP LAST UPDATE
+      if (response.lastUpdateOp.isNotEmpty) {
+        await _secureStorage.saveOpLastUpdate(response.lastUpdateOp);
+      }
+
+      return const Right(unit);
+    }
+
+    return const Left(AuthFailure('Token tidak ditemukan dari server.'));
   }
 }

@@ -5,6 +5,7 @@ import '../../../../core/design_system/tokens/app_colors.dart';
 class LoginBackgroundWidget extends StatelessWidget {
   final VoidCallback onLoginPressed;
   final VoidCallback onRegisterPressed;
+  final VoidCallback onLoginKantorkuPressed;
   final bool isHidden;
 
   const LoginBackgroundWidget({
@@ -12,6 +13,7 @@ class LoginBackgroundWidget extends StatelessWidget {
     required this.onLoginPressed,
     required this.onRegisterPressed,
     required this.isHidden,
+    required this.onLoginKantorkuPressed,
   });
 
   @override
@@ -105,10 +107,11 @@ class LoginBackgroundWidget extends StatelessWidget {
                           duration: const Duration(milliseconds: 300),
                           child: Column(
                             children: [
+                              // 1. Masuk Login Normal
                               SizedBox(
                                 width: double.infinity,
                                 height: 55,
-                                child: ElevatedButton(
+                                child: ElevatedButton.icon(
                                   onPressed: isHidden ? null : onLoginPressed,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primary,
@@ -118,7 +121,11 @@ class LoginBackgroundWidget extends StatelessWidget {
                                     ),
                                     elevation: 5,
                                   ),
-                                  child: const Text(
+                                  icon: const Icon(
+                                    Icons.login_rounded,
+                                    size: 22,
+                                  ),
+                                  label: const Text(
                                     "Masuk Akun",
                                     style: TextStyle(
                                       fontSize: 16,
@@ -128,7 +135,90 @@ class LoginBackgroundWidget extends StatelessWidget {
                                 ),
                               ),
 
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 10),
+
+                              // 2. Divider "ATAU"
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.8,
+                                      ),
+                                      thickness: 1,
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.0,
+                                    ),
+                                    child: Text(
+                                      "ATAU",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.8,
+                                      ),
+                                      thickness: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              // 3. Masuk Dengan Kantorku
+                              SizedBox(
+                                width: double.infinity,
+                                height: 55,
+                                child: ElevatedButton(
+                                  onPressed: isHidden
+                                      ? null
+                                      : onLoginKantorkuPressed,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryLight,
+                                    foregroundColor: AppColors.background,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 5,
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ClipOval(
+                                          child: Image.asset(
+                                            'assets/iconlogo/kantorku_icon.png',
+                                            height: 36,
+                                            width: 36,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        const Text(
+                                          "Masuk dengan Kantorku",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.surface,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),

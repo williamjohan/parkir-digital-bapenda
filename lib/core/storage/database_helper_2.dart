@@ -9,7 +9,7 @@ class DatabaseHelper2 {
   static Database? _database;
 
   static const String dbName = 'surabaya_tax.db';
-  static const int dbVersion = 3;
+  static const int dbVersion = 4;
 
   static const String tableNopList = 'nop_list';
 
@@ -45,7 +45,8 @@ class DatabaseHelper2 {
         kdCamat TEXT NOT NULL,
         nmCamat TEXT NOT NULL,
         kdLurah TEXT NOT NULL,
-        nmLurah TEXT NOT NULL
+        nmLurah TEXT NOT NULL,
+        statusDigitalisasi TEXT
       )
     ''');
   }
@@ -54,13 +55,36 @@ class DatabaseHelper2 {
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 3) {
       await db.execute('''
-        ALTER TABLE $tableNopList 
-        ADD COLUMN uptb INTEGER NOT NULL DEFAULT 0;
-        ADD COLUMN kdCamat TEXT NOT NULL;
-        ADD COLUMN nmCamat TEXT NOT NULL;
-        ADD COLUMN kdLurah TEXT NOT NULL;
-        ADD COLUMN nmLurah TEXT NOT NULL;
-      ''');
+      ALTER TABLE $tableNopList
+      ADD COLUMN uptb INTEGER NOT NULL DEFAULT 0;
+    ''');
+
+      await db.execute('''
+      ALTER TABLE $tableNopList
+      ADD COLUMN kdCamat TEXT NOT NULL DEFAULT '';
+    ''');
+
+      await db.execute('''
+      ALTER TABLE $tableNopList
+      ADD COLUMN nmCamat TEXT NOT NULL DEFAULT '';
+    ''');
+
+      await db.execute('''
+      ALTER TABLE $tableNopList
+      ADD COLUMN kdLurah TEXT NOT NULL DEFAULT '';
+    ''');
+
+      await db.execute('''
+      ALTER TABLE $tableNopList
+      ADD COLUMN nmLurah TEXT NOT NULL DEFAULT '';
+    ''');
+    }
+
+    if (oldVersion < 4) {
+      await db.execute('''
+      ALTER TABLE $tableNopList
+      ADD COLUMN statusDigitalisasi TEXT;
+    ''');
     }
   }
 
@@ -89,6 +113,7 @@ class DatabaseHelper2 {
         'nmCamat': item['nmCamat'],
         'kdLurah': item['kdLurah'],
         'nmLurah': item['nmLurah'],
+        'statusDigitalisasi': item['statusDigitalisasi'], // baru
       }, conflictAlgorithm: ConflictAlgorithm.replace);
     }
 
@@ -99,6 +124,18 @@ class DatabaseHelper2 {
   Future<List<Map<String, dynamic>>> getNopList() async {
     final db = await database;
     return await db.query(tableNopList);
+  }
+
+  Future<List<Map<String, dynamic>>> getNopListByStatusDigitalisasi(
+    String status,
+  ) async {
+    final db = await database;
+
+    return await db.query(
+      tableNopList,
+      where: 'statusDigitalisasi = ?',
+      whereArgs: [status],
+    );
   }
 
   /// Ambil NOP berdasarkan status digital

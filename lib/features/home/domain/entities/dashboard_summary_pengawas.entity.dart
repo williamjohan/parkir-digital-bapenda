@@ -129,13 +129,16 @@ class DetailAlatEntity extends Equatable {
   final int id;
   final String namaAlat;
   final bool isBawa;
+  final int jenis;
 
   const DetailAlatEntity({
     required this.id,
     required this.namaAlat,
     required this.isBawa,
+    required this.jenis,
+    
   });
 
   @override
-  List<Object?> get props => [id, namaAlat, isBawa];
+  List<Object?> get props => [id, namaAlat, isBawa, jenis];
 }

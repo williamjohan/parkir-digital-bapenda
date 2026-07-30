@@ -23,4 +23,13 @@ class MainActivity: FlutterActivity() {
             }
         }
     }
+
+    // Cegah FlutterActivity meneruskan Intent (termasuk custom scheme
+    // seperti tspark://) sebagai route push otomatis ke go_router.
+    // Deep link tetap ditangkap manual oleh app_links/uni_links
+    // lewat DeeplinkService, jadi ini aman — go_router tidak akan
+    // pernah mencoba mem-parse tspark:// sebagai route lagi.
+    override fun shouldHandleDeeplinking(): Boolean {
+        return false
+    }
 }

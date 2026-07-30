@@ -18,7 +18,12 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$AbsensiState {
   AbsensiStatus get status => throw _privateConstructorUsedError;
-  String get errorMessage =>
+  String get errorMessage => throw _privateConstructorUsedError;
+  AppPermissionType? get deniedPermissionType =>
+      throw _privateConstructorUsedError;
+  JenisPengawasan? get jenis => throw _privateConstructorUsedError;
+  String? get nop => throw _privateConstructorUsedError; // 🆕
+  ShiftPengawasan? get shift =>
       throw _privateConstructorUsedError; // --- STATE UNTUK UI FORM ---
   File? get rawPhoto =>
       throw _privateConstructorUsedError; // Foto asli sebelum di-watermark
@@ -34,9 +39,10 @@ mixin _$AbsensiState {
       throw _privateConstructorUsedError; // --- INPUT FORM ---
   String get motorText => throw _privateConstructorUsedError;
   String get mobilText => throw _privateConstructorUsedError;
-  bool get edc => throw _privateConstructorUsedError;
-  bool get qris => throw _privateConstructorUsedError;
-  bool get tsPark => throw _privateConstructorUsedError;
+  List<AlatDigitalEntity> get allInstruments =>
+      throw _privateConstructorUsedError;
+  List<int> get selectedInstrumentIds => throw _privateConstructorUsedError;
+  bool get isLoadingInstruments => throw _privateConstructorUsedError;
 
   /// Create a copy of AbsensiState
   /// with the given fields replaced by the non-null parameter values.
@@ -55,6 +61,10 @@ abstract class $AbsensiStateCopyWith<$Res> {
   $Res call({
     AbsensiStatus status,
     String errorMessage,
+    AppPermissionType? deniedPermissionType,
+    JenisPengawasan? jenis,
+    String? nop,
+    ShiftPengawasan? shift,
     File? rawPhoto,
     File? watermarkedPhoto,
     DateTime? photoTakenAt,
@@ -66,9 +76,9 @@ abstract class $AbsensiStateCopyWith<$Res> {
     bool isCapturing,
     String motorText,
     String mobilText,
-    bool edc,
-    bool qris,
-    bool tsPark,
+    List<AlatDigitalEntity> allInstruments,
+    List<int> selectedInstrumentIds,
+    bool isLoadingInstruments,
   });
 }
 
@@ -89,6 +99,10 @@ class _$AbsensiStateCopyWithImpl<$Res, $Val extends AbsensiState>
   $Res call({
     Object? status = null,
     Object? errorMessage = null,
+    Object? deniedPermissionType = freezed,
+    Object? jenis = freezed,
+    Object? nop = freezed,
+    Object? shift = freezed,
     Object? rawPhoto = freezed,
     Object? watermarkedPhoto = freezed,
     Object? photoTakenAt = freezed,
@@ -100,9 +114,9 @@ class _$AbsensiStateCopyWithImpl<$Res, $Val extends AbsensiState>
     Object? isCapturing = null,
     Object? motorText = null,
     Object? mobilText = null,
-    Object? edc = null,
-    Object? qris = null,
-    Object? tsPark = null,
+    Object? allInstruments = null,
+    Object? selectedInstrumentIds = null,
+    Object? isLoadingInstruments = null,
   }) {
     return _then(
       _value.copyWith(
@@ -114,6 +128,22 @@ class _$AbsensiStateCopyWithImpl<$Res, $Val extends AbsensiState>
                 ? _value.errorMessage
                 : errorMessage // ignore: cast_nullable_to_non_nullable
                       as String,
+            deniedPermissionType: freezed == deniedPermissionType
+                ? _value.deniedPermissionType
+                : deniedPermissionType // ignore: cast_nullable_to_non_nullable
+                      as AppPermissionType?,
+            jenis: freezed == jenis
+                ? _value.jenis
+                : jenis // ignore: cast_nullable_to_non_nullable
+                      as JenisPengawasan?,
+            nop: freezed == nop
+                ? _value.nop
+                : nop // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            shift: freezed == shift
+                ? _value.shift
+                : shift // ignore: cast_nullable_to_non_nullable
+                      as ShiftPengawasan?,
             rawPhoto: freezed == rawPhoto
                 ? _value.rawPhoto
                 : rawPhoto // ignore: cast_nullable_to_non_nullable
@@ -158,17 +188,17 @@ class _$AbsensiStateCopyWithImpl<$Res, $Val extends AbsensiState>
                 ? _value.mobilText
                 : mobilText // ignore: cast_nullable_to_non_nullable
                       as String,
-            edc: null == edc
-                ? _value.edc
-                : edc // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            qris: null == qris
-                ? _value.qris
-                : qris // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            tsPark: null == tsPark
-                ? _value.tsPark
-                : tsPark // ignore: cast_nullable_to_non_nullable
+            allInstruments: null == allInstruments
+                ? _value.allInstruments
+                : allInstruments // ignore: cast_nullable_to_non_nullable
+                      as List<AlatDigitalEntity>,
+            selectedInstrumentIds: null == selectedInstrumentIds
+                ? _value.selectedInstrumentIds
+                : selectedInstrumentIds // ignore: cast_nullable_to_non_nullable
+                      as List<int>,
+            isLoadingInstruments: null == isLoadingInstruments
+                ? _value.isLoadingInstruments
+                : isLoadingInstruments // ignore: cast_nullable_to_non_nullable
                       as bool,
           )
           as $Val,
@@ -188,6 +218,10 @@ abstract class _$$AbsensiStateImplCopyWith<$Res>
   $Res call({
     AbsensiStatus status,
     String errorMessage,
+    AppPermissionType? deniedPermissionType,
+    JenisPengawasan? jenis,
+    String? nop,
+    ShiftPengawasan? shift,
     File? rawPhoto,
     File? watermarkedPhoto,
     DateTime? photoTakenAt,
@@ -199,9 +233,9 @@ abstract class _$$AbsensiStateImplCopyWith<$Res>
     bool isCapturing,
     String motorText,
     String mobilText,
-    bool edc,
-    bool qris,
-    bool tsPark,
+    List<AlatDigitalEntity> allInstruments,
+    List<int> selectedInstrumentIds,
+    bool isLoadingInstruments,
   });
 }
 
@@ -221,6 +255,10 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
     Object? errorMessage = null,
+    Object? deniedPermissionType = freezed,
+    Object? jenis = freezed,
+    Object? nop = freezed,
+    Object? shift = freezed,
     Object? rawPhoto = freezed,
     Object? watermarkedPhoto = freezed,
     Object? photoTakenAt = freezed,
@@ -232,9 +270,9 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
     Object? isCapturing = null,
     Object? motorText = null,
     Object? mobilText = null,
-    Object? edc = null,
-    Object? qris = null,
-    Object? tsPark = null,
+    Object? allInstruments = null,
+    Object? selectedInstrumentIds = null,
+    Object? isLoadingInstruments = null,
   }) {
     return _then(
       _$AbsensiStateImpl(
@@ -246,6 +284,22 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
             ? _value.errorMessage
             : errorMessage // ignore: cast_nullable_to_non_nullable
                   as String,
+        deniedPermissionType: freezed == deniedPermissionType
+            ? _value.deniedPermissionType
+            : deniedPermissionType // ignore: cast_nullable_to_non_nullable
+                  as AppPermissionType?,
+        jenis: freezed == jenis
+            ? _value.jenis
+            : jenis // ignore: cast_nullable_to_non_nullable
+                  as JenisPengawasan?,
+        nop: freezed == nop
+            ? _value.nop
+            : nop // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        shift: freezed == shift
+            ? _value.shift
+            : shift // ignore: cast_nullable_to_non_nullable
+                  as ShiftPengawasan?,
         rawPhoto: freezed == rawPhoto
             ? _value.rawPhoto
             : rawPhoto // ignore: cast_nullable_to_non_nullable
@@ -290,17 +344,17 @@ class __$$AbsensiStateImplCopyWithImpl<$Res>
             ? _value.mobilText
             : mobilText // ignore: cast_nullable_to_non_nullable
                   as String,
-        edc: null == edc
-            ? _value.edc
-            : edc // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        qris: null == qris
-            ? _value.qris
-            : qris // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        tsPark: null == tsPark
-            ? _value.tsPark
-            : tsPark // ignore: cast_nullable_to_non_nullable
+        allInstruments: null == allInstruments
+            ? _value._allInstruments
+            : allInstruments // ignore: cast_nullable_to_non_nullable
+                  as List<AlatDigitalEntity>,
+        selectedInstrumentIds: null == selectedInstrumentIds
+            ? _value._selectedInstrumentIds
+            : selectedInstrumentIds // ignore: cast_nullable_to_non_nullable
+                  as List<int>,
+        isLoadingInstruments: null == isLoadingInstruments
+            ? _value.isLoadingInstruments
+            : isLoadingInstruments // ignore: cast_nullable_to_non_nullable
                   as bool,
       ),
     );
@@ -313,6 +367,10 @@ class _$AbsensiStateImpl extends _AbsensiState {
   const _$AbsensiStateImpl({
     this.status = AbsensiStatus.initial,
     this.errorMessage = '',
+    this.deniedPermissionType,
+    this.jenis,
+    this.nop,
+    this.shift,
     this.rawPhoto,
     this.watermarkedPhoto,
     this.photoTakenAt,
@@ -324,10 +382,12 @@ class _$AbsensiStateImpl extends _AbsensiState {
     this.isCapturing = false,
     this.motorText = '',
     this.mobilText = '',
-    this.edc = false,
-    this.qris = false,
-    this.tsPark = false,
-  }) : super._();
+    final List<AlatDigitalEntity> allInstruments = const [],
+    final List<int> selectedInstrumentIds = const [],
+    this.isLoadingInstruments = false,
+  }) : _allInstruments = allInstruments,
+       _selectedInstrumentIds = selectedInstrumentIds,
+       super._();
 
   @override
   @JsonKey()
@@ -335,6 +395,15 @@ class _$AbsensiStateImpl extends _AbsensiState {
   @override
   @JsonKey()
   final String errorMessage;
+  @override
+  final AppPermissionType? deniedPermissionType;
+  @override
+  final JenisPengawasan? jenis;
+  @override
+  final String? nop;
+  // 🆕
+  @override
+  final ShiftPengawasan? shift;
   // --- STATE UNTUK UI FORM ---
   @override
   final File? rawPhoto;
@@ -365,19 +434,32 @@ class _$AbsensiStateImpl extends _AbsensiState {
   @override
   @JsonKey()
   final String mobilText;
+  final List<AlatDigitalEntity> _allInstruments;
   @override
   @JsonKey()
-  final bool edc;
+  List<AlatDigitalEntity> get allInstruments {
+    if (_allInstruments is EqualUnmodifiableListView) return _allInstruments;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_allInstruments);
+  }
+
+  final List<int> _selectedInstrumentIds;
   @override
   @JsonKey()
-  final bool qris;
+  List<int> get selectedInstrumentIds {
+    if (_selectedInstrumentIds is EqualUnmodifiableListView)
+      return _selectedInstrumentIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_selectedInstrumentIds);
+  }
+
   @override
   @JsonKey()
-  final bool tsPark;
+  final bool isLoadingInstruments;
 
   @override
   String toString() {
-    return 'AbsensiState(status: $status, errorMessage: $errorMessage, rawPhoto: $rawPhoto, watermarkedPhoto: $watermarkedPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, motorText: $motorText, mobilText: $mobilText, edc: $edc, qris: $qris, tsPark: $tsPark)';
+    return 'AbsensiState(status: $status, errorMessage: $errorMessage, deniedPermissionType: $deniedPermissionType, jenis: $jenis, nop: $nop, shift: $shift, rawPhoto: $rawPhoto, watermarkedPhoto: $watermarkedPhoto, photoTakenAt: $photoTakenAt, latitude: $latitude, longitude: $longitude, placeName: $placeName, locationError: $locationError, isFetchingLocation: $isFetchingLocation, isCapturing: $isCapturing, motorText: $motorText, mobilText: $mobilText, allInstruments: $allInstruments, selectedInstrumentIds: $selectedInstrumentIds, isLoadingInstruments: $isLoadingInstruments)';
   }
 
   @override
@@ -388,6 +470,11 @@ class _$AbsensiStateImpl extends _AbsensiState {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
+            (identical(other.deniedPermissionType, deniedPermissionType) ||
+                other.deniedPermissionType == deniedPermissionType) &&
+            (identical(other.jenis, jenis) || other.jenis == jenis) &&
+            (identical(other.nop, nop) || other.nop == nop) &&
+            (identical(other.shift, shift) || other.shift == shift) &&
             (identical(other.rawPhoto, rawPhoto) ||
                 other.rawPhoto == rawPhoto) &&
             (identical(other.watermarkedPhoto, watermarkedPhoto) ||
@@ -410,16 +497,27 @@ class _$AbsensiStateImpl extends _AbsensiState {
                 other.motorText == motorText) &&
             (identical(other.mobilText, mobilText) ||
                 other.mobilText == mobilText) &&
-            (identical(other.edc, edc) || other.edc == edc) &&
-            (identical(other.qris, qris) || other.qris == qris) &&
-            (identical(other.tsPark, tsPark) || other.tsPark == tsPark));
+            const DeepCollectionEquality().equals(
+              other._allInstruments,
+              _allInstruments,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._selectedInstrumentIds,
+              _selectedInstrumentIds,
+            ) &&
+            (identical(other.isLoadingInstruments, isLoadingInstruments) ||
+                other.isLoadingInstruments == isLoadingInstruments));
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     status,
     errorMessage,
+    deniedPermissionType,
+    jenis,
+    nop,
+    shift,
     rawPhoto,
     watermarkedPhoto,
     photoTakenAt,
@@ -431,10 +529,10 @@ class _$AbsensiStateImpl extends _AbsensiState {
     isCapturing,
     motorText,
     mobilText,
-    edc,
-    qris,
-    tsPark,
-  );
+    const DeepCollectionEquality().hash(_allInstruments),
+    const DeepCollectionEquality().hash(_selectedInstrumentIds),
+    isLoadingInstruments,
+  ]);
 
   /// Create a copy of AbsensiState
   /// with the given fields replaced by the non-null parameter values.
@@ -449,6 +547,10 @@ abstract class _AbsensiState extends AbsensiState {
   const factory _AbsensiState({
     final AbsensiStatus status,
     final String errorMessage,
+    final AppPermissionType? deniedPermissionType,
+    final JenisPengawasan? jenis,
+    final String? nop,
+    final ShiftPengawasan? shift,
     final File? rawPhoto,
     final File? watermarkedPhoto,
     final DateTime? photoTakenAt,
@@ -460,16 +562,24 @@ abstract class _AbsensiState extends AbsensiState {
     final bool isCapturing,
     final String motorText,
     final String mobilText,
-    final bool edc,
-    final bool qris,
-    final bool tsPark,
+    final List<AlatDigitalEntity> allInstruments,
+    final List<int> selectedInstrumentIds,
+    final bool isLoadingInstruments,
   }) = _$AbsensiStateImpl;
   const _AbsensiState._() : super._();
 
   @override
   AbsensiStatus get status;
   @override
-  String get errorMessage; // --- STATE UNTUK UI FORM ---
+  String get errorMessage;
+  @override
+  AppPermissionType? get deniedPermissionType;
+  @override
+  JenisPengawasan? get jenis;
+  @override
+  String? get nop; // 🆕
+  @override
+  ShiftPengawasan? get shift; // --- STATE UNTUK UI FORM ---
   @override
   File? get rawPhoto; // Foto asli sebelum di-watermark
   @override
@@ -493,11 +603,11 @@ abstract class _AbsensiState extends AbsensiState {
   @override
   String get mobilText;
   @override
-  bool get edc;
+  List<AlatDigitalEntity> get allInstruments;
   @override
-  bool get qris;
+  List<int> get selectedInstrumentIds;
   @override
-  bool get tsPark;
+  bool get isLoadingInstruments;
 
   /// Create a copy of AbsensiState
   /// with the given fields replaced by the non-null parameter values.

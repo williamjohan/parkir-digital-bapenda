@@ -1,38 +1,31 @@
-part of 'printer_cubit.dart';
+import 'package:flutter_classic_bluetooth/flutter_classic_bluetooth.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-abstract class PrinterState extends Equatable {
-  const PrinterState();
+part 'printer_state.freezed.dart';
 
-  @override
-  List<Object?> get props => [];
-}
+@freezed
+class PrinterState with _$PrinterState {
+  const factory PrinterState.initial() = _Initial;
 
-class PrinterInitial extends PrinterState {}
+  const factory PrinterState.loading() = _Loading;
 
-class PrinterLoading extends PrinterState {}
+  const factory PrinterState.loaded({
+    required List<BtcDevice> devices,
+    @Default([]) List<BtcDevice> discoveredDevices,
+    BtcDevice? connectedDevice,
+    String? savedMacAddress,
+    @Default(false) bool isLoading,
+    @Default(false) bool isScanning,
+  }) = _Loaded;
 
-class PrinterLoaded extends PrinterState {
-  final List<BluetoothDevice> devices;
-  final BluetoothDevice? connectedDevice;
-  final bool isLoading;
+  const factory PrinterState.error({
+    required String message,
+    DateTime? timestamp,
+  }) = _Error;
 
-  const PrinterLoaded({
-    required this.devices,
-    this.connectedDevice,
-    this.isLoading = false,
-  });
+  const factory PrinterState.permissionRequiresAction({DateTime? timestamp}) =
+      _PermissionRequiresAction;
 
-  @override
-  List<Object?> get props => [devices, connectedDevice, isLoading];
-}
-
-class PrinterError extends PrinterState {
-  final String message;
-  final DateTime
-  timestamp; // Memicu re-render meski pesan error sama berturut-turut
-
-  PrinterError(this.message) : timestamp = DateTime.now();
-
-  @override
-  List<Object?> get props => [message, timestamp];
+  const factory PrinterState.bluetoothOffRequiresAction({DateTime? timestamp}) =
+      _BluetoothOffRequiresAction;
 }

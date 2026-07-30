@@ -1,0 +1,16 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--  Memotong izin OTA dari library eksternal -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove" />
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES" tools:node="remove" />
+
+    <!-- 💡 Memotong izin rekam suara dari plugin kamera -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" />
+
+    <!--  (WAJIB DITAMBAHKAN): Membunuh residu izin galeri untuk lolos Topik 1 Google -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
+
+</manifest>

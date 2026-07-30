@@ -1,42 +1,40 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_dialog.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
+import 'package:parkir_digital_bapenda/core/design_system/components/pb_show_dialog.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
-import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
-// import 'package:parkir_digital_bapenda/core/utils/debug_mock_scenario.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/presentation/widgets/keterangan_section_card.dart';
 import 'package:parkir_digital_bapenda/shared/loading/loading_overlay.dart';
-import '../../../../core/utils/photo_utils.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import '../../../../core/design_system/components/pb_permission_dialog.dart';
+import '../../../../core/enums/app_enums.dart';
+import '../../../../core/utils/watermark_utils.dart';
 import '../cubit/pengawasan_cubit.dart';
 import '../cubit/pengawasan_state.dart';
 import '../widgets/jenis_pelanggaran_section.dart';
 import '../widgets/photo_section_card.dart';
 
 class LaporanFormScreen extends StatefulWidget {
-  final IAppLocationService locationService;
-
-  const LaporanFormScreen({super.key, required this.locationService});
-
+  final File? recoveredPhoto;
+  const LaporanFormScreen({super.key, this.recoveredPhoto});
   @override
   State<LaporanFormScreen> createState() => _LaporanFormScreenState();
 }
 
 class _LaporanFormScreenState extends State<LaporanFormScreen> {
   final _keteranganController = TextEditingController();
-
-  final ImagePicker _picker = ImagePicker();
   final GlobalKey _photoKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final cubit = context.read<PengawasanCubit>();
-      cubit.loadJenisPelanggaran();
-      cubit.fetchLocation(widget.locationService);
+      context.read<PengawasanCubit>().initPage(
+        recoveredPhoto: widget.recoveredPhoto,
+      );
     });
   }
 
@@ -47,6 +45,7 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
   }
 
   Future<void> _submitLaporan() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final cubit = context.read<PengawasanCubit>();
     final state = cubit.state;
 
@@ -73,7 +72,7 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
     // 1. Jalankan proses pembuatan watermark gambar
     cubit.setCapturing(true);
     await Future.delayed(const Duration(milliseconds: 300));
-    final capturedFile = await PhotoUtils.captureWatermarkedImage(_photoKey);
+    final capturedFile = await PhotoUtils.setWatermarkImage(_photoKey);
     cubit.setCapturing(false);
 
     if (capturedFile == null) {
@@ -100,22 +99,43 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<PengawasanCubit, PengawasanState>(
       listenWhen: (prev, curr) =>
+          prev.status != curr.status ||
           prev.isSuccess != curr.isSuccess ||
           prev.errorMessage != curr.errorMessage,
       listener: (context, state) {
         if (state.isSuccess) {
-          FormResultDialog.showSuccess(
+          PbShowDialog.show(
             context,
             title: "Laporan Berhasil",
             description: "Laporan pelanggaran kamu sudah tersimpan",
+            icon: Icons.check_circle_rounded,
+            iconColor: AppColors.success,
+            buttonText: "OK",
             onConfirm: () => Navigator.of(context).pop(true),
           );
-        } else if (state.errorMessage != null) {
-          FormResultDialog.showError(
+        } else if (state.status == PengawasanStatus.permissionDenied) {
+          PbPermissionDialog.show(
+            context,
+            type: state.deniedPermissionType ?? AppPermissionType.camera,
+            status: AppPermissionStatus.permanentlyDenied,
+            onActionPressed: () =>
+                context.read<PengawasanCubit>().openAppSettings(),
+          );
+        } else if (state.status == PengawasanStatus.gpsOff) {
+          PbPermissionDialog.show(
+            context,
+            type: AppPermissionType.locationService,
+            status: AppPermissionStatus.permanentlyDenied,
+            onActionPressed: () =>
+                context.read<PengawasanCubit>().openLocationSettings(),
+          );
+        } else if (state.status == PengawasanStatus.failure &&
+            state.errorMessage != null) {
+          PbShowDialog.show(
             context,
             title: "Gagal",
             description: state.errorMessage!,
-            onConfirm: () {},
+            buttonText: "Tutup",
           );
         }
       },
@@ -136,62 +156,67 @@ class _LaporanFormScreenState extends State<LaporanFormScreen> {
               backgroundColor: AppColors.surface,
               elevation: 0,
             ),
-            body: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                // 1. Seksi Foto Bukti
-                PhotoSectionCard(
-                  photoKey: _photoKey,
-                  photo: state.rawPhoto,
-                  photoTakenAt: state.photoTakenAt,
-                  isFetchingLocation: state.isFetchingLocation,
-                  locationError: state.locationError,
-                  placeName: state.placeName,
-                  latitude: state.latitude,
-                  longitude: state.longitude,
-                  onPickPhoto: () {
-                    context.read<PengawasanCubit>().pickAndSetPhoto(
-                      picker: _picker,
-                      locationService: widget.locationService,
-                    );
-                  },
-                  onRemovePhoto: () =>
-                      context.read<PengawasanCubit>().removePhoto(),
-                ),
-                const SizedBox(height: 16),
+            body: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              child: Skeletonizer(
+                enabled: state.isLoadingJenisPelanggaran,
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    // 1. Seksi Foto Bukti
+                    PhotoSectionCard(
+                      photoKey: _photoKey,
+                      photo: state.rawPhoto,
+                      photoTakenAt: state.photoTakenAt,
+                      isFetchingLocation: state.isFetchingLocation,
+                      locationError: state.locationError,
+                      placeName: state.placeName,
+                      latitude: state.latitude,
+                      longitude: state.longitude,
+                      onPickPhoto: () =>
+                          context.read<PengawasanCubit>().pickAndSetPhoto(),
+                      onRemovePhoto: () =>
+                          context.read<PengawasanCubit>().removePhoto(),
+                    ),
+                    const SizedBox(height: 16),
 
-                // 2. Seksi Jenis Pelanggaran (Sekarang bersih menggunakan widget baru!)
-                JenisPelanggaranSection(
-                  jenisPelanggaranList: state.jenisPelanggaran,
-                  selectedJenisPelId: state.request.jenisPel,
-                  onJenisPelanggaranSelected: (id) {
-                    context.read<PengawasanCubit>().setJenisPelanggaran(id);
-                  },
-                ),
-                const SizedBox(height: 16),
+                    // 2. Seksi Jenis Pelanggaran (Sekarang bersih menggunakan widget baru!)
+                    JenisPelanggaranSection(
+                      jenisPelanggaranList: state.jenisPelanggaran,
+                      selectedJenisPelId: state.request.jenisPel,
+                      onJenisPelanggaranSelected: (id) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        context.read<PengawasanCubit>().setJenisPelanggaran(id);
+                      },
+                    ),
+                    const SizedBox(height: 16),
 
-                // 3. Seksi Keterangan
-                KeteranganSectionCard(
-                  keteranganController: _keteranganController,
-                  onChanged: context.read<PengawasanCubit>().setKeterangan,
+                    // 3. Seksi Keterangan
+                    KeteranganSectionCard(
+                      keteranganController: _keteranganController,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                // const Positioned(
-                //   bottom: 16,
-                //   right: 16,
-                //   child: MockScenarioFab(),
-                // ),
-              ],
+              ),
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(8.0),
               // Gunakan ValueListenableBuilder untuk mendengarkan ketikan pada controller
-              child: PbPrimaryButton(
-                text: "Kirim Laporan",
-                isDisabled: !state.canSubmit,
-                onPressed: (state.isLoading || state.isCapturing)
-                    ? null
-                    : _submitLaporan,
+              child: ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _keteranganController,
+                builder: (context, value, child) {
+                  return PbPrimaryButton(
+                    text: "Kirim Laporan",
+                    isDisabled: !state.canSubmit || value.text.trim().isEmpty,
+                    onPressed: (state.isLoading || state.isCapturing)
+                        ? null
+                        : _submitLaporan,
+                  );
+                },
               ),
             ),
           ),

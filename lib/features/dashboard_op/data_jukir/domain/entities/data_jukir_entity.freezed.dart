@@ -379,7 +379,7 @@ abstract class _DataJukirEntity implements DataJukirEntity {
 mixin _$UsernameEntity {
   String get username => throw _privateConstructorUsedError;
   String get namaPetugas => throw _privateConstructorUsedError;
-  String get fotoBase64 => throw _privateConstructorUsedError;
+  Uint8List? get fotoBytes => throw _privateConstructorUsedError;
 
   /// Create a copy of UsernameEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -395,7 +395,7 @@ abstract class $UsernameEntityCopyWith<$Res> {
     $Res Function(UsernameEntity) then,
   ) = _$UsernameEntityCopyWithImpl<$Res, UsernameEntity>;
   @useResult
-  $Res call({String username, String namaPetugas, String fotoBase64});
+  $Res call({String username, String namaPetugas, Uint8List? fotoBytes});
 }
 
 /// @nodoc
@@ -415,7 +415,7 @@ class _$UsernameEntityCopyWithImpl<$Res, $Val extends UsernameEntity>
   $Res call({
     Object? username = null,
     Object? namaPetugas = null,
-    Object? fotoBase64 = null,
+    Object? fotoBytes = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -427,10 +427,10 @@ class _$UsernameEntityCopyWithImpl<$Res, $Val extends UsernameEntity>
                 ? _value.namaPetugas
                 : namaPetugas // ignore: cast_nullable_to_non_nullable
                       as String,
-            fotoBase64: null == fotoBase64
-                ? _value.fotoBase64
-                : fotoBase64 // ignore: cast_nullable_to_non_nullable
-                      as String,
+            fotoBytes: freezed == fotoBytes
+                ? _value.fotoBytes
+                : fotoBytes // ignore: cast_nullable_to_non_nullable
+                      as Uint8List?,
           )
           as $Val,
     );
@@ -446,7 +446,7 @@ abstract class _$$UsernameEntityImplCopyWith<$Res>
   ) = __$$UsernameEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String username, String namaPetugas, String fotoBase64});
+  $Res call({String username, String namaPetugas, Uint8List? fotoBytes});
 }
 
 /// @nodoc
@@ -465,7 +465,7 @@ class __$$UsernameEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? username = null,
     Object? namaPetugas = null,
-    Object? fotoBase64 = null,
+    Object? fotoBytes = freezed,
   }) {
     return _then(
       _$UsernameEntityImpl(
@@ -477,10 +477,10 @@ class __$$UsernameEntityImplCopyWithImpl<$Res>
             ? _value.namaPetugas
             : namaPetugas // ignore: cast_nullable_to_non_nullable
                   as String,
-        fotoBase64: null == fotoBase64
-            ? _value.fotoBase64
-            : fotoBase64 // ignore: cast_nullable_to_non_nullable
-                  as String,
+        fotoBytes: freezed == fotoBytes
+            ? _value.fotoBytes
+            : fotoBytes // ignore: cast_nullable_to_non_nullable
+                  as Uint8List?,
       ),
     );
   }
@@ -492,7 +492,7 @@ class _$UsernameEntityImpl implements _UsernameEntity {
   const _$UsernameEntityImpl({
     required this.username,
     required this.namaPetugas,
-    required this.fotoBase64,
+    this.fotoBytes,
   });
 
   @override
@@ -500,11 +500,11 @@ class _$UsernameEntityImpl implements _UsernameEntity {
   @override
   final String namaPetugas;
   @override
-  final String fotoBase64;
+  final Uint8List? fotoBytes;
 
   @override
   String toString() {
-    return 'UsernameEntity(username: $username, namaPetugas: $namaPetugas, fotoBase64: $fotoBase64)';
+    return 'UsernameEntity(username: $username, namaPetugas: $namaPetugas, fotoBytes: $fotoBytes)';
   }
 
   @override
@@ -516,13 +516,16 @@ class _$UsernameEntityImpl implements _UsernameEntity {
                 other.username == username) &&
             (identical(other.namaPetugas, namaPetugas) ||
                 other.namaPetugas == namaPetugas) &&
-            (identical(other.fotoBase64, fotoBase64) ||
-                other.fotoBase64 == fotoBase64));
+            const DeepCollectionEquality().equals(other.fotoBytes, fotoBytes));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, username, namaPetugas, fotoBase64);
+  int get hashCode => Object.hash(
+    runtimeType,
+    username,
+    namaPetugas,
+    const DeepCollectionEquality().hash(fotoBytes),
+  );
 
   /// Create a copy of UsernameEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -540,7 +543,7 @@ abstract class _UsernameEntity implements UsernameEntity {
   const factory _UsernameEntity({
     required final String username,
     required final String namaPetugas,
-    required final String fotoBase64,
+    final Uint8List? fotoBytes,
   }) = _$UsernameEntityImpl;
 
   @override
@@ -548,7 +551,7 @@ abstract class _UsernameEntity implements UsernameEntity {
   @override
   String get namaPetugas;
   @override
-  String get fotoBase64;
+  Uint8List? get fotoBytes;
 
   /// Create a copy of UsernameEntity
   /// with the given fields replaced by the non-null parameter values.

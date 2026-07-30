@@ -4,12 +4,17 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:parkir_digital_bapenda/core/network/connectivity_check_interceptor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../network/dio_auth_interceptor.dart';
 import '../network/env_config.dart';
 import '../network/resilent_dns_resolver.dart';
+import '../services/audio/audio_notification_service_impl.dart';
+import '../services/audio/i_audio_notification_service.dart';
+import '../services/deeplink_service.dart';
 import '../utils/app_logger.dart';
 
 @module
@@ -170,7 +175,7 @@ abstract class RegisterModule {
     );
 
     // 🚀 3. INTERCEPTOR LAINNYA
-    // (Opsional: DnsDiagnosticInterceptor bisa dilepas karena ResilientDnsResolver sudah cukup memberikan log[cite: 3, 4])
+    // (Opsional: DnsDiagnosticInterceptor bisa dilepas karena ResilientDnsResolver sudah cukup memberikan log
 
     // 🚀 FIX: ConnectivityCheckInterceptor dipindah KELUAR dari kDebugMode
     // dan ditaruh PALING AWAL. Sebelumnya cuma aktif saat development --
@@ -210,4 +215,18 @@ abstract class RegisterModule {
 
   @lazySingleton
   Connectivity get connectivity => Connectivity();
+
+  @lazySingleton
+  IAudioNotificationService get audioNotificationService =>
+      AudioNotificationServiceImpl()..init();
+
+  @lazySingleton
+  ImagePicker get imagePicker => ImagePicker();
+
+  @preResolve
+  @lazySingleton
+  Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
+
+  @lazySingleton
+  DeeplinkService get deeplinkService => DeeplinkService()..init();
 }

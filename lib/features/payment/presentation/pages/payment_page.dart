@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/payment/presentation/pages/payment_dialog_helpers.dart';
+import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/services/audio/i_audio_notification_service.dart';
+import '../../../printer/presentation/cubit/printer_state.dart';
+import '../../../transaction_history/data/models/history_item_model.dart';
 import '../cubit/payment_cubit.dart';
 import '../cubit/payment_state.dart';
 import 'payment_local_qris_view.dart';
@@ -70,16 +76,66 @@ class _PaymentPageState extends State<PaymentPage> {
           //  2. Ubah listener menjadi async
           listener: (context, state) async {
             await state.whenOrNull(
-              paymentSuccess: () async {
-                // 3. Tampilkan Lottie Dialog dan tunggu sampai selesai (2 detik)
-                // isFree = false karena ini adalah pembayaran QRIS
+              paymentSuccess: (ticketData) async {
+                locator<IAudioNotificationService>().playPaymentSuccess(
+                  ticketData.credit,
+                );
                 await PaymentDialogHelpers.showSuccessLottie(context, false);
+                if (!context.mounted) return;
 
-                // 4. Tutup halaman PaymentPage dan kembalikan nilai 'true' ke TransactionPage
-                // Selalu gunakan context.mounted setelah proses await
-                if (context.mounted) {
-                  context.pop(true);
-                }
+                final historyItem = HistoryItemModel.forTicketPreview(
+                  orderId: ticketData.orderId,
+                  namaOp: ticketData.namaOp,
+                  alamatOp: ticketData.alamatOp,
+                  tglTrx: ticketData.tanggalTransaksi,
+                  jenisTarif: ticketData.jenisTarif,
+                  kredit: ticketData.credit,
+                  encUrl: ticketData.encUrl,
+                );
+
+                final printerCubit = context.read<PrinterCubit>();
+                final parentContext = context;
+
+                await showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (dialogContext) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      child: Center(
+                        child: BlocBuilder<PrinterCubit, PrinterState>(
+                          bloc: printerCubit,
+                          builder: (context, printerState) {
+                            final isReady = printerState.maybeMap(
+                              loaded: (s) => s.connectedDevice != null,
+                              orElse: () => false,
+                            );
+
+                            return PbPreviewTicketWidget(
+                              item: historyItem,
+                              isPrinterReady: isReady,
+                              okPressed: () {
+                                dialogContext.pop();
+
+                                if (parentContext.mounted) {
+                                  parentContext.pop(
+                                    true,
+                                  ); // Tutup PaymentPage & kirim result true
+                                }
+                              },
+                              printPressed: () async {
+                                return await printerCubit.printReceipt(
+                                  historyItem,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             );
           },

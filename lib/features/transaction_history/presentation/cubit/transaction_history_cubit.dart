@@ -1,8 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/core/storage/app_preferences.dart';
 import 'package:parkir_digital_bapenda/core/storage/i_secure_storage_manager.dart';
 import 'package:parkir_digital_bapenda/core/utils/app_logger.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
+import 'package:parkir_digital_bapenda/features/transaction_history/domain/usecases/get_sof_usecase.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../domain/usecases/get_transaction_history_usecase.dart';
 import 'transaction_history_state.dart';
 
@@ -10,12 +13,18 @@ import 'transaction_history_state.dart';
 class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   final GetTransactionHistoryUseCase _useCase;
   final ISecureStorageManager _secureStorage;
+  final GetSofBreakdownUseCase _sofUseCase;
+  final AppPreferences _appPreferences;
 
   static const int _defaultPageSize = 20;
   bool _isFetchingMore = false;
 
-  TransactionHistoryCubit(this._useCase, this._secureStorage)
-    : super(TransactionHistoryInitial());
+  TransactionHistoryCubit(
+    this._useCase,
+    this._sofUseCase,
+    this._secureStorage,
+    this._appPreferences,
+  ) : super(TransactionHistoryInitial());
 
   int _jenisKendaraanFor(String kategori) {
     switch (kategori) {
@@ -48,13 +57,36 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       return;
     }
 
+    final previousState = state;
+    final bool shouldRefreshSof =
+        previousState is TransactionHistoryLoaded &&
+        previousState.sofDetailList.isNotEmpty;
+
     emit(TransactionHistoryLoading());
     _isFetchingMore = false;
 
-    String finalNop = nop;
-    if (nop.trim().isEmpty) {
-      final profile = await _secureStorage.getJukirProfile() ?? {};
-      finalNop = profile['nop']?.toString() ?? '';
+    String finalNop = nop.trim();
+
+    if (finalNop.isEmpty) {
+      // Cek siapa yang sedang login
+      final roleId = await _secureStorage.getRoleId() ?? 0;
+      final userRole = RoleLoginDigitalParkir.fromInt(roleId);
+
+      if (userRole == RoleLoginDigitalParkir.jukir) {
+        final profile = await _secureStorage.getJukirProfile() ?? {};
+        finalNop = profile['nop']?.toString().trim() ?? '';
+      } else if (userRole == RoleLoginDigitalParkir.pengawas) {
+        finalNop = _appPreferences.getNomorObjekPengawasan()?.trim() ?? '';
+      }
+    }
+
+    if (finalNop.isEmpty) {
+      emit(
+        const TransactionHistoryError(
+          'Data NOP tidak ditemukan. Mohon pastikan Anda sudah memilih Objek Pengawasan.',
+        ),
+      );
+      return;
     }
 
     final result = await _useCase.execute(
@@ -94,72 +126,130 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
           currentPage: 1,
           pageSize: _defaultPageSize,
           hasReachedMax: data.detail.length < _defaultPageSize,
+          sofDetailList: const [],
+          isSofPanelLoading: shouldRefreshSof,
         ),
       ),
     );
+    if (shouldRefreshSof) {
+      fetchSofBreakdown();
+    }
   }
 
   /// [LOCAL FILTER]: Menyortir data yang sudah ada di memori secara instan
+  /// [LOCAL FILTER]: Menyortir data yang sudah ada di memori secara instan
   Future<void> applyFilter({String? kategori, int? mode}) async {
     if (state is! TransactionHistoryLoaded) return;
-    var currentState = state as TransactionHistoryLoaded;
+    final currentState = state as TransactionHistoryLoaded;
 
     final newKategori = kategori ?? currentState.selectedKategori;
     final newMode = mode ?? currentState.selectedMode;
     final kategoriChanged = newKategori != currentState.selectedKategori;
 
-    if (kategoriChanged) {
-      emit(currentState.copyWith(isFilterLoading: true));
+    // Kategori gak berubah (cuma ganti mode lokal) -> instan, gak nembak API
+    if (!kategoriChanged) {
+      if (!isClosed) {
+        emit(_rebuildFilteredState(currentState, mode: newMode));
+      }
+      return;
+    }
 
-      final result = await _useCase.execute(
-        startDate: currentState.startDate,
-        endDate: currentState.endDate,
-        nop: currentState.nop,
-        idDevice: currentState.idDevice,
-        page: 1,
-        pageSize: currentState.pageSize,
-        jenisKendaraan: _jenisKendaraanFor(newKategori),
-      );
+    // 🆕 nyalain skeleton dua-duanya BARENG dari awal
+    final bool shouldRefreshSof = currentState.sofDetailList.isNotEmpty;
 
-      if (isClosed) return;
+    emit(
+      currentState.copyWith(
+        isFilterLoading: true,
+        isSofPanelLoading: shouldRefreshSof,
+      ),
+    );
 
-      final refetched = result.fold<TransactionHistoryLoaded?>(
-        (failure) {
-          AppLogger.error(
-            'Gagal filter kategori $newKategori: ${failure.message}',
-          );
-          return null;
-        },
-        (data) => currentState.copyWith(
-          allTransactions: data.detail,
-          selectedKategori: newKategori,
-          roda2: data.roda2,
-          roda4: data.roda4,
-          totalTransaksi: data.jumlahTransaksi,
-          totalPendapatan: data.totalPendapatan,
-          totalPajak: data.totalPendapatanBapenda,
-          totalBersih: data.totalPendapatanWajibPajak,
-          currentPage: 1,
-          hasReachedMax: data.detail.length < currentState.pageSize,
-          isFilterLoading: false,
-        ),
-      );
+    // 🆕 dua request ditembak paralel, bukan nunggu satu-satu
+    final historyFuture = _useCase.execute(
+      startDate: currentState.startDate,
+      endDate: currentState.endDate,
+      nop: currentState.nop,
+      idDevice: currentState.idDevice,
+      page: 1,
+      pageSize: currentState.pageSize,
+      jenisKendaraan: _jenisKendaraanFor(newKategori),
+    );
 
+    final sofFuture = shouldRefreshSof
+        ? _sofUseCase.execute(
+            nop: currentState.nop,
+            startDate: currentState.startDate,
+            endDate: currentState.endDate,
+            jenisKendaraan: _jenisKendaraanFor(newKategori),
+          )
+        : null;
+
+    // Handle history begitu dia selesai (gak nunggu sof)
+    final historyResult = await historyFuture;
+    if (isClosed) return;
+
+    final refetched = historyResult.fold<TransactionHistoryLoaded?>(
+      (failure) {
+        AppLogger.error(
+          'Gagal filter kategori $newKategori: ${failure.message}',
+        );
+        return null;
+      },
+      (data) => currentState.copyWith(
+        allTransactions: data.detail,
+        selectedKategori: newKategori,
+        roda2: data.roda2,
+        roda4: data.roda4,
+        totalTransaksi: data.jumlahTransaksi,
+        totalPendapatan: data.totalPendapatan,
+        totalPajak: data.totalPendapatanBapenda,
+        totalBersih: data.totalPendapatanWajibPajak,
+        currentPage: 1,
+        hasReachedMax: data.detail.length < currentState.pageSize,
+        isFilterLoading: false,
+      ),
+    );
+
+    if (!isClosed) {
       if (refetched == null) {
-        if (!isClosed && state is TransactionHistoryLoaded) {
+        if (state is TransactionHistoryLoaded) {
           emit(
             (state as TransactionHistoryLoaded).copyWith(
               isFilterLoading: false,
             ),
           );
         }
-        return;
+      } else {
+        emit(_rebuildFilteredState(refetched, mode: newMode));
       }
-      currentState = refetched;
     }
 
-    if (!isClosed) {
-      emit(_rebuildFilteredState(currentState, mode: newMode));
+    // 🆕 handle sof begitu dia selesai — independen, kapanpun dia balik duluan/belakangan
+    if (sofFuture != null) {
+      final sofResult = await sofFuture;
+      if (isClosed) return;
+
+      sofResult.fold(
+        (failure) {
+          AppLogger.error('Gagal ambil breakdown SOF: ${failure.message}');
+          if (state is TransactionHistoryLoaded) {
+            emit(
+              (state as TransactionHistoryLoaded).copyWith(
+                isSofPanelLoading: false,
+              ),
+            );
+          }
+        },
+        (data) {
+          if (state is! TransactionHistoryLoaded) return;
+          emit(
+            (state as TransactionHistoryLoaded).copyWith(
+              sofDetailList: data,
+              isSofPanelLoading: false,
+            ),
+          );
+        },
+      );
     }
   }
 
@@ -262,6 +352,44 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       totalPajak: filterPajak,
       totalBersih: filterBersih,
       sofBreakdown: _computeSofBreakdown(filteredData),
+    );
+  }
+
+  Future<void> fetchSofBreakdown() async {
+    if (state is! TransactionHistoryLoaded) return;
+    final currentState = state as TransactionHistoryLoaded;
+
+    emit(currentState.copyWith(isSofPanelLoading: true));
+
+    final result = await _sofUseCase.execute(
+      nop: currentState.nop,
+      startDate: currentState.startDate,
+      endDate: currentState.endDate,
+      jenisKendaraan: _jenisKendaraanFor(currentState.selectedKategori),
+    );
+
+    if (isClosed) return;
+
+    result.fold(
+      (failure) {
+        AppLogger.error('Gagal ambil breakdown SOF: ${failure.message}');
+        if (state is TransactionHistoryLoaded) {
+          emit(
+            (state as TransactionHistoryLoaded).copyWith(
+              isSofPanelLoading: false,
+            ),
+          );
+        }
+      },
+      (data) {
+        if (state is! TransactionHistoryLoaded) return;
+        emit(
+          (state as TransactionHistoryLoaded).copyWith(
+            sofDetailList: data,
+            isSofPanelLoading: false,
+          ),
+        );
+      },
     );
   }
 

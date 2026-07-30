@@ -3,8 +3,11 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_linux
   file_selector_linux
+  flutter_classic_bluetooth
   flutter_secure_storage_linux
+  gtk
   url_launcher_linux
 )
 

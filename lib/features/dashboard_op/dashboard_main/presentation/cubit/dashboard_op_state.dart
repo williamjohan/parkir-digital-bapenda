@@ -7,6 +7,7 @@ part 'dashboard_op_state.freezed.dart';
 class DashboardOpState with _$DashboardOpState {
   const factory DashboardOpState({
     @Default(false) bool loading,
+    @Default(false) bool showTSCard,
     DashboardOpEntity? data,
     String? errorMessage,
   }) = _DashboardOpState;

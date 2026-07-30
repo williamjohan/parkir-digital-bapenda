@@ -7,7 +7,7 @@ class PaymentCountdownTimer extends StatelessWidget {
 
   const PaymentCountdownTimer({
     super.key,
-    this.duration = const Duration(minutes: 3), // Default 3 menit
+    this.duration = const Duration(minutes: 5),
     this.onTimeout,
   });
 

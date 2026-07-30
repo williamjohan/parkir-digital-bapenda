@@ -9,11 +9,18 @@
             "args": ["--flavor", "demo"]
         },
         {
-            "name": "📱 Debug: TS Park (PROD)",
+            "name": "📱 Debug: TS Park (JUKIR)",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
-            "args": ["--flavor", "prod"]
+            "args": ["--flavor", "jukir"]
+        },
+        {
+            "name": "📱 Debug: TS Park (PLAYSTORE)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": ["--flavor", "playstore"]
         }
     ]
 }

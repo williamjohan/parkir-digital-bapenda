@@ -24,6 +24,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyProfilePicture = 'PROFILE_PICTURE';
   static const String _keyQrisMetadata = 'QRIS_METADATA_V2';
   static const String _keyQrisLastUpdate = 'QRIS_LAST_UPDATE_V2';
+  static const String _keyOpLastUpdate = 'OP_LAST_UPDATE';
 
   @override
   Future<void> saveAccessToken(String token) async {
@@ -52,6 +53,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     await clearJukirProfile();
     await clearMasterTarif();
     await clearRoleId();
+    await clearProfilePicture();
     await clearDashboardAnchor();
   }
 
@@ -177,6 +179,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     required String alamat,
     required int roleId,
     int? pungutTarif,
+    String? nmOpd,
     String? pungutTarifDescription,
     String? namaObjekPajak,
     String? idDevice,
@@ -189,6 +192,7 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
     final profileData = {
       'idUser': idUserStorage,
       'username': username,
+      'nmOpd': nmOpd,
       'roleId': roleId,
       'namaUser': namaUserStorage,
       'nop': nopStorage,
@@ -317,5 +321,20 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   @override
   Future<void> clearQrisLastUpdate() async {
     await _storage.delete(key: _keyQrisLastUpdate);
+  }
+
+  @override
+  Future<void> saveOpLastUpdate(String dateString) async {
+    await _storage.write(key: _keyOpLastUpdate, value: dateString);
+  }
+
+  @override
+  Future<String?> getOpLastUpdate() async {
+    return await _storage.read(key: _keyOpLastUpdate);
+  }
+
+  @override
+  Future<void> clearOpLastUpdate() async {
+    await _storage.delete(key: _keyOpLastUpdate);
   }
 }

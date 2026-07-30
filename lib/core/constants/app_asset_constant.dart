@@ -22,3 +22,8 @@ class AppAssetLottie {
   static const paymentSuccess = 'assets/lottie/Success_Animation_Blue.json';
   static const paymentSuccessOrange = 'assets/lottie/payment_orange.json';
 }
+
+class AppAssetAudio {
+  AppAssetAudio._();
+  static const successAudio = 'audio/success.mp3';
+}

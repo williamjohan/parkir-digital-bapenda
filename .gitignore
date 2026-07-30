@@ -50,3 +50,13 @@ app.*.map.json
 .env.local
 .env.*.local
 .fvm/
+
+# --- SECURE CREDENTIALS & KEYSTORES (DO NOT COMMIT) ---
+*.jks
+*.keystore
+key.properties
+android/key.properties
+
+# Firebase & Google Services Secrets
+**/google-services.json
+**/GoogleService-Info.plist

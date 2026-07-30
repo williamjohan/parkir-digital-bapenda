@@ -70,26 +70,40 @@ class HistoryItemModel {
     required this.namaOp,
     required this.alamatOp,
   });
+  factory HistoryItemModel.forTicketPreview({
+    required String orderId,
+    required String jenisTarif,
+    required String tglTrx,
+    required int kredit,
+    required String encUrl,
+    required String namaOp,
+    required String alamatOp,
+  }) {
+    return HistoryItemModel(
+      // Isi parameter yang dinamis dari PaymentSuccessEntity
+      orderId: orderId,
+      jenisTarif: jenisTarif,
+      tglTrx: tglTrx,
+      kredit: kredit,
+      encUrl: encUrl,
+      namaOp: namaOp,
+      alamatOp: alamatOp,
+
+      // Isi parameter sisa dengan Default/Dummy value agar UI tidak kotor
+      id: 0,
+      sof: '',
+      platNumber: '-',
+      namaPetugas: '-',
+      modePlat: 0,
+      shift: '-',
+      tarifPajak: 0,
+      deviceId: '-',
+      namaLokasi: alamatOp,
+    );
+  }
 
   factory HistoryItemModel.fromJson(Map<String, dynamic> json) =>
       _$HistoryItemModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$HistoryItemModelToJson(this);
-
-  // factory HistoryItemModel.fromLocalDatabase(Map<String, dynamic> map) {
-  //   return HistoryItemModel(
-  //     id: 0,
-  //     orderId: map['id_transaksi_lokal']?.toString() ?? '',
-  //     jenisTarif: map['kategori_kendaraan']?.toString() ?? '-',
-  //     sof: map['metode_pembayaran']?.toString() ?? 'FREE',
-  //     platNumber: map['plat_nomor']?.toString() ?? '-',
-  //     tglTrx: map['waktu_transaksi']?.toString() ?? '',
-  //     kredit: (map['nominal'] as num?)?.toInt() ?? 0,
-  //     namaPetugas: map['nama_jukir']?.toString() ?? '',
-  //     modePlat: (map['mode_plat'] as num?)?.toInt() ?? 0,
-  //     shift: map['shift']?.toString() ?? '1',
-  //     tarifPajak: (map['tarif_pajak'] as num?)?.toInt() ?? 0,
-  //     deviceId: map['deviceId']?.toString() ?? '',
-  //   );
-  // }
 }

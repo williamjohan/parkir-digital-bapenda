@@ -28,6 +28,8 @@ mixin _$AuthResponseModel {
   int get pungutTarif => throw _privateConstructorUsedError;
   List<NopModel> get nopList => throw _privateConstructorUsedError;
   OpPengawasAuthModel? get opPengawas => throw _privateConstructorUsedError;
+  String get lastUpdateOp => throw _privateConstructorUsedError;
+  String get nmOpd => throw _privateConstructorUsedError;
 
   /// Serializes this AuthResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,6 +56,8 @@ abstract class $AuthResponseModelCopyWith<$Res> {
     int pungutTarif,
     List<NopModel> nopList,
     OpPengawasAuthModel? opPengawas,
+    String lastUpdateOp,
+    String nmOpd,
   });
 
   $OpPengawasAuthModelCopyWith<$Res>? get opPengawas;
@@ -81,6 +85,8 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
     Object? pungutTarif = null,
     Object? nopList = null,
     Object? opPengawas = freezed,
+    Object? lastUpdateOp = null,
+    Object? nmOpd = null,
   }) {
     return _then(
       _value.copyWith(
@@ -112,6 +118,14 @@ class _$AuthResponseModelCopyWithImpl<$Res, $Val extends AuthResponseModel>
                 ? _value.opPengawas
                 : opPengawas // ignore: cast_nullable_to_non_nullable
                       as OpPengawasAuthModel?,
+            lastUpdateOp: null == lastUpdateOp
+                ? _value.lastUpdateOp
+                : lastUpdateOp // ignore: cast_nullable_to_non_nullable
+                      as String,
+            nmOpd: null == nmOpd
+                ? _value.nmOpd
+                : nmOpd // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -149,6 +163,8 @@ abstract class _$$AuthResponseModelImplCopyWith<$Res>
     int pungutTarif,
     List<NopModel> nopList,
     OpPengawasAuthModel? opPengawas,
+    String lastUpdateOp,
+    String nmOpd,
   });
 
   @override
@@ -176,6 +192,8 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
     Object? pungutTarif = null,
     Object? nopList = null,
     Object? opPengawas = freezed,
+    Object? lastUpdateOp = null,
+    Object? nmOpd = null,
   }) {
     return _then(
       _$AuthResponseModelImpl(
@@ -207,6 +225,14 @@ class __$$AuthResponseModelImplCopyWithImpl<$Res>
             ? _value.opPengawas
             : opPengawas // ignore: cast_nullable_to_non_nullable
                   as OpPengawasAuthModel?,
+        lastUpdateOp: null == lastUpdateOp
+            ? _value.lastUpdateOp
+            : lastUpdateOp // ignore: cast_nullable_to_non_nullable
+                  as String,
+        nmOpd: null == nmOpd
+            ? _value.nmOpd
+            : nmOpd // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -223,6 +249,8 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
     this.pungutTarif = 0,
     final List<NopModel> nopList = const [],
     this.opPengawas,
+    this.lastUpdateOp = '',
+    this.nmOpd = '',
   }) : _nopList = nopList;
 
   factory _$AuthResponseModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -254,10 +282,16 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
 
   @override
   final OpPengawasAuthModel? opPengawas;
+  @override
+  @JsonKey()
+  final String lastUpdateOp;
+  @override
+  @JsonKey()
+  final String nmOpd;
 
   @override
   String toString() {
-    return 'AuthResponseModel(accessToken: $accessToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList, opPengawas: $opPengawas)';
+    return 'AuthResponseModel(accessToken: $accessToken, nop: $nop, uuidStatic: $uuidStatic, roleLoginId: $roleLoginId, pungutTarif: $pungutTarif, nopList: $nopList, opPengawas: $opPengawas, lastUpdateOp: $lastUpdateOp, nmOpd: $nmOpd)';
   }
 
   @override
@@ -276,7 +310,10 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
                 other.pungutTarif == pungutTarif) &&
             const DeepCollectionEquality().equals(other._nopList, _nopList) &&
             (identical(other.opPengawas, opPengawas) ||
-                other.opPengawas == opPengawas));
+                other.opPengawas == opPengawas) &&
+            (identical(other.lastUpdateOp, lastUpdateOp) ||
+                other.lastUpdateOp == lastUpdateOp) &&
+            (identical(other.nmOpd, nmOpd) || other.nmOpd == nmOpd));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -290,6 +327,8 @@ class _$AuthResponseModelImpl implements _AuthResponseModel {
     pungutTarif,
     const DeepCollectionEquality().hash(_nopList),
     opPengawas,
+    lastUpdateOp,
+    nmOpd,
   );
 
   /// Create a copy of AuthResponseModel
@@ -318,6 +357,8 @@ abstract class _AuthResponseModel implements AuthResponseModel {
     final int pungutTarif,
     final List<NopModel> nopList,
     final OpPengawasAuthModel? opPengawas,
+    final String lastUpdateOp,
+    final String nmOpd,
   }) = _$AuthResponseModelImpl;
 
   factory _AuthResponseModel.fromJson(Map<String, dynamic> json) =
@@ -337,6 +378,10 @@ abstract class _AuthResponseModel implements AuthResponseModel {
   List<NopModel> get nopList;
   @override
   OpPengawasAuthModel? get opPengawas;
+  @override
+  String get lastUpdateOp;
+  @override
+  String get nmOpd;
 
   /// Create a copy of AuthResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -362,6 +407,7 @@ mixin _$NopModel {
   String get nmCamat => throw _privateConstructorUsedError;
   String get kdLurah => throw _privateConstructorUsedError;
   String get nmLurah => throw _privateConstructorUsedError;
+  String get statusDigitalisasi => throw _privateConstructorUsedError;
 
   /// Serializes this NopModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -389,6 +435,7 @@ abstract class $NopModelCopyWith<$Res> {
     String nmCamat,
     String kdLurah,
     String nmLurah,
+    String statusDigitalisasi,
   });
 }
 
@@ -417,6 +464,7 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
     Object? nmCamat = null,
     Object? kdLurah = null,
     Object? nmLurah = null,
+    Object? statusDigitalisasi = null,
   }) {
     return _then(
       _value.copyWith(
@@ -460,6 +508,10 @@ class _$NopModelCopyWithImpl<$Res, $Val extends NopModel>
                 ? _value.nmLurah
                 : nmLurah // ignore: cast_nullable_to_non_nullable
                       as String,
+            statusDigitalisasi: null == statusDigitalisasi
+                ? _value.statusDigitalisasi
+                : statusDigitalisasi // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -486,6 +538,7 @@ abstract class _$$NopModelImplCopyWith<$Res>
     String nmCamat,
     String kdLurah,
     String nmLurah,
+    String statusDigitalisasi,
   });
 }
 
@@ -513,6 +566,7 @@ class __$$NopModelImplCopyWithImpl<$Res>
     Object? nmCamat = null,
     Object? kdLurah = null,
     Object? nmLurah = null,
+    Object? statusDigitalisasi = null,
   }) {
     return _then(
       _$NopModelImpl(
@@ -556,6 +610,10 @@ class __$$NopModelImplCopyWithImpl<$Res>
             ? _value.nmLurah
             : nmLurah // ignore: cast_nullable_to_non_nullable
                   as String,
+        statusDigitalisasi: null == statusDigitalisasi
+            ? _value.statusDigitalisasi
+            : statusDigitalisasi // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -575,6 +633,7 @@ class _$NopModelImpl implements _NopModel {
     this.nmCamat = '',
     this.kdLurah = '',
     this.nmLurah = '',
+    this.statusDigitalisasi = '',
   });
 
   factory _$NopModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -610,10 +669,13 @@ class _$NopModelImpl implements _NopModel {
   @override
   @JsonKey()
   final String nmLurah;
+  @override
+  @JsonKey()
+  final String statusDigitalisasi;
 
   @override
   String toString() {
-    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital, pungutTarif: $pungutTarif, uptb: $uptb, kdCamat: $kdCamat, nmCamat: $nmCamat, kdLurah: $kdLurah, nmLurah: $nmLurah)';
+    return 'NopModel(nop: $nop, namaOp: $namaOp, alamatOp: $alamatOp, isDigital: $isDigital, pungutTarif: $pungutTarif, uptb: $uptb, kdCamat: $kdCamat, nmCamat: $nmCamat, kdLurah: $kdLurah, nmLurah: $nmLurah, statusDigitalisasi: $statusDigitalisasi)';
   }
 
   @override
@@ -633,7 +695,9 @@ class _$NopModelImpl implements _NopModel {
             (identical(other.kdCamat, kdCamat) || other.kdCamat == kdCamat) &&
             (identical(other.nmCamat, nmCamat) || other.nmCamat == nmCamat) &&
             (identical(other.kdLurah, kdLurah) || other.kdLurah == kdLurah) &&
-            (identical(other.nmLurah, nmLurah) || other.nmLurah == nmLurah));
+            (identical(other.nmLurah, nmLurah) || other.nmLurah == nmLurah) &&
+            (identical(other.statusDigitalisasi, statusDigitalisasi) ||
+                other.statusDigitalisasi == statusDigitalisasi));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -650,6 +714,7 @@ class _$NopModelImpl implements _NopModel {
     nmCamat,
     kdLurah,
     nmLurah,
+    statusDigitalisasi,
   );
 
   /// Create a copy of NopModel
@@ -678,6 +743,7 @@ abstract class _NopModel implements NopModel {
     final String nmCamat,
     final String kdLurah,
     final String nmLurah,
+    final String statusDigitalisasi,
   }) = _$NopModelImpl;
 
   factory _NopModel.fromJson(Map<String, dynamic> json) =
@@ -703,6 +769,8 @@ abstract class _NopModel implements NopModel {
   String get kdLurah;
   @override
   String get nmLurah;
+  @override
+  String get statusDigitalisasi;
 
   /// Create a copy of NopModel
   /// with the given fields replaced by the non-null parameter values.

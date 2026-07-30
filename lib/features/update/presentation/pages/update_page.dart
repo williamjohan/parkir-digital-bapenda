@@ -7,7 +7,7 @@ import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/di/injection.dart';
 import '../cubit/check_update_cubit.dart';
 import '../cubit/check_update_state.dart';
-import '../widgets/update_progress_dialog.dart'; // 🚀 Panggil File 2
+import '../widgets/update_progress_dialog.dart';
 
 class UpdatePage extends StatelessWidget {
   const UpdatePage({super.key});
@@ -44,7 +44,9 @@ class _UpdatePageContent extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColors.surface,
         scrolledUnderElevation: 0,
-        shape: const Border(bottom: BorderSide(color: AppColors.primary, width: 1.0)),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
         elevation: 0,
         foregroundColor: Colors.black,
         iconTheme: const IconThemeData(color: AppColors.primary),

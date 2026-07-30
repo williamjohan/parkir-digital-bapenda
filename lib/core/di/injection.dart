@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import 'injection.config.dart'; // Baris ini akan error (merah) sebelum build_runner dijalankan. Biarkan saja.
+import 'injection.config.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -9,4 +9,6 @@ final GetIt locator = GetIt.instance;
   preferRelativeImports: true,
   asExtension: false,
 )
-void configureDependencies() => init(locator);
+Future<void> configureDependencies() async {
+  await init(locator);
+}

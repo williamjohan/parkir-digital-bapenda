@@ -32,20 +32,27 @@ class SearchOpCubit extends Cubit<SearchOpState> {
 
     try {
       List<Map<String, dynamic>> result;
+
       switch (type) {
         case SearchOpType.digital:
-          result = await databaseHelper.getNopListByIsDigital(true);
+          result = await databaseHelper.getNopListByStatusDigitalisasi(
+            'Digital',
+          );
           break;
+
         case SearchOpType.nonDigital:
-          result = await databaseHelper.getNopListByIsDigital(false);
+          result = await databaseHelper.getNopListByStatusDigitalisasi(
+            'Proses Digital',
+          );
           break;
+
         case SearchOpType.free:
-          result = await databaseHelper.getNopListByTarif('1');
-          break;
-        case SearchOpType.paid:
-          result = await databaseHelper.getNopListByTarif('2');
+          result = await databaseHelper.getNopListByStatusDigitalisasi(
+            'Gratis',
+          );
           break;
       }
+
       emit(
         state.copyWith(
           isLoading: false,

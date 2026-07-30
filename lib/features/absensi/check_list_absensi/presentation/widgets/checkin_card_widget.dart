@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import '../../../../home/domain/entities/dashboard_summary_pengawas.entity.dart';
-import 'instrument_badge_widget.dart';
 
 class CheckInCardWidget extends StatelessWidget {
   final bool isCheckedIn;
@@ -156,14 +155,6 @@ class CheckInCardWidget extends StatelessWidget {
     );
   }
 
-  bool _isAlatBawa(String keyword) {
-    return detailAlat.any(
-      (alat) =>
-          alat.namaAlat.toLowerCase().contains(keyword.toLowerCase()) &&
-          alat.isBawa,
-    );
-  }
-
   Widget _buildCheckedInContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,30 +187,7 @@ class CheckInCardWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: InstrumentBadgeWidget(
-                label: "EDC",
-                isActive: _isAlatBawa("edc"),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: InstrumentBadgeWidget(
-                label: "QRIS",
-                isActive: _isAlatBawa("qris") || _isAlatBawa("rompi"),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: InstrumentBadgeWidget(
-                label: "TSpark",
-                isActive: _isAlatBawa("ts"),
-              ),
-            ),
-          ],
-        ),
+        _buildInstrumentBadges(),
       ],
     );
   }
@@ -269,6 +237,70 @@ class CheckInCardWidget extends StatelessWidget {
             "$count",
             style: AppTypography.bodySemiBold.copyWith(
               color: Colors.grey.shade800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInstrumentBadges() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 8.0;
+        const columns = 3;
+        final itemWidth =
+            (constraints.maxWidth - spacing * (columns - 1)) / columns;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: detailAlat
+              .map(
+                (alat) => SizedBox(
+                  width: itemWidth,
+                  child: _buildInstrumentChip(alat.namaAlat, alat.isBawa),
+                ),
+              )
+              .toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildInstrumentChip(String label, bool tersedia) {
+    final color = tersedia ? AppColors.success : AppColors.textHint;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: tersedia
+            ? AppColors.success.withValues(alpha: 0.08)
+            : AppColors.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: tersedia
+              ? AppColors.success.withValues(alpha: 0.3)
+              : AppColors.border,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            tersedia ? Icons.check_circle_rounded : Icons.cancel_rounded,
+            size: 15,
+            color: color,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: color,
             ),
           ),
         ],

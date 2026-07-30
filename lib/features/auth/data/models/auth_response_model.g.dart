@@ -24,6 +24,8 @@ _$AuthResponseModelImpl _$$AuthResponseModelImplFromJson(
       : OpPengawasAuthModel.fromJson(
           json['opPengawas'] as Map<String, dynamic>,
         ),
+  lastUpdateOp: json['lastUpdateOp'] as String? ?? '',
+  nmOpd: json['nmOpd'] as String? ?? '',
 );
 
 Map<String, dynamic> _$$AuthResponseModelImplToJson(
@@ -36,6 +38,8 @@ Map<String, dynamic> _$$AuthResponseModelImplToJson(
   'pungutTarif': instance.pungutTarif,
   'nopList': instance.nopList,
   'opPengawas': instance.opPengawas,
+  'lastUpdateOp': instance.lastUpdateOp,
+  'nmOpd': instance.nmOpd,
 };
 
 _$NopModelImpl _$$NopModelImplFromJson(Map<String, dynamic> json) =>
@@ -50,6 +54,7 @@ _$NopModelImpl _$$NopModelImplFromJson(Map<String, dynamic> json) =>
       nmCamat: json['nmCamat'] as String? ?? '',
       kdLurah: json['kdLurah'] as String? ?? '',
       nmLurah: json['nmLurah'] as String? ?? '',
+      statusDigitalisasi: json['statusDigitalisasi'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
@@ -64,6 +69,7 @@ Map<String, dynamic> _$$NopModelImplToJson(_$NopModelImpl instance) =>
       'nmCamat': instance.nmCamat,
       'kdLurah': instance.kdLurah,
       'nmLurah': instance.nmLurah,
+      'statusDigitalisasi': instance.statusDigitalisasi,
     };
 
 _$OpPengawasAuthModelImpl _$$OpPengawasAuthModelImplFromJson(

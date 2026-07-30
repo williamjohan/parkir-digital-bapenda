@@ -1,21 +1,21 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../../../core/enums/app_enums.dart';
-import '../../../../../core/utils/permission_utils.dart';
+import '../../../../../core/services/camera/recovered_camera_session.dart';
 import '../../../../transaction_history/data/models/history_item_model.dart';
 import '../../../domain/entities/dashboard_summary_non_jukir_entity.dart';
 import '../../../domain/entities/dashboard_summary_pengawas.entity.dart';
+import '../../../domain/entities/rekap_wilayah_entity.dart';
 
 part 'home_state.freezed.dart';
 
-enum HomeStatus { initial, loading, success, failure }
+enum HomeStatus { initial, loading, needsSelection, success, failure }
 
 @freezed
 class HomeState with _$HomeState {
   const factory HomeState({
     @Default(HomeStatus.initial) HomeStatus status,
-    CameraPermissionStatus? permissionActionStatus,
+    RecoveredCameraSession? recoveredSession,
     String? selectedVehicleForCapture,
-    int? actionTimestamp,
     @Default(0) int motorCount,
     @Default(0) int mobilCount,
     @Default(0.0) double totalPendapatan,
@@ -25,9 +25,9 @@ class HomeState with _$HomeState {
     @Default([]) List<HistoryItemModel> recentTransactions,
     @Default(false) bool isFree,
     @Default("") String nop,
-    @Default("") String namaLokasi,
+    @Default("") String? namaLokasi,
     @Default("") String namaJukir,
-    @Default("") String namaOp,
+    @Default("") String? namaOp,
     @Default("") String? namaJukirFormatted,
     @Default("") String profilePicturePath,
 
@@ -85,6 +85,8 @@ class HomeState with _$HomeState {
 
     //Segment Pengawas
     @Default(0) int laporanPelanggaran,
+    ShiftPengawasan? shiftPengawasan,
+    JenisPengawasan? jenisPengawasan,
     @Default(
       CheckInOutEntity(
         idEvent: 0,
@@ -104,10 +106,13 @@ class HomeState with _$HomeState {
         checkOutJmlMotor: 0,
         latitude: '',
         longitude: '',
-        detailAlatCheckIn: [], // ⬅️ ganti dari detailAlat
+        detailAlatCheckIn: [],
         detailAlatCheckOut: [],
       ),
     )
     CheckInOutEntity checkInOutData,
+    @Default(true) bool isOpUpToDate,
+    RekapWilayahEntity? rekapWilayah,
+    @Default('') String? nmOpd,
   }) = _HomeState;
 }

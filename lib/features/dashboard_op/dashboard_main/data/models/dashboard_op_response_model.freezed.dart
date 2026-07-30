@@ -38,6 +38,13 @@ mixin _$DashboardOpResponseModel {
   List<RiwayatPendapatanModel> get riwayatList =>
       throw _privateConstructorUsedError;
   List<SofModel> get sofList => throw _privateConstructorUsedError;
+  List<AlatDigitalModel> get alatDigitalList =>
+      throw _privateConstructorUsedError;
+  TaxSurveillanceModel? get taxSurveillance =>
+      throw _privateConstructorUsedError;
+  int get tarifMotor => throw _privateConstructorUsedError;
+  int get tarifMobil => throw _privateConstructorUsedError;
+  String get jadwalOperasional => throw _privateConstructorUsedError;
 
   /// Serializes this DashboardOpResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -69,9 +76,15 @@ abstract class $DashboardOpResponseModelCopyWith<$Res> {
     RealisasiTahunIniModel realisasiTahunIni,
     List<RiwayatPendapatanModel> riwayatList,
     List<SofModel> sofList,
+    List<AlatDigitalModel> alatDigitalList,
+    TaxSurveillanceModel? taxSurveillance,
+    int tarifMotor,
+    int tarifMobil,
+    String jadwalOperasional,
   });
 
   $RealisasiTahunIniModelCopyWith<$Res> get realisasiTahunIni;
+  $TaxSurveillanceModelCopyWith<$Res>? get taxSurveillance;
 }
 
 /// @nodoc
@@ -104,6 +117,11 @@ class _$DashboardOpResponseModelCopyWithImpl<
     Object? realisasiTahunIni = null,
     Object? riwayatList = null,
     Object? sofList = null,
+    Object? alatDigitalList = null,
+    Object? taxSurveillance = freezed,
+    Object? tarifMotor = null,
+    Object? tarifMobil = null,
+    Object? jadwalOperasional = null,
   }) {
     return _then(
       _value.copyWith(
@@ -157,6 +175,26 @@ class _$DashboardOpResponseModelCopyWithImpl<
                 ? _value.sofList
                 : sofList // ignore: cast_nullable_to_non_nullable
                       as List<SofModel>,
+            alatDigitalList: null == alatDigitalList
+                ? _value.alatDigitalList
+                : alatDigitalList // ignore: cast_nullable_to_non_nullable
+                      as List<AlatDigitalModel>,
+            taxSurveillance: freezed == taxSurveillance
+                ? _value.taxSurveillance
+                : taxSurveillance // ignore: cast_nullable_to_non_nullable
+                      as TaxSurveillanceModel?,
+            tarifMotor: null == tarifMotor
+                ? _value.tarifMotor
+                : tarifMotor // ignore: cast_nullable_to_non_nullable
+                      as int,
+            tarifMobil: null == tarifMobil
+                ? _value.tarifMobil
+                : tarifMobil // ignore: cast_nullable_to_non_nullable
+                      as int,
+            jadwalOperasional: null == jadwalOperasional
+                ? _value.jadwalOperasional
+                : jadwalOperasional // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -171,6 +209,22 @@ class _$DashboardOpResponseModelCopyWithImpl<
       value,
     ) {
       return _then(_value.copyWith(realisasiTahunIni: value) as $Val);
+    });
+  }
+
+  /// Create a copy of DashboardOpResponseModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TaxSurveillanceModelCopyWith<$Res>? get taxSurveillance {
+    if (_value.taxSurveillance == null) {
+      return null;
+    }
+
+    return $TaxSurveillanceModelCopyWith<$Res>(_value.taxSurveillance!, (
+      value,
+    ) {
+      return _then(_value.copyWith(taxSurveillance: value) as $Val);
     });
   }
 }
@@ -197,10 +251,17 @@ abstract class _$$DashboardOpResponseModelImplCopyWith<$Res>
     RealisasiTahunIniModel realisasiTahunIni,
     List<RiwayatPendapatanModel> riwayatList,
     List<SofModel> sofList,
+    List<AlatDigitalModel> alatDigitalList,
+    TaxSurveillanceModel? taxSurveillance,
+    int tarifMotor,
+    int tarifMobil,
+    String jadwalOperasional,
   });
 
   @override
   $RealisasiTahunIniModelCopyWith<$Res> get realisasiTahunIni;
+  @override
+  $TaxSurveillanceModelCopyWith<$Res>? get taxSurveillance;
 }
 
 /// @nodoc
@@ -233,6 +294,11 @@ class __$$DashboardOpResponseModelImplCopyWithImpl<$Res>
     Object? realisasiTahunIni = null,
     Object? riwayatList = null,
     Object? sofList = null,
+    Object? alatDigitalList = null,
+    Object? taxSurveillance = freezed,
+    Object? tarifMotor = null,
+    Object? tarifMobil = null,
+    Object? jadwalOperasional = null,
   }) {
     return _then(
       _$DashboardOpResponseModelImpl(
@@ -285,6 +351,26 @@ class __$$DashboardOpResponseModelImplCopyWithImpl<$Res>
             ? _value._sofList
             : sofList // ignore: cast_nullable_to_non_nullable
                   as List<SofModel>,
+        alatDigitalList: null == alatDigitalList
+            ? _value._alatDigitalList
+            : alatDigitalList // ignore: cast_nullable_to_non_nullable
+                  as List<AlatDigitalModel>,
+        taxSurveillance: freezed == taxSurveillance
+            ? _value.taxSurveillance
+            : taxSurveillance // ignore: cast_nullable_to_non_nullable
+                  as TaxSurveillanceModel?,
+        tarifMotor: null == tarifMotor
+            ? _value.tarifMotor
+            : tarifMotor // ignore: cast_nullable_to_non_nullable
+                  as int,
+        tarifMobil: null == tarifMobil
+            ? _value.tarifMobil
+            : tarifMobil // ignore: cast_nullable_to_non_nullable
+                  as int,
+        jadwalOperasional: null == jadwalOperasional
+            ? _value.jadwalOperasional
+            : jadwalOperasional // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -306,8 +392,14 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
     required this.realisasiTahunIni,
     required final List<RiwayatPendapatanModel> riwayatList,
     required final List<SofModel> sofList,
+    final List<AlatDigitalModel> alatDigitalList = const [],
+    this.taxSurveillance,
+    required this.tarifMotor,
+    required this.tarifMobil,
+    required this.jadwalOperasional,
   }) : _riwayatList = riwayatList,
-       _sofList = sofList;
+       _sofList = sofList,
+       _alatDigitalList = alatDigitalList;
 
   factory _$DashboardOpResponseModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$DashboardOpResponseModelImplFromJson(json);
@@ -348,9 +440,27 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
     return EqualUnmodifiableListView(_sofList);
   }
 
+  final List<AlatDigitalModel> _alatDigitalList;
+  @override
+  @JsonKey()
+  List<AlatDigitalModel> get alatDigitalList {
+    if (_alatDigitalList is EqualUnmodifiableListView) return _alatDigitalList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_alatDigitalList);
+  }
+
+  @override
+  final TaxSurveillanceModel? taxSurveillance;
+  @override
+  final int tarifMotor;
+  @override
+  final int tarifMobil;
+  @override
+  final String jadwalOperasional;
+
   @override
   String toString() {
-    return 'DashboardOpResponseModel(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList)';
+    return 'DashboardOpResponseModel(nop: $nop, namaOp: $namaOp, uptbId: $uptbId, isDigital: $isDigital, pendapatanHariIniKotor: $pendapatanHariIniKotor, pendapatanHariIniBersihWajibPajak: $pendapatanHariIniBersihWajibPajak, pendapatanHariIniBersihBapenda: $pendapatanHariIniBersihBapenda, totalTransaksiRodaDua: $totalTransaksiRodaDua, totalTransaksiRodaEmpat: $totalTransaksiRodaEmpat, realisasiTahunIni: $realisasiTahunIni, riwayatList: $riwayatList, sofList: $sofList, alatDigitalList: $alatDigitalList, taxSurveillance: $taxSurveillance, tarifMotor: $tarifMotor, tarifMobil: $tarifMobil, jadwalOperasional: $jadwalOperasional)';
   }
 
   @override
@@ -390,7 +500,19 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
               other._riwayatList,
               _riwayatList,
             ) &&
-            const DeepCollectionEquality().equals(other._sofList, _sofList));
+            const DeepCollectionEquality().equals(other._sofList, _sofList) &&
+            const DeepCollectionEquality().equals(
+              other._alatDigitalList,
+              _alatDigitalList,
+            ) &&
+            (identical(other.taxSurveillance, taxSurveillance) ||
+                other.taxSurveillance == taxSurveillance) &&
+            (identical(other.tarifMotor, tarifMotor) ||
+                other.tarifMotor == tarifMotor) &&
+            (identical(other.tarifMobil, tarifMobil) ||
+                other.tarifMobil == tarifMobil) &&
+            (identical(other.jadwalOperasional, jadwalOperasional) ||
+                other.jadwalOperasional == jadwalOperasional));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -409,6 +531,11 @@ class _$DashboardOpResponseModelImpl implements _DashboardOpResponseModel {
     realisasiTahunIni,
     const DeepCollectionEquality().hash(_riwayatList),
     const DeepCollectionEquality().hash(_sofList),
+    const DeepCollectionEquality().hash(_alatDigitalList),
+    taxSurveillance,
+    tarifMotor,
+    tarifMobil,
+    jadwalOperasional,
   );
 
   /// Create a copy of DashboardOpResponseModel
@@ -442,6 +569,11 @@ abstract class _DashboardOpResponseModel implements DashboardOpResponseModel {
     required final RealisasiTahunIniModel realisasiTahunIni,
     required final List<RiwayatPendapatanModel> riwayatList,
     required final List<SofModel> sofList,
+    final List<AlatDigitalModel> alatDigitalList,
+    final TaxSurveillanceModel? taxSurveillance,
+    required final int tarifMotor,
+    required final int tarifMobil,
+    required final String jadwalOperasional,
   }) = _$DashboardOpResponseModelImpl;
 
   factory _DashboardOpResponseModel.fromJson(Map<String, dynamic> json) =
@@ -471,6 +603,16 @@ abstract class _DashboardOpResponseModel implements DashboardOpResponseModel {
   List<RiwayatPendapatanModel> get riwayatList;
   @override
   List<SofModel> get sofList;
+  @override
+  List<AlatDigitalModel> get alatDigitalList;
+  @override
+  TaxSurveillanceModel? get taxSurveillance;
+  @override
+  int get tarifMotor;
+  @override
+  int get tarifMobil;
+  @override
+  String get jadwalOperasional;
 
   /// Create a copy of DashboardOpResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1255,4 +1397,414 @@ abstract class _SofModel implements SofModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SofModelImplCopyWith<_$SofModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+AlatDigitalModel _$AlatDigitalModelFromJson(Map<String, dynamic> json) {
+  return _AlatDigitalModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AlatDigitalModel {
+  String get nama => throw _privateConstructorUsedError;
+  bool get status => throw _privateConstructorUsedError;
+
+  /// Serializes this AlatDigitalModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of AlatDigitalModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $AlatDigitalModelCopyWith<AlatDigitalModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AlatDigitalModelCopyWith<$Res> {
+  factory $AlatDigitalModelCopyWith(
+    AlatDigitalModel value,
+    $Res Function(AlatDigitalModel) then,
+  ) = _$AlatDigitalModelCopyWithImpl<$Res, AlatDigitalModel>;
+  @useResult
+  $Res call({String nama, bool status});
+}
+
+/// @nodoc
+class _$AlatDigitalModelCopyWithImpl<$Res, $Val extends AlatDigitalModel>
+    implements $AlatDigitalModelCopyWith<$Res> {
+  _$AlatDigitalModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of AlatDigitalModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? nama = null, Object? status = null}) {
+    return _then(
+      _value.copyWith(
+            nama: null == nama
+                ? _value.nama
+                : nama // ignore: cast_nullable_to_non_nullable
+                      as String,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$AlatDigitalModelImplCopyWith<$Res>
+    implements $AlatDigitalModelCopyWith<$Res> {
+  factory _$$AlatDigitalModelImplCopyWith(
+    _$AlatDigitalModelImpl value,
+    $Res Function(_$AlatDigitalModelImpl) then,
+  ) = __$$AlatDigitalModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String nama, bool status});
+}
+
+/// @nodoc
+class __$$AlatDigitalModelImplCopyWithImpl<$Res>
+    extends _$AlatDigitalModelCopyWithImpl<$Res, _$AlatDigitalModelImpl>
+    implements _$$AlatDigitalModelImplCopyWith<$Res> {
+  __$$AlatDigitalModelImplCopyWithImpl(
+    _$AlatDigitalModelImpl _value,
+    $Res Function(_$AlatDigitalModelImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AlatDigitalModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? nama = null, Object? status = null}) {
+    return _then(
+      _$AlatDigitalModelImpl(
+        nama: null == nama
+            ? _value.nama
+            : nama // ignore: cast_nullable_to_non_nullable
+                  as String,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AlatDigitalModelImpl implements _AlatDigitalModel {
+  const _$AlatDigitalModelImpl({required this.nama, required this.status});
+
+  factory _$AlatDigitalModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AlatDigitalModelImplFromJson(json);
+
+  @override
+  final String nama;
+  @override
+  final bool status;
+
+  @override
+  String toString() {
+    return 'AlatDigitalModel(nama: $nama, status: $status)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AlatDigitalModelImpl &&
+            (identical(other.nama, nama) || other.nama == nama) &&
+            (identical(other.status, status) || other.status == status));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, nama, status);
+
+  /// Create a copy of AlatDigitalModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AlatDigitalModelImplCopyWith<_$AlatDigitalModelImpl> get copyWith =>
+      __$$AlatDigitalModelImplCopyWithImpl<_$AlatDigitalModelImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AlatDigitalModelImplToJson(this);
+  }
+}
+
+abstract class _AlatDigitalModel implements AlatDigitalModel {
+  const factory _AlatDigitalModel({
+    required final String nama,
+    required final bool status,
+  }) = _$AlatDigitalModelImpl;
+
+  factory _AlatDigitalModel.fromJson(Map<String, dynamic> json) =
+      _$AlatDigitalModelImpl.fromJson;
+
+  @override
+  String get nama;
+  @override
+  bool get status;
+
+  /// Create a copy of AlatDigitalModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AlatDigitalModelImplCopyWith<_$AlatDigitalModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+TaxSurveillanceModel _$TaxSurveillanceModelFromJson(Map<String, dynamic> json) {
+  return _TaxSurveillanceModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TaxSurveillanceModel {
+  String get bulan => throw _privateConstructorUsedError;
+  String get totalRealisasiMotor => throw _privateConstructorUsedError;
+  String get totalRealisasiMobil => throw _privateConstructorUsedError;
+  String get totalRealisasiBulan => throw _privateConstructorUsedError;
+
+  /// Serializes this TaxSurveillanceModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of TaxSurveillanceModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $TaxSurveillanceModelCopyWith<TaxSurveillanceModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaxSurveillanceModelCopyWith<$Res> {
+  factory $TaxSurveillanceModelCopyWith(
+    TaxSurveillanceModel value,
+    $Res Function(TaxSurveillanceModel) then,
+  ) = _$TaxSurveillanceModelCopyWithImpl<$Res, TaxSurveillanceModel>;
+  @useResult
+  $Res call({
+    String bulan,
+    String totalRealisasiMotor,
+    String totalRealisasiMobil,
+    String totalRealisasiBulan,
+  });
+}
+
+/// @nodoc
+class _$TaxSurveillanceModelCopyWithImpl<
+  $Res,
+  $Val extends TaxSurveillanceModel
+>
+    implements $TaxSurveillanceModelCopyWith<$Res> {
+  _$TaxSurveillanceModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of TaxSurveillanceModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bulan = null,
+    Object? totalRealisasiMotor = null,
+    Object? totalRealisasiMobil = null,
+    Object? totalRealisasiBulan = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            bulan: null == bulan
+                ? _value.bulan
+                : bulan // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalRealisasiMotor: null == totalRealisasiMotor
+                ? _value.totalRealisasiMotor
+                : totalRealisasiMotor // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalRealisasiMobil: null == totalRealisasiMobil
+                ? _value.totalRealisasiMobil
+                : totalRealisasiMobil // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalRealisasiBulan: null == totalRealisasiBulan
+                ? _value.totalRealisasiBulan
+                : totalRealisasiBulan // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$TaxSurveillanceModelImplCopyWith<$Res>
+    implements $TaxSurveillanceModelCopyWith<$Res> {
+  factory _$$TaxSurveillanceModelImplCopyWith(
+    _$TaxSurveillanceModelImpl value,
+    $Res Function(_$TaxSurveillanceModelImpl) then,
+  ) = __$$TaxSurveillanceModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    String bulan,
+    String totalRealisasiMotor,
+    String totalRealisasiMobil,
+    String totalRealisasiBulan,
+  });
+}
+
+/// @nodoc
+class __$$TaxSurveillanceModelImplCopyWithImpl<$Res>
+    extends _$TaxSurveillanceModelCopyWithImpl<$Res, _$TaxSurveillanceModelImpl>
+    implements _$$TaxSurveillanceModelImplCopyWith<$Res> {
+  __$$TaxSurveillanceModelImplCopyWithImpl(
+    _$TaxSurveillanceModelImpl _value,
+    $Res Function(_$TaxSurveillanceModelImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of TaxSurveillanceModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bulan = null,
+    Object? totalRealisasiMotor = null,
+    Object? totalRealisasiMobil = null,
+    Object? totalRealisasiBulan = null,
+  }) {
+    return _then(
+      _$TaxSurveillanceModelImpl(
+        bulan: null == bulan
+            ? _value.bulan
+            : bulan // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalRealisasiMotor: null == totalRealisasiMotor
+            ? _value.totalRealisasiMotor
+            : totalRealisasiMotor // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalRealisasiMobil: null == totalRealisasiMobil
+            ? _value.totalRealisasiMobil
+            : totalRealisasiMobil // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalRealisasiBulan: null == totalRealisasiBulan
+            ? _value.totalRealisasiBulan
+            : totalRealisasiBulan // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TaxSurveillanceModelImpl implements _TaxSurveillanceModel {
+  const _$TaxSurveillanceModelImpl({
+    required this.bulan,
+    required this.totalRealisasiMotor,
+    required this.totalRealisasiMobil,
+    required this.totalRealisasiBulan,
+  });
+
+  factory _$TaxSurveillanceModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TaxSurveillanceModelImplFromJson(json);
+
+  @override
+  final String bulan;
+  @override
+  final String totalRealisasiMotor;
+  @override
+  final String totalRealisasiMobil;
+  @override
+  final String totalRealisasiBulan;
+
+  @override
+  String toString() {
+    return 'TaxSurveillanceModel(bulan: $bulan, totalRealisasiMotor: $totalRealisasiMotor, totalRealisasiMobil: $totalRealisasiMobil, totalRealisasiBulan: $totalRealisasiBulan)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaxSurveillanceModelImpl &&
+            (identical(other.bulan, bulan) || other.bulan == bulan) &&
+            (identical(other.totalRealisasiMotor, totalRealisasiMotor) ||
+                other.totalRealisasiMotor == totalRealisasiMotor) &&
+            (identical(other.totalRealisasiMobil, totalRealisasiMobil) ||
+                other.totalRealisasiMobil == totalRealisasiMobil) &&
+            (identical(other.totalRealisasiBulan, totalRealisasiBulan) ||
+                other.totalRealisasiBulan == totalRealisasiBulan));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    bulan,
+    totalRealisasiMotor,
+    totalRealisasiMobil,
+    totalRealisasiBulan,
+  );
+
+  /// Create a copy of TaxSurveillanceModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaxSurveillanceModelImplCopyWith<_$TaxSurveillanceModelImpl>
+  get copyWith =>
+      __$$TaxSurveillanceModelImplCopyWithImpl<_$TaxSurveillanceModelImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TaxSurveillanceModelImplToJson(this);
+  }
+}
+
+abstract class _TaxSurveillanceModel implements TaxSurveillanceModel {
+  const factory _TaxSurveillanceModel({
+    required final String bulan,
+    required final String totalRealisasiMotor,
+    required final String totalRealisasiMobil,
+    required final String totalRealisasiBulan,
+  }) = _$TaxSurveillanceModelImpl;
+
+  factory _TaxSurveillanceModel.fromJson(Map<String, dynamic> json) =
+      _$TaxSurveillanceModelImpl.fromJson;
+
+  @override
+  String get bulan;
+  @override
+  String get totalRealisasiMotor;
+  @override
+  String get totalRealisasiMobil;
+  @override
+  String get totalRealisasiBulan;
+
+  /// Create a copy of TaxSurveillanceModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TaxSurveillanceModelImplCopyWith<_$TaxSurveillanceModelImpl>
+  get copyWith => throw _privateConstructorUsedError;
 }

@@ -69,7 +69,7 @@ class CardLaporanPelanggaran extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    jenisPelanggaran?.nama ??
+                    jenisPelanggaran?.namaPelanggaran ??
                         'Jenis Pelanggaran Tidak Diketahui',
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,

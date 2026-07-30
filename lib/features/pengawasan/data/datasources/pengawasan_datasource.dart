@@ -7,12 +7,20 @@ import '../../../../../core/network/api_endpoints.dart';
 import '../../../../../core/network/dio_error_handler.dart';
 import '../../../../core/services/image/i_image_service.dart';
 import '../../domain/entities/request_laporan_pengawasan_entity/request_laporan_pengawasan_entity.dart';
+import '../models/add_pengawasan_model.dart';
+import '../models/jenis_pelanggaran/jenis_pelanggaran_model.dart';
 import '../models/laporan_pengawasan/laporan_pengawasan_model.dart';
 
 abstract class PengawasanDatasource {
-  Future<List<LaporanPengawasanModel>> getLaporanPengawasan();
+  Future<List<LaporanPengawasanModel>> getLaporanPengawasan({
+    required String nomorObjek,
+    required int shift,
+    required int jenis,
+  });
 
   Future<void> addPengawasan(RequestLaporanPengawasanEntity request);
+
+  Future<List<JenisPelanggaranModel>> getJenisPelanggaran();
 }
 
 @LazySingleton(as: PengawasanDatasource)
@@ -40,11 +48,22 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
   PengawasanDatasourceImpl(this._dio, this._imageService);
 
   @override
-  Future<List<LaporanPengawasanModel>> getLaporanPengawasan() async {
+  Future<List<LaporanPengawasanModel>> getLaporanPengawasan({
+    required String nomorObjek,
+    required int shift,
+    required int jenis,
+  }) async {
     try {
       AppLogger.info('Request Get Laporan Pengawasan');
 
-      final response = await _dio.get(ApiEndpoints.pengawasLaporanList);
+      final response = await _dio.get(
+        ApiEndpoints.pengawasLaporanList,
+        queryParameters: {
+          'nomorObjek': nomorObjek,
+          'shift': shift,
+          'jenis': jenis,
+        },
+      );
 
       AppLogger.info(
         'Response Get Laporan Pengawasan: ${response.data['data']?.length} laporan',
@@ -86,12 +105,11 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
 
       MultipartFile? buktiFotoMultipart;
 
-      // 1. Cek apakah ada foto yang dilampirkan
+      // Compress image jika ada
       if (request.buktiFoto != null && request.buktiFoto!.path.isNotEmpty) {
         final originalFile = File(request.buktiFoto!.path);
 
         if (await originalFile.exists()) {
-          // Kompresi Gambar
           compressedPath = await _imageService.compressAndSaveImage(
             originalFile: originalFile,
             fileName: 'pengawasan_${DateTime.now().millisecondsSinceEpoch}',
@@ -99,34 +117,30 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
             minResolution: 1024,
           );
 
-          // Jika kompresi berhasil pakai file kompresi, jika gagal otomatis fallback ke file asli HP
           final finalFile = File(compressedPath ?? originalFile.path);
           final bytes = await finalFile.readAsBytes();
 
-          // 🚀 2. DYNAMIC MEDIA TYPE: Berjalan otomatis untuk JPG, JPEG, PNG, WEBP!
           buktiFotoMultipart = MultipartFile.fromBytes(
             bytes,
             filename: finalFile.path.split('/').last,
-            contentType: _getMediaType(
-              finalFile.path,
-            ), // <-- Otomatis menyesuaikan!
+            contentType: _getMediaType(finalFile.path),
           );
         }
       }
 
-      // 3. Build Payload
-      final mapData = <String, dynamic>{
-        'JenisPel': request.jenisPel,
-        'KetPel': request.ketPel,
-      };
+      // Entity -> Model
+      final model = request.toModel();
+
+      // Payload
+      final mapData = <String, dynamic>{...model.toJson()};
 
       if (buktiFotoMultipart != null) {
         mapData['BuktiFoto'] = buktiFotoMultipart;
-      } else {
-        mapData['BuktiFoto'] = ''; // Sesuai trial Swagger jika foto kosong
       }
 
       final formData = FormData.fromMap(mapData);
+
+      AppLogger.info('Payload Add Pengawasan : $mapData');
 
       final response = await _dio.post(
         ApiEndpoints.addPengawasanPelaporanDev,
@@ -134,7 +148,7 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
         options: Options(contentType: Headers.multipartFormDataContentType),
       );
 
-      AppLogger.info('Response Add Pengawasan: ${response.data}');
+      AppLogger.info('Response Add Pengawasan : ${response.data}');
 
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
@@ -157,10 +171,47 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
         message: 'Terjadi kesalahan internal saat memproses laporan.',
       );
     } finally {
-      // 4. Bersihkan file kompresi sementara di HP pengawas
       if (compressedPath != null) {
         _imageService.deleteImage(compressedPath).ignore();
       }
+    }
+  }
+
+  @override
+  Future<List<JenisPelanggaranModel>> getJenisPelanggaran() async {
+    try {
+      AppLogger.info('Request Get Jenis Pelanggaran');
+
+      final response = await _dio.get(ApiEndpoints.jenisPelanggaran);
+
+      AppLogger.info(
+        'Response Get Jenis Pelanggaran : ${response.data['data']?.length} data',
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(
+          statusCode: response.statusCode ?? 500,
+          message:
+              response.data?['message'] ??
+              'Gagal mengambil data Jenis Pelanggaran.',
+        );
+      }
+
+      final List<dynamic> data = response.data['data'];
+
+      return data
+          .map((e) => JenisPelanggaranModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      AppLogger.error('>>> [DIO ERROR] ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error Get Jenis Pelanggaran', e, stackTrace);
+
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal.',
+      );
     }
   }
 }

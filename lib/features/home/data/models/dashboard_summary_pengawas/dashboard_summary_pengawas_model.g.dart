@@ -6,6 +6,22 @@ part of 'dashboard_summary_pengawas_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+DetailAlatModel _$DetailAlatModelFromJson(Map<String, dynamic> json) =>
+    DetailAlatModel(
+      alatId: (json['alatId'] as num?)?.toInt() ?? 0,
+      nama: json['nama'] as String? ?? '',
+      jenis: (json['jenis'] as num?)?.toInt() ?? 0,
+      isBawa: json['isChecked'] as bool? ?? true,
+    );
+
+Map<String, dynamic> _$DetailAlatModelToJson(DetailAlatModel instance) =>
+    <String, dynamic>{
+      'alatId': instance.alatId,
+      'nama': instance.nama,
+      'jenis': instance.jenis,
+      'isChecked': instance.isBawa,
+    };
+
 _$DashboardSummaryPengawasModelImpl
 _$$DashboardSummaryPengawasModelImplFromJson(Map<String, dynamic> json) =>
     _$DashboardSummaryPengawasModelImpl(
@@ -123,20 +139,4 @@ Map<String, dynamic> _$$CheckInOutModelImplToJson(
   'longitude': instance.longitude,
   'detailAlatCheckIn': instance.detailAlatCheckIn,
   'detailAlatCheckOut': instance.detailAlatCheckOut,
-};
-
-_$DetailAlatModelImpl _$$DetailAlatModelImplFromJson(
-  Map<String, dynamic> json,
-) => _$DetailAlatModelImpl(
-  alatId: (json['alatId'] as num?)?.toInt() ?? 0,
-  nama: json['nama'] as String? ?? '',
-  isBawa: json['isBawa'] as bool? ?? true,
-);
-
-Map<String, dynamic> _$$DetailAlatModelImplToJson(
-  _$DetailAlatModelImpl instance,
-) => <String, dynamic>{
-  'alatId': instance.alatId,
-  'nama': instance.nama,
-  'isBawa': instance.isBawa,
 };

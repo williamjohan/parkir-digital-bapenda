@@ -4,6 +4,8 @@ part 'dashboard_op_entity.freezed.dart';
 
 @freezed
 class DashboardOpEntity with _$DashboardOpEntity {
+  const DashboardOpEntity._();
+
   const factory DashboardOpEntity({
     required String nop,
     required String namaOp,
@@ -21,7 +23,22 @@ class DashboardOpEntity with _$DashboardOpEntity {
 
     required List<RiwayatPendapatanEntity> riwayatList,
     required List<SofEntity> sofList,
+
+    @Default([]) List<AlatDigitalEntity> alatDigitalList,
+    TaxSurveillanceEntity? taxSurveillance,
+    required int tarifMotor,
+    required int tarifMobil,
+    required String jadwalOperasional,
   }) = _DashboardOpEntity;
+
+  bool _isAlatActive(String nama) => alatDigitalList.any(
+    (e) => e.nama.toUpperCase() == nama.toUpperCase() && e.status,
+  );
+
+  bool get hasCctv => _isAlatActive('CCTV');
+  bool get hasEdc => _isAlatActive('EDC');
+  bool get hasTs => _isAlatActive('TS');
+  bool get hasQrisRompi => _isAlatActive('ROMPI');
 }
 
 @freezed
@@ -59,4 +76,22 @@ class SofEntity with _$SofEntity {
     required int jumlahMotor,
     required int jumlahMobil,
   }) = _SofEntity;
+}
+
+@freezed
+class AlatDigitalEntity with _$AlatDigitalEntity {
+  const factory AlatDigitalEntity({
+    required String nama,
+    required bool status,
+  }) = _AlatDigitalEntity;
+}
+
+@freezed
+class TaxSurveillanceEntity with _$TaxSurveillanceEntity {
+  const factory TaxSurveillanceEntity({
+    required String bulan,
+    required String totalRealisasiMotor,
+    required String totalRealisasiMobil,
+    required String totalRealisasiBulan,
+  }) = _TaxSurveillanceEntity;
 }

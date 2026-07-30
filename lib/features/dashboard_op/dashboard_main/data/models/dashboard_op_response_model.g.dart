@@ -29,6 +29,19 @@ _$DashboardOpResponseModelImpl _$$DashboardOpResponseModelImplFromJson(
   sofList: (json['sofList'] as List<dynamic>)
       .map((e) => SofModel.fromJson(e as Map<String, dynamic>))
       .toList(),
+  alatDigitalList:
+      (json['alatDigitalList'] as List<dynamic>?)
+          ?.map((e) => AlatDigitalModel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  taxSurveillance: json['taxSurveillance'] == null
+      ? null
+      : TaxSurveillanceModel.fromJson(
+          json['taxSurveillance'] as Map<String, dynamic>,
+        ),
+  tarifMotor: (json['tarifMotor'] as num).toInt(),
+  tarifMobil: (json['tarifMobil'] as num).toInt(),
+  jadwalOperasional: json['jadwalOperasional'] as String,
 );
 
 Map<String, dynamic> _$$DashboardOpResponseModelImplToJson(
@@ -47,6 +60,11 @@ Map<String, dynamic> _$$DashboardOpResponseModelImplToJson(
   'realisasiTahunIni': instance.realisasiTahunIni,
   'riwayatList': instance.riwayatList,
   'sofList': instance.sofList,
+  'alatDigitalList': instance.alatDigitalList,
+  'taxSurveillance': instance.taxSurveillance,
+  'tarifMotor': instance.tarifMotor,
+  'tarifMobil': instance.tarifMobil,
+  'jadwalOperasional': instance.jadwalOperasional,
 };
 
 _$RealisasiTahunIniModelImpl _$$RealisasiTahunIniModelImplFromJson(
@@ -112,3 +130,32 @@ Map<String, dynamic> _$$SofModelImplToJson(_$SofModelImpl instance) =>
       'jumlahMotor': instance.jumlahMotor,
       'jumlahMobil': instance.jumlahMobil,
     };
+
+_$AlatDigitalModelImpl _$$AlatDigitalModelImplFromJson(
+  Map<String, dynamic> json,
+) => _$AlatDigitalModelImpl(
+  nama: json['nama'] as String,
+  status: json['status'] as bool,
+);
+
+Map<String, dynamic> _$$AlatDigitalModelImplToJson(
+  _$AlatDigitalModelImpl instance,
+) => <String, dynamic>{'nama': instance.nama, 'status': instance.status};
+
+_$TaxSurveillanceModelImpl _$$TaxSurveillanceModelImplFromJson(
+  Map<String, dynamic> json,
+) => _$TaxSurveillanceModelImpl(
+  bulan: json['bulan'] as String,
+  totalRealisasiMotor: json['totalRealisasiMotor'] as String,
+  totalRealisasiMobil: json['totalRealisasiMobil'] as String,
+  totalRealisasiBulan: json['totalRealisasiBulan'] as String,
+);
+
+Map<String, dynamic> _$$TaxSurveillanceModelImplToJson(
+  _$TaxSurveillanceModelImpl instance,
+) => <String, dynamic>{
+  'bulan': instance.bulan,
+  'totalRealisasiMotor': instance.totalRealisasiMotor,
+  'totalRealisasiMobil': instance.totalRealisasiMobil,
+  'totalRealisasiBulan': instance.totalRealisasiBulan,
+};

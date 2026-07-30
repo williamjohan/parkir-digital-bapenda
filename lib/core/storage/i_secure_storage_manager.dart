@@ -32,6 +32,7 @@ abstract class ISecureStorageManager {
     required String nopStorage,
     required String alamat,
     required int roleId,
+    String? nmOpd,
     String? pungutTarifDescription,
     int? pungutTarif,
     String? namaObjekPajak,
@@ -61,4 +62,7 @@ abstract class ISecureStorageManager {
   Future<void> saveQrisLastUpdate(String dateString);
   Future<String?> getQrisLastUpdate();
   Future<void> clearQrisLastUpdate();
+  Future<void> saveOpLastUpdate(String dateString);
+  Future<String?> getOpLastUpdate();
+  Future<void> clearOpLastUpdate();
 }
