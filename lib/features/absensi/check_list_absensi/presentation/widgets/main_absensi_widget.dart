@@ -31,13 +31,12 @@ class MainAbsensiWidget extends StatelessWidget {
 
     if (result == true) {
       final cubit = context.read<HomeCubit>();
-      final currentState = cubit
-          .state; // BARU — baca ulang, bukan pakai homeState yang udah basi
+      final currentState = cubit.state;
 
       cubit.loadDashboardPengawas(
         nomorObjek: currentState.nop,
-        shift: currentState.shiftPengawasan!.id, 
-        jenis: currentState.jenisPengawasan!.id, 
+        shift: currentState.shiftPengawasan!.id,
+        jenis: currentState.jenisPengawasan!.id,
       );
     }
   }

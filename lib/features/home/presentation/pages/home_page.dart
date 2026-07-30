@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
 
     context.read<HomeCubit>().clearRecoveredSession();
 
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 300), () async {
       if (!context.mounted) return;
 
       PbStatusSnackbar.show(
@@ -70,9 +70,11 @@ class _HomePageState extends State<HomePage> {
         isError: false,
       );
 
+      bool? result;
+
       switch (session.intent) {
         case CameraModuleIntent.absensiCheckIn:
-          context.push(
+          result = await context.push<bool>(
             AppRoutes.absensi,
             extra: {
               'type': ShiftFormType.checkIn,
@@ -85,7 +87,7 @@ class _HomePageState extends State<HomePage> {
           break;
 
         case CameraModuleIntent.absensiCheckOut:
-          context.push(
+          result = await context.push<bool>(
             AppRoutes.absensi,
             extra: {
               'type': ShiftFormType.checkOut,
@@ -98,12 +100,32 @@ class _HomePageState extends State<HomePage> {
           break;
 
         case CameraModuleIntent.pengawasan:
-          context.push(AppRoutes.addLaporanPelanggaran, extra: session.file);
+          result = await context.push<bool>(
+            AppRoutes.addLaporanPelanggaran,
+            extra: session.file,
+          );
           break;
 
         case CameraModuleIntent.unknown:
-          break;
+          return;
       }
+
+      if (!context.mounted) return;
+      if (result != true) return;
+
+      final cubit = context.read<HomeCubit>();
+      final currentState = cubit.state;
+
+      if (currentState.shiftPengawasan == null ||
+          currentState.jenisPengawasan == null) {
+        return;
+      }
+
+      cubit.loadDashboardPengawas(
+        nomorObjek: currentState.nop,
+        shift: currentState.shiftPengawasan!.id,
+        jenis: currentState.jenisPengawasan!.id,
+      );
     });
   }
 
