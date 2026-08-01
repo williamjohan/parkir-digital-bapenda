@@ -157,29 +157,32 @@ class _OpPengawasScreenState extends State<OpPengawasScreen> {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
 
+                                      final cubit = context
+                                          .read<OpPengawasanCubit>();
+                                      final mainContext = context;
+
+                                      bool isTapped = false;
+
                                       PbBasicBottomSheet.show(
-                                        context: context,
+                                        context: mainContext,
                                         title: 'Pilih Shift Pengawasan',
                                         subTitle:
                                             'Pilih shift sebelum memulai pengawasan.',
                                         child: ShiftPengawasanBottomSheet(
                                           onSelected: (shiftYangDipilih) async {
-                                            // 1. SIMPAN DAN TUNGGU SAMPAI SELESAI 100%
-                                            await context
-                                                .read<OpPengawasanCubit>()
-                                                .changeShift(
-                                                  shiftYangDipilih,
-                                                  item,
-                                                );
+                                            if (isTapped) return;
 
-                                            // 2. TUTUP LAYAR DENGAN AMAN
-                                            if (context.mounted) {
-                                              Navigator.pop(
-                                                context,
-                                              ); // Menutup Bottom Sheet
-                                              Navigator.pop(
-                                                context,
-                                              ); // Menutup Layar Pencarian
+                                            isTapped = true;
+
+                                            Navigator.pop(mainContext);
+
+                                            await cubit.changeShift(
+                                              shiftYangDipilih,
+                                              item,
+                                            );
+
+                                            if (mainContext.mounted) {
+                                              Navigator.pop(mainContext);
                                             }
                                           },
                                         ),

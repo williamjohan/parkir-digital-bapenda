@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/services/location/i_app_location_service.dart';
@@ -106,9 +107,19 @@ class AbsensiCubit extends Cubit<AbsensiState> {
 
   // --- AMBIL FOTO  ---
   Future<void> takePhoto({required bool isCheckIn}) async {
-    try {
-      emit(state.copyWith(status: AbsensiStatus.initial, errorMessage: ''));
+    //  1. GEMBOK KONKURENSI (UI LEVEL): Tolak ketukan ganda
+    if (state.isCapturing) return;
 
+    //  2. KUNCI GEMBOK
+    emit(
+      state.copyWith(
+        status: AbsensiStatus.initial,
+        errorMessage: '',
+        isCapturing: true,
+      ),
+    );
+
+    try {
       final canProceed = await _guardCameraAndLocationPermissions();
       if (!canProceed || isClosed) return;
 
@@ -122,14 +133,28 @@ class AbsensiCubit extends Cubit<AbsensiState> {
         jenis: state.jenis,
         shift: state.shift,
       );
+
+      // Pengaman State sebelum melanjutkan logika
+      if (isClosed) return;
+
       if (file == null) return;
 
       emit(state.copyWith(rawPhoto: file, photoTakenAt: DateTime.now()));
 
       await fetchLocation();
-    } catch (e) {
+    } on PlatformException {
+      // 🛡️ MENANGKAP KEBOCORAN ERROR PLATFORM (seperti already_active)
+      if (isClosed) return;
+      emit(
+        state.copyWith(errorMessage: "Kamera sedang memuat, silakan tunggu..."),
+      );
+    } catch (_) {
       if (isClosed) return;
       emit(state.copyWith(errorMessage: "Gagal mengambil foto dari kamera"));
+    } finally {
+      if (!isClosed) {
+        emit(state.copyWith(isCapturing: false));
+      }
     }
   }
 

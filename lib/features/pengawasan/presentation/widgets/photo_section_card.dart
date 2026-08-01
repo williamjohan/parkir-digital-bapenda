@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
+import '../../../../core/design_system/components/pb_safe_file_image.dart';
 import '../../../../core/utils/watermark_utils.dart';
 
 class PhotoSectionCard extends StatelessWidget {
@@ -49,7 +50,7 @@ class PhotoSectionCard extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   if (photo != null)
-                    Image.file(photo!, fit: BoxFit.cover)
+                    PbSafeFileImage(file: photo!, fit: BoxFit.cover)
                   else
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,

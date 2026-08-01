@@ -23,7 +23,13 @@ class DashboardOpCubit extends Cubit<DashboardOpState> {
           emit(state.copyWith(loading: false, errorMessage: failure.message));
         },
         (dashboard) {
-          emit(state.copyWith(loading: false, data: dashboard, showTSCard: _usecase.getTSInfo(dashboard)));
+          emit(
+            state.copyWith(
+              loading: false,
+              data: dashboard,
+              showTSCard: _usecase.getTSInfo(dashboard),
+            ),
+          );
         },
       );
 

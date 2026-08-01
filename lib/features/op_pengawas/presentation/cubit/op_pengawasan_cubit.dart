@@ -51,6 +51,7 @@ class OpPengawasanCubit extends Cubit<OpPengawasanState> {
   }
 
   Future<void> changeShift(ShiftPengawasan shift, OpPengawasEntity item) async {
+    if (isClosed) return;
     await _appPreferences.saveShiftObjekPengawasan(shift);
     await _appPreferences.saveJenisObjekPengawasan(item.jenisPengawasan);
     await _appPreferences.saveNomorObjekPengawasan(item.nop);
