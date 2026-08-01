@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/features/pengawasan/domain/entities/laporan_pengawasan/laporan_pengawasan_entity.dart';
@@ -32,6 +33,8 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     // 1. Muat master data jenis pelanggaran
     await getJenisPelanggaran();
 
+    if (isClosed) return;
+
     // 2. Jika halaman dibuka hasil lemparan LMK(Low Memory Killer) dari Home bawa foto selamat:
     if (recoveredPhoto != null) {
       emit(
@@ -53,6 +56,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
 
   // --- LOGIC LOKASI ---
   Future<void> fetchLocation() async {
+    if (isClosed) return;
     emit(
       state.copyWith(
         isFetchingLocation: true,
@@ -63,7 +67,6 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       ),
     );
     try {
-      // 🛡️ PERTAHANAN 1: Cek izin & sensor GPS sebelum akses hardware
       final canProceed = await _guardLocationPermissions();
       if (!canProceed || isClosed) return;
 
@@ -88,26 +91,45 @@ class PengawasanCubit extends Cubit<PengawasanState> {
 
   // --- LOGIC AMBIL FOTO  ---
   Future<void> pickAndSetPhoto() async {
-    try {
-      emit(
-        state.copyWith(status: PengawasanStatus.initial, errorMessage: null),
-      );
+    //  1. GEMBOK KONKURENSI (UI LEVEL): Tolak ketukan ganda
+    if (state.isCapturing) return;
 
+    //  2. KUNCI GEMBOK
+    emit(
+      state.copyWith(
+        status: PengawasanStatus.initial,
+        errorMessage: null,
+        isCapturing: true,
+      ),
+    );
+
+    try {
       final canProceed = await _guardCameraAndLocationPermissions();
       if (!canProceed || isClosed) return;
 
-      //  Panggil lewat ICameraService dengan KTP modul Pengawasan!
       final file = await _cameraService.takePhoto(
         intent: CameraModuleIntent.pengawasan,
       );
+
+      if (isClosed) return;
+
       if (file == null) return;
 
       emit(state.copyWith(rawPhoto: file, photoTakenAt: DateTime.now()));
 
       await fetchLocation();
-    } catch (e) {
+    } on PlatformException {
+      if (isClosed) return;
+      emit(
+        state.copyWith(errorMessage: "Kamera sedang memuat, silakan tunggu..."),
+      );
+    } catch (_) {
       if (isClosed) return;
       emit(state.copyWith(errorMessage: "Gagal mengambil foto dari kamera"));
+    } finally {
+      if (!isClosed) {
+        emit(state.copyWith(isCapturing: false));
+      }
     }
   }
 

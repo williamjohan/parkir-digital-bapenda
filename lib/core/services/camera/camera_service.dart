@@ -12,10 +12,9 @@ import 'recovered_camera_session.dart';
 class CameraService implements ICameraService {
   final ImagePicker _picker;
   final SharedPreferences _prefs;
+  bool _isPickerActive = false;
 
   static const String _kCameraIntentKey = 'pending_camera_intent_tag';
-  // 🆕 Key tambahan untuk menyelamatkan konteks absensi (nop/jenis/shift)
-  // dari process death, sama seperti _kCameraIntentKey.
   static const String _kCameraNopKey = 'pending_camera_nop';
   static const String _kCameraJenisKey = 'pending_camera_jenis';
   static const String _kCameraShiftKey = 'pending_camera_shift';
@@ -25,10 +24,19 @@ class CameraService implements ICameraService {
   @override
   Future<File?> takePhoto({
     required CameraModuleIntent intent,
-    String? nop, // 🆕
-    JenisPengawasan? jenis, // 🆕
-    ShiftPengawasan? shift, // 🆕
+    String? nop,
+    JenisPengawasan? jenis,
+    ShiftPengawasan? shift,
   }) async {
+    if (_isPickerActive) {
+      AppLogger.warning(
+        'Image picker sedang aktif. Mengabaikan request ganda dari UI.',
+      );
+      return null;
+    }
+
+    _isPickerActive = true;
+
     try {
       // 1. CATAT KE DISK: Simpan identitas modul sebelum buka kamera eksternal
       await _prefs.setString(_kCameraIntentKey, intent.name);
@@ -61,6 +69,8 @@ class CameraService implements ICameraService {
       await _clearPendingKeys();
       AppLogger.error('Gagal mengambil foto dari kamera', e, stackTrace);
       return null;
+    } finally {
+      _isPickerActive = false;
     }
   }
 

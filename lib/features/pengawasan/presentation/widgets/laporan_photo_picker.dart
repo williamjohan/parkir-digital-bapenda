@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 
+import '../../../../core/design_system/components/pb_safe_file_image.dart';
+
 class LaporanPhotoPicker extends StatelessWidget {
   final File? photo;
   final VoidCallback onPick;
@@ -53,8 +55,8 @@ class LaporanPhotoPicker extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Stack(
         children: [
-          Image.file(
-            photo!,
+          PbSafeFileImage(
+            file: photo!,
             width: double.infinity,
             height: 180,
             fit: BoxFit.cover,

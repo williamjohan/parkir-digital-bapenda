@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/utils/watermark_utils.dart';
+import '../../../../../core/design_system/components/pb_safe_file_image.dart';
 import '../cubit/absensi_state.dart';
 
 class AbsenPhotoWidget extends StatelessWidget {
@@ -35,7 +36,7 @@ class AbsenPhotoWidget extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   if (state.rawPhoto != null)
-                    Image.file(state.rawPhoto!, fit: BoxFit.cover)
+                    PbSafeFileImage(file: state.rawPhoto!, fit: BoxFit.cover)
                   else
                     _buildPlaceholder(),
 

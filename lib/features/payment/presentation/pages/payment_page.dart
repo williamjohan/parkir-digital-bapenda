@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:parkir_digital_bapenda/features/payment/presentation/pages/payment_dialog_helpers.dart';
 import 'package:parkir_digital_bapenda/features/printer/presentation/cubit/printer_cubit.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../../../../core/design_system/components/pb_safe_file_image.dart';
 import '../../../../core/design_system/components/struck/pb_ticket_preview_widget.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -156,13 +157,11 @@ class _PaymentPageState extends State<PaymentPage> {
                       child: PaymentLocalQrisView(
                         kategoriKendaraan: widget.args.kategoriKendaraan,
                         showTimer: kodeQris.trim().isNotEmpty,
-                        qrWidget: Image.file(
-                          File(qrisImagePath),
+                        qrWidget: PbSafeFileImage(
+                          file: File(qrisImagePath),
                           width: 220,
                           height: 220,
                           fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) =>
-                              const Icon(Icons.broken_image, size: 48),
                         ),
                       ),
                     ),

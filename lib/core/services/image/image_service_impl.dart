@@ -15,7 +15,8 @@ class ImageServiceImpl implements IImageService {
     int minResolution = 1024,
   }) async {
     try {
-      final tempDir = await getTemporaryDirectory();
+      // final tempDir = await getTemporaryDirectory();
+      final secureDir = await getApplicationSupportDirectory();
 
       // 🚀 Algoritma Step-Down yang Lebih Manusiawi & Menjaga Kualitas Visual
       int currentQuality = 85;
@@ -24,7 +25,7 @@ class ImageServiceImpl implements IImageService {
 
       // Maksimal 3 kali percobaan agar CPU tidak bekerja terlalu keras
       for (int i = 1; i <= 3; i++) {
-        final targetPath = '${tempDir.path}/${fileName}_v$i.jpg';
+        final targetPath = '${secureDir.path}/${fileName}_v$i.jpg';
 
         final compressedXFile = await FlutterImageCompress.compressAndGetFile(
           originalFile.absolute.path,
