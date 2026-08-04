@@ -48,6 +48,7 @@ Map<String, dynamic> _$ObjekPengawasanModelToJson(
 CheckInOutModel _$CheckInOutModelFromJson(Map<String, dynamic> json) =>
     CheckInOutModel(
       check: json['check'] as String?,
+      shift: (json['shift'] as num?)?.toInt(),
       jmlMotor: (json['jmlMotor'] as num).toInt(),
       jmlMobil: (json['jmlMobil'] as num).toInt(),
       alatList: (json['alatList'] as List<dynamic>)
@@ -58,6 +59,7 @@ CheckInOutModel _$CheckInOutModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$CheckInOutModelToJson(CheckInOutModel instance) =>
     <String, dynamic>{
       'check': instance.check,
+      'shift': instance.shift,
       'jmlMotor': instance.jmlMotor,
       'jmlMobil': instance.jmlMobil,
       'alatList': instance.alatList,

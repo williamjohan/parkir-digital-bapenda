@@ -35,6 +35,7 @@ class RiwayatAbsensiCard extends StatelessWidget {
           _buildSessionBlock(
             label: 'Check In',
             time: record.jamCheckIn,
+            shift: record.shiftCheckIn,
             icon: Icons.login_rounded,
             iconColor: AppColors.info,
             jumlahMotor: record.motorCheckIn,
@@ -50,6 +51,7 @@ class RiwayatAbsensiCard extends StatelessWidget {
           _buildSessionBlock(
             label: 'Check Out',
             time: record.jamCheckOut ?? '--:--',
+            shift: record.shiftCheckOut,
             icon: Icons.logout_rounded,
             iconColor: _sudahCheckOut ? AppColors.warning : AppColors.textHint,
             jumlahMotor: record.motorCheckOut,
@@ -124,6 +126,7 @@ class RiwayatAbsensiCard extends StatelessWidget {
   Widget _buildSessionBlock({
     required String label,
     required String time,
+    required String? shift,
     required IconData icon,
     required Color iconColor,
     required int? jumlahMotor,
@@ -173,8 +176,44 @@ class RiwayatAbsensiCard extends StatelessWidget {
                   ),
                 ],
               ),
+
+              const Spacer(),
+              if (shift != null && shift.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface, // Latar putih solid agar kontras
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: iconColor.withValues(alpha: 0.5),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.schedule_rounded, size: 12, color: iconColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        'SHIFT $shift',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color:
+                              iconColor, // Warna teks mengikuti warna tema blok (Info/Warning)
+                          letterSpacing:
+                              0.5, // Sedikit renggang agar lebih formal
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
+
           const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -4,11 +4,13 @@ import 'package:parkir_digital_bapenda/features/jadwal/domain/entities/riwayat_a
 import 'package:parkir_digital_bapenda/features/jadwal/domain/usecases/riwayat_absensi_usecase.dart';
 import 'package:parkir_digital_bapenda/features/jadwal/presentation/cubit/riwayat_absensi_state.dart';
 import '../../../../core/utils/app_logger.dart';
+
 @injectable
 class RiwayatAbsensiCubit extends Cubit<RiwayatAbsensiState> {
   final RiwayatAbsensiUsecase _getRiwayatAbsensiUsecase;
 
-  RiwayatAbsensiCubit(this._getRiwayatAbsensiUsecase) : super(const RiwayatAbsensiState());
+  RiwayatAbsensiCubit(this._getRiwayatAbsensiUsecase)
+    : super(const RiwayatAbsensiState());
 
   Future<void> fetchJadwal({
     required DateTime tglAwal,
@@ -28,6 +30,8 @@ class RiwayatAbsensiCubit extends Cubit<RiwayatAbsensiState> {
               (_) => const ObjekPengawasanEntity(
                 nop: '00.00.000.000.000-0000.0',
                 namaNop: 'Memuat data objek pengawasan',
+                shiftCheckIn: '0',
+                shiftCheckOut: '0',
                 jamCheckIn: '00:00',
                 jamCheckOut: '00:00',
                 motorCheckIn: 0,
@@ -51,7 +55,9 @@ class RiwayatAbsensiCubit extends Cubit<RiwayatAbsensiState> {
       ),
     );
 
-    AppLogger.info('>>> [RiwayatAbsensiCubit] Mengeksekusi permintaan data jadwal...');
+    AppLogger.info(
+      '>>> [RiwayatAbsensiCubit] Mengeksekusi permintaan data jadwal...',
+    );
 
     final result = await _getRiwayatAbsensiUsecase.getRiwayatAbsensiInfo(
       tglAwal: tglAwal,
@@ -63,7 +69,9 @@ class RiwayatAbsensiCubit extends Cubit<RiwayatAbsensiState> {
     result.fold(
       (failure) {
         if (isClosed) return;
-        AppLogger.warning('>>> [RiwayatAbsensiCubit] Gagal: ${failure.message}');
+        AppLogger.warning(
+          '>>> [RiwayatAbsensiCubit] Gagal: ${failure.message}',
+        );
         emit(
           state.copyWith(
             status: JadwalStatus.failure,
@@ -75,7 +83,10 @@ class RiwayatAbsensiCubit extends Cubit<RiwayatAbsensiState> {
         if (isClosed) return;
         AppLogger.info('>>> [RiwayatAbsensiCubit] Sukses memuat data jadwal!');
         emit(
-          state.copyWith(status: JadwalStatus.success, jadwal: riwayatAbsensiEntity),
+          state.copyWith(
+            status: JadwalStatus.success,
+            jadwal: riwayatAbsensiEntity,
+          ),
         );
       },
     );

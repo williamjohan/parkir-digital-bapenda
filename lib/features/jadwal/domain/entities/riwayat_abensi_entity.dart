@@ -20,6 +20,8 @@ class RiwayatAbsensiEntity extends Equatable {
 class ObjekPengawasanEntity extends Equatable {
   final String nop;
   final String namaNop;
+  final String? shiftCheckIn;
+  final String? shiftCheckOut;
   final String jamCheckIn;
   final String? jamCheckOut;
   final int motorCheckIn;
@@ -32,6 +34,8 @@ class ObjekPengawasanEntity extends Equatable {
   const ObjekPengawasanEntity({
     required this.nop,
     required this.namaNop,
+    this.shiftCheckIn,
+    this.shiftCheckOut,
     required this.jamCheckIn,
     this.jamCheckOut,
     required this.motorCheckIn,
@@ -46,6 +50,8 @@ class ObjekPengawasanEntity extends Equatable {
   List<Object?> get props => [
     nop,
     namaNop,
+    shiftCheckIn,
+    shiftCheckOut,
     jamCheckIn,
     jamCheckOut,
     motorCheckIn,

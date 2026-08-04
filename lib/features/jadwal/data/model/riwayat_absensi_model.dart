@@ -58,6 +58,9 @@ class CheckInOutModel {
   @JsonKey(name: 'check')
   final String? check;
 
+  @JsonKey(name: 'shift')
+  final int? shift;
+
   @JsonKey(name: 'jmlMotor')
   final int jmlMotor;
 
@@ -69,6 +72,7 @@ class CheckInOutModel {
 
   CheckInOutModel({
     this.check,
+    required this.shift,
     required this.jmlMotor,
     required this.jmlMobil,
     required this.alatList,
@@ -126,13 +130,15 @@ extension RiwayatPengawasanModelListExt on List<RiwayatAbsensiModel> {
       map((model) => model.toEntity()).toList();
 }
 
-extension ObjekPengawasanModelExt on ObjekPengawasanModel {
+extension ObjekPengawasanModelX on ObjekPengawasanModel {
   ObjekPengawasanEntity toEntity() {
     final sudahCheckOut = checkOut?.check != null;
 
     return ObjekPengawasanEntity(
       nop: idTempat,
       namaNop: namaTempat,
+      shiftCheckIn: checkIn?.shift?.toString(),
+      shiftCheckOut: sudahCheckOut ? checkOut!.shift?.toString() : null,
       jamCheckIn: _formatJam(checkIn?.check),
       jamCheckOut: sudahCheckOut ? _formatJam(checkOut!.check) : null,
       motorCheckIn: checkIn?.jmlMotor ?? 0,
