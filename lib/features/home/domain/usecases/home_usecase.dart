@@ -6,6 +6,7 @@ import '../../../../core/errors/failure.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
 import '../../../transaction_history/domain/repositories/i_transaction_history_repository.dart';
+import '../entities/counter_data_entity.dart';
 import '../entities/dashboard_summary_non_jukir_entity.dart';
 import '../entities/dashboard_summary_pengawas.entity.dart';
 import '../entities/rekap_wilayah_entity.dart';
@@ -102,5 +103,19 @@ class HomeUsecase {
 
   Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan() async {
     return await _repository.getRekapWilayahKecamatan();
+  }
+
+  Future<Either<Failure, CounterDataEntity>> getCounterData() {
+    return _repository.getCounterData();
+  }
+
+  Future<Either<Failure, void>> insertCounterData({
+    required int jumlahMotor,
+    required int jumlahMobil,
+  }) {
+    return _repository.insertCounterData(
+      jumlahMotor: jumlahMotor,
+      jumlahMobil: jumlahMobil,
+    );
   }
 }

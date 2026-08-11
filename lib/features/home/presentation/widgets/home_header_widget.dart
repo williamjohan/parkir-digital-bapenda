@@ -113,7 +113,7 @@ class HomeHeaderWidget extends StatelessWidget {
   // Pengecekan Slot Dinamis
   Widget _buildDynamicRoleSection() {
     switch (role) {
-      case RoleLoginDigitalParkir.jukir:
+      case RoleLoginDigitalParkir.jukir || RoleLoginDigitalParkir.jukircounter:
         return _buildJukirMetadataCard();
       case RoleLoginDigitalParkir.pengawas:
         return _buildPengawasActionCard();
@@ -260,6 +260,7 @@ class HomeHeaderWidget extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildZeroStateHeader() {
     return Column(

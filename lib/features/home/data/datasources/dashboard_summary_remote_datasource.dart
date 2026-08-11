@@ -5,6 +5,7 @@ import 'package:parkir_digital_bapenda/core/network/api_endpoints.dart';
 import '../../../../core/errors/exception.dart';
 import '../../../../core/network/dio_error_handler.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../models/counter/counter_data_model.dart';
 import '../models/dashboard_summary_jukir/dashboard_summary_jukir_model.dart';
 import '../models/dashboard_summary_non_jukir/dashboard_summary_non_jukir_model.dart';
 import '../models/dashboard_summary_pengawas/dashboard_summary_pengawas_model.dart';
@@ -28,6 +29,11 @@ abstract class ISummaryRemoteDataSource {
 
   Future<OpLastUpdateModel> getOpLastUpdate();
   Future<RekapWilayahResponseModel> getRekapWilayah();
+  Future<CounterDataModel> getCounterData();
+  Future<void> insertCounterData({
+    required int jumlahMotor,
+    required int jumlahMobil,
+  });
 }
 
 @LazySingleton(as: ISummaryRemoteDataSource)
@@ -247,6 +253,79 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
       throw const ServerException(
         statusCode: 500,
         message: 'Terjadi kesalahan internal saat memuat rekap wilayah.',
+      );
+    }
+  }
+
+ @override
+  Future<CounterDataModel> getCounterData() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.getDataCounter);
+
+      final result = CounterDataResponseModel.fromJson(response.data);
+
+      if (result.isSuccess == true && result.data != null) {
+        return result.data!;
+      } else {
+        throw ServerException(
+          statusCode: (result.statusCode != null && result.statusCode != 0)
+              ? result.statusCode!
+              : 500,
+          message: result.message?.isNotEmpty == true
+              ? result.message!
+              : 'Gagal mengambil data counter kendaraan',
+        );
+      }
+    } on DioException catch (e) {
+      AppLogger.error('>>> [DIO ERROR] getCounterData: ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error Get Counter Data', e, stackTrace);
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal saat memuat data counter.',
+      );
+    }
+  }
+
+  @override
+  Future<void> insertCounterData({
+    required int jumlahMotor,
+    required int jumlahMobil,
+  }) async {
+    try {
+      final payload = {
+        "jumlahMotor": jumlahMotor,
+        "jumlahMobil": jumlahMobil,
+      };
+
+      final response = await _dio.post(
+        ApiEndpoints.insertDataCounter,
+        data: payload,
+      );
+
+      final result = InsertCounterResponseModel.fromJson(response.data);
+
+      if (result.isSuccess == true) {
+        return; // Berhasil, keluar dari fungsi tanpa error
+      } else {
+        throw ServerException(
+          statusCode: (result.statusCode != null && result.statusCode != 0)
+              ? result.statusCode!
+              : 500,
+          message: result.message?.isNotEmpty == true
+              ? result.message!
+              : 'Gagal mengirim data pencatatan kendaraan',
+        );
+      }
+    } on DioException catch (e) {
+      AppLogger.error('>>> [DIO ERROR] insertCounterData: ${e.response?.data}');
+      throw DioErrorHandler.handle(e);
+    } catch (e, stackTrace) {
+      AppLogger.error('Internal Error Insert Counter Data', e, stackTrace);
+      throw const ServerException(
+        statusCode: 500,
+        message: 'Terjadi kesalahan internal saat mencatat kendaraan.',
       );
     }
   }

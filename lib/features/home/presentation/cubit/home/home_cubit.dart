@@ -97,6 +97,9 @@ class HomeCubit extends Cubit<HomeState> {
         shift: activeShift.id,
         jenis: activeJenis.id,
       );
+    } else if (state.role == RoleLoginDigitalParkir.jukircounter) {
+      emit(state.copyWith(status: HomeStatus.success));
+      return; 
     } else {
       await _loadDashboardNonJukir();
       await checkOpLastUpdate();
@@ -341,8 +344,8 @@ class HomeCubit extends Cubit<HomeState> {
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
     final namaUserShort = namaUser.shortName;
 
-    //  1. BEHAVIOR KHUSUS JUKIR (NOP Statis Menempel dari Secured Storage)
-    if (userRole == RoleLoginDigitalParkir.jukir) {
+    //  1. BEHAVIOR KHUSUS JUKIR atau JUKIR COUNTER (NOP Statis Menempel dari Secured Storage)
+    if (userRole == RoleLoginDigitalParkir.jukir || userRole == RoleLoginDigitalParkir.jukircounter) {
       emit(
         state.copyWith(
           namaJukir: namaUserShort,

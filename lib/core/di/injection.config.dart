@@ -94,6 +94,8 @@ import '../../features/home/data/repositories/home_repository_impl.dart'
 import '../../features/home/domain/repositories/i_home_repository.dart'
     as _i274;
 import '../../features/home/domain/usecases/home_usecase.dart' as _i207;
+import '../../features/home/presentation/cubit/counter_kendaraan/jukir_counter_cubit.dart'
+    as _i695;
 import '../../features/home/presentation/cubit/home/home_cubit.dart' as _i273;
 import '../../features/home/presentation/cubit/search_op/search_op_cubit.dart'
     as _i655;
@@ -586,6 +588,9 @@ Future<_i174.GetIt> init(
       gh<_i274.IHomeRepository>(),
       gh<_i502.ITransactionHistoryRepository>(),
     ),
+  );
+  gh.factory<_i695.JukirCounterCubit>(
+    () => _i695.JukirCounterCubit(gh<_i207.HomeUsecase>()),
   );
   gh.factory<_i273.HomeCubit>(
     () => _i273.HomeCubit(

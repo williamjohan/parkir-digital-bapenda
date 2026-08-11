@@ -82,4 +82,8 @@ class ApiEndpoints {
   static const String kantorkuUrl = '/api/Kominfo/authorize-login-kantorku';
 
   static const String loginWithKantorkuSession = '/api/Kominfo/mobile-login';
+
+  // Counting Kendaraan //
+  static const getDataCounter = '/api/mobile/parking/get-data-counter';
+  static const insertDataCounter = '/api/mobile/parking/insert-data-counter';
 }

@@ -22,6 +22,8 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../shared/loading/app_loading_widget.dart';
 import '../../../auth/presentation/cubit/app_auth/app_auth_cubit.dart';
+import '../cubit/counter_kendaraan/jukir_counter_cubit.dart';
+import '../cubit/counter_kendaraan/jukir_counter_state.dart';
 import '../cubit/home/home_cubit.dart';
 import '../cubit/home/home_state.dart';
 import '../widgets/animated_home_fab.dart';
@@ -29,6 +31,7 @@ import '../widgets/card_laporan_pelanggaran_widget.dart';
 import '../widgets/card_rekap_jenis_pembayaran_widget.dart';
 import '../widgets/card_rekap_kendaraan_widget.dart';
 import '../widgets/home_header_widget.dart';
+import '../widgets/jukir_counting/counter_dashboard_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -287,6 +290,8 @@ class _HomePageState extends State<HomePage> {
                             ),
 
                             child:
+                            state.role == RoleLoginDigitalParkir.jukircounter 
+       ? _buildJukirCounterDashboard(context, state) :
                                 state.role == RoleLoginDigitalParkir.pengawas &&
                                     state.status == HomeStatus.needsSelection
                                 // TAMPILAN BODY KOSONG JIKA BELUM PILIH OP
@@ -687,3 +692,61 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+Widget _buildJukirCounterDashboard(BuildContext context, HomeState state) {
+    return BlocProvider(
+      // 1. Injeksi dan langsung tembak API GET saat widget di-mount
+      create: (context) => locator<JukirCounterCubit>()..fetchInitialCounter(),
+      
+      child: BlocBuilder<JukirCounterCubit, JukirCounterState>(
+
+            
+        builder: (counterContext, counterState) {
+          
+          final isInitialLoading = counterState.status == JukirCounterStatus.initial || 
+                                  (counterState.status == JukirCounterStatus.loading && 
+                                   counterState.mobilCount == 0 && 
+                                   counterState.motorCount == 0);
+
+          if (isInitialLoading) {
+            return const Padding(
+              padding: EdgeInsets.only(top: 64.0),
+              child: Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+            );
+          }
+
+
+          if (counterState.status == JukirCounterStatus.failure && 
+              counterState.mobilCount == 0 && 
+              counterState.motorCount == 0) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 64.0),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      counterState.errorMessage ?? 'Gagal memuat data awal.',
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.error),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => counterContext.read<JukirCounterCubit>().fetchInitialCounter(),
+                      child: const Text('Coba Lagi'),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }
+          
+  
+          return CounterDashboardWidget(
+            namaOp: state.namaOp ?? 'Tidak Ada Lokasi',
+            alamatOp: state.namaLokasi ?? '-', 
+          );
+        }
+      ),
+    );
+  }

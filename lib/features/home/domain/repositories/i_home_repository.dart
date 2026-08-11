@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:parkir_digital_bapenda/features/home/domain/entities/dashboard_summary_jukir_entity.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/errors/failure.dart';
+import '../entities/counter_data_entity.dart';
 import '../entities/dashboard_summary_non_jukir_entity.dart';
 import '../entities/dashboard_summary_pengawas.entity.dart';
 import '../entities/rekap_wilayah_entity.dart';
@@ -31,4 +32,10 @@ abstract class IHomeRepository {
   String? getNamaObjekPengawasan();
 
   Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan();
+
+  Future<Either<Failure, CounterDataEntity>> getCounterData();
+  Future<Either<Failure, void>> insertCounterData({
+    required int jumlahMotor, 
+    required int jumlahMobil,
+  });
 }
