@@ -89,19 +89,21 @@ class HomeDrawer extends StatelessWidget {
                     RoleLoginDigitalParkir.jukir,
                     RoleLoginDigitalParkir.bapenda,
                     RoleLoginDigitalParkir.wp,
-                    RoleLoginDigitalParkir.jukircounter
+                    RoleLoginDigitalParkir.jukircounter,
                   ],
                   currentRole: role,
                   child: ListTile(
                     leading: Icon(
-                      (role == RoleLoginDigitalParkir.jukir || role == RoleLoginDigitalParkir.jukircounter)
+                      (role == RoleLoginDigitalParkir.jukir ||
+                              role == RoleLoginDigitalParkir.jukircounter)
                           ? Icons.receipt_long
                           : Icons.store,
                       color: AppColors.textPrimary,
                     ),
 
                     title: Text(
-                      (role == RoleLoginDigitalParkir.jukir || role == RoleLoginDigitalParkir.jukircounter)
+                      (role == RoleLoginDigitalParkir.jukir ||
+                              role == RoleLoginDigitalParkir.jukircounter)
                           ? 'Riwayat Transaksi'
                           : 'Objek Pajak',
                       style: AppTypography.bodyRegular,
@@ -126,9 +128,14 @@ class HomeDrawer extends StatelessWidget {
                           return;
                         }
 
+                        final bool isFreeForHistory =
+                            (role == RoleLoginDigitalParkir.jukircounter)
+                            ? true
+                            : isFree;
+
                         context.pushNamed(
                           AppRoutes.history,
-                          extra: {'isFree': false, 'nop': nop},
+                          extra: {'isFree': isFreeForHistory, 'nop': nop},
                         );
                       } else {
                         if (onCheckOpBeforeRouting != null) {

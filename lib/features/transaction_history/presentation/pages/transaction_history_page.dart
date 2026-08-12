@@ -344,7 +344,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
                     ),
                   ],
                 ),
-                floatingActionButton: state is TransactionHistoryLoaded
+                floatingActionButton:
+                    (!widget.isFree && state is TransactionHistoryLoaded)
                     ? AnimatedBuilder(
                         animation: _sofPanelController,
                         builder: (context, _) {

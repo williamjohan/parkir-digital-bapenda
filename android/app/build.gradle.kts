@@ -50,7 +50,7 @@ android {
         create("demo") {
             dimension = "env"
             applicationIdSuffix = ".demo"
-            resValue("string", "app_name", "TS Park Bapenda")
+            resValue("string", "app_name", "TS Park Testing")
         }
         create("playstore") {
             dimension = "env"
