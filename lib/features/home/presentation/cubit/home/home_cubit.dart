@@ -47,7 +47,7 @@ class HomeCubit extends Cubit<HomeState> {
     formatUserName();
 
     if (state.role == RoleLoginDigitalParkir.jukir) {
-      await loadDashboarJukir();
+      await loadDashboardJukir();
       await _profileUseCase.getProfilePicturePath();
       await _qrisUsecase.syncQris();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
@@ -99,7 +99,7 @@ class HomeCubit extends Cubit<HomeState> {
       );
     } else if (state.role == RoleLoginDigitalParkir.jukircounter) {
       emit(state.copyWith(status: HomeStatus.success));
-      return; 
+      return;
     } else {
       await _loadDashboardNonJukir();
       await checkOpLastUpdate();
@@ -108,10 +108,12 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> loadDashboarJukir() async {
+  Future<void> loadDashboardJukir() async {
     emit(state.copyWith(status: HomeStatus.loading));
 
     final profile = await _secureStorage.getJukirProfile();
+
+    if (isClosed) return;
 
     bool isFreeStatus = false;
 
@@ -125,27 +127,26 @@ class HomeCubit extends Cubit<HomeState> {
       nop: state.nop,
     );
 
+    if (isClosed) return;
+
+    bool isSummaryFailed = false;
+
     summaryJukirResult.fold(
       (failure) {
-        if (!isClosed) {
-          emit(
-            state.copyWith(isFree: isFreeStatus, status: HomeStatus.failure),
-          );
-        }
+        isSummaryFailed = true;
+        emit(state.copyWith(isFree: isFreeStatus, status: HomeStatus.failure));
       },
       (summary) {
-        if (!isClosed) {
-          emit(
-            state.copyWith(
-              motorCount: summary.jumlahMotorHariIni,
-              mobilCount: summary.jumlahMobilHariIni,
-              totalPendapatan: summary.totalNominalHariIni,
-              totalPajak: summary.totalNominalBersihUntukBapenda,
-              totalBersih: summary.totalNominalBersihUntukWajibPajak,
-              isFree: isFreeStatus,
-            ),
-          );
-        }
+        emit(
+          state.copyWith(
+            motorCount: summary.jumlahMotorHariIni,
+            mobilCount: summary.jumlahMobilHariIni,
+            totalPendapatan: summary.totalNominalHariIni,
+            totalPajak: summary.totalNominalBersihUntukBapenda,
+            totalBersih: summary.totalNominalBersihUntukWajibPajak,
+            isFree: isFreeStatus,
+          ),
+        );
       },
     );
 
@@ -154,13 +155,21 @@ class HomeCubit extends Cubit<HomeState> {
       nop: state.nop,
     );
 
-    recentResult.fold((_) {}, (transactions) {
-      if (!isClosed) {
-        emit(state.copyWith(recentTransactions: transactions));
-      }
-    });
+    if (isClosed) return;
 
-    if (!isClosed) {
+    recentResult.fold(
+      (failure) {
+        // Opsional: Anda bisa melogging error ini tanpa harus merusak status utama UI
+        AppLogger.error(
+          'Gagal mengambil history transaksi: ${failure.message}',
+        );
+      },
+      (transactions) {
+        emit(state.copyWith(recentTransactions: transactions));
+      },
+    );
+
+    if (!isSummaryFailed) {
       emit(state.copyWith(status: HomeStatus.success));
     }
   }
@@ -178,67 +187,65 @@ class HomeCubit extends Cubit<HomeState> {
       jenis: jenis,
     );
 
+    if (isClosed) return;
+
     result.fold(
       (failure) {
-        if (!isClosed) {
-          emit(
-            state.copyWith(
-              status: HomeStatus.failure,
-              motorCount: 0,
-              mobilCount: 0,
-              totalPendapatan: 0,
-              totalPajak: 0,
-              totalBersih: 0,
-              laporanPelanggaran: 0,
-              checkInOutData: const CheckInOutEntity(
-                idEvent: 0,
-                op: '',
-                nip: '',
-                tglRoster: '',
-                jadwalMasuk: '',
-                jadwalOut: '',
-                status: 0,
-                checkIn: '',
-                checkInString: '',
-                checkInJmlMobil: 0,
-                checkInJmlMotor: 0,
-                checkOut: '',
-                checkOutString: '',
-                checkOutJmlMobil: 0,
-                checkOutJmlMotor: 0,
-                latitude: '',
-                longitude: '',
-                detailAlatCheckIn: [],
-                detailAlatCheckOut: [],
-              ),
+        emit(
+          state.copyWith(
+            status: HomeStatus.failure,
+            motorCount: 0,
+            mobilCount: 0,
+            totalPendapatan: 0,
+            totalPajak: 0,
+            totalBersih: 0,
+            laporanPelanggaran: 0,
+            checkInOutData: const CheckInOutEntity(
+              idEvent: 0,
+              op: '',
+              nip: '',
+              tglRoster: '',
+              jadwalMasuk: '',
+              jadwalOut: '',
+              status: 0,
+              checkIn: '',
+              checkInString: '',
+              checkInJmlMobil: 0,
+              checkInJmlMotor: 0,
+              checkOut: '',
+              checkOutString: '',
+              checkOutJmlMobil: 0,
+              checkOutJmlMotor: 0,
+              latitude: '',
+              longitude: '',
+              detailAlatCheckIn: [],
+              detailAlatCheckOut: [],
             ),
-          );
-        }
+          ),
+        );
       },
       (summary) {
-        if (!isClosed) {
-          emit(
-            state.copyWith(
-              status: HomeStatus.success,
-              motorCount: summary.data.dashboard.jumlahMotorHariIni,
-              mobilCount: summary.data.dashboard.jumlahMobilHariIni,
-              totalPendapatan: summary.data.dashboard.totalNominalHariIni
-                  .toDouble(),
-              totalPajak: summary.data.dashboard.totalNominalBersihUntukBapenda
-                  .toDouble(),
-              totalBersih: summary
-                  .data
-                  .dashboard
-                  .totalNominalBersihUntukWajibPajak
-                  .toDouble(),
-              laporanPelanggaran: summary.data.laporanPelanggaran,
-              checkInOutData: _filterDetailAlatByJenis(
-                summary.data.checkInOut,
-                jenis,
-              ),
+        emit(
+          state.copyWith(
+            status: HomeStatus.success,
+            motorCount: summary.data.dashboard.jumlahMotorHariIni,
+            mobilCount: summary.data.dashboard.jumlahMobilHariIni,
+            totalPendapatan: summary.data.dashboard.totalNominalHariIni
+                .toDouble(),
+            totalPajak: summary.data.dashboard.totalNominalBersihUntukBapenda
+                .toDouble(),
+            totalBersih: summary
+                .data
+                .dashboard
+                .totalNominalBersihUntukWajibPajak
+                .toDouble(),
+            laporanPelanggaran: summary.data.laporanPelanggaran,
+            checkInOutData: _filterDetailAlatByJenis(
+              summary.data.checkInOut,
+              jenis,
             ),
-          );
-        }
+          ),
+        );
       },
     );
   }
@@ -246,91 +253,88 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> _loadDashboardNonJukir() async {
     final result = await _homeUsecase.getDashboardSummaryNonJukir();
 
+    if (isClosed) return;
     result.fold(
       (failure) {
-        if (!isClosed) {
-          emit(
-            state.copyWith(
-              status: HomeStatus.failure,
-              motorCount: 0,
-              mobilCount: 0,
-              totalPendapatan: 0,
-              totalPajak: 0,
-              totalBersih: 0,
-              totalOp: 0,
-              totalOpDigital: 0,
-              totalOpNonDigital: 0,
+        emit(
+          state.copyWith(
+            status: HomeStatus.failure,
+            motorCount: 0,
+            mobilCount: 0,
+            totalPendapatan: 0,
+            totalPajak: 0,
+            totalBersih: 0,
+            totalOp: 0,
+            totalOpDigital: 0,
+            totalOpNonDigital: 0,
+            totalBertarif: 0,
+            totalNonTarif: 0,
+            totalTarifTidakDiketahui: 0,
+            digital: const OpCategoryEntity(
+              total: 0,
               totalBertarif: 0,
               totalNonTarif: 0,
-              totalTarifTidakDiketahui: 0,
-              digital: const OpCategoryEntity(
-                total: 0,
-                totalBertarif: 0,
-                totalNonTarif: 0,
-                totalTidakDiketahui: 0,
-                persentaseBertarif: 0,
-                persentaseNonTarif: 0,
-                persentaseTidakDiketahui: 0,
-              ),
-
-              nonDigital: const OpCategoryEntity(
-                total: 0,
-                totalBertarif: 0,
-                totalNonTarif: 0,
-                totalTidakDiketahui: 0,
-                persentaseBertarif: 0,
-                persentaseNonTarif: 0,
-                persentaseTidakDiketahui: 0,
-              ),
-              detail: const DetailEntity(
-                totalEdc: 0,
-                totalRompiQris: 0,
-                totalCctvCounting: 0,
-                totalTs: 0,
-                totalBebasParkir: 0,
-                totalNonDigital: 0,
-              ),
-              berbayar: const BerbayarEntity(
-                digital: 0,
-                nonDigital: 0,
-                total: 0,
-                persentase: 0,
-              ),
-
-              persentaseDigital: 0,
-              persentaseNonDigital: 0,
-              sofParkirResults: [],
+              totalTidakDiketahui: 0,
+              persentaseBertarif: 0,
+              persentaseNonTarif: 0,
+              persentaseTidakDiketahui: 0,
             ),
-          );
-        }
+
+            nonDigital: const OpCategoryEntity(
+              total: 0,
+              totalBertarif: 0,
+              totalNonTarif: 0,
+              totalTidakDiketahui: 0,
+              persentaseBertarif: 0,
+              persentaseNonTarif: 0,
+              persentaseTidakDiketahui: 0,
+            ),
+            detail: const DetailEntity(
+              totalEdc: 0,
+              totalRompiQris: 0,
+              totalCctvCounting: 0,
+              totalTs: 0,
+              totalBebasParkir: 0,
+              totalNonDigital: 0,
+            ),
+            berbayar: const BerbayarEntity(
+              digital: 0,
+              nonDigital: 0,
+              total: 0,
+              persentase: 0,
+            ),
+
+            persentaseDigital: 0,
+            persentaseNonDigital: 0,
+            sofParkirResults: [],
+          ),
+        );
       },
       (summary) {
-        if (!isClosed) {
-          emit(
-            state.copyWith(
-              status: HomeStatus.success,
-              motorCount: summary.jumlahMotorHariIni,
-              mobilCount: summary.jumlahMobilHariIni,
-              totalPendapatan: summary.totalNominalHariIni,
-              totalPajak: summary.totalNominalBersihUntukBapenda,
-              totalBersih: summary.totalNominalBersihUntukWajibPajak,
-              totalOp: summary.totalOp,
-              totalOpDigital: summary.totalOpDigital,
-              totalOpNonDigital: summary.totalOpNonDigital,
-              digital: summary.digital,
-              nonDigital: summary.nonDigital,
+        emit(
+          state.copyWith(
+            status: HomeStatus.success,
+            motorCount: summary.jumlahMotorHariIni,
+            mobilCount: summary.jumlahMobilHariIni,
+            totalPendapatan: summary.totalNominalHariIni,
+            totalPajak: summary.totalNominalBersihUntukBapenda,
+            totalBersih: summary.totalNominalBersihUntukWajibPajak,
+            totalOp: summary.totalOp,
+            totalOpDigital: summary.totalOpDigital,
+            totalOpNonDigital: summary.totalOpNonDigital,
+            digital: summary.digital,
+            nonDigital: summary.nonDigital,
 
-              persentaseDigital: summary.persentaseDigital,
-              persentaseNonDigital: summary.persentaseNonDigital,
-              sofParkirResults: summary.sofParkirResults,
-              totalBertarif: summary.totalBertarif,
-              totalNonTarif: summary.totalNonTarif,
-              totalTarifTidakDiketahui: summary.totalTarifTidakDiketahui,
-              detail: summary.detail,
-              berbayar: summary.berbayar,
-            ),
-          );
-        }
+            persentaseDigital: summary.persentaseDigital,
+            persentaseNonDigital: summary.persentaseNonDigital,
+            sofParkirResults: summary.sofParkirResults,
+            totalBertarif: summary.totalBertarif,
+            totalNonTarif: summary.totalNonTarif,
+            totalTarifTidakDiketahui: summary.totalTarifTidakDiketahui,
+            detail: summary.detail,
+            berbayar: summary.berbayar,
+          ),
+        );
       },
     );
   }
@@ -345,7 +349,8 @@ class HomeCubit extends Cubit<HomeState> {
     final namaUserShort = namaUser.shortName;
 
     //  1. BEHAVIOR KHUSUS JUKIR atau JUKIR COUNTER (NOP Statis Menempel dari Secured Storage)
-    if (userRole == RoleLoginDigitalParkir.jukir || userRole == RoleLoginDigitalParkir.jukircounter) {
+    if (userRole == RoleLoginDigitalParkir.jukir ||
+        userRole == RoleLoginDigitalParkir.jukircounter) {
       emit(
         state.copyWith(
           namaJukir: namaUserShort,
@@ -376,6 +381,8 @@ class HomeCubit extends Cubit<HomeState> {
     //  3. BEHAVIOR NON-JUKIR (WP, Bapenda, dll)
     final nopList = await _databaseHelper.getNopList();
 
+    if (isClosed) return;
+
     if (nopList.isEmpty) {
       emit(state.copyWith(namaJukir: namaUser));
       return;
@@ -402,7 +409,7 @@ class HomeCubit extends Cubit<HomeState> {
       ),
     );
 
-    await loadDashboarJukir();
+    await loadDashboardJukir();
   }
 
   void formatUserName() {
@@ -428,6 +435,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> checkOpLastUpdate() async {
     final result = await _homeUsecase.getOpLastUpdate();
+
+    if (isClosed) return;
 
     result.fold(
       (failure) {

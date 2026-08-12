@@ -313,6 +313,9 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     final locStatus = await _permissionService.requestPermission(
       AppPermissionType.location,
     );
+
+    if (isClosed) return false;
+
     if (locStatus == AppPermissionStatus.permanentlyDenied) {
       emit(
         state.copyWith(
@@ -337,6 +340,9 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     final gpsStatus = await _permissionService.requestPermission(
       AppPermissionType.locationService,
     );
+
+    if (isClosed) return false;
+
     if (gpsStatus == AppPermissionStatus.permanentlyDenied) {
       emit(
         state.copyWith(
@@ -347,7 +353,6 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       );
       return false;
     }
-
     return true;
   }
 
@@ -355,6 +360,9 @@ class PengawasanCubit extends Cubit<PengawasanState> {
     final camStatus = await _permissionService.requestPermission(
       AppPermissionType.camera,
     );
+
+    if (isClosed) return false;
+
     if (camStatus == AppPermissionStatus.permanentlyDenied) {
       emit(
         state.copyWith(
@@ -375,7 +383,9 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       );
       return false;
     }
-    return await _guardLocationPermissions();
+    final locProceed = await _guardLocationPermissions();
+    if (isClosed) return false;
+    return locProceed;
   }
 
   Future<void> openAppSettings() async {

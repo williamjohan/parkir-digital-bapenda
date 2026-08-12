@@ -8,9 +8,19 @@ import 'i_permission_service.dart';
 
 @LazySingleton(as: IPermissionService)
 class PermissionServiceImpl implements IPermissionService {
+  bool _isRequestingPermission = false;
+
   @override
   Future<AppPermissionStatus> requestPermission(AppPermissionType type) async {
-    // 🚀 PERTAHANAN 1: Bungkus seluruh proses request dengan Try-Catch utama
+    if (_isRequestingPermission) {
+      AppLogger.warning(
+        '⚠️ [PermissionService] Request untuk ${type.name} diabaikan: Request izin native lain sedang berjalan.',
+      );
+      return AppPermissionStatus.denied;
+    }
+
+    _isRequestingPermission = true;
+
     try {
       AppLogger.debug(
         '🛡️ [PermissionService] Memulai request izin untuk: ${type.name}',
@@ -55,6 +65,9 @@ class PermissionServiceImpl implements IPermissionService {
         stackTrace,
       );
       return AppPermissionStatus.denied;
+    } finally {
+      //  Pastikan lock selalu dilepas baik saat sukses maupun error
+      _isRequestingPermission = false;
     }
   }
 
@@ -140,7 +153,7 @@ class PermissionServiceImpl implements IPermissionService {
         return AppPermissionStatus.permanentlyDenied;
       }
 
-      // 🚀 PERTAHANAN 3: "OS Lie Detector" khusus untuk kombo Bluetooth
+      // 3: "OS Lie Detector" khusus untuk kombo Bluetooth
       if (await Permission.bluetoothScan.isPermanentlyDenied ||
           await Permission.bluetoothConnect.isPermanentlyDenied ||
           await Permission.locationWhenInUse.isPermanentlyDenied) {
@@ -152,7 +165,7 @@ class PermissionServiceImpl implements IPermissionService {
 
       return AppPermissionStatus.denied;
     } catch (e, stackTrace) {
-      // 🚀 PERTAHANAN 4: Menangkap error spesifik kegagalan hardware bluetooth
+      //  4: Menangkap error spesifik kegagalan hardware bluetooth
       AppLogger.error(
         '🚨 [PermissionService] Gagal mengeksekusi multi-izin Bluetooth',
         e,

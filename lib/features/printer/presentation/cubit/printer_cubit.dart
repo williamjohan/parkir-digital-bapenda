@@ -69,6 +69,7 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   Future<bool> checkBluetoothOn() async {
     final bluetoothOn = await _printerService.isBluetoothOn;
+    if (isClosed) return false;
     if (!bluetoothOn) {
       emit(PrinterState.bluetoothOffRequiresAction(timestamp: DateTime.now()));
       return false;
@@ -79,12 +80,14 @@ class PrinterCubit extends Cubit<PrinterState> {
   Future<void> refreshPairedDevices() async {
     try {
       final granted = await checkAndRequestPermissions();
-      if (!granted) return;
+      if (!granted || isClosed) return;
 
       final bluetoothOn = await checkBluetoothOn();
-      if (!bluetoothOn) return;
+      if (!bluetoothOn || isClosed) return;
 
       final devices = await _printerService.getPairedDevices();
+      if (isClosed) return;
+
       final savedMac = await _secureStorage.getPrinterMacAddress();
       if (isClosed) return;
 
@@ -120,6 +123,7 @@ class PrinterCubit extends Cubit<PrinterState> {
       final status = await _permissionService.requestPermission(
         AppPermissionType.bluetooth,
       );
+      if (isClosed) return false;
 
       if (status == AppPermissionStatus.granted) return true;
 
@@ -127,6 +131,7 @@ class PrinterCubit extends Cubit<PrinterState> {
       return false;
     } catch (e, stackTrace) {
       AppLogger.error("Exception saat mengecek permission", e, stackTrace);
+      if (isClosed) return false;
       emit(
         PrinterState.error(
           message: "Terjadi kesalahan sistem saat meminta izin.",
@@ -145,15 +150,15 @@ class PrinterCubit extends Cubit<PrinterState> {
 
     try {
       final granted = await checkAndRequestPermissions();
-      if (!granted) return;
+      if (!granted || isClosed) return;
 
       final bluetoothOn = await checkBluetoothOn();
-      if (!bluetoothOn) return;
+      if (!bluetoothOn || isClosed) return;
 
       final devices = await _printerService.getPairedDevices();
+      if (isClosed) return;
 
       final savedMac = await _secureStorage.getPrinterMacAddress();
-
       if (isClosed) return;
 
       emit(
@@ -178,23 +183,27 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   Future<void> startScanning() async {
     final granted = await checkAndRequestPermissions();
-    if (!granted) return;
+    if (!granted || isClosed) return;
 
     final bluetoothOn = await checkBluetoothOn();
-    if (!bluetoothOn) return;
+    if (!bluetoothOn || isClosed) return;
 
     final List<BtcDevice> existingDevices = state.maybeMap(
       loaded: (s) => s.devices,
       orElse: () => <BtcDevice>[],
     );
 
+    final devicesToUse = existingDevices.isEmpty
+        ? await _printerService.getPairedDevices()
+        : existingDevices;
+    if (isClosed) return;
+
     final savedMac = await _secureStorage.getPrinterMacAddress();
+    if (isClosed) return;
 
     emit(
       PrinterState.loaded(
-        devices: existingDevices.isEmpty
-            ? await _printerService.getPairedDevices()
-            : existingDevices,
+        devices: devicesToUse,
         discoveredDevices: const [],
         connectedDevice: _printerService.connectedDevice,
         savedMacAddress: savedMac, // 🚀 SUPAI KE STATE UI
@@ -221,6 +230,7 @@ class PrinterCubit extends Cubit<PrinterState> {
     });
 
     await _printerService.startDiscovery();
+    if (isClosed) return;
 
     _discoveryTimer?.cancel();
     _discoveryTimer = Timer(const Duration(seconds: 12), stopScanning);
@@ -241,20 +251,25 @@ class PrinterCubit extends Cubit<PrinterState> {
   Future<bool> printReceipt(HistoryItemModel transaction) async {
     try {
       final granted = await checkAndRequestPermissions();
-      if (!granted) return false;
+      if (!granted || isClosed) return false;
 
       final bluetoothOn = await checkBluetoothOn();
-      if (!bluetoothOn) return false;
+      if (!bluetoothOn || isClosed) return false;
 
       if (!_printerService.isConnected) {
         final savedMacAddress = await _secureStorage.getPrinterMacAddress();
+        if (isClosed) return false;
+
         if (savedMacAddress != null && savedMacAddress.isNotEmpty) {
           final pairedDevices = await _printerService.getPairedDevices();
+          if (isClosed) return false;
+
           try {
             final targetDevice = pairedDevices.firstWhere(
               (d) => d.address == savedMacAddress,
             );
             await _printerService.connect(targetDevice);
+            if (isClosed) return false;
           } catch (_) {
             /* Printer tidak ditemukan di paired devices */
           }
@@ -262,6 +277,7 @@ class PrinterCubit extends Cubit<PrinterState> {
       }
 
       if (!_printerService.isConnected) {
+        if (isClosed) return false;
         emit(
           PrinterState.error(
             message:
@@ -273,6 +289,8 @@ class PrinterCubit extends Cubit<PrinterState> {
       }
 
       final success = await _printerService.printReceipt(transaction);
+      if (isClosed) return false;
+
       if (!success) {
         emit(
           PrinterState.error(
@@ -287,6 +305,7 @@ class PrinterCubit extends Cubit<PrinterState> {
       return true;
     } catch (e) {
       AppLogger.error("🖨️ [Print] Terjadi kesalahan fatal: $e");
+      if (isClosed) return false;
       emit(
         PrinterState.error(
           message: "Terjadi kesalahan sistem saat mencoba mencetak.",
@@ -299,7 +318,7 @@ class PrinterCubit extends Cubit<PrinterState> {
 
   Future<void> connectDevice(BtcDevice device) async {
     final bluetoothOn = await checkBluetoothOn();
-    if (!bluetoothOn) return;
+    if (!bluetoothOn || isClosed) return;
 
     state.maybeMap(
       loaded: (s) => emit(s.copyWith(isLoading: true)),
@@ -312,6 +331,7 @@ class PrinterCubit extends Cubit<PrinterState> {
     if (success) {
       // Simpan ke Local Storage
       await _secureStorage.savePrinterMacAddress(device.address);
+      if (isClosed) return;
       AppLogger.debug(
         "🖨️ MAC Address ${device.address} resmi tersimpan di aplikasi!",
       );

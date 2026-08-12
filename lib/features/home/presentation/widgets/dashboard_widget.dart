@@ -75,7 +75,10 @@ class DashboardWidget extends StatelessWidget {
               ),
               if (isFree && isSuccess)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     border: Border.all(color: Colors.white),
@@ -101,7 +104,10 @@ class DashboardWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     border: Border.all(color: Colors.white),
@@ -146,7 +152,7 @@ class DashboardWidget extends StatelessWidget {
 
               if (!context.mounted) return;
               if (result == true) {
-                context.read<HomeCubit>().loadDashboarJukir();
+                context.read<HomeCubit>().loadDashboardJukir();
               }
             },
           ),

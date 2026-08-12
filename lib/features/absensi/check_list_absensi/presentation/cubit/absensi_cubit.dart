@@ -79,7 +79,7 @@ class AbsensiCubit extends Cubit<AbsensiState> {
       final canProceed = await _guardLocationPermissions();
       if (!canProceed || isClosed) return;
 
-      // 🚀 Langsung gunakan _locationService milik Cubit!
+      //  Langsung gunakan _locationService milik Cubit!
       final result = await _locationService.getCurrentLocation();
       if (isClosed) return;
 
@@ -239,26 +239,23 @@ class AbsensiCubit extends Cubit<AbsensiState> {
 
     final result = await _usecase.postAbsensi(entity);
 
+    if (isClosed) return;
+
     result.fold(
       (failure) {
-        if (!isClosed) {
-          // 🚀 [AUDIT CRASHLYTICS] 3. (Opsional) Log jika API gagal tapi tidak crash
-          FirebaseCrashlytics.instance.log(
-            'AbsensiCubit: Gagal submit API - ${failure.message}',
-          );
+        FirebaseCrashlytics.instance.log(
+          'AbsensiCubit: Gagal submit API - ${failure.message}',
+        );
 
-          emit(
-            state.copyWith(
-              status: AbsensiStatus.failure,
-              errorMessage: failure.message,
-            ),
-          );
-        }
+        emit(
+          state.copyWith(
+            status: AbsensiStatus.failure,
+            errorMessage: failure.message,
+          ),
+        );
       },
       (_) {
-        if (!isClosed) {
-          emit(state.copyWith(status: AbsensiStatus.success));
-        }
+        emit(state.copyWith(status: AbsensiStatus.success));
       },
     );
   }
@@ -275,6 +272,8 @@ class AbsensiCubit extends Cubit<AbsensiState> {
     final locStatus = await _permissionService.requestPermission(
       AppPermissionType.location,
     );
+    if (isClosed) return false;
+
     if (locStatus == AppPermissionStatus.permanentlyDenied) {
       emit(
         state.copyWith(
@@ -299,6 +298,8 @@ class AbsensiCubit extends Cubit<AbsensiState> {
     final gpsStatus = await _permissionService.requestPermission(
       AppPermissionType.locationService,
     );
+    if (isClosed) return false;
+
     if (gpsStatus == AppPermissionStatus.permanentlyDenied) {
       emit(
         state.copyWith(
@@ -309,7 +310,6 @@ class AbsensiCubit extends Cubit<AbsensiState> {
       );
       return false;
     }
-
     return true;
   }
 
@@ -317,6 +317,9 @@ class AbsensiCubit extends Cubit<AbsensiState> {
     final camStatus = await _permissionService.requestPermission(
       AppPermissionType.camera,
     );
+
+    if (isClosed) return false;
+
     if (camStatus == AppPermissionStatus.permanentlyDenied) {
       emit(
         state.copyWith(
@@ -337,7 +340,9 @@ class AbsensiCubit extends Cubit<AbsensiState> {
       );
       return false;
     }
-    return await _guardLocationPermissions();
+    final locProceed = await _guardLocationPermissions();
+    if (isClosed) return false;
+    return locProceed;
   }
 
   Future<void> openAppSettings() async {

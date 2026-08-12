@@ -89,18 +89,19 @@ class HomeDrawer extends StatelessWidget {
                     RoleLoginDigitalParkir.jukir,
                     RoleLoginDigitalParkir.bapenda,
                     RoleLoginDigitalParkir.wp,
+                    RoleLoginDigitalParkir.jukircounter
                   ],
                   currentRole: role,
                   child: ListTile(
                     leading: Icon(
-                      role == RoleLoginDigitalParkir.jukir
+                      (role == RoleLoginDigitalParkir.jukir || role == RoleLoginDigitalParkir.jukircounter)
                           ? Icons.receipt_long
                           : Icons.store,
                       color: AppColors.textPrimary,
                     ),
 
                     title: Text(
-                      (role == RoleLoginDigitalParkir.jukir)
+                      (role == RoleLoginDigitalParkir.jukir || role == RoleLoginDigitalParkir.jukircounter)
                           ? 'Riwayat Transaksi'
                           : 'Objek Pajak',
                       style: AppTypography.bodyRegular,
@@ -110,6 +111,7 @@ class HomeDrawer extends StatelessWidget {
                       Navigator.pop(context);
 
                       if (role == RoleLoginDigitalParkir.jukir ||
+                          role == RoleLoginDigitalParkir.jukircounter ||
                           role == RoleLoginDigitalParkir.pengawas) {
                         if (!context.mounted) return;
 
