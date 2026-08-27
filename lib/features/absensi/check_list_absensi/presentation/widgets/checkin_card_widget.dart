@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
+import '../../../../../core/constants/app_asset_constant.dart';
 import '../../../../home/domain/entities/dashboard_summary_pengawas.entity.dart';
 
 class CheckInCardWidget extends StatelessWidget {
@@ -26,6 +27,11 @@ class CheckInCardWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        image: const DecorationImage(
+          image: AssetImage(AppAssetImages.patternCard),
+          fit: BoxFit.cover,
+          opacity: 1,
+        ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(

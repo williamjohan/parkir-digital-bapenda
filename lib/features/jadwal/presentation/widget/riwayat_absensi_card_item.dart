@@ -6,7 +6,14 @@ class RiwayatAbsensiCard extends StatelessWidget {
   final ObjekPengawasanEntity record;
   const RiwayatAbsensiCard({super.key, required this.record});
 
-  bool get _sudahCheckOut => record.jamCheckOut != null;
+  bool get _sudahCheckOut {
+    final jam = record.jamCheckOut;
+    if (jam == null || jam.trim().isEmpty) return false;
+
+    if (jam == '00:00' || jam == '00:00:00') return false;
+
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +57,20 @@ class RiwayatAbsensiCard extends StatelessWidget {
 
           _buildSessionBlock(
             label: 'Check Out',
-            time: record.jamCheckOut ?? '--:--',
-            shift: record.shiftCheckOut,
+            time: _sudahCheckOut ? (record.jamCheckOut ?? '--:--') : '--:--',
+
+            shift: _sudahCheckOut ? record.shiftCheckOut : null,
+
             icon: Icons.logout_rounded,
             iconColor: _sudahCheckOut ? AppColors.warning : AppColors.textHint,
-            jumlahMotor: record.motorCheckOut,
-            jumlahMobil: record.mobilCheckOut,
-            instrumen: record.instrumenCheckOut,
+
+            jumlahMotor: _sudahCheckOut ? record.motorCheckOut : null,
+            jumlahMobil: _sudahCheckOut ? record.mobilCheckOut : null,
+            instrumen: _sudahCheckOut ? record.instrumenCheckOut : null,
+
             belumAdaText: _sudahCheckOut
                 ? 'Data instrumen tidak tersedia'
-                : 'Belum check out',
+                : 'Belum melakukan check out',
           ),
         ],
       ),
@@ -198,7 +209,7 @@ class RiwayatAbsensiCard extends StatelessWidget {
                       Icon(Icons.schedule_rounded, size: 12, color: iconColor),
                       const SizedBox(width: 4),
                       Text(
-                        'SHIFT $shift',
+                        'Pengawasan Ke - $shift',
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,

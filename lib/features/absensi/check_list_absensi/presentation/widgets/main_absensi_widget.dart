@@ -12,10 +12,15 @@ import 'checkout_card_widget.dart';
 
 class MainAbsensiWidget extends StatelessWidget {
   final CheckInOutEntity absensiData;
+  final String pengawasanSequence;
 
-  const MainAbsensiWidget({super.key, required this.absensiData});
+  const MainAbsensiWidget({
+    super.key,
+    required this.absensiData,
+    required this.pengawasanSequence,
+  });
 
-  Future<void> _openForm(BuildContext context, ShiftFormType type) async {
+  Future<void> _openForm(BuildContext context, AbsenFormType type) async {
     final homeState = context.read<HomeCubit>().state;
     final result = await context.pushNamed<bool>(
       AppRoutes.absensi,
@@ -35,8 +40,8 @@ class MainAbsensiWidget extends StatelessWidget {
 
       cubit.loadDashboardPengawas(
         nomorObjek: currentState.nop,
-        shift: currentState.shiftPengawasan!.id,
-        jenis: currentState.jenisPengawasan!.id,
+        // shift: currentState.shiftPengawasan!.id,
+        jenisPengawasan: currentState.jenisPengawasan!.id,
       );
     }
   }
@@ -49,7 +54,11 @@ class MainAbsensiWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildShiftStatus(isCheckedIn: isCheckedIn, isCheckedOut: isCheckedOut),
+        _buildShiftStatus(
+          isCheckedIn: isCheckedIn,
+          isCheckedOut: isCheckedOut,
+          pengawasanSequence: pengawasanSequence,
+        ),
         const SizedBox(height: 12),
 
         // CARD CHECK IN
@@ -59,7 +68,7 @@ class MainAbsensiWidget extends StatelessWidget {
           totalMotor: absensiData.checkInJmlMotor,
           totalMobil: absensiData.checkInJmlMobil,
           detailAlat: absensiData.detailAlatCheckIn,
-          onTapCheckIn: () => _openForm(context, ShiftFormType.checkIn),
+          onTapCheckIn: () => _openForm(context, AbsenFormType.checkIn),
         ),
 
         const SizedBox(height: 10),
@@ -73,7 +82,7 @@ class MainAbsensiWidget extends StatelessWidget {
           totalMobil: absensiData.checkOutJmlMobil,
           detailAlat: absensiData.detailAlatCheckOut,
           onTapCheckOut: isCheckedIn
-              ? () => _openForm(context, ShiftFormType.checkOut)
+              ? () => _openForm(context, AbsenFormType.checkOut)
               : null,
         ),
       ],
@@ -83,6 +92,7 @@ class MainAbsensiWidget extends StatelessWidget {
   Widget _buildShiftStatus({
     required bool isCheckedIn,
     required bool isCheckedOut,
+    required String pengawasanSequence,
   }) {
     final bool isDone = isCheckedIn && isCheckedOut;
     final bool isOngoing = isCheckedIn && !isCheckedOut;
@@ -94,15 +104,15 @@ class MainAbsensiWidget extends StatelessWidget {
     if (isDone) {
       color = AppColors.primary;
       icon = Icons.verified_rounded;
-      label = "Selesai";
+      label = "Selesai, Pengawasan Ke : $pengawasanSequence";
     } else if (isOngoing) {
       color = AppColors.success;
       icon = Icons.radio_button_checked_rounded;
-      label = "Berlangsung";
+      label = "Berlangsung Pengawasan Ke : $pengawasanSequence";
     } else {
       color = Colors.grey.shade400;
       icon = Icons.radio_button_unchecked_rounded;
-      label = "Belum Mulai";
+      label = "Pengawasan Ke : $pengawasanSequence, Belum Mulai";
     }
 
     return Container(

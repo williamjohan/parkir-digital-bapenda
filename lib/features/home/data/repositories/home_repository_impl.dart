@@ -81,13 +81,11 @@ class HomeRepositoryImpl implements IHomeRepository {
   Future<Either<Failure, DashboardSummaryPengawasEntity>>
   getDashboardSummaryPengawas({
     required String nomorObjek,
-    required int shift,
     required int jenis,
   }) async {
     try {
       final model = await _summaryRemoteDS.getDashboardSummaryPengawas(
         nomorObjek: nomorObjek,
-        shift: shift,
         jenis: jenis,
       );
       return Right(model.toEntity());
@@ -125,8 +123,8 @@ class HomeRepositoryImpl implements IHomeRepository {
       _appPreferences.getNomorObjekPengawasan();
 
   @override
-  ShiftPengawasan? getShiftObjekPengawasan() =>
-      _appPreferences.getShiftObjekPengawasan();
+  String? getAlamatObjekPengawasan() =>
+      _appPreferences.getAlamatObjekPengawasan();
 
   @override
   JenisPengawasan? getJenisObjekPengawasan() =>
@@ -134,6 +132,16 @@ class HomeRepositoryImpl implements IHomeRepository {
 
   @override
   String? getNamaObjekPengawasan() => _appPreferences.getNamaObjekPengawasan();
+
+  @override
+  Future<void> clearObjekPengawasanData() async {
+    await Future.wait([
+      _appPreferences.removeNomorObjekPengawasan(),
+      _appPreferences.removeNamaObjekPengawasan(),
+      _appPreferences.removeAlamatObjekPengawasan(),
+      _appPreferences.removeJenisObjekPengawasan(),
+    ]);
+  }
 
   @override
   Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan() async {
@@ -162,12 +170,12 @@ class HomeRepositoryImpl implements IHomeRepository {
     try {
       // 1. Panggil data dari Datasource
       final counterModel = await _summaryRemoteDS.getCounterData();
-      
+
       // 2. Mapping dari Model ke Entity dan kembalikan sebagai Right (Sukses)
       return Right(counterModel.toEntity());
     } on ServerException catch (e) {
       // 3. Tangkap ServerException (seperti 404, 500) dan ubah ke ServerFailure
-      return Left(ServerFailure(e.message ));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       // 4. Tangkap error tak terduga lainnya
       return Left(ServerFailure(e.toString()));
@@ -185,7 +193,7 @@ class HomeRepositoryImpl implements IHomeRepository {
         jumlahMotor: jumlahMotor,
         jumlahMobil: jumlahMobil,
       );
-      
+
       // 2. Jika tidak ada throw dari Datasource, berarti sukses. Kembalikan void (null)
       return const Right(null);
     } on ServerException catch (e) {

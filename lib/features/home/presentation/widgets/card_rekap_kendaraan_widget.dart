@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/utils/number_formatter.dart';
 
+import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
 class CardRekapKendaraanWidget extends StatelessWidget {
@@ -26,6 +27,11 @@ class CardRekapKendaraanWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
+        image: const DecorationImage(
+          image: AssetImage(AppAssetImages.patternCard),
+          fit: BoxFit.cover,
+          opacity: 1,
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [

@@ -263,35 +263,39 @@ class PengawasanCubit extends Cubit<PengawasanState> {
   }
 
   Future<void> getLaporanPengawasan() async {
-    if (!isClosed) {
-      emit(
-        state.copyWith(
-          isLoadingLaporan: true,
-          errorMessage: null,
-          laporanFake: List<LaporanPengawasanEntity>.generate(
-            4,
-            (_) => LaporanPengawasanEntity(
-              idEvent: 0,
-              nip: '',
-              opd: '',
-              kdCamat: '',
-              nmCamat: '',
-              kdOp: '',
-              nmOp: '',
-              jenis: 0,
-              shift: 0,
-              tglPengawasan: DateTime(2000, 1, 1),
-              seq: 0,
-              jenisPel: 0,
-              ketPel: '',
-              insDate: DateTime(2000, 1, 1),
-              insBy: '',
-              fotoPelaporan: null,
-            ),
+    // 🚀 BEST PRACTICE: Guard Lock
+    // Cegah pemanggilan ganda! Jika saat ini state sedang memuat laporan,
+    // hentikan eksekusi. Ini otomatis mengabaikan trigger kedua dari UI.
+    if (state.isLoadingLaporan || isClosed) return;
+
+    // 🚀 Emit state loading dengan data fake untuk Skeletonizer
+    emit(
+      state.copyWith(
+        isLoadingLaporan: true,
+        errorMessage: null,
+        laporanFake: List<LaporanPengawasanEntity>.generate(
+          4,
+          (_) => LaporanPengawasanEntity(
+            idEvent: 0,
+            nip: '',
+            opd: '',
+            kdCamat: '',
+            nmCamat: '',
+            kdOp: '',
+            nmOp: '',
+            jenis: 0,
+            shift: 0,
+            tglPengawasan: DateTime(2000, 1, 1),
+            seq: 0,
+            jenisPel: 0,
+            ketPel: '',
+            insDate: DateTime(2000, 1, 1),
+            insBy: '',
+            fotoPelaporan: null,
           ),
         ),
-      );
-    }
+      ),
+    );
 
     try {
       final result = await _getLaporanPengawasanUsecase();
@@ -305,6 +309,7 @@ class PengawasanCubit extends Cubit<PengawasanState> {
       emit(state.copyWith(isLoadingLaporan: false, errorMessage: e.toString()));
     }
   }
+
   // ===========================================================================
   // 🛡️ PRIVATE PERMISSION GUARDS
   // ===========================================================================

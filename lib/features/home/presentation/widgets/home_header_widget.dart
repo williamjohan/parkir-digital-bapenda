@@ -10,6 +10,7 @@ class HomeHeaderWidget extends StatelessWidget {
   final String? namaObjekPajak;
   final String? nmOpd;
   final String? namalokasi;
+  final String? alamatObjekPengawasan;
   final RoleLoginDigitalParkir role;
   final HomeStatus status;
   final ShiftPengawasan? shift;
@@ -24,6 +25,7 @@ class HomeHeaderWidget extends StatelessWidget {
     this.nmOpd,
     this.namaObjekPajak,
     this.namalokasi,
+    this.alamatObjekPengawasan,
     required this.role,
     this.shift,
     this.jenis,
@@ -261,7 +263,6 @@ class HomeHeaderWidget extends StatelessWidget {
     );
   }
 
-
   Widget _buildZeroStateHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -272,7 +273,7 @@ class HomeHeaderWidget extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          "Mohon pilih Objek Pengawasan dan Shift terlebih dahulu untuk mulai bekerja.",
+          "Mohon pilih Objek Pengawasan terlebih dahulu untuk mulai melakukan pengawasan.",
           textAlign: TextAlign.center,
           style: AppTypography.bodySmall.copyWith(
             color: Colors.white.withValues(alpha: 0.8),
@@ -283,7 +284,7 @@ class HomeHeaderWidget extends StatelessWidget {
           text: "Pilih Objek Pengawasan",
           variant: PbButtonVariant.secondaryLight,
           iconLeft: Icons.search,
-          onPressed: onPressed, // Memanggil navigasi dari Parent
+          onPressed: onPressed,
         ),
       ],
     );
@@ -313,11 +314,12 @@ class HomeHeaderWidget extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           // Menampilkan label enum yang disuntikkan
-          "Shift : ${shift?.id ?? '-'} (${shift?.timeRange}) |  Jenis : ${jenis?.label ?? '-'}",
+          "Alamat : $alamatObjekPengawasan",
           style: AppTypography.bodySemiBold.copyWith(
             fontSize: 12,
             color: Colors.yellowAccent,
           ),
+          maxLines: 2,
         ),
         const SizedBox(height: 12),
         PbPrimaryButton(

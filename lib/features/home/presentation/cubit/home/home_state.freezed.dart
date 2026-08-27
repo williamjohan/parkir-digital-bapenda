@@ -31,6 +31,7 @@ mixin _$HomeState {
       throw _privateConstructorUsedError;
   bool get isFree => throw _privateConstructorUsedError;
   String get nop => throw _privateConstructorUsedError;
+  String? get alamatObjekPengawasan => throw _privateConstructorUsedError;
   String? get namaLokasi => throw _privateConstructorUsedError;
   String get namaJukir => throw _privateConstructorUsedError;
   String? get namaOp => throw _privateConstructorUsedError;
@@ -53,6 +54,7 @@ mixin _$HomeState {
   RoleLoginDigitalParkir get role =>
       throw _privateConstructorUsedError; //Segment Pengawas
   int get laporanPelanggaran => throw _privateConstructorUsedError;
+  int get pengawasanSequence => throw _privateConstructorUsedError;
   ShiftPengawasan? get shiftPengawasan => throw _privateConstructorUsedError;
   JenisPengawasan? get jenisPengawasan => throw _privateConstructorUsedError;
   CheckInOutEntity get checkInOutData => throw _privateConstructorUsedError;
@@ -85,6 +87,7 @@ abstract class $HomeStateCopyWith<$Res> {
     List<HistoryItemModel> recentTransactions,
     bool isFree,
     String nop,
+    String? alamatObjekPengawasan,
     String? namaLokasi,
     String namaJukir,
     String? namaOp,
@@ -105,6 +108,7 @@ abstract class $HomeStateCopyWith<$Res> {
     List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
     int laporanPelanggaran,
+    int pengawasanSequence,
     ShiftPengawasan? shiftPengawasan,
     JenisPengawasan? jenisPengawasan,
     CheckInOutEntity checkInOutData,
@@ -146,6 +150,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? recentTransactions = null,
     Object? isFree = null,
     Object? nop = null,
+    Object? alamatObjekPengawasan = freezed,
     Object? namaLokasi = freezed,
     Object? namaJukir = null,
     Object? namaOp = freezed,
@@ -166,6 +171,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? sofParkirResults = null,
     Object? role = null,
     Object? laporanPelanggaran = null,
+    Object? pengawasanSequence = null,
     Object? shiftPengawasan = freezed,
     Object? jenisPengawasan = freezed,
     Object? checkInOutData = null,
@@ -223,6 +229,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
                 ? _value.nop
                 : nop // ignore: cast_nullable_to_non_nullable
                       as String,
+            alamatObjekPengawasan: freezed == alamatObjekPengawasan
+                ? _value.alamatObjekPengawasan
+                : alamatObjekPengawasan // ignore: cast_nullable_to_non_nullable
+                      as String?,
             namaLokasi: freezed == namaLokasi
                 ? _value.namaLokasi
                 : namaLokasi // ignore: cast_nullable_to_non_nullable
@@ -302,6 +312,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
             laporanPelanggaran: null == laporanPelanggaran
                 ? _value.laporanPelanggaran
                 : laporanPelanggaran // ignore: cast_nullable_to_non_nullable
+                      as int,
+            pengawasanSequence: null == pengawasanSequence
+                ? _value.pengawasanSequence
+                : pengawasanSequence // ignore: cast_nullable_to_non_nullable
                       as int,
             shiftPengawasan: freezed == shiftPengawasan
                 ? _value.shiftPengawasan
@@ -395,6 +409,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     List<HistoryItemModel> recentTransactions,
     bool isFree,
     String nop,
+    String? alamatObjekPengawasan,
     String? namaLokasi,
     String namaJukir,
     String? namaOp,
@@ -415,6 +430,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
     List<SofParkirResultEntity> sofParkirResults,
     RoleLoginDigitalParkir role,
     int laporanPelanggaran,
+    int pengawasanSequence,
     ShiftPengawasan? shiftPengawasan,
     JenisPengawasan? jenisPengawasan,
     CheckInOutEntity checkInOutData,
@@ -459,6 +475,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? recentTransactions = null,
     Object? isFree = null,
     Object? nop = null,
+    Object? alamatObjekPengawasan = freezed,
     Object? namaLokasi = freezed,
     Object? namaJukir = null,
     Object? namaOp = freezed,
@@ -479,6 +496,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? sofParkirResults = null,
     Object? role = null,
     Object? laporanPelanggaran = null,
+    Object? pengawasanSequence = null,
     Object? shiftPengawasan = freezed,
     Object? jenisPengawasan = freezed,
     Object? checkInOutData = null,
@@ -536,6 +554,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.nop
             : nop // ignore: cast_nullable_to_non_nullable
                   as String,
+        alamatObjekPengawasan: freezed == alamatObjekPengawasan
+            ? _value.alamatObjekPengawasan
+            : alamatObjekPengawasan // ignore: cast_nullable_to_non_nullable
+                  as String?,
         namaLokasi: freezed == namaLokasi
             ? _value.namaLokasi
             : namaLokasi // ignore: cast_nullable_to_non_nullable
@@ -616,6 +638,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
             ? _value.laporanPelanggaran
             : laporanPelanggaran // ignore: cast_nullable_to_non_nullable
                   as int,
+        pengawasanSequence: null == pengawasanSequence
+            ? _value.pengawasanSequence
+            : pengawasanSequence // ignore: cast_nullable_to_non_nullable
+                  as int,
         shiftPengawasan: freezed == shiftPengawasan
             ? _value.shiftPengawasan
             : shiftPengawasan // ignore: cast_nullable_to_non_nullable
@@ -661,6 +687,7 @@ class _$HomeStateImpl implements _HomeState {
     final List<HistoryItemModel> recentTransactions = const [],
     this.isFree = false,
     this.nop = "",
+    this.alamatObjekPengawasan = "",
     this.namaLokasi = "",
     this.namaJukir = "",
     this.namaOp = "",
@@ -709,6 +736,7 @@ class _$HomeStateImpl implements _HomeState {
     final List<SofParkirResultEntity> sofParkirResults = const [],
     this.role = RoleLoginDigitalParkir.tidakDiketahui,
     this.laporanPelanggaran = 0,
+    this.pengawasanSequence = 0,
     this.shiftPengawasan,
     this.jenisPengawasan,
     this.checkInOutData = const CheckInOutEntity(
@@ -780,6 +808,9 @@ class _$HomeStateImpl implements _HomeState {
   final String nop;
   @override
   @JsonKey()
+  final String? alamatObjekPengawasan;
+  @override
+  @JsonKey()
   final String? namaLokasi;
   @override
   @JsonKey()
@@ -847,6 +878,9 @@ class _$HomeStateImpl implements _HomeState {
   @JsonKey()
   final int laporanPelanggaran;
   @override
+  @JsonKey()
+  final int pengawasanSequence;
+  @override
   final ShiftPengawasan? shiftPengawasan;
   @override
   final JenisPengawasan? jenisPengawasan;
@@ -864,7 +898,7 @@ class _$HomeStateImpl implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(status: $status, recoveredSession: $recoveredSession, selectedVehicleForCapture: $selectedVehicleForCapture, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, shiftPengawasan: $shiftPengawasan, jenisPengawasan: $jenisPengawasan, checkInOutData: $checkInOutData, isOpUpToDate: $isOpUpToDate, rekapWilayah: $rekapWilayah, nmOpd: $nmOpd)';
+    return 'HomeState(status: $status, recoveredSession: $recoveredSession, selectedVehicleForCapture: $selectedVehicleForCapture, motorCount: $motorCount, mobilCount: $mobilCount, totalPendapatan: $totalPendapatan, totalPajak: $totalPajak, totalBersih: $totalBersih, selectedModePlat: $selectedModePlat, recentTransactions: $recentTransactions, isFree: $isFree, nop: $nop, alamatObjekPengawasan: $alamatObjekPengawasan, namaLokasi: $namaLokasi, namaJukir: $namaJukir, namaOp: $namaOp, namaJukirFormatted: $namaJukirFormatted, profilePicturePath: $profilePicturePath, totalOp: $totalOp, totalOpDigital: $totalOpDigital, totalOpNonDigital: $totalOpNonDigital, digital: $digital, totalBertarif: $totalBertarif, totalNonTarif: $totalNonTarif, totalTarifTidakDiketahui: $totalTarifTidakDiketahui, detail: $detail, berbayar: $berbayar, nonDigital: $nonDigital, persentaseDigital: $persentaseDigital, persentaseNonDigital: $persentaseNonDigital, sofParkirResults: $sofParkirResults, role: $role, laporanPelanggaran: $laporanPelanggaran, pengawasanSequence: $pengawasanSequence, shiftPengawasan: $shiftPengawasan, jenisPengawasan: $jenisPengawasan, checkInOutData: $checkInOutData, isOpUpToDate: $isOpUpToDate, rekapWilayah: $rekapWilayah, nmOpd: $nmOpd)';
   }
 
   @override
@@ -898,6 +932,8 @@ class _$HomeStateImpl implements _HomeState {
             ) &&
             (identical(other.isFree, isFree) || other.isFree == isFree) &&
             (identical(other.nop, nop) || other.nop == nop) &&
+            (identical(other.alamatObjekPengawasan, alamatObjekPengawasan) ||
+                other.alamatObjekPengawasan == alamatObjekPengawasan) &&
             (identical(other.namaLokasi, namaLokasi) ||
                 other.namaLokasi == namaLokasi) &&
             (identical(other.namaJukir, namaJukir) ||
@@ -938,6 +974,8 @@ class _$HomeStateImpl implements _HomeState {
             (identical(other.role, role) || other.role == role) &&
             (identical(other.laporanPelanggaran, laporanPelanggaran) ||
                 other.laporanPelanggaran == laporanPelanggaran) &&
+            (identical(other.pengawasanSequence, pengawasanSequence) ||
+                other.pengawasanSequence == pengawasanSequence) &&
             (identical(other.shiftPengawasan, shiftPengawasan) ||
                 other.shiftPengawasan == shiftPengawasan) &&
             (identical(other.jenisPengawasan, jenisPengawasan) ||
@@ -966,6 +1004,7 @@ class _$HomeStateImpl implements _HomeState {
     const DeepCollectionEquality().hash(_recentTransactions),
     isFree,
     nop,
+    alamatObjekPengawasan,
     namaLokasi,
     namaJukir,
     namaOp,
@@ -986,6 +1025,7 @@ class _$HomeStateImpl implements _HomeState {
     const DeepCollectionEquality().hash(_sofParkirResults),
     role,
     laporanPelanggaran,
+    pengawasanSequence,
     shiftPengawasan,
     jenisPengawasan,
     checkInOutData,
@@ -1017,6 +1057,7 @@ abstract class _HomeState implements HomeState {
     final List<HistoryItemModel> recentTransactions,
     final bool isFree,
     final String nop,
+    final String? alamatObjekPengawasan,
     final String? namaLokasi,
     final String namaJukir,
     final String? namaOp,
@@ -1037,6 +1078,7 @@ abstract class _HomeState implements HomeState {
     final List<SofParkirResultEntity> sofParkirResults,
     final RoleLoginDigitalParkir role,
     final int laporanPelanggaran,
+    final int pengawasanSequence,
     final ShiftPengawasan? shiftPengawasan,
     final JenisPengawasan? jenisPengawasan,
     final CheckInOutEntity checkInOutData,
@@ -1069,6 +1111,8 @@ abstract class _HomeState implements HomeState {
   bool get isFree;
   @override
   String get nop;
+  @override
+  String? get alamatObjekPengawasan;
   @override
   String? get namaLokasi;
   @override
@@ -1109,6 +1153,8 @@ abstract class _HomeState implements HomeState {
   RoleLoginDigitalParkir get role; //Segment Pengawas
   @override
   int get laporanPelanggaran;
+  @override
+  int get pengawasanSequence;
   @override
   ShiftPengawasan? get shiftPengawasan;
   @override

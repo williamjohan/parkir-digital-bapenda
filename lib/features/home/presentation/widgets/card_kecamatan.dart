@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_colors.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 
+import '../../../../core/constants/app_asset_constant.dart';
+
 class KecamatanStatCard extends StatelessWidget {
   final String namaKecamatan;
   final int totalObjekPajak;
@@ -21,6 +23,11 @@ class KecamatanStatCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
+        image: const DecorationImage(
+          image: AssetImage(AppAssetImages.patternCard),
+          fit: BoxFit.cover,
+          opacity: 1,
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [

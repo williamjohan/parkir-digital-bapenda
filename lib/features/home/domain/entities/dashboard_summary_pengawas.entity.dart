@@ -19,17 +19,24 @@ class DashboardSummaryPengawasEntity extends Equatable {
 
 class DashboardDataEntity extends Equatable {
   final int laporanPelanggaran;
+  final int pengawasanSequence;
   final DashboardInfoEntity dashboard;
   final CheckInOutEntity checkInOut;
 
   const DashboardDataEntity({
     required this.laporanPelanggaran,
+    required this.pengawasanSequence,
     required this.dashboard,
     required this.checkInOut,
   });
 
   @override
-  List<Object?> get props => [laporanPelanggaran, dashboard, checkInOut];
+  List<Object?> get props => [
+    laporanPelanggaran,
+    pengawasanSequence,
+    dashboard,
+    checkInOut,
+  ];
 }
 
 class DashboardInfoEntity extends Equatable {
@@ -136,7 +143,6 @@ class DetailAlatEntity extends Equatable {
     required this.namaAlat,
     required this.isBawa,
     required this.jenis,
-    
   });
 
   @override

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import '../../../../core/design_system/components/pb_basic_bottom_sheet.dart';
 import '../../../../core/design_system/components/pb_text_field.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
@@ -10,8 +9,8 @@ import '../../../../core/enums/app_enums.dart';
 import '../cubit/op_pengawasan_cubit.dart';
 import '../cubit/op_pengawasan_state.dart';
 import '../widgets/card_op_pengawas.dart';
+import 'package:go_router/go_router.dart';
 import '../widgets/filter_op_pengawas.dart';
-import '../widgets/shift_pengawasan_bottom_sheet.dart';
 
 class OpPengawasScreen extends StatefulWidget {
   const OpPengawasScreen({super.key});
@@ -90,7 +89,7 @@ class _OpPengawasScreenState extends State<OpPengawasScreen> {
         backgroundColor: Colors.grey.shade50,
         appBar: AppBar(
           title: Text(
-            'Objek Pajak Pengawasan',
+            'Objek Pengawasan',
             style: AppTypography.heading5.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.w600,
@@ -153,40 +152,22 @@ class _OpPengawasScreenState extends State<OpPengawasScreen> {
                               item: item,
                               onTap: state.isLoading
                                   ? null
-                                  : () {
+                                  : () async {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
 
                                       final cubit = context
                                           .read<OpPengawasanCubit>();
-                                      final mainContext = context;
 
-                                      bool isTapped = false;
+                                      // 1. Tunggu proses simpan selesai
+                                      await cubit.selectObjekPengawasan(item);
 
-                                      PbBasicBottomSheet.show(
-                                        context: mainContext,
-                                        title: 'Pilih Shift Pengawasan',
-                                        subTitle:
-                                            'Pilih shift sebelum memulai pengawasan.',
-                                        child: ShiftPengawasanBottomSheet(
-                                          onSelected: (shiftYangDipilih) async {
-                                            if (isTapped) return;
-
-                                            isTapped = true;
-
-                                            Navigator.pop(mainContext);
-
-                                            await cubit.changeShift(
-                                              shiftYangDipilih,
-                                              item,
-                                            );
-
-                                            if (mainContext.mounted) {
-                                              Navigator.pop(mainContext);
-                                            }
-                                          },
-                                        ),
-                                      );
+                                      // 2. Gembok Keamanan Ganda (Anti-Crash)
+                                      if (!context.mounted) return;
+                                      if (context.canPop()) {
+                                        context
+                                            .pop(); // Gunakan context.pop() bawaan GoRouter
+                                      }
                                     },
                             );
                           },

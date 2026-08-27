@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
@@ -18,7 +17,7 @@ import '../cubit/absensi_state.dart';
 import '../widgets/instrument_toggle_widget.dart';
 
 class AbsensiCheckListScreen extends StatefulWidget {
-  final ShiftFormType type;
+  final AbsenFormType type;
   final File? recoveredPhoto;
   final JenisPengawasan? jenis;
   final String? nop;
@@ -42,7 +41,7 @@ class _AbsensiCheckListScreenState extends State<AbsensiCheckListScreen> {
   final _mobilController = TextEditingController();
   final _photoKey = GlobalKey();
 
-  bool get _isCheckIn => widget.type == ShiftFormType.checkIn;
+  bool get _isCheckIn => widget.type == AbsenFormType.checkIn;
   Color get _accentColor => _isCheckIn ? AppColors.success : AppColors.error;
   String get _title => _isCheckIn ? "Form Check In" : "Form Check Out";
   String get _submitLabel =>

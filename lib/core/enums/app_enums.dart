@@ -84,7 +84,7 @@ enum AppPermissionStatus { granted, denied, permanentlyDenied }
 
 enum CameraModuleIntent { absensiCheckIn, absensiCheckOut, pengawasan, unknown }
 
-enum ShiftFormType { checkIn, checkOut }
+enum AbsenFormType { checkIn, checkOut }
 
 enum ShiftPengawasan {
   shift1(id: 1, label: 'Shift 1', timeRange: '10:00 - 14:00'),

@@ -23,7 +23,6 @@ abstract class ISummaryRemoteDataSource {
   });
   Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas({
     required String nomorObjek,
-    required int shift,
     required int jenis,
   });
 
@@ -154,17 +153,12 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
   @override
   Future<DashboardSummaryPengawasModel> getDashboardSummaryPengawas({
     required String nomorObjek,
-    required int shift,
     required int jenis,
   }) async {
     try {
       final response = await _dio.get(
         ApiEndpoints.pengawasDashboardRosterSummaryDev,
-        queryParameters: {
-          'nomorObjek': nomorObjek,
-          'shift': shift,
-          'jenis': jenis,
-        },
+        queryParameters: {'nomorObjek': nomorObjek, 'jenis': jenis},
       ); // Sesuaikan endpoint
 
       final result = DashboardSummaryPengawasModel.fromJson(response.data);
@@ -257,7 +251,7 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
     }
   }
 
- @override
+  @override
   Future<CounterDataModel> getCounterData() async {
     try {
       final response = await _dio.get(ApiEndpoints.getDataCounter);
@@ -294,10 +288,7 @@ class SummaryRemoteDataSourceImpl implements ISummaryRemoteDataSource {
     required int jumlahMobil,
   }) async {
     try {
-      final payload = {
-        "jumlahMotor": jumlahMotor,
-        "jumlahMobil": jumlahMobil,
-      };
+      final payload = {"jumlahMotor": jumlahMotor, "jumlahMobil": jumlahMobil};
 
       final response = await _dio.post(
         ApiEndpoints.insertDataCounter,

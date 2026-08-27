@@ -46,6 +46,7 @@ _$DashboardDataModelImpl _$$DashboardDataModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$DashboardDataModelImpl(
   laporanPelanggaran: (json['laporanPelanggaran'] as num?)?.toInt() ?? 0,
+  pengawasanSequence: (json['pengawasanSequence'] as num?)?.toInt() ?? 0,
   dashboard: json['dashboard'] == null
       ? const DashboardInfoModel()
       : DashboardInfoModel.fromJson(json['dashboard'] as Map<String, dynamic>),
@@ -58,6 +59,7 @@ Map<String, dynamic> _$$DashboardDataModelImplToJson(
   _$DashboardDataModelImpl instance,
 ) => <String, dynamic>{
   'laporanPelanggaran': instance.laporanPelanggaran,
+  'pengawasanSequence': instance.pengawasanSequence,
   'dashboard': instance.dashboard,
   'checkInOut': instance.checkInOut,
 };

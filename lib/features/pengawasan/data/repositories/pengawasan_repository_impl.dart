@@ -19,7 +19,6 @@ class PengawasanRepositoryImpl implements PengawasanRepository {
   @override
   Future<void> addPengawasan(RequestLaporanPengawasanEntity request) async {
     final nomorObjek = _appPreferences.getNomorObjekPengawasan();
-    final shift = _appPreferences.getShiftObjekPengawasan();
     final jenis = _appPreferences.getJenisObjekPengawasan();
 
     // Validasi data yang wajib tersedia
@@ -27,13 +26,6 @@ class PengawasanRepositoryImpl implements PengawasanRepository {
       throw const ServerException(
         statusCode: 400,
         message: 'Nomor objek pengawasan belum dipilih.',
-      );
-    }
-
-    if (shift == null) {
-      throw const ServerException(
-        statusCode: 400,
-        message: 'Shift pengawasan belum dipilih.',
       );
     }
 
@@ -46,7 +38,6 @@ class PengawasanRepositoryImpl implements PengawasanRepository {
 
     final finalRequest = request.copyWith(
       nomorObjek: nomorObjek,
-      shift: shift.id,
       jenis: jenis.id,
     );
 
@@ -56,20 +47,12 @@ class PengawasanRepositoryImpl implements PengawasanRepository {
   @override
   Future<List<LaporanPengawasanEntity>> getLaporanPengawasan() async {
     final nomorObjek = _appPreferences.getNomorObjekPengawasan();
-    final shift = _appPreferences.getShiftObjekPengawasan();
     final jenis = _appPreferences.getJenisObjekPengawasan();
 
     if (nomorObjek == null || nomorObjek.isEmpty) {
       throw const ServerException(
         statusCode: 400,
         message: 'Nomor objek pengawasan belum dipilih.',
-      );
-    }
-
-    if (shift == null) {
-      throw const ServerException(
-        statusCode: 400,
-        message: 'Shift pengawasan belum dipilih.',
       );
     }
 
@@ -82,7 +65,6 @@ class PengawasanRepositoryImpl implements PengawasanRepository {
 
     final models = await _datasource.getLaporanPengawasan(
       nomorObjek: nomorObjek,
-      shift: shift.id,
       jenis: jenis.id,
     );
 

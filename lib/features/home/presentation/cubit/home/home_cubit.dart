@@ -52,15 +52,13 @@ class HomeCubit extends Cubit<HomeState> {
       await _qrisUsecase.syncQris();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
       final activeNop = _homeUsecase.getNomorObjekPengawasan();
-      final activeShift = _homeUsecase.getShiftObjekPengawasan();
+      // final activeShift = _homeUsecase.getShiftObjekPengawasan();
       final activeJenis = _homeUsecase.getJenisObjekPengawasan();
+      final activeAlamat = _homeUsecase.getAlamatObjekPengawasan();
 
       //  2. GUARD CLAUSE (Zero State Logic)
       // Jika salah satu data belum lengkap, hentikan eksekusi API.
-      if (activeNop == null ||
-          activeNop.isEmpty ||
-          activeShift == null ||
-          activeJenis == null) {
+      if (activeNop == null || activeNop.isEmpty) {
         final rekapResult = await _homeUsecase.getRekapWilayahKecamatan();
 
         rekapResult.fold(
@@ -85,8 +83,9 @@ class HomeCubit extends Cubit<HomeState> {
       emit(
         state.copyWith(
           nop: activeNop,
-          shiftPengawasan: activeShift,
+          // shiftPengawasan: activeShift,
           jenisPengawasan: activeJenis,
+          alamatObjekPengawasan: activeAlamat,
         ),
       );
 
@@ -94,8 +93,7 @@ class HomeCubit extends Cubit<HomeState> {
       // Kirim parameter tersebut ke fungsi loadDashboardPengawas
       await loadDashboardPengawas(
         nomorObjek: activeNop,
-        shift: activeShift.id,
-        jenis: activeJenis.id,
+        jenisPengawasan: activeJenis!.id,
       );
     } else if (state.role == RoleLoginDigitalParkir.jukircounter) {
       emit(state.copyWith(status: HomeStatus.success));
@@ -176,15 +174,13 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> loadDashboardPengawas({
     required String nomorObjek,
-    required int shift,
-    required int jenis,
+    required int jenisPengawasan,
   }) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
     final result = await _homeUsecase.getDashboardSummaryPengawas(
       nomorObjek: nomorObjek,
-      shift: shift,
-      jenis: jenis,
+      jenis: jenisPengawasan,
     );
 
     if (isClosed) return;
@@ -200,6 +196,7 @@ class HomeCubit extends Cubit<HomeState> {
             totalPajak: 0,
             totalBersih: 0,
             laporanPelanggaran: 0,
+            pengawasanSequence: 0,
             checkInOutData: const CheckInOutEntity(
               idEvent: 0,
               op: '',
@@ -240,9 +237,10 @@ class HomeCubit extends Cubit<HomeState> {
                 .totalNominalBersihUntukWajibPajak
                 .toDouble(),
             laporanPelanggaran: summary.data.laporanPelanggaran,
+            pengawasanSequence: summary.data.pengawasanSequence,
             checkInOutData: _filterDetailAlatByJenis(
               summary.data.checkInOut,
-              jenis,
+              jenisPengawasan,
             ),
           ),
         );
@@ -341,10 +339,14 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> _loadProfileInfo() async {
     final roleId = await _secureStorage.getRoleId() ?? 0;
+    if (isClosed) return;
+
     final userRole = RoleLoginDigitalParkir.fromInt(roleId);
     emit(state.copyWith(role: userRole));
 
     final profile = await _secureStorage.getJukirProfile();
+    if (isClosed) return;
+
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
     final namaUserShort = namaUser.shortName;
 
@@ -481,5 +483,27 @@ class HomeCubit extends Cubit<HomeState> {
           .where((a) => a.jenis == jenis)
           .toList(),
     );
+  }
+
+  Future<void> clearObjekPengawasan() async {
+    // 1. Hapus memori di background terlebih dahulu
+    // (agar jika initialize dipanggil, ia tahu NOP sudah kosong)
+    await _homeUsecase.clearObjekPengawasanData();
+
+    if (isClosed) return;
+
+    if (state.rekapWilayah == null) {
+      emit(state.copyWith(nop: '', status: HomeStatus.loading));
+      await initialize();
+    } else {
+      emit(
+        state.copyWith(
+          nop: '',
+          namaOp: '',
+          alamatObjekPengawasan: '',
+          status: HomeStatus.needsSelection,
+        ),
+      );
+    }
   }
 }

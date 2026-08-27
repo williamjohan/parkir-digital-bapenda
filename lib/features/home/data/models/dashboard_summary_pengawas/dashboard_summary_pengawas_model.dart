@@ -23,6 +23,7 @@ class DashboardSummaryPengawasModel with _$DashboardSummaryPengawasModel {
 class DashboardDataModel with _$DashboardDataModel {
   const factory DashboardDataModel({
     @Default(0) int laporanPelanggaran,
+    @Default(0) int pengawasanSequence,
     @Default(DashboardInfoModel()) DashboardInfoModel dashboard,
     @Default(CheckInOutModel()) CheckInOutModel checkInOut,
   }) = _DashboardDataModel;
@@ -123,6 +124,7 @@ extension DashboardPengawasanModelExt on DashboardSummaryPengawasModel {
 extension DashboardDataModelExt on DashboardDataModel {
   DashboardDataEntity toEntity() {
     return DashboardDataEntity(
+      pengawasanSequence: pengawasanSequence,
       laporanPelanggaran: laporanPelanggaran,
       dashboard: dashboard.toEntity(),
       checkInOut: checkInOut.toEntity(),

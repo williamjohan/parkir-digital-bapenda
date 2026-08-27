@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_form_section_card.dart';
 
+import '../../../../core/design_system/tokens/app_colors.dart';
+
 class DetailLaporanPengawasanScreen extends StatelessWidget {
   final String namaJenisPelanggaran;
   final String keterangan;
@@ -20,15 +22,22 @@ class DetailLaporanPengawasanScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back_ios_rounded, size: 18),
+        title: Text(
+          'Detail Laporan',
+          style: AppTypography.heading5.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        title: const Text('Detail Laporan', style: AppTypography.bodySemiBold),
         centerTitle: true,
+        backgroundColor: AppColors.surface,
+        scrolledUnderElevation: 0,
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.primary, width: 1.0),
+        ),
+        elevation: 0,
+        foregroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

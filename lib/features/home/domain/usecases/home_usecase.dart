@@ -40,12 +40,10 @@ class HomeUsecase {
   Future<Either<Failure, DashboardSummaryPengawasEntity>>
   getDashboardSummaryPengawas({
     required String nomorObjek,
-    required int shift,
     required int jenis,
   }) {
     return _repository.getDashboardSummaryPengawas(
       nomorObjek: nomorObjek,
-      shift: shift,
       jenis: jenis,
     );
   }
@@ -95,11 +93,13 @@ class HomeUsecase {
   }
 
   String? getNomorObjekPengawasan() => _repository.getNomorObjekPengawasan();
-  ShiftPengawasan? getShiftObjekPengawasan() =>
-      _repository.getShiftObjekPengawasan();
+  String? getAlamatObjekPengawasan() => _repository.getAlamatObjekPengawasan();
   JenisPengawasan? getJenisObjekPengawasan() =>
       _repository.getJenisObjekPengawasan();
   String? getNamaObjekPengawasan() => _repository.getNamaObjekPengawasan();
+
+  Future<void> clearObjekPengawasanData() =>
+      _repository.clearObjekPengawasanData();
 
   Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan() async {
     return await _repository.getRekapWilayahKecamatan();

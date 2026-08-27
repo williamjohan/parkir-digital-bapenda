@@ -27,11 +27,6 @@ void main() {
       // 1. MUTLAK: Binding dipanggil DI DALAM zona yang sama dengan runApp
       WidgetsFlutterBinding.ensureInitialized();
       HttpOverrides.global = BapendaHttpOverrides();
-
-      // 2. Pasang global error handler PALING AWAL, sebelum langkah bootstrap
-      //    lain yang bisa gagal (dotenv/date-formatting/Firebase). Kalau dipasang
-      //    belakangan dan salah satu langkah itu throw, handler ini tidak pernah
-      //    aktif dan crash setelahnya tidak akan ke-report ke Crashlytics.
       FlutterError.onError = (errorDetails) {
         if (Firebase.apps.isNotEmpty) {
           FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
@@ -77,7 +72,6 @@ void main() {
         runApp(const _BootstrapFailedApp());
         return;
       }
-
       // 5. RUN APP DI DALAM ZONA YANG SAMA DENGAN BINDINGS
       runApp(const MyApp());
     },

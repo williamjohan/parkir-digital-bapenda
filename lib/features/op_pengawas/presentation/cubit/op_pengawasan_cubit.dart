@@ -50,12 +50,15 @@ class OpPengawasanCubit extends Cubit<OpPengawasanState> {
     }
   }
 
-  Future<void> changeShift(ShiftPengawasan shift, OpPengawasEntity item) async {
+  Future<void> selectObjekPengawasan(OpPengawasEntity item) async {
     if (isClosed) return;
-    await _appPreferences.saveShiftObjekPengawasan(shift);
-    await _appPreferences.saveJenisObjekPengawasan(item.jenisPengawasan);
-    await _appPreferences.saveNomorObjekPengawasan(item.nop);
-    await _appPreferences.saveNamaObjekPengawasan(item.namaOp);
+
+    await Future.wait([
+      _appPreferences.saveJenisObjekPengawasan(item.jenisPengawasan),
+      _appPreferences.saveAlamatObjekPengawasan(item.alamat),
+      _appPreferences.saveNomorObjekPengawasan(item.nop),
+      _appPreferences.saveNamaObjekPengawasan(item.namaOp),
+    ]);
   }
 
   static final List<OpPengawasEntity> _dummySkeleton = List.generate(

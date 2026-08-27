@@ -18,24 +18,22 @@ abstract class IHomeRepository {
   getDashboardSummaryNonJukirRange({String? tglAwal, String? tglAkhir});
 
   Future<Either<Failure, DashboardSummaryPengawasEntity>>
-  getDashboardSummaryPengawas({
-    required String nomorObjek,
-    required int shift,
-    required int jenis,
-  });
+  getDashboardSummaryPengawas({required String nomorObjek, required int jenis});
 
   Future<Either<Failure, bool>> getOpLastUpdate();
 
   String? getNomorObjekPengawasan();
-  ShiftPengawasan? getShiftObjekPengawasan();
-  JenisPengawasan? getJenisObjekPengawasan();
+  String? getAlamatObjekPengawasan();
   String? getNamaObjekPengawasan();
+  JenisPengawasan? getJenisObjekPengawasan();
 
   Future<Either<Failure, RekapWilayahEntity>> getRekapWilayahKecamatan();
 
   Future<Either<Failure, CounterDataEntity>> getCounterData();
   Future<Either<Failure, void>> insertCounterData({
-    required int jumlahMotor, 
+    required int jumlahMotor,
     required int jumlahMobil,
   });
+
+  Future<void> clearObjekPengawasanData();
 }

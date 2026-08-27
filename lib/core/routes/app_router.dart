@@ -150,17 +150,17 @@ class AppRouter {
           path: AppRoutes.absensi,
           name: AppRoutes.absensi,
           builder: (context, state) {
-            ShiftFormType type = ShiftFormType.checkIn;
+            AbsenFormType type = AbsenFormType.checkIn;
             File? recoveredFile;
             JenisPengawasan? jenis;
             String? nop; // 🆕
             ShiftPengawasan? shift; // 🆕
 
-            if (state.extra is ShiftFormType) {
-              type = state.extra as ShiftFormType;
+            if (state.extra is AbsenFormType) {
+              type = state.extra as AbsenFormType;
             } else if (state.extra is Map<String, dynamic>) {
               final args = state.extra as Map<String, dynamic>;
-              type = args['type'] as ShiftFormType? ?? ShiftFormType.checkIn;
+              type = args['type'] as AbsenFormType? ?? AbsenFormType.checkIn;
               recoveredFile = args['file'] as File?;
               jenis = args['jenis'] as JenisPengawasan?;
               nop = args['nop'] as String?;

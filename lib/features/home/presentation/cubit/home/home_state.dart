@@ -25,6 +25,7 @@ class HomeState with _$HomeState {
     @Default([]) List<HistoryItemModel> recentTransactions,
     @Default(false) bool isFree,
     @Default("") String nop,
+    @Default("") String? alamatObjekPengawasan,
     @Default("") String? namaLokasi,
     @Default("") String namaJukir,
     @Default("") String? namaOp,
@@ -85,8 +86,10 @@ class HomeState with _$HomeState {
 
     //Segment Pengawas
     @Default(0) int laporanPelanggaran,
+    @Default(0) int pengawasanSequence,
     ShiftPengawasan? shiftPengawasan,
     JenisPengawasan? jenisPengawasan,
+
     @Default(
       CheckInOutEntity(
         idEvent: 0,

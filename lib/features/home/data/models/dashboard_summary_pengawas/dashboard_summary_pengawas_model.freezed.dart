@@ -290,6 +290,7 @@ DashboardDataModel _$DashboardDataModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$DashboardDataModel {
   int get laporanPelanggaran => throw _privateConstructorUsedError;
+  int get pengawasanSequence => throw _privateConstructorUsedError;
   DashboardInfoModel get dashboard => throw _privateConstructorUsedError;
   CheckInOutModel get checkInOut => throw _privateConstructorUsedError;
 
@@ -312,6 +313,7 @@ abstract class $DashboardDataModelCopyWith<$Res> {
   @useResult
   $Res call({
     int laporanPelanggaran,
+    int pengawasanSequence,
     DashboardInfoModel dashboard,
     CheckInOutModel checkInOut,
   });
@@ -336,6 +338,7 @@ class _$DashboardDataModelCopyWithImpl<$Res, $Val extends DashboardDataModel>
   @override
   $Res call({
     Object? laporanPelanggaran = null,
+    Object? pengawasanSequence = null,
     Object? dashboard = null,
     Object? checkInOut = null,
   }) {
@@ -344,6 +347,10 @@ class _$DashboardDataModelCopyWithImpl<$Res, $Val extends DashboardDataModel>
             laporanPelanggaran: null == laporanPelanggaran
                 ? _value.laporanPelanggaran
                 : laporanPelanggaran // ignore: cast_nullable_to_non_nullable
+                      as int,
+            pengawasanSequence: null == pengawasanSequence
+                ? _value.pengawasanSequence
+                : pengawasanSequence // ignore: cast_nullable_to_non_nullable
                       as int,
             dashboard: null == dashboard
                 ? _value.dashboard
@@ -390,6 +397,7 @@ abstract class _$$DashboardDataModelImplCopyWith<$Res>
   @useResult
   $Res call({
     int laporanPelanggaran,
+    int pengawasanSequence,
     DashboardInfoModel dashboard,
     CheckInOutModel checkInOut,
   });
@@ -415,6 +423,7 @@ class __$$DashboardDataModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? laporanPelanggaran = null,
+    Object? pengawasanSequence = null,
     Object? dashboard = null,
     Object? checkInOut = null,
   }) {
@@ -423,6 +432,10 @@ class __$$DashboardDataModelImplCopyWithImpl<$Res>
         laporanPelanggaran: null == laporanPelanggaran
             ? _value.laporanPelanggaran
             : laporanPelanggaran // ignore: cast_nullable_to_non_nullable
+                  as int,
+        pengawasanSequence: null == pengawasanSequence
+            ? _value.pengawasanSequence
+            : pengawasanSequence // ignore: cast_nullable_to_non_nullable
                   as int,
         dashboard: null == dashboard
             ? _value.dashboard
@@ -442,6 +455,7 @@ class __$$DashboardDataModelImplCopyWithImpl<$Res>
 class _$DashboardDataModelImpl implements _DashboardDataModel {
   const _$DashboardDataModelImpl({
     this.laporanPelanggaran = 0,
+    this.pengawasanSequence = 0,
     this.dashboard = const DashboardInfoModel(),
     this.checkInOut = const CheckInOutModel(),
   });
@@ -454,6 +468,9 @@ class _$DashboardDataModelImpl implements _DashboardDataModel {
   final int laporanPelanggaran;
   @override
   @JsonKey()
+  final int pengawasanSequence;
+  @override
+  @JsonKey()
   final DashboardInfoModel dashboard;
   @override
   @JsonKey()
@@ -461,7 +478,7 @@ class _$DashboardDataModelImpl implements _DashboardDataModel {
 
   @override
   String toString() {
-    return 'DashboardDataModel(laporanPelanggaran: $laporanPelanggaran, dashboard: $dashboard, checkInOut: $checkInOut)';
+    return 'DashboardDataModel(laporanPelanggaran: $laporanPelanggaran, pengawasanSequence: $pengawasanSequence, dashboard: $dashboard, checkInOut: $checkInOut)';
   }
 
   @override
@@ -471,6 +488,8 @@ class _$DashboardDataModelImpl implements _DashboardDataModel {
             other is _$DashboardDataModelImpl &&
             (identical(other.laporanPelanggaran, laporanPelanggaran) ||
                 other.laporanPelanggaran == laporanPelanggaran) &&
+            (identical(other.pengawasanSequence, pengawasanSequence) ||
+                other.pengawasanSequence == pengawasanSequence) &&
             (identical(other.dashboard, dashboard) ||
                 other.dashboard == dashboard) &&
             (identical(other.checkInOut, checkInOut) ||
@@ -479,8 +498,13 @@ class _$DashboardDataModelImpl implements _DashboardDataModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, laporanPelanggaran, dashboard, checkInOut);
+  int get hashCode => Object.hash(
+    runtimeType,
+    laporanPelanggaran,
+    pengawasanSequence,
+    dashboard,
+    checkInOut,
+  );
 
   /// Create a copy of DashboardDataModel
   /// with the given fields replaced by the non-null parameter values.
@@ -502,6 +526,7 @@ class _$DashboardDataModelImpl implements _DashboardDataModel {
 abstract class _DashboardDataModel implements DashboardDataModel {
   const factory _DashboardDataModel({
     final int laporanPelanggaran,
+    final int pengawasanSequence,
     final DashboardInfoModel dashboard,
     final CheckInOutModel checkInOut,
   }) = _$DashboardDataModelImpl;
@@ -511,6 +536,8 @@ abstract class _DashboardDataModel implements DashboardDataModel {
 
   @override
   int get laporanPelanggaran;
+  @override
+  int get pengawasanSequence;
   @override
   DashboardInfoModel get dashboard;
   @override

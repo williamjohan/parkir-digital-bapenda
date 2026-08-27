@@ -14,7 +14,6 @@ import '../models/laporan_pengawasan/laporan_pengawasan_model.dart';
 abstract class PengawasanDatasource {
   Future<List<LaporanPengawasanModel>> getLaporanPengawasan({
     required String nomorObjek,
-    required int shift,
     required int jenis,
   });
 
@@ -50,7 +49,6 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
   @override
   Future<List<LaporanPengawasanModel>> getLaporanPengawasan({
     required String nomorObjek,
-    required int shift,
     required int jenis,
   }) async {
     try {
@@ -58,11 +56,7 @@ class PengawasanDatasourceImpl implements PengawasanDatasource {
 
       final response = await _dio.get(
         ApiEndpoints.pengawasLaporanList,
-        queryParameters: {
-          'nomorObjek': nomorObjek,
-          'shift': shift,
-          'jenis': jenis,
-        },
+        queryParameters: {'nomorObjek': nomorObjek, 'jenis': jenis},
       );
 
       AppLogger.info(

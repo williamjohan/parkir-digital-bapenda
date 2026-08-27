@@ -62,6 +62,21 @@ class AppPreferences {
   }
 
   // ---------------------------------------------------------------------------
+  // --- Alamat Objek Pengawasan (Tetap String Bebas) ---
+  // ---------------------------------------------------------------------------
+  Future<bool> saveAlamatObjekPengawasan(String value) async {
+    return await _prefs.setString(PreferenceKeys.alamatObjekPengawasan, value);
+  }
+
+  String? getAlamatObjekPengawasan() {
+    return _prefs.getString(PreferenceKeys.alamatObjekPengawasan);
+  }
+
+  Future<bool> removeAlamatObjekPengawasan() async {
+    return await _prefs.remove(PreferenceKeys.alamatObjekPengawasan);
+  }
+
+  // ---------------------------------------------------------------------------
   // --- NAMA OBJEK PENGAWASAN (Tetap String Bebas) ---
   // ---------------------------------------------------------------------------
   Future<bool> saveNamaObjekPengawasan(String value) async {
