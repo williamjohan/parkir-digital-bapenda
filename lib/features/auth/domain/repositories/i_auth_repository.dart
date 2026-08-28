@@ -18,5 +18,7 @@ abstract class IAuthRepository {
   Stream<String> get ssoTokenStream;
 
   /// Login dengan SessionId dari kantorku
-  Future<Either<Failure, void>> loginWithKantorkuSession(String sessionId);
+  Future<Either<Failure, Unit>> loginWithKantorkuSession(String sessionId);
+
+  Future<void> saveCredentials(String username, String password);
 }

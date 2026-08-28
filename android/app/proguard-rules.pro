@@ -1,2 +1,5 @@
--keep class com.google.mlkit.vision.text.** { *; }
--dontwarn com.google.mlkit.**
+-keepclassmembers class * extends androidx.security.crypto.EncryptedSharedPreferences {
+    <init>(...);
+}
+-keep class androidx.security.crypto.** { *; }
+-keep class com.google.crypto.tink.** { *; }

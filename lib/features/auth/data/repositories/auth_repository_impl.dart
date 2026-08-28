@@ -164,4 +164,9 @@ class AuthRepositoryImpl implements IAuthRepository {
 
     return const Left(AuthFailure('Token tidak ditemukan dari server.'));
   }
+
+  @override
+  Future<void> saveCredentials(String username, String password) async {
+    await _secureStorage.saveCredentials(username, password);
+  }
 }

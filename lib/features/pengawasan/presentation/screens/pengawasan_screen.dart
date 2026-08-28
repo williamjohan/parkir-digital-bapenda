@@ -119,14 +119,16 @@ class _LaporanPelanggaranScreenState extends State<LaporanPelanggaranScreen> {
                   return CardLaporanPelanggaran(
                     item: laporan,
                     onTapLaporan: () {
-                      final jenisPelanggaran = dummyJenisPelanggaran.firstWhere(
-                        (e) => e.id == laporan.jenisPel,
-                      );
+                      final jenisPelanggaran = dummyJenisPelanggaran
+                          .where((e) => e.id == laporan.jenisPel)
+                          .firstOrNull;
+
                       context.pushNamed(
                         AppRoutes.detailLaporanPelanggaran,
                         extra: {
                           'namaJenisPelanggaran':
-                              jenisPelanggaran.namaPelanggaran,
+                              jenisPelanggaran?.namaPelanggaran ??
+                              'Jenis Pelanggaran Tidak Diketahui',
                           'keterangan': laporan.ketPel,
                           'foto': laporan.fotoPelaporan,
                         },

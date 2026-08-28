@@ -52,22 +52,19 @@ class HomeCubit extends Cubit<HomeState> {
       await _qrisUsecase.syncQris();
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
       final activeNop = _homeUsecase.getNomorObjekPengawasan();
-      // final activeShift = _homeUsecase.getShiftObjekPengawasan();
       final activeJenis = _homeUsecase.getJenisObjekPengawasan();
       final activeAlamat = _homeUsecase.getAlamatObjekPengawasan();
 
-      //  2. GUARD CLAUSE (Zero State Logic)
-      // Jika salah satu data belum lengkap, hentikan eksekusi API.
       if (activeNop == null || activeNop.isEmpty) {
         final rekapResult = await _homeUsecase.getRekapWilayahKecamatan();
 
         rekapResult.fold(
           (failure) {
-            // Jika API rekap gagal, tetap tampilkan layar Zero State (tanpa card)
+            if (isClosed) return;
             emit(state.copyWith(status: HomeStatus.needsSelection));
           },
           (rekapData) {
-            // Jika berhasil, kirim status needsSelection BERSAMAAN dengan data rekap
+            if (isClosed) return;
             emit(
               state.copyWith(
                 status: HomeStatus.needsSelection,
@@ -79,23 +76,21 @@ class HomeCubit extends Cubit<HomeState> {
         return;
       }
 
-      // 3. JIKA DATA LENGKAP: Simpan ke State agar UI merender Header Dashboard
+      if (isClosed) return;
       emit(
         state.copyWith(
           nop: activeNop,
-          // shiftPengawasan: activeShift,
           jenisPengawasan: activeJenis,
           alamatObjekPengawasan: activeAlamat,
         ),
       );
 
-      // 4. TEMBAK API
-      // Kirim parameter tersebut ke fungsi loadDashboardPengawas
       await loadDashboardPengawas(
         nomorObjek: activeNop,
         jenisPengawasan: activeJenis!.id,
       );
     } else if (state.role == RoleLoginDigitalParkir.jukircounter) {
+      if (isClosed) return;
       emit(state.copyWith(status: HomeStatus.success));
       return;
     } else {
@@ -117,7 +112,6 @@ class HomeCubit extends Cubit<HomeState> {
 
     if (profile != null) {
       final dynamic rawPungutTarif = profile['pungutTarif'];
-
       isFreeStatus = rawPungutTarif == 1 || rawPungutTarif == '1';
     }
 
@@ -132,9 +126,11 @@ class HomeCubit extends Cubit<HomeState> {
     summaryJukirResult.fold(
       (failure) {
         isSummaryFailed = true;
+        if (isClosed) return;
         emit(state.copyWith(isFree: isFreeStatus, status: HomeStatus.failure));
       },
       (summary) {
+        if (isClosed) return;
         emit(
           state.copyWith(
             motorCount: summary.jumlahMotorHariIni,
@@ -157,17 +153,18 @@ class HomeCubit extends Cubit<HomeState> {
 
     recentResult.fold(
       (failure) {
-        // Opsional: Anda bisa melogging error ini tanpa harus merusak status utama UI
         AppLogger.error(
           'Gagal mengambil history transaksi: ${failure.message}',
         );
       },
       (transactions) {
+        if (isClosed) return;
         emit(state.copyWith(recentTransactions: transactions));
       },
     );
 
     if (!isSummaryFailed) {
+      if (isClosed) return;
       emit(state.copyWith(status: HomeStatus.success));
     }
   }
@@ -187,6 +184,7 @@ class HomeCubit extends Cubit<HomeState> {
 
     result.fold(
       (failure) {
+        if (isClosed) return;
         emit(
           state.copyWith(
             status: HomeStatus.failure,
@@ -222,6 +220,7 @@ class HomeCubit extends Cubit<HomeState> {
         );
       },
       (summary) {
+        if (isClosed) return;
         emit(
           state.copyWith(
             status: HomeStatus.success,
@@ -252,8 +251,10 @@ class HomeCubit extends Cubit<HomeState> {
     final result = await _homeUsecase.getDashboardSummaryNonJukir();
 
     if (isClosed) return;
+
     result.fold(
       (failure) {
+        if (isClosed) return;
         emit(
           state.copyWith(
             status: HomeStatus.failure,
@@ -277,7 +278,6 @@ class HomeCubit extends Cubit<HomeState> {
               persentaseNonTarif: 0,
               persentaseTidakDiketahui: 0,
             ),
-
             nonDigital: const OpCategoryEntity(
               total: 0,
               totalBertarif: 0,
@@ -301,7 +301,6 @@ class HomeCubit extends Cubit<HomeState> {
               total: 0,
               persentase: 0,
             ),
-
             persentaseDigital: 0,
             persentaseNonDigital: 0,
             sofParkirResults: [],
@@ -309,6 +308,7 @@ class HomeCubit extends Cubit<HomeState> {
         );
       },
       (summary) {
+        if (isClosed) return;
         emit(
           state.copyWith(
             status: HomeStatus.success,
@@ -322,7 +322,6 @@ class HomeCubit extends Cubit<HomeState> {
             totalOpNonDigital: summary.totalOpNonDigital,
             digital: summary.digital,
             nonDigital: summary.nonDigital,
-
             persentaseDigital: summary.persentaseDigital,
             persentaseNonDigital: summary.persentaseNonDigital,
             sofParkirResults: summary.sofParkirResults,
@@ -350,9 +349,9 @@ class HomeCubit extends Cubit<HomeState> {
     final namaUser = profile?['namaUser']?.toString() ?? 'User';
     final namaUserShort = namaUser.shortName;
 
-    //  1. BEHAVIOR KHUSUS JUKIR atau JUKIR COUNTER (NOP Statis Menempel dari Secured Storage)
     if (userRole == RoleLoginDigitalParkir.jukir ||
         userRole == RoleLoginDigitalParkir.jukircounter) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           namaJukir: namaUserShort,
@@ -364,11 +363,12 @@ class HomeCubit extends Cubit<HomeState> {
       return;
     }
 
-    //  2. BEHAVIOR KHUSUS PENGAWAS (Hanya ambil nama)
     if (userRole == RoleLoginDigitalParkir.pengawas) {
       final activeNamaLokasi = _homeUsecase.getNamaObjekPengawasan();
       final activeNop = _homeUsecase.getNomorObjekPengawasan();
       final nmOpd = profile?['nmOpd']?.toString() ?? '-';
+
+      if (isClosed) return;
       emit(
         state.copyWith(
           namaJukir: namaUserShort,
@@ -380,9 +380,7 @@ class HomeCubit extends Cubit<HomeState> {
       return;
     }
 
-    //  3. BEHAVIOR NON-JUKIR (WP, Bapenda, dll)
     final nopList = await _databaseHelper.getNopList();
-
     if (isClosed) return;
 
     if (nopList.isEmpty) {
@@ -392,6 +390,7 @@ class HomeCubit extends Cubit<HomeState> {
 
     final firstNop = nopList.first;
 
+    if (isClosed) return;
     emit(
       state.copyWith(
         namaJukir: namaUser,
@@ -403,6 +402,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> changeObjekPajak(Map<String, dynamic> item) async {
+    if (isClosed) return;
     emit(
       state.copyWith(
         nop: item['nop']?.toString() ?? '',
@@ -432,6 +432,7 @@ class HomeCubit extends Cubit<HomeState> {
 
     AppLogger.debug("isi namaJukirFormatted : $formattedName");
 
+    if (isClosed) return;
     emit(state.copyWith(namaJukirFormatted: formattedName));
   }
 
@@ -445,6 +446,8 @@ class HomeCubit extends Cubit<HomeState> {
         AppLogger.error('Gagal mengecek update OP: ${failure.message}');
       },
       (isSame) {
+        // 🚀 INI DIA TITIK LEDAKAN UTAMANYA. PERISAI DITAMBAHKAN!
+        if (isClosed) return;
         emit(state.copyWith(isOpUpToDate: isSame));
       },
     );
@@ -452,7 +455,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   void clearRecoveredSession() {
     if (!isClosed) {
-      // Freezed langsung paham kita ingin mengosongkan field ini
       emit(state.copyWith(recoveredSession: null));
     }
   }
@@ -486,8 +488,6 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> clearObjekPengawasan() async {
-    // 1. Hapus memori di background terlebih dahulu
-    // (agar jika initialize dipanggil, ia tahu NOP sudah kosong)
     await _homeUsecase.clearObjekPengawasanData();
 
     if (isClosed) return;
@@ -496,6 +496,7 @@ class HomeCubit extends Cubit<HomeState> {
       emit(state.copyWith(nop: '', status: HomeStatus.loading));
       await initialize();
     } else {
+      if (isClosed) return;
       emit(
         state.copyWith(
           nop: '',

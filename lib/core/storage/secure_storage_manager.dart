@@ -1,12 +1,17 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
+import '../utils/app_logger.dart';
 import 'i_secure_storage_manager.dart';
 
 @LazySingleton(as: ISecureStorageManager)
 class SecureStorageManagerImpl implements ISecureStorageManager {
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(resetOnError: true),
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+  );
 
   static const String _keyAccessToken = 'ACCESS_TOKEN';
   static const String _keyRefreshToken = 'REFRESH_TOKEN';
@@ -25,15 +30,33 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
   static const String _keyQrisMetadata = 'QRIS_METADATA_V2';
   static const String _keyQrisLastUpdate = 'QRIS_LAST_UPDATE_V2';
   static const String _keyOpLastUpdate = 'OP_LAST_UPDATE';
+  String? _cachedAccessToken;
 
   @override
   Future<void> saveAccessToken(String token) async {
-    await _storage.write(key: _keyAccessToken, value: token);
+    try {
+      await _storage.write(key: _keyAccessToken, value: token);
+      _cachedAccessToken = token;
+    } on PlatformException catch (e) {
+      AppLogger.error('Keystore Error saat save token: ${e.message}');
+      _cachedAccessToken = token;
+    }
   }
 
   @override
   Future<String?> getAccessToken() async {
-    return await _storage.read(key: _keyAccessToken);
+    if (_cachedAccessToken != null) {
+      return _cachedAccessToken;
+    }
+
+    try {
+      final token = await _storage.read(key: _keyAccessToken);
+      _cachedAccessToken = token; // Simpan ke cache
+      return token;
+    } on PlatformException catch (e) {
+      AppLogger.error('Keystore Error -41 saat baca token: ${e.message}');
+      return null;
+    }
   }
 
   @override
@@ -48,13 +71,20 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
 
   @override
   Future<void> clearAllTokens() async {
-    await _storage.delete(key: _keyAccessToken);
-    await _storage.delete(key: _keyRefreshToken);
-    await clearJukirProfile();
-    await clearMasterTarif();
-    await clearRoleId();
-    await clearProfilePicture();
-    await clearDashboardAnchor();
+    try {
+      await _storage.delete(key: _keyAccessToken);
+      await _storage.delete(key: _keyRefreshToken);
+      _cachedAccessToken = null;
+
+      await clearJukirProfile();
+      await clearMasterTarif();
+      await clearRoleId();
+      await clearProfilePicture();
+      await clearDashboardAnchor();
+    } on PlatformException catch (e) {
+      AppLogger.error('Keystore Error saat clear token: ${e.message}');
+      _cachedAccessToken = null;
+    }
   }
 
   @override

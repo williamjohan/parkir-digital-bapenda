@@ -1,27 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+import 'package:parkir_digital_bapenda/features/auth/domain/usecases/auth_usecase.dart';
 import 'package:parkir_digital_bapenda/features/profile/domain/usecases/profile_usecase.dart';
 import '../../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
-import '../../../domain/usecases/check_auth_status_usecase.dart';
-import '../../../domain/usecases/check_device_uuid_usecase.dart';
-import '../../../domain/usecases/logout_usecase.dart';
 import 'app_auth_state.dart';
 
 @lazySingleton
 class AppAuthCubit extends Cubit<AppAuthState> {
-  final CheckAuthStatusUseCase _checkAuthStatus;
-  final LogoutUseCase _logout;
   final ProfileUseCase _profileUseCase;
-  final CheckDeviceUuidUseCase _checkDeviceUuid;
+  final AuthUseCase _authUseCase;
 
-  AppAuthCubit(
-    this._checkAuthStatus,
-    this._logout,
-    this._profileUseCase,
-    this._checkDeviceUuid,
-  ) : super(AppAuthInitial());
+  AppAuthCubit(this._profileUseCase, this._authUseCase)
+    : super(AppAuthInitial());
 
   Future<void> checkStatus({bool isFromSplash = false}) async {
     AppLogger.debug(">>> [AppAuthCubit] Mengecek status autentikasi...");
@@ -30,9 +22,14 @@ class AppAuthCubit extends Cubit<AppAuthState> {
       await Future.delayed(const Duration(seconds: 1));
     }
 
+    if (isClosed) return;
+
     try {
       // 1. Cek apakah Token JWT masih ada/valid di lokal
-      final hasValidToken = await _checkAuthStatus();
+      final hasValidToken = await _authUseCase.checkAuthStatus();
+
+      if (isClosed) return;
+
       if (!hasValidToken) {
         emit(AppUnauthenticated());
         return;
@@ -41,6 +38,7 @@ class AppAuthCubit extends Cubit<AppAuthState> {
       // 2. Ambil & Sinkronisasi Profil (Agar Role Terbaru Masuk ke Storage)
       final profileResult = await _profileUseCase.getProfileInfo();
 
+      if (isClosed) return;
       bool isOnline = false;
       bool isProfileValid = false;
 
@@ -65,6 +63,8 @@ class AppAuthCubit extends Cubit<AppAuthState> {
         },
       );
 
+      if (isClosed) return;
+
       // Jika profil lokal pun tidak ada, tendang ke Login
       if (!isProfileValid) {
         emit(AppUnauthenticated());
@@ -72,12 +72,13 @@ class AppAuthCubit extends Cubit<AppAuthState> {
       }
 
       // 3. Verifikasi UUID Perangkat (Hanya dilakukan jika ONLINE)
-      // Jika offline, kita percayai sesi lokal terlebih dahulu demi kelancaran Jukir di lapangan
       if (isOnline) {
         AppLogger.debug(
           ">>> [AppAuthCubit] Memverifikasi UUID perangkat ke server...",
         );
-        final isDeviceValid = await _checkDeviceUuid();
+        final isDeviceValid = await _authUseCase.checkDeviceUuid();
+
+        if (isClosed) return;
 
         if (!isDeviceValid) {
           AppLogger.error(
@@ -92,7 +93,7 @@ class AppAuthCubit extends Cubit<AppAuthState> {
         );
       }
 
-      // Lolos semua sensor
+      if (isClosed) return;
       emit(AppAuthenticated());
     } catch (e, stackTrace) {
       AppLogger.error(
@@ -100,6 +101,7 @@ class AppAuthCubit extends Cubit<AppAuthState> {
         e,
         stackTrace,
       );
+      if (isClosed) return;
       emit(AppUnauthenticated());
     }
   }
@@ -109,12 +111,16 @@ class AppAuthCubit extends Cubit<AppAuthState> {
     final storage = GetIt.instance<ISecureStorageManager>();
     await storage.saveLogoutReason('DEVICE_MISMATCH');
     await storage.clearPasswordOnly();
-    await _logout();
+    await _authUseCase.logout();
+
+    if (isClosed) return;
     emit(AppUnauthenticated());
   }
 
   Future<void> forceLogout() async {
-    await _logout();
+    await _authUseCase.logout();
+
+    if (isClosed) return;
     emit(AppUnauthenticated());
   }
 }

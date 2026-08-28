@@ -1,39 +1,22 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../../core/di/injection.dart';
-import '../../../../../core/storage/i_secure_storage_manager.dart';
 import '../../../../../core/utils/app_logger.dart';
-import '../../../domain/usecases/get_kantorku_sso_url_usecase.dart';
-import '../../../domain/usecases/get_sso_token_stream_usecase.dart';
 import '../../../domain/usecases/login_usecase.dart';
-import '../../../domain/usecases/login_with_sso_usecase.dart';
-import '../app_auth/app_auth_cubit.dart';
 import 'login_state.dart';
 
 @injectable
 class LoginCubit extends Cubit<LoginState> {
-  final LoginUseCase _loginUseCase;
-  final AppAuthCubit _appAuthCubit;
-  final GetKantorkuSsoUrlUseCase _getKantorkuSsoUrlUseCase;
-  final GetSsoTokenStreamUseCase _getSsoTokenStreamUseCase;
-  final LoginWithSsoUseCase _loginWithSsoUseCase;
+  final LoginUseCase _loginUsecase;
 
   StreamSubscription<String>? _ssoSubscription;
 
-  LoginCubit(
-    this._loginUseCase,
-    this._appAuthCubit,
-    this._getKantorkuSsoUrlUseCase,
-    this._getSsoTokenStreamUseCase,
-    this._loginWithSsoUseCase,
-  ) : super(LoginInitial()) {
+  LoginCubit(this._loginUsecase) : super(LoginInitial()) {
     _initSsoListener();
   }
 
   void _initSsoListener() {
-    _ssoSubscription = _getSsoTokenStreamUseCase().listen((sessionId) {
+    _ssoSubscription = _loginUsecase.ssoTokenStream.listen((sessionId) {
       _processSsoCallback(sessionId);
     });
   }
@@ -44,19 +27,21 @@ class LoginCubit extends Cubit<LoginState> {
     bool rememberMe,
   ) async {
     emit(LoginLoading());
-    final result = await _loginUseCase(username, password);
+    final result = await _loginUsecase.loginReguler(username, password);
+
+    if (isClosed) return;
+
     await result.fold(
       (failure) async {
         emit(LoginFailure(failure.message));
       },
       (_) async {
         if (rememberMe) {
-          await locator<ISecureStorageManager>().saveCredentials(
-            username,
-            password,
-          );
+          // 🚀 BERKOMUNIKASI LEWAT FACADE
+          await _loginUsecase.saveCredentials(username, password);
         }
-        await _appAuthCubit.checkStatus(isFromSplash: false);
+
+        if (isClosed) return;
         emit(LoginSuccess());
       },
     );
@@ -64,8 +49,9 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> initiateKantorkuSSO() async {
     emit(LoginLoading());
+    final result = await _loginUsecase.getKantorkuSsoUrl();
 
-    final result = await _getKantorkuSsoUrlUseCase();
+    if (isClosed) return;
 
     result.fold(
       (failure) => emit(LoginFailure(failure.message)),
@@ -75,19 +61,18 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> _processSsoCallback(String sessionId) async {
     emit(LoginLoading());
-    AppLogger.debug(
-      '✅ Cubit menerima Session ID SSO via Clean Architecture: $sessionId',
-    );
+    AppLogger.debug('✅ Session ID SSO: $sessionId');
 
-    final result = await _loginWithSsoUseCase(sessionId);
+    final result = await _loginUsecase.loginWithSso(sessionId);
+
+    if (isClosed) return;
 
     await result.fold(
       (failure) async {
         emit(LoginFailure(failure.message));
       },
       (_) async {
-        await _appAuthCubit.checkStatus(isFromSplash: false);
-
+        if (isClosed) return;
         emit(LoginSuccess());
       },
     );
