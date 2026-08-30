@@ -5,6 +5,7 @@ import 'package:parkir_digital_bapenda/core/design_system/tokens/app_typography.
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_model.dart';
 import 'package:parkir_digital_bapenda/features/transaction_history/data/models/history_item_ui_extension.dart';
 
+import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/routes/app_routes.dart';
 
 class LastActivityWidget extends StatelessWidget {
@@ -18,8 +19,13 @@ class LastActivityWidget extends StatelessWidget {
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white, // Tambahkan warna dasar putih
-        borderRadius: BorderRadius.circular(12), // Sedikit diperhalus sudutnya
+        color: Colors.white,
+        image: const DecorationImage(
+          image: AssetImage(AppAssetImages.patternCard),
+          fit: BoxFit.cover,
+          opacity: 1,
+        ),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),

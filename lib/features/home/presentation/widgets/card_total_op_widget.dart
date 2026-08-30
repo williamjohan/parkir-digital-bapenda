@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parkir_digital_bapenda/core/design_system/components/pb_primary_button.dart';
 import 'package:parkir_digital_bapenda/core/utils/number_formatter.dart';
+import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 
@@ -42,6 +43,11 @@ class CardTotalOpWidget extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
+        image: const DecorationImage(
+          image: AssetImage(AppAssetImages.patternCard),
+          fit: BoxFit.cover,
+          opacity: 1,
+        ),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
@@ -133,7 +139,9 @@ class CardTotalOpWidget extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: digitalPercent / 100,
                   backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.primary,
+                  ),
                   minHeight: 10,
                 ),
               ),

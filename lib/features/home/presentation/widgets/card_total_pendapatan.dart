@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/constants/app_asset_constant.dart';
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/utils/currency_formatter.dart';
@@ -28,6 +29,11 @@ class CardTotalPendapatan extends StatelessWidget {
       ), // Padding diperbesar sedikit untuk napas
       decoration: BoxDecoration(
         color: Colors.white,
+        image: const DecorationImage(
+          image: AssetImage(AppAssetImages.patternCard),
+          fit: BoxFit.cover,
+          opacity: 1,
+        ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -60,7 +66,10 @@ class CardTotalPendapatan extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                   ],
-                  const Text("TOTAL PENDAPATAN", style: AppTypography.bodySemiBold),
+                  const Text(
+                    "TOTAL PENDAPATAN",
+                    style: AppTypography.bodySemiBold,
+                  ),
                 ],
               ),
               if (isShowHariIni)
