@@ -25,7 +25,7 @@ class ReceiptFormatter {
       styles: const PosStyles(align: PosAlign.center),
     );
     bytes += generator.text(
-      transaction.namaLokasi,
+      transaction.namaOp,
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
     bytes += generator.text(

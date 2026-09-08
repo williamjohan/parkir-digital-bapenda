@@ -14,6 +14,7 @@ class PbPreviewTicketWidget extends StatefulWidget {
   final Future<bool> Function()? printPressed;
   final HistoryItemModel item;
   final bool isPrinterReady;
+  final VoidCallback? onConnectPressed;
 
   const PbPreviewTicketWidget({
     super.key,
@@ -21,6 +22,7 @@ class PbPreviewTicketWidget extends StatefulWidget {
     required this.printPressed,
     required this.item,
     required this.isPrinterReady,
+    this.onConnectPressed,
   });
 
   @override
@@ -255,7 +257,7 @@ class _PbPreviewTicketWidgetState extends State<PbPreviewTicketWidget>
           padding: const EdgeInsets.symmetric(vertical: 13),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        onPressed: widget.printPressed == null ? null : _handlePrint,
+        onPressed: widget.onConnectPressed,
         icon: const Icon(Icons.bluetooth_disabled, size: 18),
         label: const FittedBox(
           child: Text(

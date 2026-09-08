@@ -10,6 +10,7 @@ import '../../../../core/design_system/components/struck/pb_ticket_preview_widge
 import '../../../../core/design_system/tokens/app_colors.dart';
 import '../../../../core/design_system/tokens/app_typography.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../../../../core/services/audio/i_audio_notification_service.dart';
 import '../../../printer/presentation/cubit/printer_state.dart';
 import '../../../transaction_history/data/models/history_item_model.dart';
@@ -97,6 +98,9 @@ class _PaymentPageState extends State<PaymentPage> {
                 final printerCubit = context.read<PrinterCubit>();
                 final parentContext = context;
 
+                await printerCubit.refreshPairedDevices();
+
+                if (!context.mounted) return;
                 await showDialog(
                   context: context,
                   barrierDismissible: false,
@@ -108,8 +112,13 @@ class _PaymentPageState extends State<PaymentPage> {
                         child: BlocBuilder<PrinterCubit, PrinterState>(
                           bloc: printerCubit,
                           builder: (context, printerState) {
+                            // 🚀 2. PERBAIKAN LOGIKA: Cek apakah printer benar-benar siap
                             final isReady = printerState.maybeMap(
-                              loaded: (s) => s.connectedDevice != null,
+                              loaded: (s) {
+                                return s.connectedDevice != null ||
+                                    (s.savedMacAddress != null &&
+                                        s.savedMacAddress!.isNotEmpty);
+                              },
                               orElse: () => false,
                             );
 
@@ -118,17 +127,23 @@ class _PaymentPageState extends State<PaymentPage> {
                               isPrinterReady: isReady,
                               okPressed: () {
                                 dialogContext.pop();
-
                                 if (parentContext.mounted) {
-                                  parentContext.pop(
-                                    true,
-                                  ); // Tutup PaymentPage & kirim result true
+                                  parentContext.pop(true);
                                 }
                               },
                               printPressed: () async {
                                 return await printerCubit.printReceipt(
                                   historyItem,
                                 );
+                              },
+                              // 🚀 3. TAMBAHAN BARU: Fungsi ketika Jukir menekan tombol merah "Hubungkan"
+                              onConnectPressed: () {
+                                dialogContext.pop();
+                                // 🚀 FIX: Pengecekan mounted untuk menghindari error async gap
+                                if (parentContext.mounted) {
+                                  // Sesuaikan path ini dengan route setting printer Anda
+                                  parentContext.push(AppRoutes.printerSetting);
+                                }
                               },
                             );
                           },
