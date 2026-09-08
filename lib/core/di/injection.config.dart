@@ -33,7 +33,12 @@ import '../../features/auth/data/repositories/auth_repository_impl.dart'
 import '../../features/auth/domain/repositories/i_auth_repository.dart'
     as _i589;
 import '../../features/auth/domain/usecases/auth_usecase.dart' as _i436;
+import '../../features/auth/domain/usecases/get_kantorku_sso_url_usecase.dart'
+    as _i845;
+import '../../features/auth/domain/usecases/get_sso_token_stream_usecase.dart'
+    as _i30;
 import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/presentation/cubit/app_auth/app_auth_cubit.dart'
     as _i808;
 import '../../features/auth/presentation/cubit/login/login_cubit.dart' as _i264;
@@ -470,6 +475,12 @@ Future<_i174.GetIt> init(
       gh<_i1015.ISecureStorageManager>(),
     ),
   );
+  gh.lazySingleton<_i845.GetKantorkuSsoUrlUseCase>(
+    () => _i845.GetKantorkuSsoUrlUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i30.GetSsoTokenStreamUseCase>(
+    () => _i30.GetSsoTokenStreamUseCase(gh<_i589.IAuthRepository>()),
+  );
   gh.factory<_i425.GetRealisasiSeluruhOpUseCase>(
     () => _i425.GetRealisasiSeluruhOpUseCase(gh<_i534.RealisasiRepository>()),
   );
@@ -549,6 +560,9 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i188.LoginUseCase>(
     () => _i188.LoginUseCase(gh<_i589.IAuthRepository>()),
+  );
+  gh.lazySingleton<_i48.LogoutUseCase>(
+    () => _i48.LogoutUseCase(gh<_i589.IAuthRepository>()),
   );
   gh.factory<_i753.TransactionHistoryCubit>(
     () => _i753.TransactionHistoryCubit(

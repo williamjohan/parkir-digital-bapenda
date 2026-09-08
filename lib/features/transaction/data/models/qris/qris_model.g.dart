@@ -11,7 +11,7 @@ _$QrisResponseModelImpl _$$QrisResponseModelImplFromJson(
 ) => _$QrisResponseModelImpl(
   jenisKendaraanId: (json['jenisKendaraanId'] as num?)?.toInt() ?? 0,
   qrisImageBase64: json['qrisImageBase64'] as String? ?? '',
-  kodeQris: json['kodeQris'] as String? ?? '',
+  kodeQris: json['kodeQris'] as String?,
 );
 
 Map<String, dynamic> _$$QrisResponseModelImplToJson(

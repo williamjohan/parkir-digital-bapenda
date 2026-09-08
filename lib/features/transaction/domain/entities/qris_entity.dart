@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class QrisResponseEntity extends Equatable {
   final int jenisKendaraanId;
   final String qrisImageBase64;
-  final String kodeQris;
+  final String? kodeQris;
 
   const QrisResponseEntity({
     required this.jenisKendaraanId,

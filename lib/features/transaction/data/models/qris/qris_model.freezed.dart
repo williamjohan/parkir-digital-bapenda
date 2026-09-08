@@ -23,7 +23,7 @@ QrisResponseModel _$QrisResponseModelFromJson(Map<String, dynamic> json) {
 mixin _$QrisResponseModel {
   int get jenisKendaraanId => throw _privateConstructorUsedError;
   String get qrisImageBase64 => throw _privateConstructorUsedError;
-  String get kodeQris => throw _privateConstructorUsedError;
+  String? get kodeQris => throw _privateConstructorUsedError;
 
   /// Serializes this QrisResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,7 +42,7 @@ abstract class $QrisResponseModelCopyWith<$Res> {
     $Res Function(QrisResponseModel) then,
   ) = _$QrisResponseModelCopyWithImpl<$Res, QrisResponseModel>;
   @useResult
-  $Res call({int jenisKendaraanId, String qrisImageBase64, String kodeQris});
+  $Res call({int jenisKendaraanId, String qrisImageBase64, String? kodeQris});
 }
 
 /// @nodoc
@@ -62,7 +62,7 @@ class _$QrisResponseModelCopyWithImpl<$Res, $Val extends QrisResponseModel>
   $Res call({
     Object? jenisKendaraanId = null,
     Object? qrisImageBase64 = null,
-    Object? kodeQris = null,
+    Object? kodeQris = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -74,10 +74,10 @@ class _$QrisResponseModelCopyWithImpl<$Res, $Val extends QrisResponseModel>
                 ? _value.qrisImageBase64
                 : qrisImageBase64 // ignore: cast_nullable_to_non_nullable
                       as String,
-            kodeQris: null == kodeQris
+            kodeQris: freezed == kodeQris
                 ? _value.kodeQris
                 : kodeQris // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
           )
           as $Val,
     );
@@ -93,7 +93,7 @@ abstract class _$$QrisResponseModelImplCopyWith<$Res>
   ) = __$$QrisResponseModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int jenisKendaraanId, String qrisImageBase64, String kodeQris});
+  $Res call({int jenisKendaraanId, String qrisImageBase64, String? kodeQris});
 }
 
 /// @nodoc
@@ -112,7 +112,7 @@ class __$$QrisResponseModelImplCopyWithImpl<$Res>
   $Res call({
     Object? jenisKendaraanId = null,
     Object? qrisImageBase64 = null,
-    Object? kodeQris = null,
+    Object? kodeQris = freezed,
   }) {
     return _then(
       _$QrisResponseModelImpl(
@@ -124,10 +124,10 @@ class __$$QrisResponseModelImplCopyWithImpl<$Res>
             ? _value.qrisImageBase64
             : qrisImageBase64 // ignore: cast_nullable_to_non_nullable
                   as String,
-        kodeQris: null == kodeQris
+        kodeQris: freezed == kodeQris
             ? _value.kodeQris
             : kodeQris // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
       ),
     );
   }
@@ -139,7 +139,7 @@ class _$QrisResponseModelImpl implements _QrisResponseModel {
   const _$QrisResponseModelImpl({
     this.jenisKendaraanId = 0,
     this.qrisImageBase64 = '',
-    this.kodeQris = '',
+    this.kodeQris,
   });
 
   factory _$QrisResponseModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -152,8 +152,7 @@ class _$QrisResponseModelImpl implements _QrisResponseModel {
   @JsonKey()
   final String qrisImageBase64;
   @override
-  @JsonKey()
-  final String kodeQris;
+  final String? kodeQris;
 
   @override
   String toString() {
@@ -199,7 +198,7 @@ abstract class _QrisResponseModel implements QrisResponseModel {
   const factory _QrisResponseModel({
     final int jenisKendaraanId,
     final String qrisImageBase64,
-    final String kodeQris,
+    final String? kodeQris,
   }) = _$QrisResponseModelImpl;
 
   factory _QrisResponseModel.fromJson(Map<String, dynamic> json) =
@@ -210,7 +209,7 @@ abstract class _QrisResponseModel implements QrisResponseModel {
   @override
   String get qrisImageBase64;
   @override
-  String get kodeQris;
+  String? get kodeQris;
 
   /// Create a copy of QrisResponseModel
   /// with the given fields replaced by the non-null parameter values.

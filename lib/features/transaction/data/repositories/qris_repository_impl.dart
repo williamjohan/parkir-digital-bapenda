@@ -26,7 +26,7 @@ class QrisRepositoryImpl implements IQrisRepository {
 
       final Map<String, QrisLocalModel> localModelsMap = {};
 
-      for (final item in remoteEntities) {
+      final futures = remoteEntities.map((item) async {
         final jenisKendaraan = JenisKendaraanId.fromInt(item.jenisKendaraanId);
 
         if (jenisKendaraan != JenisKendaraanId.tidakDiketahui) {
@@ -34,18 +34,34 @@ class QrisRepositoryImpl implements IQrisRepository {
             jenisKendaraanId: item.jenisKendaraanId,
             base64String: item.qrisImageBase64,
           );
-          localModelsMap[item.jenisKendaraanId.toString()] = QrisLocalModel(
-            path: filePath,
-            kodeQris: item.kodeQris,
+
+          return MapEntry(
+            item.jenisKendaraanId.toString(),
+            QrisLocalModel(path: filePath, kodeQris: item.kodeQris ?? ''),
           );
+        }
+        return null;
+      });
+
+      // Tunggu semua proses penulisan file selesai secara bersamaan
+      final results = await Future.wait(futures);
+
+      // Masukkan hasil yang tidak null ke dalam Map
+      for (final result in results) {
+        if (result != null) {
+          localModelsMap[result.key] = result.value;
         }
       }
 
+      // 🚀 PENYELESAIAN BUG DATA HANTU (EMPTY LIST)
       if (localModelsMap.isNotEmpty) {
         final jsonMap = localModelsMap.map(
           (key, model) => MapEntry(key, model.toJson()),
         );
         await _secureStorage.saveQrisMetadata(jsonEncode(jsonMap));
+      } else {
+        // Jika list dari backend kosong (Empty List), pastikan cache lokal dihancurkan!
+        await _secureStorage.clearQrisMetadata();
       }
 
       return const Right(unit);

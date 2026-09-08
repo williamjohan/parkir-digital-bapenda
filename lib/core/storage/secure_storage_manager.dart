@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
 import '../utils/app_logger.dart';
+import '../utils/base64_image_helper.dart';
 import 'i_secure_storage_manager.dart';
 
 @LazySingleton(as: ISecureStorageManager)
@@ -71,20 +72,26 @@ class SecureStorageManagerImpl implements ISecureStorageManager {
 
   @override
   Future<void> clearAllTokens() async {
-    try {
-      await _storage.delete(key: _keyAccessToken);
-      await _storage.delete(key: _keyRefreshToken);
-      _cachedAccessToken = null;
+    _cachedAccessToken = null;
 
-      await clearJukirProfile();
-      await clearMasterTarif();
-      await clearRoleId();
-      await clearProfilePicture();
-      await clearDashboardAnchor();
-    } on PlatformException catch (e) {
-      AppLogger.error('Keystore Error saat clear token: ${e.message}');
-      _cachedAccessToken = null;
-    }
+    await Future.wait([
+      _storage.delete(key: _keyAccessToken).catchError((_) {}),
+      _storage.delete(key: _keyRefreshToken).catchError((_) {}),
+      clearJukirProfile().catchError((_) {}),
+      clearMasterTarif().catchError((_) {}),
+      clearRoleId().catchError((_) {}),
+      clearProfilePicture().catchError((_) {}),
+      clearDashboardAnchor().catchError((_) {}),
+
+      // SAPU BERSIH METADATA DI BRANKAS ENKRIPSI
+      clearQrisMetadata().catchError((_) {}),
+      clearQrisLastUpdate().catchError((_) {}),
+      clearOpLastUpdate().catchError((_) {}),
+
+      // (GARBAGE COLLECTOR):
+      // Sapu bersih file fisik gambar QRIS dari direktori HP saat logout!
+      Base64ImageHelper.clearAllQrisImages().catchError((_) {}),
+    ]);
   }
 
   @override

@@ -21,6 +21,8 @@ class PaymentCubit extends Cubit<PaymentState> {
   Future<void> loadQris({
     required int jenisKendaraanId,
     required bool isDemoMode,
+    bool isRetryFetch =
+        false, // 🚀 TAMBAHAN: Flag untuk mencegah infinite loop auto-sync
   }) async {
     if (isClosed) return;
 
@@ -39,27 +41,42 @@ class PaymentCubit extends Cubit<PaymentState> {
     final result = await _qrisUsecase.getLocalQris();
     if (isClosed) return;
 
-    result.fold(
-      (_) => emit(
-        const PaymentState.error(message: 'Data QRIS lokal belum tersedia.'),
-      ),
+    await result.fold(
+      (failure) async {
+        // 🚀 SELF-HEALING 1: Jika data lokal tidak ada, paksa sync dari API!
+        if (!isRetryFetch) {
+          await _forceSyncAndReload(jenisKendaraanId, isDemoMode);
+        } else {
+          emit(
+            const PaymentState.error(
+              message: 'Gagal mengunduh data QRIS. Pastikan internet stabil.',
+            ),
+          );
+        }
+      },
       (qrisMap) async {
         if (isClosed) return;
 
         final qrisEntity = qrisMap[jenisKendaraanId.toString()];
 
+        // 🚀 SELF-HEALING 2: Jika data ada di Storage, tapi file gambar fisik terhapus oleh OS HP
         if (qrisEntity == null ||
             qrisEntity.path.isEmpty ||
             !File(qrisEntity.path).existsSync()) {
+          if (!isRetryFetch) {
+            await _forceSyncAndReload(jenisKendaraanId, isDemoMode);
+            return;
+          }
           emit(
-            const PaymentState.error(message: 'QRIS / File tidak ditemukan.'),
+            const PaymentState.error(
+              message: 'File gambar QRIS rusak atau hilang.',
+            ),
           );
           return;
         }
 
         String simulatedKodeQris = qrisEntity.kodeQris;
 
-        // 1. Tampilkan UI
         emit(
           PaymentState.localQrisReady(
             qrisImagePath: qrisEntity.path,
@@ -67,12 +84,33 @@ class PaymentCubit extends Cubit<PaymentState> {
           ),
         );
 
-        // 2. LAYER PERTAHANAN: Evaluasi kelayakan SignalR
         if (simulatedKodeQris.trim().isNotEmpty) {
           await _setupSignalR(qrisEntity.kodeQris);
-        } else {
-          // Log opsional jika kodeQris kosong
         }
+      },
+    );
+  }
+
+  // 🚀 FUNGSI BANTUAN UNTUK AUTO-SYNC
+  Future<void> _forceSyncAndReload(
+    int jenisKendaraanId,
+    bool isDemoMode,
+  ) async {
+    final syncResult = await _qrisUsecase.syncQris();
+
+    if (isClosed) return;
+
+    syncResult.fold(
+      (failure) {
+        emit(PaymentState.error(message: 'Koneksi gagal: ${failure.message}'));
+      },
+      (_) async {
+        // Jika sync berhasil, panggil loadQris lagi (baca dari lokal) dengan flag true
+        await loadQris(
+          jenisKendaraanId: jenisKendaraanId,
+          isDemoMode: isDemoMode,
+          isRetryFetch: true,
+        );
       },
     );
   }

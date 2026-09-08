@@ -47,9 +47,11 @@ class HomeCubit extends Cubit<HomeState> {
     formatUserName();
 
     if (state.role == RoleLoginDigitalParkir.jukir) {
-      await loadDashboardJukir();
-      await _profileUseCase.getProfilePicturePath();
-      await _qrisUsecase.syncQris();
+      await Future.wait([
+        loadDashboardJukir(),
+        _profileUseCase.getProfilePicturePath(),
+        _qrisUsecase.syncQris(),
+      ]);
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
       final activeNop = _homeUsecase.getNomorObjekPengawasan();
       final activeJenis = _homeUsecase.getJenisObjekPengawasan();

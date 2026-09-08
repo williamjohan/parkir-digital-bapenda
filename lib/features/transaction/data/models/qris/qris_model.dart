@@ -9,7 +9,7 @@ class QrisResponseModel with _$QrisResponseModel {
   const factory QrisResponseModel({
     @Default(0) int jenisKendaraanId,
     @Default('') String qrisImageBase64,
-    @Default('') String kodeQris,
+    String? kodeQris,
   }) = _QrisResponseModel;
 
   factory QrisResponseModel.fromJson(Map<String, dynamic> json) =>
