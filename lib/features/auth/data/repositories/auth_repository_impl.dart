@@ -43,23 +43,23 @@ class AuthRepositoryImpl implements IAuthRepository {
     }
   }
 
-  void _simpanNopSecaraParalel(List<NopModel> nopList) {
-    final sqliteData = AuthMapper.toSqliteList(nopList);
-    _databaseHelper
-        .saveNopList(sqliteData)
-        .then((_) {
-          AppLogger.info(
-            ">>> AUDIT DATABASE: Berhasil insert ${nopList.length} NOP di background!",
-          );
-        })
-        .catchError((e, stackTrace) {
-          AppLogger.error(
-            ">>> AUDIT DATABASE ERROR: Gagal insert NOP: $e",
-            e,
-            stackTrace,
-          );
-        });
-  }
+  // void _simpanNopSecaraParalel(List<NopModel> nopList) {
+  //   final sqliteData = AuthMapper.toSqliteList(nopList);
+  //   _databaseHelper
+  //       .saveNopList(sqliteData)
+  //       .then((_) {
+  //         AppLogger.info(
+  //           ">>> AUDIT DATABASE: Berhasil insert ${nopList.length} NOP di background!",
+  //         );
+  //       })
+  //       .catchError((e, stackTrace) {
+  //         AppLogger.error(
+  //           ">>> AUDIT DATABASE ERROR: Gagal insert NOP: $e",
+  //           e,
+  //           stackTrace,
+  //         );
+  //       });
+  // }
 
   @override
   Future<Either<Failure, Unit>> logout() async {
@@ -149,9 +149,13 @@ class AuthRepositoryImpl implements IAuthRepository {
         await _secureStorage.saveDeviceUUID(response.uuidStatic);
       }
 
-      // 4. SIMPAN NOP SECARA PARALEL
+      //  4. PERBAIKAN: SIMPAN NOP SECARA LINIER (DITUNGGU/AWAIT)
       if (response.nopList.isNotEmpty) {
-        _simpanNopSecaraParalel(response.nopList);
+        final sqliteData = AuthMapper.toSqliteList(response.nopList);
+        await _databaseHelper.saveNopList(sqliteData);
+        AppLogger.info(
+          ">>> AUDIT DATABASE: Berhasil insert ${response.nopList.length} NOP secara sinkron!",
+        );
       }
 
       // 5. SIMPAN OP LAST UPDATE

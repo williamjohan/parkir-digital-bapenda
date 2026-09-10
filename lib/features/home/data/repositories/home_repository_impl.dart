@@ -108,8 +108,6 @@ class HomeRepositoryImpl implements IHomeRepository {
         return const Right(true);
       }
 
-      // berbeda -> update storage
-      await _secureStorage.saveOpLastUpdate(model.data);
       return const Right(false);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
