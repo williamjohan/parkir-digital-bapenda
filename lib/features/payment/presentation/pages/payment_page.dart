@@ -101,6 +101,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 await printerCubit.refreshPairedDevices();
 
                 if (!context.mounted) return;
+
                 await showDialog(
                   context: context,
                   barrierDismissible: false,
@@ -234,7 +235,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 );
               },
-              // 🚀 5. Saat paymentSuccess terjadi, UI di latar belakang akan dirender
+              //  5. Saat paymentSuccess terjadi, UI di latar belakang akan dirender
               // menjadi CircularProgressIndicator selagi Lottie Dialog bermain di atasnya.
               // Ini mencegah pengguna menekan tombol apapun secara tidak sengaja.
               orElse: () => const Center(
