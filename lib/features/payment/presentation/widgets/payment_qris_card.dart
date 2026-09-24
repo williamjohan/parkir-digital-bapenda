@@ -9,6 +9,16 @@ class PaymentQrisCard extends StatelessWidget {
   final bool isCapturing;
   final bool showTimer;
   final VoidCallback onDownloadTap;
+  // BARU (Poin A - jaring pengaman): diteruskan ke PaymentCountdownTimer.
+  // Sebelumnya PaymentCountdownTimer selalu dibuat TANPA onTimeout sama
+  // sekali di sini, jadi hitungan mundur mencapai 00:00 tidak pernah
+  // memicu apapun — satu-satunya jalur ke PaymentState.error murni
+  // event QRIS_TIMEOUT dari server. Kalau server/SignalR gagal kirim
+  // event itu (mis. reconnect gagal), layar akan diam selamanya di
+  // 00:00. Parameter ini opsional (default null) supaya pemanggil lama
+  // yang belum sempat diupdate tetap kompatibel — perilakunya sama
+  // persis seperti sebelumnya kalau tidak diisi.
+  final VoidCallback? onTimeout;
 
   const PaymentQrisCard({
     super.key,
@@ -17,6 +27,7 @@ class PaymentQrisCard extends StatelessWidget {
     required this.isCapturing,
     required this.showTimer,
     required this.onDownloadTap,
+    this.onTimeout,
   });
 
   @override
@@ -72,7 +83,7 @@ class PaymentQrisCard extends StatelessWidget {
           // Hanya tampil jika showTimer true DAN tidak sedang di-screenshot/download
           if (showTimer && !isCapturing) ...[
             const SizedBox(height: 16),
-            const PaymentCountdownTimer(),
+            PaymentCountdownTimer(onTimeout: onTimeout),
           ],
 
           // QR IMAGE

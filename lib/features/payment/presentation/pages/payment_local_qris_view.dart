@@ -13,12 +13,18 @@ class PaymentLocalQrisView extends StatefulWidget {
   final Widget qrWidget;
   final String kategoriKendaraan;
   final bool showTimer;
+  // BARU (Poin A - jaring pengaman): diteruskan sampai ke
+  // PaymentCountdownTimer. Opsional (default null) — pemanggil yang
+  // tidak mengisi ini (mis. jalur demo) berperilaku sama persis seperti
+  // sebelumnya.
+  final VoidCallback? onTimeout;
 
   const PaymentLocalQrisView({
     super.key,
     required this.qrWidget,
     required this.kategoriKendaraan,
     this.showTimer = true,
+    this.onTimeout,
   });
 
   @override
@@ -110,6 +116,7 @@ class _PaymentLocalQrisViewState extends State<PaymentLocalQrisView> {
               isCapturing: _isCapturing,
               showTimer: widget.showTimer,
               onDownloadTap: _downloadQris,
+              onTimeout: widget.onTimeout,
             ),
           ),
 

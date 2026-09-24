@@ -3,6 +3,13 @@ import 'package:injectable/injectable.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 import '../../../../core/utils/app_logger.dart';
 
+/// Status yang mungkin dikirim lewat [QrisSignalRDatasource.qrisStatusStream]:
+/// - "LUNAS"        : pembayaran sukses, `payload` berisi data transaksi
+/// - "TIMEOUT"       : QRIS_TIMEOUT dari server (waktu pembayaran habis)
+/// - "ERROR"         : QRIS_ERROR dari server, atau kegagalan connect awal
+/// - "DISCONNECTED" : koneksi putus PERMANEN (auto-reconnect sudah habis
+///                     mencoba) — beda dari "ERROR" karena ini soal
+///                     jaringan/koneksi, bukan soal transaksi itu sendiri
 class SignalREvent {
   final String status;
   final Map<String, dynamic>? payload;
@@ -16,6 +23,16 @@ class QrisSignalRDatasource {
   StreamController<SignalREvent>? _statusController;
   String? _activeKodeQris;
 
+  // NEW: generation token. Dinaikkan oleh connectAndJoin() DAN disconnect().
+  // Ini krusial karena PaymentCubit dibuat ulang setiap kali route /payment
+  // di-push (lihat BlocProvider di app_routes.dart), sementara datasource
+  // ini @lazySingleton dan dipakai bergantian oleh cubit-cubit tersebut.
+  // Tanpa bump di disconnect() juga, attempt lama dari Cubit yang sudah
+  // close() masih bisa menembak event ke stream yang sedang didengarkan
+  // Cubit baru — persis kasus "QRIS Tidak Tersedia" yang muncul tiba-tiba
+  // tanpa ada log usaha connect baru.
+  int _connectionGeneration = 0;
+
   Stream<SignalREvent> get qrisStatusStream {
     _statusController ??= StreamController<SignalREvent>.broadcast();
     return _statusController!.stream;
@@ -23,74 +40,108 @@ class QrisSignalRDatasource {
 
   /// Buka koneksi dan join group kodeQris
   Future<void> connectAndJoin(String kodeQris) async {
+    // Selalu bersihkan koneksi sebelumnya dulu, apapun statusnya.
+    await disconnect();
+
+    // Generation baru untuk percobaan koneksi ini.
+    final int myGeneration = ++_connectionGeneration;
+    _activeKodeQris = kodeQris;
+
+    final HubConnection connection = HubConnectionBuilder()
+        .withUrl("https://apibapenda.surabaya.go.id:8282/qrisHub")
+        .withAutomaticReconnect()
+        .build();
+
+    // Simpan ke field HANYA setelah dibuat, tapi kita tetap pegang
+    // referensi lokal `connection` untuk semua operasi di generation ini
+    // supaya tidak ketuker sama koneksi generation lain.
+    _connection = connection;
+
+    _registerListeners(connection, myGeneration);
+
     try {
-      await disconnect();
+      await connection.start();
 
-      _activeKodeQris = kodeQris;
+      // Kalau selama menunggu start() ada percobaan koneksi baru yang
+      // lebih baru (user sudah pindah lagi), buang hasil ini dan jangan
+      // lanjut join / log seolah-olah ini koneksi yang aktif.
+      if (myGeneration != _connectionGeneration) {
+        AppLogger.debug(
+          '⚠️ [SignalR] Koneksi generation $myGeneration sudah usang, '
+          'membersihkan diri diam-diam.',
+        );
+        await _stopSilently(connection);
+        return;
+      }
 
-      _connection = HubConnectionBuilder()
-          .withUrl("https://apibapenda.surabaya.go.id:8282/qrisHub")
-          .withAutomaticReconnect()
-          .build();
-
-      _registerListeners();
-
-      await _connection!.start();
-      AppLogger.debug('✅ [SignalR] Connected! State: ${_connection!.state}');
-
-      await _joinGroup(kodeQris);
+      AppLogger.debug('🟢 [SignalR] Connected! State: ${connection.state}');
+      await _joinGroup(connection, kodeQris, myGeneration);
     } catch (e) {
+      if (myGeneration != _connectionGeneration) {
+        // Sudah usang, jangan kirim ERROR palsu ke listener yang sedang
+        // menunggu koneksi generation baru.
+        return;
+      }
       AppLogger.error('🚨 [SignalR] Gagal connect: $e');
-      // esuaikan pemanggilan error
       _statusController?.add(SignalREvent("ERROR"));
     }
   }
 
-  Future<void> _joinGroup(String kodeQris) async {
+  Future<void> _joinGroup(
+    HubConnection connection,
+    String kodeQris,
+    int generation,
+  ) async {
     try {
-      if (_connection?.state == HubConnectionState.Connected) {
-        await _connection!.invoke("QrisStatus", args: [kodeQris]);
-        AppLogger.debug('📡 [SignalR] Joined group: $kodeQris');
+      if (connection.state == HubConnectionState.Connected) {
+        await connection.invoke("QrisStatus", args: [kodeQris]);
+        if (generation == _connectionGeneration) {
+          AppLogger.debug('📡 [SignalR] Joined group: $kodeQris');
+        }
       }
     } catch (e) {
-      AppLogger.error('❌ [SignalR] Gagal invoke QrisStatus: $e');
+      if (generation == _connectionGeneration) {
+        AppLogger.error('❌ [SignalR] Gagal invoke QrisStatus: $e');
+      }
     }
   }
 
-  /// Event Listeners
-  void _registerListeners() {
-    _connection?.on("QRIS_LUNAS", (arguments) {
+  /// Event Listeners — sekarang menerima instance koneksi & generation-nya
+  /// sendiri, bukan mengandalkan field `_connection` yang bisa berubah.
+  void _registerListeners(HubConnection connection, int generation) {
+    connection.on("QRIS_LUNAS", (arguments) {
+      if (generation != _connectionGeneration) return; // abaikan zombie
       AppLogger.debug('💰 [SignalR] QRIS_LUNAS — args: $arguments');
 
-      //  TANGKAP DAN PARSING PAYLOAD DENGAN AMAN
       if (arguments != null && arguments.isNotEmpty) {
         try {
-          // Parsing aman dari dynamic ke String untuk key-nya
           final rawPayload = arguments[0] as Map<dynamic, dynamic>;
           final safePayload = rawPayload.map(
             (key, value) => MapEntry(key.toString(), value),
           );
-
           _statusController?.add(SignalREvent("LUNAS", payload: safePayload));
         } catch (e) {
           AppLogger.error('🚨 Gagal parsing payload LUNAS: $e');
-          _statusController?.add(SignalREvent("LUNAS")); // Fallback aman
+          _statusController?.add(SignalREvent("LUNAS"));
         }
       } else {
         _statusController?.add(SignalREvent("LUNAS"));
       }
     });
 
-    _connection?.on("QRIS_PENDING", (arguments) {
+    connection.on("QRIS_PENDING", (arguments) {
+      if (generation != _connectionGeneration) return;
       AppLogger.debug('⏳ [SignalR] QRIS_PENDING — args: $arguments');
     });
 
-    _connection?.on("QRIS_TIMEOUT", (arguments) {
+    connection.on("QRIS_TIMEOUT", (arguments) {
+      if (generation != _connectionGeneration) return;
       AppLogger.debug('⏰ [SignalR] QRIS_TIMEOUT — args: $arguments');
-      _statusController?.add(SignalREvent("TIMEOUT")); // 🚀 Sesuaikan
+      _statusController?.add(SignalREvent("TIMEOUT"));
     });
 
-    _connection?.on("QRIS_ERROR", (arguments) {
+    connection.on("QRIS_ERROR", (arguments) {
+      if (generation != _connectionGeneration) return; // kunci utama fix ini
       AppLogger.debug('❌ [SignalR] QRIS_ERROR — args: $arguments');
       try {
         if (arguments != null && arguments.isNotEmpty) {
@@ -105,34 +156,89 @@ class QrisSignalRDatasource {
       } catch (e) {
         AppLogger.error('Gagal parsing error payload: $e');
       }
-      _statusController?.add(SignalREvent("ERROR")); // 🚀 Sesuaikan
+      _statusController?.add(SignalREvent("ERROR"));
     });
 
-    _connection?.onreconnected(({connectionId}) async {
+    connection.onreconnected(({connectionId}) async {
+      if (generation != _connectionGeneration) return;
       AppLogger.debug('🔄 [SignalR] Reconnected — connectionId: $connectionId');
       if (_activeKodeQris != null) {
-        await _joinGroup(_activeKodeQris!);
+        await _joinGroup(connection, _activeKodeQris!, generation);
       }
     });
 
-    _connection?.onclose(({error}) {
+    connection.onclose(({error}) {
+      // PENTING: cek generation di sini bukan cuma soal zombie listener.
+      // disconnect() SELALU menaikkan generation SEBELUM memanggil
+      // connection.stop() — jadi saat KITA yang sengaja memutus koneksi
+      // (pindah halaman, ganti kendaraan, dsb.), onclose ini akan otomatis
+      // ter-suppress di sini karena generation sudah tidak cocok lagi.
+      //
+      // Kalau generation MASIH cocok berarti koneksi ini mati BUKAN karena
+      // kita yang memutusnya — artinya otomatis-reconnect bawaan SignalR
+      // (withAutomaticReconnect, default retry di 0/2/10/30 detik) sudah
+      // habis mencoba dan menyerah. Ini sinyal genuine "putus permanen"
+      // yang perlu diteruskan ke UI, bukan cuma di-log.
+      if (generation != _connectionGeneration) return;
       AppLogger.debug('🛑 [SignalR] Connection closed — error: $error');
+      AppLogger.error(
+        '🔌 [SignalR] Koneksi putus permanen (auto-reconnect sudah habis '
+        'mencoba). Melapor ke UI.',
+      );
+      _statusController?.add(SignalREvent("DISCONNECTED"));
     });
   }
 
-  /// Close
-  Future<void> disconnect() async {
-    if (_connection != null &&
-        _connection!.state == HubConnectionState.Connected) {
-      _connection!.off("QRIS_LUNAS");
-      _connection!.off("QRIS_PENDING");
-      _connection!.off("QRIS_TIMEOUT");
-      _connection!.off("QRIS_ERROR");
-      await _connection!.stop();
-      AppLogger.debug('🛑 [SignalR] Disconnected');
+  /// Stop koneksi tanpa nge-log/ganggu state generation aktif — dipakai
+  /// buat beresin koneksi yang sudah usang (superseded).
+  Future<void> _stopSilently(HubConnection connection) async {
+    try {
+      connection.off("QRIS_LUNAS");
+      connection.off("QRIS_PENDING");
+      connection.off("QRIS_TIMEOUT");
+      connection.off("QRIS_ERROR");
+      await connection.stop();
+    } catch (_) {
+      // Diamkan — ini cuma best-effort cleanup koneksi usang.
     }
+  }
+
+  /// Close — sekarang membersihkan koneksi APAPUN statusnya, bukan cuma
+  /// yang berstatus Connected. Ini yang tadinya bikin koneksi zombie.
+  ///
+  /// PENTING: generation juga di-bump di sini, bukan cuma di
+  /// connectAndJoin(). Ini yang menutup celah "Cubit A close() duluan,
+  /// lalu attempt connect() lama miliknya baru gagal/berhasil belakangan
+  /// dan menembak event ke stream yang sedang didengarkan Cubit B".
+  /// Begitu disconnect() dipanggil, attempt manapun yang masih pending
+  /// otomatis dianggap usang oleh pengecekan `generation == _connectionGeneration`
+  /// di connectAndJoin()/_joinGroup()/listener, walau attempt itu belum
+  /// sempat memanggil connectAndJoin() baru sama sekali.
+  Future<void> disconnect() async {
+    _connectionGeneration++;
+
+    final HubConnection? connection = _connection;
     _connection = null;
     _activeKodeQris = null;
+
+    if (connection == null) return;
+
+    try {
+      connection.off("QRIS_LUNAS");
+      connection.off("QRIS_PENDING");
+      connection.off("QRIS_TIMEOUT");
+      connection.off("QRIS_ERROR");
+
+      if (connection.state != HubConnectionState.Disconnected) {
+        await connection.stop();
+      }
+      AppLogger.debug('🛑 [SignalR] Disconnected');
+    } catch (e) {
+      // Koneksi yang masih dalam proses "Connecting" saat di-stop() bisa
+      // saja melempar exception dari package-nya — jangan biarkan ini
+      // merusak alur disconnect di pemanggil.
+      AppLogger.error('⚠️ [SignalR] Error saat disconnect: $e');
+    }
   }
 
   /// Dispose

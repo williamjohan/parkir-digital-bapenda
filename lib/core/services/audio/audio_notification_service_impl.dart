@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:parkir_digital_bapenda/core/utils/app_logger.dart';
@@ -5,65 +6,91 @@ import '../../constants/app_asset_constant.dart';
 import 'i_audio_notification_service.dart';
 
 class AudioNotificationServiceImpl implements IAudioNotificationService {
-  late final AudioPlayer _audioPlayer;
   late final FlutterTts _flutterTts;
+  bool _isTtsInitialized = false;
+
+  // EDGE CASE 1 FIX: Mutex Lock untuk mencegah suara bertumpuk
+  bool _isCurrentlyPlaying = false;
 
   @override
   Future<void> init() async {
-    _audioPlayer = AudioPlayer();
     _flutterTts = FlutterTts();
-
-    //  1. Konfigurasi TTS untuk Bahasa Indonesia
-    await _flutterTts.setLanguage("id-ID");
-    await _flutterTts.setSpeechRate(0.5); // Kecepatan bicara normal & jelas
-    await _flutterTts.setVolume(1.0); // Volume maksimal untuk jalanan bising
-    await _flutterTts.setPitch(1.0);
-
-    //  2. Pre-load audio statis agar diputar tanpa delay
-    await _audioPlayer.setSource(AssetSource(AppAssetAudio.successAudio));
-  }
-
-  @override
-  Future<void> playPaymentSuccess(int nominal) async {
     try {
-      //  1. Putar nada dering statis instan terlebih dahulu (0.5 detik)
-      await _audioPlayer.play(AssetSource(AppAssetAudio.successAudio));
-
-      //  2. Beri jeda sedikit agar tidak menabrak nada dering
-      await Future.delayed(const Duration(milliseconds: 600));
-
-      //  3. Ubah angka menjadi teks dan bacakan!
-      // Contoh hasil: "Pembayaran lima ribu rupiah berhasil"
-      final nominalText = _terbilang(nominal);
-      final speechText = "Pembayaran $nominalText rupiah berhasil";
-
-      await _flutterTts.speak(speechText);
+      await _flutterTts.setLanguage("id-ID");
+      await _flutterTts.setSpeechRate(0.5);
+      await _flutterTts.setVolume(1.0);
+      await _flutterTts.setPitch(1.0);
+      _isTtsInitialized = true;
     } catch (e) {
-      //  DEFENSIVE: Jangan biarkan kegagalan audio memicu crash aplikasi!
-      // Cukup log error-nya, transaksi Jukir tetap harus berlanjut.
-      AppLogger.debug("Gagal memutar suara pembayaran: $e");
+      AppLogger.debug("Gagal inisialisasi TTS: $e");
     }
   }
 
   @override
-  Future<void> playStaticBeep() async {
+  Future<void> playPaymentSuccess(int nominal) async {
+    // 🛡️ Cegah pemanggilan ganda jika audio sedang berjalan
+    if (_isCurrentlyPlaying) return;
+    _isCurrentlyPlaying = true;
+
+    final AudioPlayer localPlayer = AudioPlayer();
+
     try {
-      await _audioPlayer.play(AssetSource(AppAssetAudio.successAudio));
-    } catch (_) {}
+      // 1. Putar suara sukses
+      await localPlayer.play(AssetSource(AppAssetAudio.successAudio));
+
+      // EDGE CASE 2 FIX: Tunggu sampai selesai, TAPI batasi maksimal 2 detik!
+      // Jika nyangkut, timeout akan dilempar, dan kita menangkapnya di catch
+      await localPlayer.onPlayerComplete.first.timeout(
+        const Duration(seconds: 2),
+      );
+    } catch (e) {
+      // Jika terjadi Timeout atau file tidak bisa diputar, abaikan saja
+      // agar proses TTS tetap bisa dieksekusi.
+      AppLogger.debug("Audio Player peringatan (lanjut ke TTS): $e");
+    } finally {
+      // Pastikan resource native Android (Xiaomi) selalu dilepaskan!
+      await localPlayer.dispose();
+    }
+
+    // 2. Eksekusi TTS (Text-to-Speech)
+    if (_isTtsInitialized) {
+      try {
+        // Hentikan paksa jika TTS sebelumnya masih cerewet
+        await _flutterTts.stop();
+
+        final nominalText = _terbilang(nominal);
+        final speechText = "Pembayaran $nominalText rupiah berhasil";
+        await _flutterTts.speak(speechText);
+      } catch (e) {
+        AppLogger.debug("Gagal eksekusi TTS: $e");
+      }
+    }
+
+    // Lepaskan gembok setelah semua tugas selesai
+    _isCurrentlyPlaying = false;
+  }
+
+  @override
+  Future<void> playStaticBeep() async {
+    // Cukup gunakan pola yang sama tanpa lock ketat
+    final AudioPlayer localPlayer = AudioPlayer();
+    try {
+      await localPlayer.play(AssetSource(AppAssetAudio.successAudio));
+      await localPlayer.onPlayerComplete.first.timeout(
+        const Duration(seconds: 2),
+      );
+    } catch (_) {
+    } finally {
+      await localPlayer.dispose();
+    }
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
     _flutterTts.stop();
   }
 
-  // Helper sederhana untuk mengubah angka jadi teks terbilang (Opsional,
-  // karena flutter_tts modern sebenarnya sudah pintar membaca angka langsung:
-  // _flutterTts.speak("Pembayaran $nominal rupiah berhasil") juga sudah bekerja bagus!
   String _terbilang(int angka) {
-    // Anda bisa menggunakan package 'terbilang' dari pub.dev
-    // atau cukup biarkan flutter_tts membaca angkanya secara native.
     return angka.toString();
   }
 }

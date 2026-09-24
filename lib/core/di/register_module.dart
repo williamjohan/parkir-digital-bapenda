@@ -204,7 +204,7 @@ abstract class RegisterModule {
           responseBody: true,
           responseHeader: false,
           error: true,
-          logPrint: (object) => AppLogger.debug(object.toString()),
+          // logPrint: (object) => AppLogger.debug(object.toString()),
         ),
       );
       dio.interceptors.add(ChuckerDioInterceptor());

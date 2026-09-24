@@ -38,15 +38,39 @@ class PaymentPage extends StatefulWidget {
   State<PaymentPage> createState() => _PaymentPageState();
 }
 
-class _PaymentPageState extends State<PaymentPage> {
+// BARU (Poin 4): WidgetsBindingObserver dipasang supaya kita tahu kapan app
+// kembali ke foreground (misal user tekan Home lalu balik lagi, atau OS
+// membekukan koneksi socket di background karena battery saver / Doze).
+// PaymentPage TIDAK di-dispose saat app cuma dikirim ke background (beda
+// dengan menekan tombol Back), jadi PaymentCubit yang sama tetap hidup dan
+// perlu diberi tahu secara eksplisit untuk reconnect.
+class _PaymentPageState extends State<PaymentPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Saat initState, Cubit akan load data dan otomatis start SignalR!
     context.read<PaymentCubit>().loadQris(
       jenisKendaraanId: widget.args.jenisKendaraanId,
       isDemoMode: widget.args.isDemoMode,
     );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // Opsi A yang disepakati: langsung minta reconnect, tanpa pengecekan
+      // kedaluwarsa timer tambahan. Aman dipanggil berulang — lihat
+      // dokumentasi di PaymentCubit.reconnectIfNeeded().
+      context.read<PaymentCubit>().reconnectIfNeeded();
+    }
   }
 
   @override
@@ -173,6 +197,13 @@ class _PaymentPageState extends State<PaymentPage> {
                       child: PaymentLocalQrisView(
                         kategoriKendaraan: widget.args.kategoriKendaraan,
                         showTimer: kodeQris.trim().isNotEmpty,
+                        // BARU (Poin A - jaring pengaman): kalau timer
+                        // lokal habis sebelum SignalR sempat kirim
+                        // QRIS_TIMEOUT (atau reconnect-nya diam-diam
+                        // gagal), cubit tetap dipaksa transisi ke state
+                        // error supaya user tidak pernah stuck.
+                        onTimeout: () =>
+                            context.read<PaymentCubit>().handleLocalTimeout(),
                         qrWidget: PbSafeFileImage(
                           file: File(qrisImagePath),
                           width: 220,

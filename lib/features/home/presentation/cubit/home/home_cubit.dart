@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:parkir_digital_bapenda/core/utils/string_ext.dart';
@@ -36,21 +37,23 @@ class HomeCubit extends Cubit<HomeState> {
 
     final recoveredSession = await _cameraService.recoverLostAndroidPhoto();
     if (recoveredSession != null && !isClosed) {
-      AppLogger.debug(
-        '>>> [HOME SATPAM] Menemukan sesi tertinggal untuk: ${recoveredSession.intent}',
-      );
+      AppLogger.debug('>>> [HOME SATPAM] Menemukan sesi tertinggal...');
       emit(state.copyWith(recoveredSession: recoveredSession));
     }
 
+    // 1. Eksekusi Cepat (Local Storage)
     await _loadProfileInfo();
-
     formatUserName();
 
+    // 2. Eksekusi Asinkron Berdasarkan Role
     if (state.role == RoleLoginDigitalParkir.jukir) {
+      // 🚀 THE FIX: PARALLEL FETCHING
+      // Jangan pakai await pada _qrisUsecase.syncQris(), biarkan jalan di background!
+      _qrisUsecase.syncQris();
+
       await Future.wait([
-        loadDashboardJukir(),
+        loadDashboardJukir(), // Fokus utamanya hanya ini
         _profileUseCase.getProfilePicturePath(),
-        _qrisUsecase.syncQris(),
       ]);
     } else if (state.role == RoleLoginDigitalParkir.pengawas) {
       final activeNop = _homeUsecase.getNomorObjekPengawasan();
@@ -59,7 +62,6 @@ class HomeCubit extends Cubit<HomeState> {
 
       if (activeNop == null || activeNop.isEmpty) {
         final rekapResult = await _homeUsecase.getRekapWilayahKecamatan();
-
         rekapResult.fold(
           (failure) {
             if (isClosed) return;
@@ -94,45 +96,59 @@ class HomeCubit extends Cubit<HomeState> {
     } else if (state.role == RoleLoginDigitalParkir.jukircounter) {
       if (isClosed) return;
       emit(state.copyWith(status: HomeStatus.success));
-      return;
     } else {
-      await _loadDashboardNonJukir();
-      await checkOpLastUpdate();
-      await _qrisUsecase.syncQris();
-      return;
+      // 🚀 THE FIX: PARALLEL FETCHING UNTUK BAPENDA
+      // _loadDashboardNonJukir dan checkOpLastUpdate jalan BERSAMAAN!
+      // _qrisUsecase jalan diam-diam di belakang layar tanpa di-await.
+      final stopwatch = Stopwatch()..start();
+      _qrisUsecase.syncQris();
+      stopwatch.stop();
+      AppLogger.debug(
+        '⏱️ [PERFORMA BAPENDA] Layar Home selesai dimuat dalam: ${stopwatch.elapsedMilliseconds} ms',
+      );
+      await Future.wait([_loadDashboardNonJukir(), checkOpLastUpdate()]);
     }
   }
 
   Future<void> loadDashboardJukir() async {
-    emit(state.copyWith(status: HomeStatus.loading));
-
+    // Profil ditarik secara sinkron untuk memori cepat
     final profile = await _secureStorage.getJukirProfile();
-
     if (isClosed) return;
 
     bool isFreeStatus = false;
-
     if (profile != null) {
       final dynamic rawPungutTarif = profile['pungutTarif'];
       isFreeStatus = rawPungutTarif == 1 || rawPungutTarif == '1';
     }
 
-    final summaryJukirResult = await _homeUsecase.getDashboardSummaryJukir(
-      nop: state.nop,
+    final stopwatch = Stopwatch()..start();
+
+    // 🚀 THE FIX: PARALLEL FETCHING API DASHBOARD & RECENT TRANSACTION
+    // Kedua API ini ditembak ke server di detik yang sama, menghemat waktu 50%
+    final results = await Future.wait([
+      _homeUsecase.getDashboardSummaryJukir(nop: state.nop),
+      _homeUsecase.getRecentTransactions(limit: 5, nop: state.nop),
+    ]);
+
+    stopwatch.stop();
+    AppLogger.debug(
+      '⏱️ [PERFORMA API] Selesai dalam: ${stopwatch.elapsedMilliseconds} ms',
     );
 
     if (isClosed) return;
 
+    final summaryJukirResult = results[0] as Either;
+    final recentResult = results[1] as Either;
+
     bool isSummaryFailed = false;
 
+    // Mapping Hasil Summary
     summaryJukirResult.fold(
       (failure) {
         isSummaryFailed = true;
-        if (isClosed) return;
         emit(state.copyWith(isFree: isFreeStatus, status: HomeStatus.failure));
       },
       (summary) {
-        if (isClosed) return;
         emit(
           state.copyWith(
             motorCount: summary.jumlahMotorHariIni,
@@ -146,27 +162,13 @@ class HomeCubit extends Cubit<HomeState> {
       },
     );
 
-    final recentResult = await _homeUsecase.getRecentTransactions(
-      limit: 5,
-      nop: state.nop,
-    );
-
-    if (isClosed) return;
-
+    // Mapping Hasil History
     recentResult.fold(
-      (failure) {
-        AppLogger.error(
-          'Gagal mengambil history transaksi: ${failure.message}',
-        );
-      },
-      (transactions) {
-        if (isClosed) return;
-        emit(state.copyWith(recentTransactions: transactions));
-      },
+      (failure) => AppLogger.error('Gagal mengambil history transaksi'),
+      (transactions) => emit(state.copyWith(recentTransactions: transactions)),
     );
 
     if (!isSummaryFailed) {
-      if (isClosed) return;
       emit(state.copyWith(status: HomeStatus.success));
     }
   }
@@ -250,11 +252,15 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> _loadDashboardNonJukir() async {
+    final apiStopwatch = Stopwatch()..start(); // Mulai ukur API
     final result = await _homeUsecase.getDashboardSummaryNonJukir();
-
+    apiStopwatch.stop(); // Hentikan ukur API
+    AppLogger.debug(
+      '⏱️ [API BACKEND] Respons getDashboardSummaryNonJukir: ${apiStopwatch.elapsedMilliseconds} ms',
+    );
     if (isClosed) return;
 
-    result.fold(
+  result.fold(
       (failure) {
         if (isClosed) return;
         emit(
